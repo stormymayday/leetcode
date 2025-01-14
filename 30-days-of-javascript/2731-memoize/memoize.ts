@@ -6,7 +6,8 @@ function memoize(fn: Fn): Fn {
     
     return function(...args) {
 
-        const key = JSON.stringify(args);
+        // const key = JSON.stringify(args);
+        const key = `${fn.name}:${args}`;
 
         if(key in cache) {
             return cache[key];
