@@ -3,38 +3,37 @@ class TimeLimitedCache {
     cache;
     
     constructor() {
-        this.cache = new Map();
+        this.cache = {};
     }
     
     set(key: number, value: number, duration: number): boolean {
 
-        const alreadyExists = this.cache.get(key);
+        const entry = this.cache[key];
 
-        if(alreadyExists) {
-            clearTimeout(alreadyExists.timeoutId);
+        if(entry) {
+            clearTimeout(this.cache[key].timeoutId);
         }
 
         const timeoutId = setTimeout(() => {
-            this.cache.delete(key);
+            delete this.cache[key];
         }, duration);
 
-        this.cache.set(key, {value, timeoutId});
+        this.cache[key] = { value, timeoutId };
 
-        return Boolean(alreadyExists);
+        return Boolean(entry);
         
     }
     
     get(key: number): number {
-        if(this.cache.get(key)) {
-            return this.cache.get(key).value;
+        if(this.cache[key]) {
+            return this.cache[key].value;
         } else {
             return -1;
         }
-        
     }
     
     count(): number {
-        return this.cache.size;
+        return Object.keys(this.cache).length;
     }
 }
 
