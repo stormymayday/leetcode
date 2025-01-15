@@ -19,5 +19,7 @@ function isEmpty(obj: Obj): boolean {
     if(prototype === null || prototype === Object.prototype) {
         return Object.keys(obj).length === 0;
     }
+
+    return true;
     
 };
