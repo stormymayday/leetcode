@@ -4,17 +4,25 @@ function timeLimit(fn: Fn, t: number): Fn {
 
     return async function (...args) {
 
-        return new Promise((resolve, reject) => {
-            const timeoutId = setTimeout(() => {
+        // return new Promise((resolve, reject) => {
+        //     const timeoutId = setTimeout(() => {
+        //         reject("Time Limit Exceeded");
+        //     }, t);
+        //     fn(...args).then((result) => {
+        //         resolve(result);
+        //     }).catch(reject).finally(() => {
+        //         clearTimeout(timeoutId)
+        //     });
+
+        // });
+        let timeoutId;
+        const timeout = new Promise((_, reject) => {
+            timeoutId = setTimeout(()=> {
                 reject("Time Limit Exceeded");
             }, t);
-            fn(...args).then((result) => {
-                resolve(result);
-            }).catch(reject).finally(() => {
-                clearTimeout(timeoutId)
-            });
-
         });
+        const result = fn(...args);
+        return Promise.race([timeout, result]).finally(() => clearTimeout(timeoutId));
 
     }
 };
