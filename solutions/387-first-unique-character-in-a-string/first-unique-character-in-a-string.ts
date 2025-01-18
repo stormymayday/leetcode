@@ -10,13 +10,11 @@ function firstUniqChar(s: string): number {
         }
     }
 
-    let firstUniqueCharIndex = -1;
     for(let i = 0; i < s.length; i++) {
         if(hashMap[s[i]] === 1) {
-            firstUniqueCharIndex = i;
-            break;
+            return i
         }
     }
 
-    return firstUniqueCharIndex;
+    return -1;
 };
