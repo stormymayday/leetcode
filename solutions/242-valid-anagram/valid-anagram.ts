@@ -1,5 +1,9 @@
 function isAnagram(s: string, t: string): boolean {
 
+    if(s.length !== t.length) {
+        return false;
+    }
+
     const freqMap = {};
 
     for(const char of s) {
