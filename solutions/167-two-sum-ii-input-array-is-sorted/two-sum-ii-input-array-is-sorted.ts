@@ -1,13 +1,16 @@
 function twoSum(numbers: number[], target: number): number[] {
 
-    for(let i = 0; i < numbers.length; i++) {
+    let left = 0;
+    let right = numbers.length - 1;
 
-        for(let j = i + 1; j < numbers.length; j++) {
+    while(left < right) {
 
-            if(numbers[i] + numbers[j] === target) {
-                return [i+1, j+1];
-            }
-
+        if(numbers[left] + numbers[right] === target) {
+            return [left + 1, right + 1];
+        } else if(numbers[left] + numbers[right] > target) {
+            right--;
+        } else {
+            left++;
         }
 
     }
