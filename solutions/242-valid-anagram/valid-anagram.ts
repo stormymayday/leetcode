@@ -1,27 +1,5 @@
 function isAnagram(s: string, t: string): boolean {
 
-    if(s.length !== t.length) {
-        return false;
-    }
-
-    const freqMap = {};
-
-    for(const char of s) {
-        if(freqMap[char]) {
-            freqMap[char]++;
-        } else {
-            freqMap[char] = 1;
-        }
-    }
-
-    for(const char of t) {
-        if(!freqMap[char]) {
-            return false;
-        } else {
-            freqMap[char]--;
-        }
-    }
-
-    return true;
+    return s.split('').sort().join('') === t.split('').sort().join('');
     
 };
