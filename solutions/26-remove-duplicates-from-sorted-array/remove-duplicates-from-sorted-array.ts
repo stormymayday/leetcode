@@ -1,18 +1,16 @@
 function removeDuplicates(nums: number[]): number {
-
     const mySet = new Set();
 
-    // Iterate in reverse order to avoid index shift issues when splicing
-    for (let i = nums.length - 1; i >= 0; i--) {
+    for (let i = 0; i < nums.length; i++) {
         if (mySet.has(nums[i])) {
             // Remove duplicate in-place
-            nums.splice(i, 1); 
+            nums.splice(i, 1);  
+            // Decrement i to check the new value at the same index
+            i--;  
         } else {
-            // Add unique number to set
-            mySet.add(nums[i]); 
+            mySet.add(nums[i]);
         }
     }
 
-    return nums.length; // Return new length of modified array
-    
-};
+    return nums.length;
+}
