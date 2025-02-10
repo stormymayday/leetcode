@@ -1,15 +1,16 @@
 function removeDuplicates(nums: number[]): number {
-    const mySet = new Set();
+    
+    let i = 0;
 
-    for (let i = 0; i < nums.length; i++) {
-        if (mySet.has(nums[i])) {
-            // Remove duplicate in-place
-            nums.splice(i, 1);  
-            // Decrement i to check the new value at the same index
-            i--;  
+    for (let j = 1; j < nums.length; j++) {
+        
+        if(nums[i] === nums[j]) {
+            nums.splice(j, 1);
+            j--;
         } else {
-            mySet.add(nums[i]);
+            i = j;
         }
+
     }
 
     return nums.length;
