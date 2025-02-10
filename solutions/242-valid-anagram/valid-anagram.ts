@@ -17,9 +17,8 @@ function isAnagram(s: string, t: string): boolean {
     for(const char of t) {
         if(!freqMap[char]) {
             return false;
-        } else {
-            freqMap[char]--;
         }
+        freqMap[char]--;
     }
 
     return true;
