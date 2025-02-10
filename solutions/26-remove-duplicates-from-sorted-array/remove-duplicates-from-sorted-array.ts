@@ -5,13 +5,17 @@ function removeDuplicates(nums: number[]): number {
     for (let j = 1; j < nums.length; j++) {
         
         if(nums[i] === nums[j]) {
-            nums.splice(j, 1);
-            j--;
+            // EQUAL
+            // move j forward
         } else {
-            i = j;
+            // NOT EQUAL
+            // 1. move i one step forward
+            i = i + 1;
+            // 2. overwrite
+            nums[i] = nums[j];
         }
 
     }
 
-    return nums.length;
+    return i+1;
 }
