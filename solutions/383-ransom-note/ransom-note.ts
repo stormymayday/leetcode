@@ -1,23 +1,25 @@
 function canConstruct(ransomNote: string, magazine: string): boolean {
 
+    if(magazine.length < ransomNote.length) {
+        return false;
+    }
+
     const freqMap = {};
 
-    for(const element of magazine) {
-        if(freqMap[element]) {
-            freqMap[element]++;
+    for(const char of magazine) {
+        if(freqMap[char]) {
+            freqMap[char]++;
         } else {
-            freqMap[element] = 1;
+            freqMap[char] = 1;
         }
     }
 
-    for(const element of ransomNote) {
+    for(const char of ransomNote) {
 
-        if(!freqMap[element]) {
+        if(!freqMap[char]) {
             return false;
         }
-
-        freqMap[element]--;
-
+        freqMap[char]--;
     }
 
     return true;
