@@ -1,5 +1,9 @@
 function twoSum(numbers: number[], target: number): number[] {
 
+    if(!numbers.length) {
+        return [];
+    }
+
     let left = 0;
     let right = numbers.length - 1;
 
@@ -14,5 +18,7 @@ function twoSum(numbers: number[], target: number): number[] {
         }
 
     }
+
+    return [];
     
 };
