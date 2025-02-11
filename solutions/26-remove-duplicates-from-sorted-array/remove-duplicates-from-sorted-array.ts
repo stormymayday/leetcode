@@ -1,21 +1,30 @@
 function removeDuplicates(nums: number[]): number {
-    
+
+    if(!nums.length) {
+        return 0;
+    }
+
     let i = 0;
 
-    for (let j = 1; j < nums.length; j++) {
-        
+    for(let j = 1; j < nums.length; j++) {
+
         if(nums[i] === nums[j]) {
-            // EQUAL
-            // move j forward
+
+            // do nothing
+            // j moves forward
+
         } else {
-            // NOT EQUAL
-            // 1. move i one step forward
-            i = i + 1;
-            // 2. overwrite
+
+            // move i one step forward
+            i++;
+
+            // replace value at i with value at j
             nums[i] = nums[j];
+
         }
 
     }
 
-    return i+1;
-}
+    return i + 1;
+    
+};
