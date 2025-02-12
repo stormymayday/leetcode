@@ -7,11 +7,7 @@ function isAnagram(s: string, t: string): boolean {
     const freqMap = {};
 
     for(const char of s) {
-        if(freqMap[char]) {
-            freqMap[char]++;
-        } else {
-            freqMap[char] = 1;
-        }
+        freqMap[char] = (freqMap[char] || 0) + 1;
     }
 
     for(const char of t) {
