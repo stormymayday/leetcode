@@ -11,7 +11,7 @@ function maximumSubarraySum(nums: number[], k: number): number {
     const freqMap: Record<number, number> = {};
 
     // To tracks number of unique values
-    const uniqueSet = new Set<number>(); 
+    let valueCount = 0;
 
     // Left pointer of the sliding window
     let left = 0;
@@ -28,11 +28,10 @@ function maximumSubarraySum(nums: number[], k: number): number {
         // Updating frequency map: increment count for nums[right]
         if (!freqMap[nums[right]]) {
             freqMap[nums[right]] = 1;
+            valueCount++;
         } else {
             freqMap[nums[right]]++;
         }
-
-        uniqueSet.add(nums[right]);
 
         // If the window size exceeds k, shrink it from the left
         if (right - left + 1 > k) {
@@ -45,7 +44,7 @@ function maximumSubarraySum(nums: number[], k: number): number {
             // If frequency becomes zero, remove it from the map
             if (freqMap[nums[left]] === 0) {
                 delete freqMap[nums[left]];
-                uniqueSet.delete(nums[left]);
+                valueCount--;
             }
 
             // Move the left pointer forward
@@ -53,7 +52,7 @@ function maximumSubarraySum(nums: number[], k: number): number {
         }
 
         // Check if window size is exactly k and contains k unique elements
-        if (right - left + 1 === k && uniqueSet.size === k) {
+        if (right - left + 1 === k && valueCount === k) {
              // Update maximum sum
             result = Math.max(result, windowSum);
         }
