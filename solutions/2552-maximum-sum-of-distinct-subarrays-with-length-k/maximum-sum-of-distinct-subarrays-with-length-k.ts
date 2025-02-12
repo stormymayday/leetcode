@@ -1,37 +1,64 @@
 function maximumSubarraySum(nums: number[], k: number): number {
-    let result = 0;
+    // Stores the maximum sum of a valid subarray
+    let result = 0; 
 
+    // If the array is smaller than k, return 0 (no valid subarray possible)
     if (nums.length < k) {
-        return 0;
+        return result;
     }
 
-    const hashSet = new Set<number>();
+    // HashMap to track element frequencies in the window
+    const freqMap: Record<number, number> = {};
 
+    // To tracks number of unique values
+    const uniqueSet = new Set<number>(); 
+
+    // Left pointer of the sliding window
     let left = 0;
+
+    // Stores the sum of the current window
     let windowSum = 0;
 
+    // Iterating through the array using the right pointer
     for (let right = 0; right < nums.length; right++) {
-        // Ensure uniqueness by shrinking window if duplicate appears
-        while (hashSet.has(nums[right])) {
-            hashSet.delete(nums[left]);
-            windowSum -= nums[left];
-            left++;
-        }
 
-        // Add new element
-        hashSet.add(nums[right]);
+        // Adding the current element to the window sum
         windowSum += nums[right];
 
-        // If we have a valid subarray of size k
-        if (right - left + 1 === k) {
-            result = Math.max(result, windowSum);
+        // Updating frequency map: increment count for nums[right]
+        if (!freqMap[nums[right]]) {
+            freqMap[nums[right]] = 1;
+        } else {
+            freqMap[nums[right]]++;
+        }
 
-            // Remove leftmost element from window to slide right
-            hashSet.delete(nums[left]);
+        uniqueSet.add(nums[right]);
+
+        // If the window size exceeds k, shrink it from the left
+        if (right - left + 1 > k) {
+            // Remove the leftmost element from the sum
             windowSum -= nums[left];
-            left++;
+
+            // Decrease its frequency
+            freqMap[nums[left]]--;
+
+            // If frequency becomes zero, remove it from the map
+            if (freqMap[nums[left]] === 0) {
+                delete freqMap[nums[left]];
+                uniqueSet.delete(nums[left]);
+            }
+
+            // Move the left pointer forward
+            left++; 
+        }
+
+        // Check if window size is exactly k and contains k unique elements
+        if (right - left + 1 === k && uniqueSet.size === k) {
+             // Update maximum sum
+            result = Math.max(result, windowSum);
         }
     }
 
-    return result;
+    // Return the maximum sum found
+    return result; 
 }
