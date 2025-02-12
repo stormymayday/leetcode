@@ -8,13 +8,16 @@ function twoSum(nums: number[], target: number): number[] {
 
     for(const [index, value] of nums.entries()) {
 
-        const diff = target - value;
+        const difference = target - value;
 
-        if(freqMap[value] !== undefined) {
-            return [index, freqMap[value]];
+        if(freqMap[difference] !== undefined) {
+            return [index, freqMap[difference]];
         } else {
-            freqMap[diff] = index;
+            freqMap[value] = index;
         }
+
     }
+
+    return [];
     
 };
