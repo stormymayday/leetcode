@@ -4,19 +4,19 @@ function twoSum(numbers: number[], target: number): number[] {
         return [];
     }
 
-    let left = 0;
-    let right = numbers.length - 1;
+    let i = 0;
+    let j = numbers.length - 1;
 
-    while(left < right) {
+    while(i < j) {
 
-        if(numbers[left] + numbers[right] === target) {
-            return [left + 1, right + 1];
-        } else if(numbers[left] + numbers[right] > target) {
-            right--;
+        if(numbers[i] + numbers[j] === target) {
+            return [i + 1,  j + 1];
+        } else if(numbers[i] + numbers[j] > target) {
+            j--;
         } else {
-            left++;
+            i++;
         }
-
+ 
     }
 
     return [];
