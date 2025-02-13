@@ -1,28 +1,34 @@
 function minSubArrayLen(target: number, nums: number[]): number {
-        if (!nums.length) {
-            return 0;
-        }
+    
+    let result = Infinity;
 
-        let minLength = Infinity;
-        let left = 0;
-        let windowSum = 0;
-
-        for (let right = 0; right < nums.length; right++) {
-            if (nums[right] >= target) {
-                return 1;
-            }
-
-            windowSum += nums[right];
-
-            while (windowSum >= target) {
-                
-                minLength = Math.min(minLength, right - left + 1);
-
-                windowSum -= nums[left];
-
-                left++;
-            }
-        }
-
-        return minLength === Infinity ? 0 : minLength;
+    if(!nums.length) {
+        return 0;
     }
+
+    let left = 0;
+    let windowSum = 0;
+
+    for(let right = 0; right < nums.length; right++) {
+
+        if(nums[right] === target) {
+            return 1;
+        } 
+
+        windowSum += nums[right];
+
+        while(windowSum >= target) {
+
+            windowSum -= nums[left];
+
+            result = Math.min(result, right - left + 1);
+
+            left++;
+
+        }
+
+    }
+
+    return result === Infinity ? 0 : result;
+
+};
