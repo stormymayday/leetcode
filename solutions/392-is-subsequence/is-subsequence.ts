@@ -8,12 +8,11 @@ function isSubsequence(s: string, t: string): boolean {
         return true;
     }
 
-    const stack = [...s].reverse();
-
-    for(let i = 0; i < t.length; i++) {
-        if(t[i] === stack[stack.length - 1]) {
-            stack.pop();
-            if(stack.length === 0) {
+    let i = 0;
+    for(let j = 0; j < t.length; j++) {
+        if(s[i] === t[j]) {
+            i++;
+            if(i === s.length) {
                 return true;
             }
         }
