@@ -11,7 +11,7 @@ function minSubArrayLen(target: number, nums: number[]): number {
 
     for(let right = 0; right < nums.length; right++) {
 
-        if(nums[right] === target) {
+        if(nums[right] >= target) {
             return 1;
         } 
 
