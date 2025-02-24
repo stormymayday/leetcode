@@ -1,51 +1,58 @@
-function merge(arr1: number[], arr2: number[]): number[] {
+function getDigit(num, i) {
+    return Math.floor(Math.abs(num) / Math.pow(10, i)) % 10;
+}
 
-    const result = [];
+function digitCount(num) {
+    if(num === 0) {
+        return 1;
+    }
+     return Math.floor(Math.log10(Math.abs(num))) + 1;
+}
 
-    let i = 0;
-    let j = 0;
-
-    while(i < arr1.length && j < arr2.length) {
-
-        if(arr1[i] < arr2[j]) {
-
-            result.push(arr1[i]);
-            i++;
-
-        } else {
-
-            result.push(arr2[j]);
-            j++;
-
+function mostDigits(nums) {
+    let max = 0;
+    for(let i = 0; i < nums.length; i++) {
+        let currentValueDigitCount = digitCount(nums[i]);
+        if(currentValueDigitCount > max) {
+            max = currentValueDigitCount;
         }
-
     }
-
-    while(i < arr1.length) {
-        result.push(arr1[i]);
-        i++;
-    }
-
-    while(j < arr2.length) {
-        result.push(arr2[j]);
-        j++;
-    }
-
-
-    return result;
-
+    return max;
 }
 
 function sortArray(nums: number[]): number[] {
-
-    if(nums.length <= 1) {
-        return nums;
+    // Separate negative and positive numbers
+    const negatives = nums.filter(n => n < 0).map(n => Math.abs(n));
+    const positives = nums.filter(n => n >= 0);
+    
+    // Sort positive numbers
+    let maxDigitCount = mostDigits(positives);
+    for (let k = 0; k < maxDigitCount; k++) {
+        const digitBuckets = Array.from({length: 10}, () => []);
+        
+        for (let i = 0; i < positives.length; i++) {
+            const digit = getDigit(positives[i], k);
+            digitBuckets[digit].push(positives[i]);
+        }
+        
+        positives.length = 0;
+        digitBuckets.forEach(bucket => positives.push(...bucket));
     }
     
-    let middle = Math.floor(nums.length/2);
-    let left = sortArray(nums.slice(0, middle));
-    let right = sortArray(nums.slice(middle));
-
-    return merge(left, right);
+    // Sort negative numbers
+    maxDigitCount = mostDigits(negatives);
+    for (let k = 0; k < maxDigitCount; k++) {
+        const digitBuckets = Array.from({length: 10}, () => []);
+        
+        for (let i = 0; i < negatives.length; i++) {
+            const digit = getDigit(negatives[i], k);
+            digitBuckets[digit].push(negatives[i]);
+        }
+        
+        negatives.length = 0;
+        digitBuckets.forEach(bucket => negatives.push(...bucket));
+    }
     
+    // Combine results: reversed negatives (made negative again) + positives
+    return [...negatives.reverse().map(n => -n), ...positives];
 };
