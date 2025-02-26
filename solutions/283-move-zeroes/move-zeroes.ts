@@ -1,19 +1,23 @@
-/**
- Do not return anything, modify nums in-place instead.
- */
-function moveZeroes(nums: number[]): void {
-    const zeroes = [];
-    for(let i = 0; i < nums.length; i++) {
-        if(nums[i] === 0) {
-            // delete zero
-            nums.splice(i, 1);
-            // decrement i?
-            i--;
-            // push '0' to the zeros array
-            zeroes.push(0);
+function swap(arr: number[], i: number, j: number): void {
+    const temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
+function partitionZeroes(arr: number[], left: number, right: number): number {
+    let swapIdx = left;
+
+    for (let i = left; i <= right; i++) {
+        if (arr[i] !== 0) {
+            swap(arr, i, swapIdx);
+            swapIdx++;
         }
     }
-    // concat does not work because it returns a new array
-    // therefore, push zeroes to the nums array
-    nums.push(...zeroes);
-};
+    return swapIdx;
+}
+
+function moveZeroes(nums: number[], left = 0, right = nums.length - 1): void {
+    if (left < right) {
+        partitionZeroes(nums, left, right);
+    }
+}
