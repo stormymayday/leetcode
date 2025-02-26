@@ -1,23 +1,24 @@
-function swap(arr: number[], i: number, j: number): void {
+/**
+ Do not return anything, modify nums in-place instead.
+ */
+function swap(arr, i, j) {
     const temp = arr[i];
     arr[i] = arr[j];
     arr[j] = temp;
 }
+function moveZeroes(nums: number[]): void {
 
-function partitionZeroes(arr: number[], left: number, right: number): number {
-    let swapIdx = left;
+    let left = 0;
 
-    for (let i = left; i <= right; i++) {
-        if (arr[i] !== 0) {
-            swap(arr, i, swapIdx);
-            swapIdx++;
+    for(let right = 0; right < nums.length; right++) {
+        // if not zero
+        if(nums[right] !== 0) {
+            // swap
+            swap(nums, left, right);
+            // increment left
+            left++;
         }
-    }
-    return swapIdx;
-}
 
-function moveZeroes(nums: number[], left = 0, right = nums.length - 1): void {
-    if (left < right) {
-        partitionZeroes(nums, left, right);
     }
-}
+    
+};
