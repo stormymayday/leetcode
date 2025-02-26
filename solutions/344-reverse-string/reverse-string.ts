@@ -1,16 +1,21 @@
 /**
  Do not return anything, modify s in-place instead.
  */
+function swap(arr, i, j) {
+    const temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
 function reverseString(s: string[]): void {
 
-    const stack = [];
-
-    for(let i = 0; i < s.length; i++) {
-        stack.push(s[i]);
+    function reverse(left, right) {
+        if(left < right) {
+            swap(s, left, right)
+            reverse(left + 1, right - 1);
+        }
     }
 
-    for(let i = 0; i < s.length; i++) {
-        s[i] = stack.pop();
-    }
+    reverse(0, s.length - 1);
 
 };
