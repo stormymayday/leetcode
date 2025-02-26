@@ -1,20 +1,14 @@
 function maxSubArray(nums: number[]): number {
-
-    let maxSubarraySum: number = nums[0];
-    let currentSum = 0;
-
-    for(const num of nums) {
-        // if negative
-        if(currentSum < 0) {
-            // reset
-            currentSum = 0;
-        }
-        // Calculate current sum
-        currentSum += num;
-        // Check if it greater than max subarray sum
+		// Initialize max sum with first element
+    let maxSubarraySum = nums[0];
+    // Start current sum from first element
+    let currentSum = nums[0];
+    for (let i = 1; i < nums.length; i++) {
+		    // Extend or reset
+        currentSum = Math.max(nums[i], currentSum + nums[i]);
+        // Update max sum
         maxSubarraySum = Math.max(maxSubarraySum, currentSum);
     }
 
     return maxSubarraySum;
-    
-};
+}
