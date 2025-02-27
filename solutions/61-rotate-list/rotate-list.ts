@@ -30,12 +30,17 @@ function rotateRight(head: ListNode | null, k: number): ListNode | null {
         return head;
     }
 
-    // Fidning pivot point (number of rotations incase k > length)
+    // Fidning actual (if k > length) or rotations
     const numberOfRotations = k % length;
 
     // Move to the pivot point and rotate
     let current = head;
+    // Correct:
     for(let i = 0; i < length - numberOfRotations - 1; i++) {
+    // Error:
+    // for(let i = 0; i < numberOfRotations; i++) {
+    // Error:
+    // for(let i = 0; i < numberOfRotations + 1; i++) {
         current = current.next;
     }
     // now current is at the pivot point (new head)
