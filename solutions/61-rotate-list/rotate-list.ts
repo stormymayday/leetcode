@@ -25,13 +25,13 @@ function rotateRight(head: ListNode | null, k: number): ListNode | null {
         length++;
     }
 
-    // Edge Case 2: If length is equal to k we can return 
-    if(length === k) {
-        return head;
-    }
-
     // Fidning the actual (if k > length) number or rotations
     const numberOfRotations = k % length;
+
+    // Edge Case 2: the remainder is zero we can return
+    if(numberOfRotations % length === 0) {
+        return head;
+    }
 
     // Finding the pivot / break point
     let current = head;
