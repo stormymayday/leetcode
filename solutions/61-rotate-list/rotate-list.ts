@@ -28,8 +28,8 @@ function rotateRight(head: ListNode | null, k: number): ListNode | null {
     // Fidning the actual (if k > length) number or rotations
     const numberOfRotations = k % length;
 
-    // Edge Case 2: the remainder is zero we can return
-    if(numberOfRotations % length === 0) {
+    // Edge Case 2: If the remainder is zero we can return
+    if(numberOfRotations === 0) {
         return head;
     }
 
