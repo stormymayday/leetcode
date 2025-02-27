@@ -1,6 +1,5 @@
 function merge(arr1, arr2) {
-
-    let result = [];
+    const result = [];
 
     let i = 0;
     let j = 0;
@@ -26,19 +25,13 @@ function merge(arr1, arr2) {
     }
 
     return result;
-
 }
-
 function sortArray(nums: number[]): number[] {
-
     if(nums.length <= 1) {
         return nums;
     }
-
-    let middle = Math.floor(nums.length / 2);
-    let left = sortArray(nums.slice(0, middle));
-    let right = sortArray(nums.slice(middle));
-
+    const middle = Math.floor(nums.length / 2);
+    const left = sortArray(nums.slice(0, middle));
+    const right = sortArray(nums.slice(middle));
     return merge(left, right);
-    
 };
