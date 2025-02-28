@@ -1,23 +1,14 @@
 function twoSum(nums: number[], target: number): number[] {
-
-    if(!nums.length) {
-        return [];
-    }
-
-    const freqMap = {};
-
-    for(const [index, value] of nums.entries()) {
-
-        const difference = target - value;
-
-        if(freqMap[difference] !== undefined) {
-            return [index, freqMap[difference]];
-        } else {
-            freqMap[value] = index;
-        }
-
-    }
-
-    return [];
     
+    const hashMap = {};
+
+    for(let i = 0; i < nums.length; i++) {
+        const difference = target - nums[i];
+        if(hashMap[difference] !== undefined) {
+            return [i, hashMap[difference]];
+        } else {
+            hashMap[nums[i]] = i;
+        }
+    }
+
 };
