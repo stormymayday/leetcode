@@ -5,6 +5,7 @@ function chunk(arr: Obj[], size: number): Obj[][] {
 
     const result = [];
     let chunk = [];
+
     for(let i = 0; i < arr.length; i++) {
         chunk.push(arr[i]);
         if(chunk.length === size) {
@@ -13,7 +14,7 @@ function chunk(arr: Obj[], size: number): Obj[][] {
         }
     }
 
-    if(chunk.length) {
+    if(chunk.length > 0) {
         result.push(chunk);
     }
 
