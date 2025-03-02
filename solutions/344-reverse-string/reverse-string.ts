@@ -6,16 +6,21 @@ function swap(arr, i, j) {
     arr[i] = arr[j];
     arr[j] = temp;
 }
-
 function reverseString(s: string[]): void {
 
-    function reverse(left, right) {
-        if(left < right) {
-            swap(s, left, right)
-            reverse(left + 1, right - 1);
+    function helper(left, right) {
+        // Base Case
+        if(left >= right) {
+            return;
         }
+        // Otherwise, we shall recurse:
+        // 1. swap
+        swap(s, left, right);
+        // 2. recurse call
+        helper(left + 1, right - 1);
     }
 
-    reverse(0, s.length - 1);
-
+    
+    helper(0, s.length - 1);
+    
 };
