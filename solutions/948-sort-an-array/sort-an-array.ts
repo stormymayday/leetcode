@@ -10,7 +10,7 @@ function merge(arr1, arr2) {
             i++;
         } else {
             result.push(arr2[j]);
-            j++;
+            j++
         }
     }
 
@@ -21,17 +21,21 @@ function merge(arr1, arr2) {
 
     while(j < arr2.length) {
         result.push(arr2[j]);
-        j++;
+        j++
     }
 
     return result;
 }
 function sortArray(nums: number[]): number[] {
+
     if(nums.length <= 1) {
         return nums;
     }
-    const middle = Math.floor(nums.length / 2);
-    const left = sortArray(nums.slice(0, middle));
-    const right = sortArray(nums.slice(middle));
+
+    const mid = Math.floor(nums.length / 2);
+    const left = sortArray(nums.slice(0, mid));
+    const right = sortArray(nums.slice(mid));
+
     return merge(left, right);
+    
 };
