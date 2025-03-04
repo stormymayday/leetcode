@@ -1,20 +1,19 @@
-function memoize(fn: Function) {
-    const cache: Record<string, number> = {};
-    return function(...args: number[]) {
-        const key = args.join(',');
-        if(cache[key] !== undefined) {
-            return cache[key];
-        } else {
-            const result = fn.apply(this, args);
-            cache[key] = result;
-            return result;
-        }
-    }
-}
+function fib(n: number): number {
+    // Handle base cases
+    if (n < 2) return n;
 
-const fib = memoize(function fib(n: number) {
-    if (n < 2) {
-        return n;
+    // Create a DP table to store Fibonacci numbers
+    const dp: number[] = new Array(n + 1);
+    
+    // Initialize base cases in the table
+    dp[0] = 0;
+    dp[1] = 1;
+    
+    // Build the Fibonacci sequence bottom-up
+    for (let i = 2; i <= n; i++) {
+        dp[i] = dp[i - 1] + dp[i - 2];
     }
-    return fib(n - 1) + fib(n - 2);
-});
+    
+    // Return the nth Fibonacci number
+    return dp[n];
+}
