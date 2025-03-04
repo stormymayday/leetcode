@@ -1,10 +1,14 @@
 function fib(n: number): number {
-    if(n <= 1) {
+    if(n < 2) {
         return n;
     }
-    const result = [0, 1];
+
+    let a = 0;
+    let b = 1;
+
     for(let i = 2; i <= n; i++) {
-        result.push(result[i - 2] + result[i -1]);
+        [a, b] = [b, a + b];
     }
-    return result.pop();
+
+    return b;
 };
