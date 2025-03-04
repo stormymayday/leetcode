@@ -1,19 +1,19 @@
 function fib(n: number): number {
-    if(n < 2) {
-        return n;
+
+    const memo = { 
+        '0': 0,
+        '1': 1,
+    };
+
+    function f(x: number) {
+        if(memo[x] !== undefined) {
+            return memo[x];
+        } else {
+            memo[x] = f(x - 1) + f(x - 2);
+            return memo[x];
+        }
     }
 
-    let a = 0;
-    let b = 1;
+    return f(n);
 
-    for(let i = 2; i <= n; i++) {
-        // Store the current value of b in a temporary variable
-        const temp = b;
-        // Update b with the sum of a and b
-        b = a + b;
-        // Set a to the previous value of b (stored in temp)
-        a = temp;
-    }
-
-    return b;
 };
