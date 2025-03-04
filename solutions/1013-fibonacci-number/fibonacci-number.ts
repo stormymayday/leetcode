@@ -1,6 +1,10 @@
 function fib(n: number): number {
-    if(n === 0 || n === 1) {
+    if(n <= 1) {
         return n;
     }
-    return fib(n - 1) + fib(n - 2);
+    const result = [0, 1];
+    for(let i = 2; i <= n; i++) {
+        result.push(result[i - 2] + result[i -1]);
+    }
+    return result.pop();
 };
