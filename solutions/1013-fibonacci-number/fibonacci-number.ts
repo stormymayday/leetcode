@@ -1,19 +1,20 @@
-function fib(n: number): number {
-
-    const memo = { 
-        '0': 0,
-        '1': 1,
-    };
-
-    function f(x: number) {
-        if(memo[x] !== undefined) {
-            return memo[x];
+function memoize(fn: Function) {
+    const cache: Record<string, number> = {};
+    return function(...args: number[]) {
+        const key = args.join(',');
+        if(cache[key] !== undefined) {
+            return cache[key];
         } else {
-            memo[x] = f(x - 1) + f(x - 2);
-            return memo[x];
+            const result = fn.apply(this, args);
+            cache[key] = result;
+            return result;
         }
     }
+}
 
-    return f(n);
-
-};
+const fib = memoize(function fib(n: number) {
+    if (n < 2) {
+        return n;
+    }
+    return fib(n - 1) + fib(n - 2);
+});
