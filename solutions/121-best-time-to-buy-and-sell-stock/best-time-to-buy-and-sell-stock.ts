@@ -3,7 +3,7 @@ function maxProfit(prices: number[]): number {
     let maxProfit = 0;
     // Points to current minimum price (buy day)    
     let left = 0;             
-    
+    // Right poiter is sell day
     for (let right = 1; right < prices.length; right++) {
          // Holds profit for current buy-sell pair
         let profit = 0;
@@ -12,13 +12,15 @@ function maxProfit(prices: number[]): number {
             // If we find a lower price, update our buy position
             left = right;
         } else {
-            // If current price is higher than our buy price,
+            // If current price is higher than our buy price
+            // PROFIT!
             // calculate the potential profit
             profit = prices[right] - prices[left];
+
+            // Update max profit if we found a better opportunity
+            maxProfit = Math.max(maxProfit, profit);
         }
         
-        // Update max profit if we found a better opportunity
-        maxProfit = Math.max(maxProfit, profit);
     }
 
     return maxProfit;
