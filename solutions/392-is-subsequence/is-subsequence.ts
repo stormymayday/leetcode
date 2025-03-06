@@ -1,23 +1,21 @@
 function isSubsequence(s: string, t: string): boolean {
+    // Edge case: empty string is always a subsequence
+    if (s.length === 0) return true;
 
-    if(s.length > t.length) {
-        return false;
-    }
-
-    if(!s.length) {
-        return true;
-    }
-
-    let i = 0;
-    for(let j = 0; j < t.length; j++) {
-        if(s[i] === t[j]) {
-            i++;
-            if(i === s.length) {
-                return true;
-            }
+     // Pointer for string s
+    let sIndex = 0;
+    
+    for(let tIndex = 0; tIndex < t.length; tIndex++) {
+        // If current characters match, move s pointer forward
+        if(s[sIndex] === t[tIndex]) {
+            sIndex++;
+        } 
+        
+        // Check if we've matched all characters in s
+        if(sIndex === s.length) {
+            return true;
         }
     }
 
     return false;
-    
 };
