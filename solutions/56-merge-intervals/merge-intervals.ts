@@ -1,6 +1,6 @@
 function merge(intervals: number[][]): number[][] {
     // Edge Cases: empty array or single interval
-    if(intervals.length === 0 || intervals.length === 1) {
+    if(intervals.length <= 1) {
         return intervals;
     }
 
