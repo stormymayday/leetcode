@@ -1,44 +1,23 @@
-/**
- * Checks if a character is alphanumeric (a-z, A-Z, 0-9)
- * This function determines if a character falls within the ASCII ranges for letters and numbers
- * @param char - Single character to check
- * @returns true if the character is a letter or digit, false otherwise
- */
-function isAlphanumeric(char: string): boolean {
-    return (char >= "a" && char <= "z") ||  // Check if char is lowercase letter
-           (char >= "A" && char <= "Z") ||  // Check if char is uppercase letter
-           (char >= "0" && char <= "9");    // Check if char is a digit
-}
-
 function isPalindrome(s: string): boolean {
-    // Initialize two pointers - one at the start and one at the end of the string
-    let left = 0;
-    let right = s.length - 1;
+    // Preprocess the string: remove non-alphanumeric characters and convert to lowercase
+    s = s.toLowerCase().replace(/[^a-z0-9]/g, "");
     
-    // Continue checking until the pointers meet in the middle
-    while(left < right) {
-        // Skip non-alphanumeric characters on the left side
-        if(!isAlphanumeric(s[left])) {
-            left++;
-            continue;  // Continue to next iteration without executing code below
-        } 
-
-        // Skip non-alphanumeric characters on the right side
-        if(!isAlphanumeric(s[right])) {
-            right--;
-            continue;  // Continue to next iteration without executing code below
+    // recursive helper function
+    function helper(left, right) {
+        // Base case: if pointers have crossed, it's a palindrome
+        if(left >= right) {
+            return true;
         }
-
-        // Compare characters (ignoring case) from both ends
-        if(s[left].toLowerCase() !== s[right].toLowerCase()) {
-            return false;  // Not a palindrome if characters don't match
+        // If chars don't match it's not a palindrome
+        if(s[left] !== s[right]) {
+            // Early exit
+            return false;
         } else {
-            // Move both pointers inward for next comparison
-            left++;
-            right--;
+            // Otherwise, move pointers towards the center and continue checking
+            return helper(left + 1, right - 1);
         }
     }
-
-    // If we've checked all characters without finding a mismatch, it's a palindrome
-    return true;
-}
+    
+    // Start recursion with the first and last indices of the processed string
+    return helper(0, s.length - 1);
+};
