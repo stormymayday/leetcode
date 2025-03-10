@@ -1,42 +1,43 @@
 function threeSum(nums: number[]): number[][] {
-
+    
     nums.sort((a,b) => a - b);
 
-    const frequencyMap = new Map();
-    for(const num of nums) {
-        if(frequencyMap.get(num) === undefined) {
-            frequencyMap.set(num, 1);
-        } else {
-            frequencyMap.set(num, frequencyMap.get(num) + 1);
-        }
-    }
-
     const result = [];
+
+    // iterate until i < nums.length - 2 ?
     for(let i = 0; i < nums.length; i++) {
-        const num = nums[i];
-        frequencyMap.set(num, frequencyMap.get(num) - 1);
-        if(i > 0 && nums[i] === nums[i - 1]) {
+
+        if(nums[i] > 0) {
+            break;
+        } else if(i > 0 && nums[i] === nums[i - 1]) {
             continue;
         }
 
-        for(let j = i + 1; j < nums.length; j++) {
-            const num = nums[j];
-            frequencyMap.set(num, frequencyMap.get(num) - 1);
-            if(j > i + 1 && nums[j] === nums[j - 1]) {
-                continue;
-            }
-            const target = -(nums[i] + nums[j]);
-            if(frequencyMap.get(target) > 0) {
-                result.push([nums[i], nums[j], target]);
-            }
-        }
+        let low = i + 1;
+        let high = nums.length - 1;
+        while(low < high) {
+            const sum = nums[i] + nums[low] + nums[high];
+            if(sum === 0) {
+                result.push([nums[i], nums[low], nums[high]]);
 
-        for (let j = i + 1; j < nums.length; j++) {
-            frequencyMap.set(nums[j], frequencyMap.get(nums[j]) + 1);
+                low++;
+                while(low < high && nums[low] === nums[low - 1]) {
+                    low++;
+                }
+
+                high--;
+                while(low < high && nums[high] === nums[high + 1]) {
+                    high--;
+                }
+
+            } else if(sum > 0) {
+                high--;
+            } else {
+                low++;
+            }
         }
 
     }
-    
+
     return result;
-    
 };
