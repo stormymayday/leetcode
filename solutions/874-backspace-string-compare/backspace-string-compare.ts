@@ -1,29 +1,26 @@
+/**
+ * Processes a string by handling backspaces (represented by '#')
+ * @param str The input string to process
+ * @returns An array of characters representing the final string after processing backspaces
+ */
+function removePoundSign(str: string): string[] {
+    const result = [];
+    for(let i = 0; i < str.length; i++) {
+        if(str[i] !== '#') {
+            // If current character is not a backspace, add it to the result
+            result.push(str[i]);
+        } else {
+            // If current character is a backspace, remove the last character
+            result.pop();
+        }
+    }
+    return result;
+}
+
 function backspaceCompare(s: string, t: string): boolean {
-    // Arrays to store characters after processing backspaces
-    const arrS = [];
-    const arrT = [];
-
-    // Process string 's'
-    for(let i = 0; i < s.length; i++) {
-        if(s[i] !== '#') {
-            // If current character is not a backspace, add it to the array
-            arrS.push(s[i]);
-        } else {
-            // If current character is a backspace, remove the last character
-            arrS.pop();
-        }
-    }
-
-    // Process string 't'
-    for(let i = 0; i < t.length; i++) {
-        if(t[i] !== '#') {
-            // If current character is not a backspace, add it to the array
-            arrT.push(t[i]);
-        } else {
-            // If current character is a backspace, remove the last character
-            arrT.pop();
-        }
-    }
+    // Process both strings to handle backspaces
+    const arrS = removePoundSign(s);
+    const arrT = removePoundSign(t);
 
     // If the resulting arrays have different lengths, they can't be equal
     if(arrS.length !== arrT.length) {
