@@ -1,40 +1,41 @@
-/**
- * Processes a string by handling backspaces (represented by '#')
- * @param str The input string to process
- * @returns An array of characters representing the final string after processing backspaces
- */
-function removePoundSign(str: string): string[] {
-    const result = [];
-    for(let i = 0; i < str.length; i++) {
-        if(str[i] !== '#') {
-            // If current character is not a backspace, add it to the result
-            result.push(str[i]);
-        } else {
-            // If current character is a backspace, remove the last character
-            result.pop();
-        }
-    }
-    return result;
-}
-
 function backspaceCompare(s: string, t: string): boolean {
-    // Process both strings to handle backspaces
-    const arrS = removePoundSign(s);
-    const arrT = removePoundSign(t);
 
-    // If the resulting arrays have different lengths, they can't be equal
-    if(arrS.length !== arrT.length) {
-        return false;
-    }
+    let p1 = s.length - 1;
+    let p2 = t.length - 1;
 
-    // Compare each character in both arrays
-    for(let i = 0; i < arrS.length; i++) {
-        if(arrS[i] !== arrT[i]) {
-            // If any characters differ, the strings are not equal
-            return false;
+    while(p1 >= 0 || p2 >= 0) {
+
+        if(s[p1] === '#' || t[p2] === '#') {
+            if(s[p1] === '#') {
+                let backcount = 2;
+                while(backcount > 0) {
+                    p1--;
+                    backcount--;
+                    if(s[p1] === '#') {
+                        backcount += 2;
+                    }
+                }
+            }
+            if(t[p2] === '#') {
+                let backcount = 2;
+                while(backcount > 0) {
+                    p2--;
+                    backcount--;
+                    if(t[p2] === '#') {
+                        backcount += 2;
+                    }
+                }
+            }
+        } else {
+            if(s[p1] !== t[p2]) {
+                return false;
+            } else {
+                p1--;
+                p2--;
+            }
         }
     }
 
-    // If we've made it here, the strings are equal after processing backspaces
     return true;
+    
 };
