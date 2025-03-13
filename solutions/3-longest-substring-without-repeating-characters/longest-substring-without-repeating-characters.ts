@@ -1,41 +1,47 @@
 function lengthOfLongestSubstring(s: string): number {
-    // Track the maximum length of non-repeating substring found
+    // Track the maximum length of non-repeating substring
     let result = 0;
 
-    // Hash map to store the most recent index of each character
-    const charSeenAtIndex: Record<string, number> = {};
+    // Use a Set to track characters in the current window
+    const set = new Set();
 
-    // Left boundary of our sliding window
+    // Left boundary of sliding window
     let left = 0;
     
-    // Iterate through the string with the right pointer
+    // Iterate through string with right pointer
     for(let right = 0; right < s.length; right++) {
-        // Get the current character
         const currentChar = s[right];
 
-        // If this is the first time we've seen this character
-        if(charSeenAtIndex[currentChar] === undefined) {
-            // Record its position in our hash map
-            charSeenAtIndex[currentChar] = right;
+        // If the current character isn't in our set
+        if(!set.has(currentChar)) {
+            // Add it to our set
+            set.add(currentChar);
         } else {
-            // If we've seen this character before
-            
-            // Only update left pointer if the previous occurrence is within current window
-            if(charSeenAtIndex[currentChar] >= left) {
-                // Move left pointer to position just after the previous occurrence
-                left = charSeenAtIndex[currentChar] + 1;
+            // If the character is already in our set (duplicate found)
+            // Remove characters from the left until the duplicate is gone
+            while(set.has(currentChar)) {
+                // Get the leftmost character in our window
+                const leftMostCharacter = s[left];
+                
+                // Remove it from our set
+                set.delete(leftMostCharacter);
+                
+                // Move left pointer one step right
+                left++;
             }
-            // If previous occurrence is before current window, no need to move left
-
-            // Update the character's last seen position
-            charSeenAtIndex[currentChar] = right;
+            
+            // After removing the duplicate, add the current character back to the set
+            // This is critical because:
+            // 1. We've removed all instances of this character from our set in the while loop
+            // 2. The current character (at position 'right') needs to be part of our new window
+            // 3. Without this line, the character at the current position would be ignored
+            // 4. The set must accurately represent all characters in our current window [left, right]
+            set.add(currentChar);
         }
 
-        // Calculate current window size and update maximum if needed
-        // right - left + 1 represents the length of current valid window
-        result = Math.max(result, right - left + 1);
+        // Update maximum length (set.size equals current window size)
+        result = Math.max(result, set.size);
     }
 
-    // Return the length of longest substring without repeating characters
     return result;
 };
