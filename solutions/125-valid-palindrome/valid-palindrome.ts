@@ -1,25 +1,36 @@
 function isPalindrome(s: string): boolean {
-    // Remove all non-alphanumeric characters and convert to lowercase
+    // First, clean the string by removing non-alphanumeric characters and converting to lowercase
     s = s.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-
-    // Initialize two pointers: 
-    // 'left' starts at the beginning, 'right' starts at the end.
+    
+    // Initialize pointers for center-outward approach
     let left = 0;
-    let right = s.length - 1;
-
-    // Loop until the two pointers meet in the middle.
-    while (left < right) {
-        // Compare characters at left and right pointers
-        if (s[left] !== s[right]) {
-            return false; // If they don't match, it's not a palindrome.
-        } else {
-            // Move both pointers towards the center
-            left++;
-            right--;
-        }
-        
+    let right = 0;
+    
+    // Set pointer positions based on string length
+    if(s.length % 2 === 0) {
+        // For even-length strings, place pointers on the middle two characters
+        left = s.length/2 - 1;    // Left of center
+        right = s.length/2;       // Right of center
+    } else {
+        // For odd-length strings, place both pointers at the middle character
+        // The first comparison will be with the character itself (always true)
+        // Then the algorithm will expand outward
+        left = Math.floor(s.length/2);
+        right = Math.floor(s.length/2);
     }
-
-    // If all character comparisons matched, the string is a palindrome.
+    
+    // Expand outward from the center, comparing characters
+    while (left >= 0 && right < s.length) {
+        // If characters at mirrored positions don't match, it's not a palindrome
+        if (s[left] !== s[right]) {
+            return false;
+        } else {
+            // Move pointers outward in both directions
+            left--;
+            right++;
+        }
+    }
+    
+    // If all character comparisons matched, the string is a palindrome
     return true;
 }
