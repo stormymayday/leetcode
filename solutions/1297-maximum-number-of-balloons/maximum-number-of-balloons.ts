@@ -1,34 +1,46 @@
 function maxNumberOfBalloons(text: string): number {
-    // Step 1: Initialize count to infinity to ensure we can find the minimum
-    let count = Infinity;
+    // Initialize result to the length of text, which is the maximum possible count
+    // (This will be adjusted down as we check each character's frequency)
+    let result = text.length;
 
-    // Step 2: Create a hash map to store the frequency of characters in 'balloon'
-    const hashMap = {
-        'b': 0,
-        'a': 0,
-        'l': 0,
-        'o': 0,
-        'n': 0,
+    // Define the frequency of each character needed to form "balloon"
+    // 'b', 'a', and 'n' appear once, while 'l' and 'o' appear twice
+    const ballon = {
+        'b': 1,
+        'a': 1,
+        "l": 2,
+        "o": 2,
+        "n": 1,
     };
 
-    // Step 3: Iterate through the input text and count characters that appear in 'balloon'
-    for (let char of text) {
-        if (hashMap[char] !== undefined) {
-            hashMap[char]++;
+    // Create a hash map to count occurrences of required characters in the input text
+    const hashMap = {};
+    for(const char of text) {
+        // Only track characters that are in "balloon"
+        if(ballon[char]) {
+            if(hashMap[char] !== undefined) {
+                // Increment count for existing character
+                hashMap[char]++;
+            } else {
+                // Initialize count for new character
+                hashMap[char] = 1;
+            }
         }
     }
 
-    // Step 4: Calculate the number of times we can form "balloon" by checking the counts
-    for (const key in hashMap) {
-        if (key === 'l' || key === 'o') {
-            // 'l' and 'o' appear twice in "balloon", so divide their counts by 2
-            count = Math.min(count, Math.floor(hashMap[key] / 2));
+    // Check if we can form "balloon" and determine how many can be formed
+    for(const key in ballon) {
+        // If any required character is missing, we can't form "balloon"
+        if(hashMap[key] === undefined) {
+            return 0;
         } else {
-            // For the rest of the characters, take the minimum count
-            count = Math.min(count, hashMap[key]);
+            // Calculate how many times this specific character can be used
+            // by dividing its occurrence count by how many are needed per "balloon"
+            // Use Math.floor to get a whole number and Math.min to find the limiting character
+            result = Math.min(result, Math.floor(hashMap[key]/ballon[key]));
         }
     }
 
-    // Step 5: Return the number of "balloons" that can be formed
-    return count;
-}
+    // Return the maximum number of complete "balloon" words that can be formed
+    return result;
+};
