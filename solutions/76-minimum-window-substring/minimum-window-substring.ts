@@ -58,8 +58,7 @@ function minWindow(s: string, t: string): string {
     // for (let right = 0; right < s.length; right++) {
     while(right < s.length) {
         // Add the current character to our window
-        const rIndex = getCharIndex(s[right]);
-        sCharCount[rIndex]++;
+        sCharCount[getCharIndex(s[right])]++;
         
         // Shrink window from left as long as it remains valid
         while (isValidWindow(sCharCount, tCharCount) && left <= right) {
@@ -72,8 +71,7 @@ function minWindow(s: string, t: string): string {
             }
             
             // Remove leftmost character from window and move left pointer
-            const lIndex = getCharIndex(s[left]);
-            sCharCount[lIndex]--;
+            sCharCount[getCharIndex(s[left])]--;
             left++;
         }
 
