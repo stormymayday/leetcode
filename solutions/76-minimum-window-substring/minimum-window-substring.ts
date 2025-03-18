@@ -28,7 +28,11 @@ function minWindow(s: string, t: string): string {
         tCharCount[getCharIndex(t[i])]++;
     }
 
-    let left = 0, minLeft = 0, minLength = Infinity;
+    
+   
+    let minLength = Infinity;
+    let minLeft = 0;
+    let left = 0;
 
     // Expand right pointer
     for (let right = 0; right < s.length; right++) {
