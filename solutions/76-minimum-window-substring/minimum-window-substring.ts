@@ -61,45 +61,25 @@ function minWindow(s: string, t: string): string {
     
     // Expand right pointer through the string s
     while(right < s.length) {
-       
+        // window is invalid
         if(!isValidWindow(sCharCount, tCharCount)) {
-            // window is invalid
             // expand right
-            // Add the current character to our window
             right++;
+            // Add character at 'right' to our window
             sCharCount[getCharIndex(s[right])]++;
-
-            
-
         } else {
-            // window is valid
-            // shrink left
+            // WINDIW IS INVALID!
+            // CRITICAL: Only update minLength and minLeft when we find a smaller window
+            // This prevents a subtle bug where minLeft could be updated to point to
+            // a longer valid window, resulting in an incorrect answer
              if (right - left + 1 < minLength) {
                 minLength = right - left + 1;
                 minLeft = left;
             }
-            
             // Remove leftmost character from window and move left pointer
             sCharCount[getCharIndex(s[left])]--;
             left++;
-        }
-        
-        // Shrink window from left as long as it remains valid
-        // while (isValidWindow(sCharCount, tCharCount)) {
-        //     // CRITICAL: Only update minLength and minLeft when we find a smaller window
-        //     // This prevents a subtle bug where minLeft could be updated to point to
-        //     // a longer valid window, resulting in an incorrect answer
-        //     if (right - left + 1 < minLength) {
-        //         minLength = right - left + 1;
-        //         minLeft = left;
-        //     }
-            
-        //     // Remove leftmost character from window and move left pointer
-        //     sCharCount[getCharIndex(s[left])]--;
-        //     left++;
-        // }
-
-        
+        }   
     }
     
     // If no valid window was found, minLength will still be Infinity
