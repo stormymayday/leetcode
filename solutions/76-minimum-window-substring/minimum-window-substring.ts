@@ -60,13 +60,12 @@ function minWindow(s: string, t: string): string {
     let right = t.length;
     
     // Expand right pointer through the string s
-    // for (let right = 0; right < s.length; right++) {
     while(right < s.length) {
         // Add the current character to our window
         sCharCount[getCharIndex(s[right])]++;
         
         // Shrink window from left as long as it remains valid
-        while (isValidWindow(sCharCount, tCharCount) && left <= right) {
+        while (isValidWindow(sCharCount, tCharCount)) {
             // CRITICAL: Only update minLength and minLeft when we find a smaller window
             // This prevents a subtle bug where minLeft could be updated to point to
             // a longer valid window, resulting in an incorrect answer
