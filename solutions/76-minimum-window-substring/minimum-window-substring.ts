@@ -57,19 +57,24 @@ function minWindow(s: string, t: string): string {
     let minLength = Infinity;
     let minLeft = 0;  // Start index of minimum window
     let left = 0;     // Current left boundary of sliding window
-    let right = t.length;
+    let right = t.length - 1;
     
     // Expand right pointer through the string s
     while(right < s.length) {
-        // Add the current character to our window
-        sCharCount[getCharIndex(s[right])]++;
-        
-        // Shrink window from left as long as it remains valid
-        while (isValidWindow(sCharCount, tCharCount)) {
-            // CRITICAL: Only update minLength and minLeft when we find a smaller window
-            // This prevents a subtle bug where minLeft could be updated to point to
-            // a longer valid window, resulting in an incorrect answer
-            if (right - left + 1 < minLength) {
+       
+        if(!isValidWindow(sCharCount, tCharCount)) {
+            // window is invalid
+            // expand right
+            // Add the current character to our window
+            right++;
+            sCharCount[getCharIndex(s[right])]++;
+
+            
+
+        } else {
+            // window is valid
+            // shrink left
+             if (right - left + 1 < minLength) {
                 minLength = right - left + 1;
                 minLeft = left;
             }
@@ -78,8 +83,23 @@ function minWindow(s: string, t: string): string {
             sCharCount[getCharIndex(s[left])]--;
             left++;
         }
+        
+        // Shrink window from left as long as it remains valid
+        // while (isValidWindow(sCharCount, tCharCount)) {
+        //     // CRITICAL: Only update minLength and minLeft when we find a smaller window
+        //     // This prevents a subtle bug where minLeft could be updated to point to
+        //     // a longer valid window, resulting in an incorrect answer
+        //     if (right - left + 1 < minLength) {
+        //         minLength = right - left + 1;
+        //         minLeft = left;
+        //     }
+            
+        //     // Remove leftmost character from window and move left pointer
+        //     sCharCount[getCharIndex(s[left])]--;
+        //     left++;
+        // }
 
-        right++;
+        
     }
     
     // If no valid window was found, minLength will still be Infinity
