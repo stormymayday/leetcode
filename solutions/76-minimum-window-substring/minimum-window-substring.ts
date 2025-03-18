@@ -46,13 +46,18 @@ function minWindow(s: string, t: string): string {
     // Populate tCharCount with frequencies of characters in string t
     for (let i = 0; i < t.length; i++) {
         tCharCount[getCharIndex(t[i])]++;
+        sCharCount[getCharIndex(s[i])]++;
     }
-    
+
+    if(isValidWindow(sCharCount, tCharCount)) {
+        return s.slice(0, 0 + t.length);
+    }
+
     // Variables to track the minimum window found
     let minLength = Infinity;
     let minLeft = 0;  // Start index of minimum window
     let left = 0;     // Current left boundary of sliding window
-    let right = 0;
+    let right = t.length;
     
     // Expand right pointer through the string s
     // for (let right = 0; right < s.length; right++) {
