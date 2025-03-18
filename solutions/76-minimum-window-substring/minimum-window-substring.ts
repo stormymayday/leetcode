@@ -52,9 +52,11 @@ function minWindow(s: string, t: string): string {
     let minLength = Infinity;
     let minLeft = 0;  // Start index of minimum window
     let left = 0;     // Current left boundary of sliding window
+    let right = 0;
     
     // Expand right pointer through the string s
-    for (let right = 0; right < s.length; right++) {
+    // for (let right = 0; right < s.length; right++) {
+    while(right < s.length) {
         // Add the current character to our window
         const rIndex = getCharIndex(s[right]);
         sCharCount[rIndex]++;
@@ -74,6 +76,8 @@ function minWindow(s: string, t: string): string {
             sCharCount[lIndex]--;
             left++;
         }
+
+        right++;
     }
     
     // If no valid window was found, minLength will still be Infinity
