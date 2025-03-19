@@ -29,7 +29,7 @@ function characterReplacement(s: string, k: number): number {
         // Check if the current window is valid
         // A window is valid if: (total window size) - (count of most frequent char) <= k
         // This difference represents how many characters we need to replace
-        while(right - left + 1 - Math.max(...sCount) > k) {
+        if(right - left + 1 - Math.max(...sCount) > k) {
             // If we need more than k replacements, the window is invalid
             // Shrink the window by moving the left pointer
             sCount[indexOfChar(s[left])]--;
