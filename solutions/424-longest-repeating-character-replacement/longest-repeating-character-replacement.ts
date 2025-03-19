@@ -21,26 +21,42 @@ function characterReplacement(s: string, k: number): number {
     let left = 0;
     let right = 0;
     
-    // Expand the window by moving the right pointer
+    // In each iteration, we'll either expand right or contract left, but never both
     while(right < s.length) {
-        // Add the current character to our frequency count
+        // Add the current character at right to our frequency count
+        // We're tentatively including this character in our window
         sCount[indexOfChar(s[right])]++;
         
-        // Check if the current window is valid
-        // A window is valid if: (total window size) - (count of most frequent char) <= k
-        // This difference represents how many characters we need to replace
-        if(right - left + 1 - Math.max(...sCount) > k) {
-            // If we need more than k replacements, the window is invalid
-            // Shrink the window by moving the left pointer
+        // Check if the window is valid after adding the character
+        // A window is valid if: (window size) - (count of most frequent char) <= k
+        // This represents how many characters we would need to replace
+        if(right - left + 1 - Math.max(...sCount) <= k) {
+            // The window is valid after adding the character at right
+            
+            // Update the maximum valid window length
+            result = Math.max(result, right - left + 1);
+            
+            // Continue expanding the window by moving right
+            right++;
+        } else {
+            // The window becomes invalid if we include the character at right
+            
+            // Remove the leftmost character from our window
             sCount[indexOfChar(s[left])]--;
+            
+            // CRITICAL: We must also remove the character at right from our counts
+            // This is because we tried to add it to our window (incremented its count),
+            // but found that it would make our window invalid
+            // Since we're not advancing right, we need to undo this addition
+            // The next iteration will try to add this character again
+            sCount[indexOfChar(s[right])]--;
+            
+            // Move left to contract the window
             left++;
+            
+            // Note: right pointer stays in place, meaning in the next iteration
+            // we'll try again to include the character at the current right position
         }
-        
-        // Update the maximum valid window length
-        result = Math.max(result, right - left + 1);
-        
-        // Continue expanding the window
-        right++;
     }
     
     return result;
