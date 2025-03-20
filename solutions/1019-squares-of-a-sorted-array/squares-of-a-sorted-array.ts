@@ -1,58 +1,44 @@
 /**
  * Returns a sorted array of squared values from the input sorted array.
- * The approach:
- * 1. First find the element with the smallest absolute value
- * 2. Start from that element and work outward in both directions
- * 3. Always pick the element with smaller absolute value next
+ * This solution uses a two-pointer approach working from both ends toward the middle,
+ * placing the largest squared values first.
  * 
  * @param nums A sorted array of integers (can contain negative numbers)
- * @return A sorted array of squares of the input values
+ * @return A sorted array of squares of the input values in ascending order
  */
 function sortedSquares(nums: number[]): number[] {
-    // Initialize result array
-    const result = [];
-
-    // Find the element with the minimum absolute value
-    let min = Infinity;
-    let minIndex = 0;
-    for(let i = 0; i < nums.length; i++) {
-        if(min > Math.abs(nums[i])) {
-            min = Math.abs(nums[i]);
-            minIndex = i;
-        }
-    }
-
-    // Add the square of the minimum value to our result
-    result.push(nums[minIndex] * nums[minIndex]);
+    // Initialize result array with zeros to match the input array length
+    const result = new Array(nums.length).fill(0);
     
-    // Initialize pointers to move outward from the minimum element
-    let left = minIndex - 1;    // Pointer going left from minimum
-    let right = minIndex + 1;   // Pointer going right from minimum
+    // Initialize two pointers: left at the beginning and right at the end of the array
+    let left = 0;
+    let right = nums.length - 1;
     
-    // Process elements while both pointers are valid
-    while(left >= 0 && right < nums.length) {
-        // Compare absolute values and take the smaller one first
+    // We'll fill the result array from the end (largest values) to the beginning
+    let resultIndex = nums.length - 1;
+    
+    // Continue until the pointers meet or cross
+    // The condition is left <= right (not just <) to ensure we process the middle element
+    // when the array has odd length or when left and right pointers meet at the same index
+    while(left <= right) {
+        // Compare absolute values to determine which value is larger when squared
         if(Math.abs(nums[left]) < Math.abs(nums[right])) {
-            result.push(nums[left] * nums[left]);
-            left--;
+            // The right value has larger absolute value
+            // Square it and place it at the current result position
+            result[resultIndex] = nums[right] * nums[right];
+            // Move the right pointer inward
+            right--;
         } else {
-            result.push(nums[right] * nums[right]);
-            right++;
+            // The left value has larger or equal absolute value
+            // Square it and place it at the current result position
+            result[resultIndex] = nums[left] * nums[left];
+            // Move the left pointer inward
+            left++;
         }
+        // Move to the next result position (going from right to left)
+        resultIndex--;
     }
-
-    // Handle any remaining elements to the left of the minimum
-    while(left >= 0) {
-        result.push(nums[left] * nums[left]);
-        left--;
-    }
-
-    // Handle any remaining elements to the right of the minimum
-    while(right < nums.length) {
-        result.push(nums[right] * nums[right]);
-        right++;
-    }
-
-    // Return the sorted squares
+    
+    // Return the sorted array of squared values
     return result;
 };
