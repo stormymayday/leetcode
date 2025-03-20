@@ -1,17 +1,22 @@
 function twoSum(numbers: number[], target: number): number[] {
-    // Create a map to store previously seen numbers and their 1-based indices
-    const hashMap = new Map<number, number>();
+    // Initialize two pointers: left starting at the beginning and right at the end of the array
+    let left = 0;
+    let right = numbers.length - 1;
 
-    // Iterate through the numbers array
-    for (let i = 0; i < numbers.length; i++) {
-        
-        // Check if the difference (target - numbers[i]) exists in the map
-        if (hashMap.has(target - numbers[i])) {
-            // Return the 1-based indices of the pair
-            return [hashMap.get(target - numbers[i])!, i + 1]; // Use `!` to assert that the value is non-null
-        } else {
-            // Store the number with its 1-based index in the map
-            hashMap.set(numbers[i], i + 1);
+    // Iterate while the left pointer is less than the right pointer
+    while (left < right) {
+        // Check if the sum of the numbers at the left and right pointers equals the target
+        if (numbers[left] + numbers[right] === target) {
+            // Return the 1-based indices of the two numbers
+            return [left + 1, right + 1];
+        }
+        // If the sum is greater than the target, move the right pointer to the left
+        else if (numbers[left] + numbers[right] > target) {
+            right--;
+        }
+        // If the sum is less than the target, move the left pointer to the right
+        else {
+            left++;
         }
     }
 
