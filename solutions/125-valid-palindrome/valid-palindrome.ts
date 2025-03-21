@@ -1,45 +1,25 @@
-/**
- * Helper function to check if a character is alphanumeric (a-z, A-Z, or 0-9)
- * @param {string} char
- * @return {boolean}
- */
-function isAlphanumeric(char: string):boolean {
-    return (
-        (char >= "a" && char <= "z") || // Check if it's a lowercase letter
-        (char >= "A" && char <= "Z") || // Check if it's an uppercase letter
-        (char >= "0" && char <= "9") // Check if it's a digit
-    );
-}
-
 function isPalindrome(s: string): boolean {
-    // Initialize two pointers: one at the start (left) and one at the end (right) of the string
-    let left = 0;
-    let right = s.length - 1;
+    // Step 1: Clean the string by removing non-alphanumeric characters
+    // and convert it to lowercase to make it case-insensitive.
+    let cleanStr = s.replace(/[^a-zA-Z0-9]/g, "").toLocaleLowerCase();
 
-    // Loop until the two pointers meet
-    while (left < right) {
-        // If the character at the left pointer is not alphanumeric, move left pointer forward
-        if (!isAlphanumeric(s[left])) {
-            left++;
-            continue; // Skip this iteration and check the next character
+    // Step 2: Define a helper function to recursively check if the string is a palindrome.
+    function helper(left, right) {
+        // Base case: If left index is greater than right, it means we have checked all characters
+        // and confirmed that the string is a palindrome.
+        if (left > right) {
+            return true;
         }
 
-        // If the character at the right pointer is not alphanumeric, move right pointer backward
-        if (!isAlphanumeric(s[right])) {
-            right--;
-            continue; // Skip this iteration and check the next character
+        // If characters at left and right indices do not match, return false.
+        if (cleanStr[left] !== cleanStr[right]) {
+            return false;
         }
 
-        // Compare the characters at both pointers (converted to lowercase for case insensitivity)
-        if (s[left].toLowerCase() !== s[right].toLowerCase()) {
-            return false; // If characters don’t match, it's not a palindrome
-        }
-
-        // If characters match, move both pointers inward to continue checking
-        left++;
-        right--;
+        // Recursively check the next pair of characters (moving towards the center).
+        return helper(left + 1, right - 1);
     }
 
-    // If the loop completes without returning false, the string is a palindrome
-    return true;
+    // Step 3: Start the recursion with the initial left and right indices.
+    return helper(0, cleanStr.length - 1);
 }
