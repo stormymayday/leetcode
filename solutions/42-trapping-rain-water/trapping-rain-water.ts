@@ -1,51 +1,49 @@
 function trap(height: number[]): number {
-    // Initialize the total trapped water
+    // Initialize variable to track total trapped water
     let totalWater = 0;
-
+    
     // Edge case: Need at least 3 bars to trap water (a dip requires at least 3 points)
     if (height.length < 3) {
         return totalWater;
     }
 
-    // Arrays to store the maximum heights to the left and right of each position
-    const maxLeft = new Array(height.length).fill(0);
-    const maxRight = new Array(height.length).fill(0);
+    // Set up two pointers - one starting at the left end, one at the right end
+    let left = 0;
+    let right = height.length - 1;
 
-    // Calculate maximum heights to the left of each position
-    // For each position i, maxLeft[i] will store the maximum height found to its left
-    let prevMaxLeft = 0;
-    for (let i = 1; i < height.length; i++) {
-        // Update the running maximum if the previous bar is taller
-        if (height[i - 1] > prevMaxLeft) {
-            prevMaxLeft = height[i - 1];
-        }
-        // Store the maximum height to the left of current position
-        maxLeft[i] = prevMaxLeft;
-    }
+    // Keep track of the maximum height seen from left and right sides
+    let leftMax = 0;
+    let rightMax = 0;
 
-    // Calculate maximum heights to the right of each position
-    // For each position i, maxRight[i] will store the maximum height found to its right
-    let prevMaxRight = 0;
-    for (let i = height.length - 2; i >= 0; i--) {
-        // Update the running maximum if the next bar is taller
-        if (height[i + 1] > prevMaxRight) {
-            prevMaxRight = height[i + 1];
-        }
-        // Store the maximum height to the right of current position
-        maxRight[i] = prevMaxRight;
-    }
-
-    // Calculate water trapped at each position
-    for (let i = 0; i < height.length; i++) {
-        // Water trapped at position i is the minimum of tallest bars to the left and right
-        // minus the height of the current bar
-        let currentWater = Math.min(maxLeft[i], maxRight[i]) - height[i];
-
-        // Only add positive values (can't have negative water)
-        if (currentWater > 0) {
-            totalWater += currentWater;
+    // Continue until the two pointers meet
+    while(left < right) {
+        // Compare heights at left and right pointers to decide which side to process
+        if(height[left] > height[right]) { 
+            // Right side has smaller height, so it limits how much water can be trapped
+            if(height[right] >= rightMax) {
+                // If current height is the new maximum from right side, update rightMax
+                // No water can be trapped here (no higher wall to the right)
+                rightMax = height[right];
+            } else {
+                // Water can be trapped here - amount is difference between rightMax and current height
+                totalWater += rightMax - height[right];
+            }
+            // Move right pointer inward
+            right--;
+        } else {
+            // Left side has smaller or equal height, so work with left side
+            if(height[left] >= leftMax) {
+                // If current height is the new maximum from left side, update leftMax
+                // No water can be trapped here (no higher wall to the left)
+                leftMax = height[left];
+            } else {
+                // Water can be trapped here - amount is difference between leftMax and current height
+                totalWater += leftMax - height[left];
+            }
+            // Move left pointer inward
+            left++;
         }
     }
-
+    // Return the total amount of water trapped
     return totalWater;
-}
+};
