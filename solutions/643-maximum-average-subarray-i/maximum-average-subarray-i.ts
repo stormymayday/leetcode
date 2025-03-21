@@ -26,10 +26,10 @@ function findMaxAverage(nums: number[], k: number): number {
             
             // Move the left pointer to slide the window
             left++;
-        } else {
-            // Window hasn't reached size k yet, continue expanding
-            continue;
         }
+        
+        // Window hasn't reached size k yet, continue expanding
+        
     }
     
     // Return the maximum average found
