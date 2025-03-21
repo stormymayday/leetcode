@@ -3,47 +3,43 @@
  * @param {string} char
  * @return {boolean}
  */
-function isAlphanumeric(char: string): boolean {
-    // This function checks if a character is alphanumeric, i.e., a letter or a digit.
+function isAlphanumeric(char: string):boolean {
     return (
-        (char >= "a" && char <= "z") || // Check if it's a lowercase letter.
-        (char >= "A" && char <= "Z") || // Check if it's an uppercase letter.
-        (char >= "0" && char <= "9") // Check if it's a digit.
+        (char >= "a" && char <= "z") || // Check if it's a lowercase letter
+        (char >= "A" && char <= "Z") || // Check if it's an uppercase letter
+        (char >= "0" && char <= "9") // Check if it's a digit
     );
 }
 
 function isPalindrome(s: string): boolean {
-    // Step 1: Create an array to store alphanumeric characters in lowercase.
-    const cleanStr = [];
+    // Initialize two pointers: one at the start (left) and one at the end (right) of the string
+    let left = 0;
+    let right = s.length - 1;
 
-    // Step 2: Loop through the string `s` to extract alphanumeric characters.
-    // Only lowercase alphabetic and numeric characters are considered.
-    for (let i = 0; i < s.length; i++) {
-        const currentChar = s[i];
-        // Add the lowercase of the alphanumeric characters to the `cleanStr` array.
-        if (isAlphanumeric(currentChar)) {
-            cleanStr.push(currentChar.toLowerCase());
+    // Loop until the two pointers meet
+    while (left < right) {
+        // If the character at the left pointer is not alphanumeric, move left pointer forward
+        if (!isAlphanumeric(s[left])) {
+            left++;
+            continue; // Skip this iteration and check the next character
         }
+
+        // If the character at the right pointer is not alphanumeric, move right pointer backward
+        if (!isAlphanumeric(s[right])) {
+            right--;
+            continue; // Skip this iteration and check the next character
+        }
+
+        // Compare the characters at both pointers (converted to lowercase for case insensitivity)
+        if (s[left].toLowerCase() !== s[right].toLowerCase()) {
+            return false; // If characters don’t match, it's not a palindrome
+        }
+
+        // If characters match, move both pointers inward to continue checking
+        left++;
+        right--;
     }
 
-    // Step 3: Define the helper function for the recursive palindrome check.
-    function helper(left, right) {
-        // Base Case: If `left` exceeds `right`, it means we've checked all relevant characters,
-        // and the string is a palindrome. Return `true`.
-        if (left > right) {
-            return true;
-        }
-
-        // Step 4: If characters at the `left` and `right` indices don't match, return `false`.
-        if (cleanStr[left] !== cleanStr[right]) {
-            return false;
-        }
-
-        // Step 5: Recursively check the next pair of characters.
-        // Move inward by incrementing `left` and decrementing `right`.
-        return helper(left + 1, right - 1);
-    }
-
-    // Step 6: Call the helper function with the initial `left` and `right` indices.
-    return helper(0, cleanStr.length - 1);
+    // If the loop completes without returning false, the string is a palindrome
+    return true;
 }
