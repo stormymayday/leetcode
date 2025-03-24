@@ -8,8 +8,7 @@ function longestOnes(nums: number[], k: number): number {
 
     let kCount = k;
     let left = 0;
-    let right = 0;
-    while(right < nums.length) {
+    for(let right = 0; right < nums.length; right++) {
 
         if(nums[right] === 0) {
             kCount--;
@@ -23,7 +22,6 @@ function longestOnes(nums: number[], k: number): number {
         }
 
         result = Math.max(result, right - left + 1);
-        right++;
 
     }
 
