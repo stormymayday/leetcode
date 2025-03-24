@@ -1,30 +1,31 @@
 function longestOnes(nums: number[], k: number): number {
+    // Two pointers to define the sliding window
+    let left = 0; 
+    let right = 0; 
 
-    if(k === nums.length) {
-        return nums.length;
-    }
-
-    let result = 0;
-
-    let kCount = k;
-    let left = 0;
-    for(let right = 0; right < nums.length; right++) {
-
-        if(nums[right] === 0) {
-            kCount--;
+    // Iterate through the array using the right pointer
+    while (right < nums.length) {
+        
+        // If the current element is 0, we "flip" it by decreasing k
+        if (nums[right] === 0) {
+            k--;
         }
 
-        while(kCount < 0) {
-            if(nums[left] === 0) {
-                kCount++;
+        // If k is negative, it means we have flipped more 0s than allowed
+        // We need to shrink the window from the left
+        if (k < 0) {
+            // If the element at `left` is 0, restoring it gives us back a flip
+            if (nums[left] === 0) {
+                k++;
             }
+            // Move the left pointer forward to maintain a valid window
             left++;
         }
 
-        result = Math.max(result, right - left + 1);
-
+        // Expand the window by moving the right pointer
+        right++;
     }
 
-    return result;
-    
-};
+    // The length of the longest valid window found
+    return right - left;
+}
