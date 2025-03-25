@@ -17,13 +17,9 @@ function lengthOfLongestSubstring(s: string): number {
                     left++;
                 }
 
-                set.add(currentChar);
-
-            } else {
-
-                set.add(currentChar);
-                
             }
+
+            set.add(currentChar);
 
             result = Math.max(result, right - left + 1);
             right++;
