@@ -5,7 +5,8 @@ function lengthOfLongestSubstring(s: string): number {
         const set = new Set();
 
         let left = 0;
-        for(let right = 0; right < s.length; right++) {
+        let right = 0;
+        while(right < s.length) {
 
             const currentChar = s[right];
 
@@ -23,6 +24,7 @@ function lengthOfLongestSubstring(s: string): number {
             }
 
             result = Math.max(result, set.size);
+            right++;
 
         }
 
