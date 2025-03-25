@@ -10,18 +10,12 @@ function lengthOfLongestSubstring(s: string): number {
 
             const currentChar = s[right];
 
-            if(!set.has(currentChar)) {
-                set.add(currentChar);
-            } else {
-
-                while(set.has(currentChar)) {
-                    set.delete(s[left]);
-                    left++;
-                }
-
-                set.add(currentChar);
-
+            while(set.has(currentChar)) {
+                set.delete(s[left]);
+                left++;
             }
+            
+            set.add(currentChar);
 
             result = Math.max(result, right - left + 1);
             right++;
