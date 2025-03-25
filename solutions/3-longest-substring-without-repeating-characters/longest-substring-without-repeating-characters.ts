@@ -23,7 +23,7 @@ function lengthOfLongestSubstring(s: string): number {
 
             }
 
-            result = Math.max(result, set.size);
+            result = Math.max(result, right - left + 1);
             right++;
 
         }
