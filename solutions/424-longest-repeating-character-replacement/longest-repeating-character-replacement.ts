@@ -1,63 +1,43 @@
-/**
- * Converts a character to its 0-based index in the alphabet (A=0, B=1, etc.)
- * @param char The character to convert
- * @returns The 0-based index of the character in the alphabet
- */
-function indexOfChar(char: string): number {
-    // Calculate the position in the alphabet (assuming uppercase characters)
-    // 'A' is at position 0, 'B' at 1, etc.
-    return char.charCodeAt(0) - 'A'.charCodeAt(0);
-}
-
 function characterReplacement(s: string, k: number): number {
-    // Track the maximum valid substring length
+    // Initialize the result to store the maximum length of valid substring
     let result = 0;
-    
-    // Array to count occurrences of each character in the current window
-    // Index 0 corresponds to 'A', 1 to 'B', etc.
-    const sCount = new Array(26).fill(0);
-    
-    // Pointers defining the sliding window boundaries
+
+    // Use a Map to keep track of character frequencies in the current window
+    const charCount: Map<string, number> = new Map();
+
+    // Left pointer of the sliding window
     let left = 0;
-    let right = 0;
-    
-    // In each iteration, we'll either expand right or contract left, but never both
-    while(right < s.length) {
-        // Add the current character at right to our frequency count
-        // We're tentatively including this character in our window
-        sCount[indexOfChar(s[right])]++;
-        
-        // Check if the window is valid after adding the character
-        // A window is valid if: (window size) - (count of most frequent char) <= k
-        // This represents how many characters we would need to replace
-        if(right - left + 1 - Math.max(...sCount) <= k) {
-            // The window is valid after adding the character at right
-            
-            // Update the maximum valid window length
-            result = Math.max(result, right - left + 1);
-            
-            // Continue expanding the window by moving right
-            right++;
+
+    // Iterate through the string with the right pointer
+    for(let right = 0; right < s.length; right++) {
+        // Get the current character at the right pointer
+        const currentChar = s[right];
+
+        // Update the frequency of the current character in the character count map
+        if(!charCount.has(currentChar)) {
+            // If the character doesn't exist, set its count to 1
+            charCount.set(currentChar, 1);
         } else {
-            // The window becomes invalid if we include the character at right
-            
-            // Remove the leftmost character from our window
-            sCount[indexOfChar(s[left])]--;
-            
-            // CRITICAL: We must also remove the character at right from our counts
-            // This is because we tried to add it to our window (incremented its count),
-            // but found that it would make our window invalid
-            // Since we're not advancing right, we need to undo this addition
-            // The next iteration will try to add this character again
-            sCount[indexOfChar(s[right])]--;
-            
-            // Move left to contract the window
-            left++;
-            
-            // Note: right pointer stays in place, meaning in the next iteration
-            // we'll try again to include the character at the current right position
+            // If it exists, increment its count by 1
+            charCount.set(currentChar, charCount.get(currentChar) + 1);
         }
+
+        // Check if the current window is invalid
+        // Window length - max frequency of any character > k (replacement limit)
+        // This means we can't make the window valid by replacing k characters
+        while((right - left + 1) - Math.max(...charCount.values()) > k) {
+            // Reduce the count of the character at the left pointer
+            charCount.set(s[left], charCount.get(s[left]) - 1);
+            
+            // Move the left pointer to shrink the window
+            left++;
+        }
+
+        // Update the result with the maximum valid window length seen so far
+        // This happens after adjusting the window to ensure it's valid
+        result = Math.max(result, right - left + 1);
     }
-    
+
+    // Return the length of the longest valid substring
     return result;
 }
