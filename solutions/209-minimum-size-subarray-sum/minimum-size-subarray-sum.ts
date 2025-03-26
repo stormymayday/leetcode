@@ -1,32 +1,27 @@
 function minSubArrayLen(target: number, nums: number[]): number {
-    // Initialize minimum length to Infinity to track the smallest valid subarray
-    let distance = Infinity;
-
-    // Left pointer for the sliding window
-    let left = 0;
-    // Running sum of the current window
-    let sum = 0;
+    // Initialize result with Infinity to track the minimum subarray length
+    let result = Infinity;
     
-    // Right pointer expands the window
+    // Initialize current sum and left pointer of the sliding window
+    let currentSum = 0;
+    let left = 0;
+    
+    // Iterate through the array with the right pointer of the sliding window
     for(let right = 0; right < nums.length; right++) {
-        // Add the current element to our running sum
-        sum += nums[right];
+        // Expand the window by adding the current element
+        currentSum += nums[right];
 
-        // When sum becomes >= target, try to minimize the window
-        // by removing elements from the left side
-        while(sum >= target) {
-            // Update minimum distance if current window is smaller
-            distance = Math.min(distance, right - left + 1);
+        // Shrink the window from the left while the sum is greater than or equal to target
+        while(currentSum >= target) {
+            // Update the minimum subarray length
+            result = Math.min(result, right - left + 1);
             
-            // Remove the leftmost element from the sum
-            sum -= nums[left];
-            
-            // Shrink the window from the left
+            // Remove elements from the left side of the window
+            currentSum -= nums[left];
             left++;
         }
     }
 
-    // If distance is still Infinity, no valid subarray was found
-    // Return 0 in this case, otherwise return the minimum length found
-    return distance > nums.length ? 0 : distance;
-};
+    // Return 0 if no valid subarray is found, otherwise return the minimum length
+    return result === Infinity ? 0 : result;
+}
