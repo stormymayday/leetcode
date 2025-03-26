@@ -27,17 +27,14 @@ function checkInclusion(s1: string, s2: string): boolean {
         return true;
     }
 
-    let left = 0;
     for(let right = s1.length; right < s2.length; right++) {
 
         s2CharCount[indexOfChar( s2[right] )]++;
-        s2CharCount[indexOfChar( s2[left] )]--;
+        s2CharCount[indexOfChar( s2[right - s1.length] )]--;
 
         if(compareCharCount(s1CharCount, s2CharCount)) {
             return true;
         }
-
-        left++;
 
     }
 
