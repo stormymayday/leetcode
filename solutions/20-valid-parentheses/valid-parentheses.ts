@@ -1,5 +1,4 @@
 function isValid(s: string): boolean {
-
     if (s.length === 0) {
         return true;
     }
@@ -22,11 +21,10 @@ function isValid(s: string): boolean {
         if (parens[currentParen] !== undefined) {
             // if left, push
             stack.push(currentParen);
-        } else if (parens[currentParen] === undefined && stack.length === 0) {
-            // if not left and stack is empty
-            return false;
-        } else if (parens[currentParen] === undefined && stack.length !== 0) {
-            // if not left and stack is not empty
+        } else {
+            if (stack.length === 0) {
+                return false;
+            }
 
             // pop (this is left)
             const poppedParen = stack.pop();
@@ -39,5 +37,4 @@ function isValid(s: string): boolean {
     }
 
     return stack.length === 0;
-    
-};
+}
