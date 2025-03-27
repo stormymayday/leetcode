@@ -1,4 +1,5 @@
 function isValid(s: string): boolean {
+
     if (s.length === 0) {
         return true;
     }
@@ -7,41 +8,36 @@ function isValid(s: string): boolean {
         return false;
     }
 
+    const parens = {
+        "(": ")",
+        "{": "}",
+        "[": "]",
+    };
+
     const stack = [];
 
     for (let i = 0; i < s.length; i++) {
-        const currentBracket = s[i];
+        const currentParen = s[i];
 
-        if (
-            currentBracket === "(" ||
-            currentBracket === "{" ||
-            currentBracket === "["
-        ) {
-            stack.push(currentBracket);
-        } else if (
-            (currentBracket === "}" ||
-                currentBracket === ")" ||
-                currentBracket === "]") &&
-            stack.length === 0
-        ) {
+        if (parens[currentParen] !== undefined) {
+            // if left, push
+            stack.push(currentParen);
+        } else if (parens[currentParen] === undefined && stack.length === 0) {
+            // if not left and stack is empty
             return false;
-        } else if (
-            (currentBracket === "}" ||
-                currentBracket === ")" ||
-                currentBracket === "]") &&
-            stack.length !== 0
-        ) {
-            const poppedBracket = stack.pop();
+        } else if (parens[currentParen] === undefined && stack.length !== 0) {
+            // if not left and stack is not empty
 
-            if (
-                (poppedBracket === "(" && currentBracket !== ")") ||
-                (poppedBracket === "{" && currentBracket !== "}") ||
-                (poppedBracket === "[" && currentBracket !== "]")
-            ) {
+            // pop (this is left)
+            const poppedParen = stack.pop();
+
+            //  check
+            if (parens[poppedParen] !== currentParen) {
                 return false;
             }
         }
     }
 
-    return stack.length === 0 ? true : false;
-}
+    return stack.length === 0;
+    
+};
