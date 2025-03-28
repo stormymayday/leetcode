@@ -37,14 +37,17 @@ function isValid(s: string): boolean {
                 // It's invalid
                 return false;
             }
-            
+
+            // Remove the last opening paren from the stack
             const poppedParen = stack.pop();
+
+            // Check if the current paren matches the last opening one
             if (parens[poppedParen] !== currentParen) {
                 return false;
             }
         }
     }
 
-    // Ensure all parentheses are matched
+    // stack should be empty at the end (no leftover opening parens)
     return stack.length === 0;
 }
