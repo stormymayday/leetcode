@@ -1,35 +1,30 @@
 function minRemoveToMakeValid(s: string): string {
 
-    // convert into an array
     const arr = s.split("");
 
-    const stack = [];
+    let count = 0;
 
-    // first pass
     for(let i = 0; i < arr.length; i++) {
-
         const currentChar = arr[i];
-
-        // if its a right paren && stack is empty
-        if(currentChar === ')' && stack.length === 0) {
-            // convert into an empty string
+        if(currentChar === ')' && count === 0) {
             arr[i] = "";
-        } else if(currentChar === ')' && stack.length !== 0) {
-            // if its a right paren (and stack is not empty)
-            // pop the stack
-            stack.pop();
+        } else if(currentChar === ')' && count > 0) {
+            count--;
         } else if(currentChar === '(') {
-            // if it is a left paren
-            // push index on top of the stack
-            stack.push(i);
+            count++;
         }
     }
-    
-    // second pass (stray left paren indexes)
-    while(stack.length > 0) {
-        const index = stack.pop();
-        arr[index] = "";
+
+    let i = arr.length - 1;
+    while(count > 0) {
+        const currentChar = arr[i];
+        if(currentChar === '(') {
+            arr[i] = "";
+            count--;
+        }
+        i--;
     }
 
     return arr.join("");
+    
 };
