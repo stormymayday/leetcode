@@ -1,4 +1,5 @@
 function isValid(s: string): boolean {
+
     // If the string is empty
     if (s.length === 0) {
         // it's valid
@@ -11,21 +12,28 @@ function isValid(s: string): boolean {
         return false;
     }
 
-    // Mapping closing to opening
+    // Mapping opening to closing
     const parens = new Map([
-        [")", "("],
-        ["}", "{"],
-        ["]", "["],
+        ["(", ")"],
+        ["{", "}"],
+        ["[", "]"],
     ]);
 
-    // Stack to track closing parentheses
+    // Stack to track opening parentheses
     const stack = [];
 
     for (let i = 0; i < s.length; i++) {
+
         const currentParen = s[i];
 
-        // If it's a closing parenthesis
+        // If it's an opening parenthesis
         if (parens.has(currentParen)) {
+
+            // push to stack
+            stack.push(currentParen);
+
+        } else {
+
             // If the stack is empty
             if (stack.length === 0) {
                 // It's invalid
@@ -36,12 +44,10 @@ function isValid(s: string): boolean {
             const poppedParen = stack.pop();
 
             // Check if the current paren matches the last opening one
-            if (parens.get(currentParen) !== poppedParen) {
+            if (parens.get(poppedParen) !== currentParen) {
                 return false;
             }
-        } else {
-            // push to stack
-            stack.push(currentParen);
+            
         }
     }
 
