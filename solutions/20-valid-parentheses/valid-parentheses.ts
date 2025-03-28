@@ -11,26 +11,22 @@ function isValid(s: string): boolean {
         return false;
     }
 
-    // Mapping opening to closing parentheses
+    // Mapping closing to opening
     const parens = {
-        "(": ")",
-        "{": "}",
-        "[": "]",
+        ")": "(",
+        "}": "{",
+        "]": "[",
     };
 
-    // Stack to track opening parentheses
+    // Stack to track closing parentheses
     const stack = [];
 
     for (let i = 0; i < s.length; i++) {
 
         const currentParen = s[i];
 
-        // If it's an opening parenthesis
+        // If it's a closing parenthesis
         if (parens[currentParen] !== undefined) {
-            // push to stack
-            stack.push(currentParen);
-        } else {
-            // If closing parenthesis
 
             // If the stack is empty
             if (stack.length === 0) {
@@ -42,9 +38,13 @@ function isValid(s: string): boolean {
             const poppedParen = stack.pop();
 
             // Check if the current paren matches the last opening one
-            if (parens[poppedParen] !== currentParen) {
+            if (parens[currentParen] !== poppedParen) {
                 return false;
             }
+            
+        } else {
+            // push to stack
+            stack.push(currentParen);
         }
     }
 
