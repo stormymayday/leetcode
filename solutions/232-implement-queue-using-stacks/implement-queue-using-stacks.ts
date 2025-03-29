@@ -6,6 +6,7 @@ class Node {
         this.next = null;
     }
 }
+
 class Stack {
     top: Node | null;
     length: number;
@@ -13,9 +14,10 @@ class Stack {
         this.top = null;
         this.length = 0;
     }
+
     push(value: number): Stack {
         const newNode = new Node(value);
-        if(!this.top) {
+        if (!this.top) {
             this.top = newNode;
         } else {
             newNode.next = this.top;
@@ -24,8 +26,9 @@ class Stack {
         this.length++;
         return this;
     }
+
     pop(): number | undefined {
-        if(!this.top) {
+        if (!this.top) {
             return undefined;
         } else {
             const temp = this.top;
@@ -35,17 +38,21 @@ class Stack {
             return temp.value;
         }
     }
+
     peek(): number | undefined {
-        if(!this.top) {
+        if (!this.top) {
             return undefined;
         } else {
             return this.top.value;
         }
     }
 }
+
 class MyQueue {
 
-    pushStack: Stack; 
+    // Stack used for pushing elements
+    pushStack: Stack;
+     // Stack used for popping/peeking elements
     popStack: Stack;
 
     constructor() {
@@ -58,52 +65,35 @@ class MyQueue {
     }
 
     pop(): number {
-        // while(this.pushStack.peek() !== undefined) {
-        //     this.popStack.push(this.pushStack.pop());
-        // }
-        // const temp = this.popStack.pop();
-        // while(this.popStack.peek() !== undefined) {
-        //     this.pushStack.push(this.popStack.pop());
-        // }
-        // return temp;
-
-        if(this.popStack.peek() === undefined) {
-            while(this.pushStack.peek() !== undefined) {
+        if (this.popStack.peek() === undefined) {
+            // If the pop stack is empty, transfer ALL elements from the push stack
+            while (this.pushStack.peek() !== undefined) {
                 this.popStack.push(this.pushStack.pop());
-            }   
+            }
         }
+        // Pop and return the top element from the pop stack
         return this.popStack.pop();
-
-        
     }
 
     peek(): number {
-        // while(this.pushStack.peek() !== undefined) {
-        //     this.popStack.push(this.pushStack.pop());
-        // }
-        // const temp = this.popStack.peek();
-        // while(this.popStack.peek() !== undefined) {
-        //     this.pushStack.push(this.popStack.pop());
-        // }
-        // return temp;
-
-        if(this.popStack.peek() === undefined) {
-            while(this.pushStack.peek() !== undefined) {
+        if (this.popStack.peek() === undefined) {
+            // If the pop stack is empty, transfer ALL elements from the push stack
+            while (this.pushStack.peek() !== undefined) {
                 this.popStack.push(this.pushStack.pop());
-            }   
+            }
         }
+        // Peek and return the top element from the pop stack
         return this.popStack.peek();
-
     }
 
     empty(): boolean {
-
-        if(this.pushStack.peek() === undefined && this.popStack.peek() === undefined) {
+        // Check if both stacks are empty
+        if (this.pushStack.peek() === undefined && this.popStack.peek() === undefined) {
             return true;
         } else {
+            // Otherwise, the queue is not empty
             return false;
         }
-        
     }
 }
 
