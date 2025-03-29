@@ -54,46 +54,51 @@ class MyQueue {
     }
 
     push(x: number): void {
-
         this.pushStack.push(x);
-        
     }
 
     pop(): number {
+        // while(this.pushStack.peek() !== undefined) {
+        //     this.popStack.push(this.pushStack.pop());
+        // }
+        // const temp = this.popStack.pop();
+        // while(this.popStack.peek() !== undefined) {
+        //     this.pushStack.push(this.popStack.pop());
+        // }
+        // return temp;
 
-        while(this.pushStack.peek() !== undefined) {
-            this.popStack.push(this.pushStack.pop());
+        if(this.popStack.peek() === undefined) {
+            while(this.pushStack.peek() !== undefined) {
+                this.popStack.push(this.pushStack.pop());
+            }   
         }
+        return this.popStack.pop();
 
-        const temp = this.popStack.pop();
-
-        while(this.popStack.peek() !== undefined) {
-            this.pushStack.push(this.popStack.pop());
-        }
-
-        return temp;
         
     }
 
     peek(): number {
+        // while(this.pushStack.peek() !== undefined) {
+        //     this.popStack.push(this.pushStack.pop());
+        // }
+        // const temp = this.popStack.peek();
+        // while(this.popStack.peek() !== undefined) {
+        //     this.pushStack.push(this.popStack.pop());
+        // }
+        // return temp;
 
-         while(this.pushStack.peek() !== undefined) {
-            this.popStack.push(this.pushStack.pop());
+        if(this.popStack.peek() === undefined) {
+            while(this.pushStack.peek() !== undefined) {
+                this.popStack.push(this.pushStack.pop());
+            }   
         }
+        return this.popStack.peek();
 
-        const temp = this.popStack.peek();
-
-        while(this.popStack.peek() !== undefined) {
-            this.pushStack.push(this.popStack.pop());
-        }
-
-        return temp;
-        
     }
 
     empty(): boolean {
 
-        if(this.pushStack.peek() === undefined) {
+        if(this.pushStack.peek() === undefined && this.popStack.peek() === undefined) {
             return true;
         } else {
             return false;
