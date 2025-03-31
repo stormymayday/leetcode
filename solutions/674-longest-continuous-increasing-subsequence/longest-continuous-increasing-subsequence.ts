@@ -7,10 +7,9 @@ function findLengthOfLCIS(nums: number[]): number {
 
         const currentNum = nums[right];
 
-        while(left < right && nums[right - 1] !== undefined && nums[right] <= nums[right - 1]) {
-            left++;
+        if(nums[right - 1] !== undefined && nums[right] <= nums[right - 1]) {
+            left = right;
         }
-
         
         result = Math.max(result, right - left + 1);
 
