@@ -1,48 +1,40 @@
 function carFleet(target: number, position: number[], speed: number[]): number {
+    
+    // To store Time (Time = (Target - Position)/Speed)
+    const stack = [];
 
-    // Create a tuple array of position and speed pairs
+    // Positon & Speed pairs array
     const positionSpeedPairs = position.map((pos, index) => {
         return [pos, speed[index]];
     });
 
-    // Sort in ascending order
-    positionSpeedPairs.sort((a, b) => {
-        return a[0] - b[0];
-    });
-
-    // stack for time
-    const stack = [];
+    // Sort the pairs array based on position in ASC order
+    positionSpeedPairs.sort((a, b) => a[0] - b[0]);
 
     // Iterate backwards
     for(let i = positionSpeedPairs.length - 1; i >= 0; i--) {
 
-        // get current position and time
-        const[position, speed] = positionSpeedPairs[i];
-        // calculate the time
-        const time = (target - position) / speed;
+        const [currentPosition, currentSpeed] = positionSpeedPairs[i];
+        const currentTime = (target - currentPosition)/currentSpeed;
 
-        // if the stack is empty
         if(stack.length === 0) {
-            // push the time
-            stack.push(time);
+            stack.push(currentTime);
         } else {
-            // Otherwise, if the stack is not empty
 
-            // if the current 'time' is greater than time on top of the stack:
-            // - Cars cannot become a fleet
-            // - Because this car takes longer to get to the target AND it is behind
-            if(time > stack[stack.length - 1]) {
-                stack.push(time);
-            } else {
-                // Otherwise, this car will take less time to get to the target
-                // - therefore, they can become a fleet
-                // - skip pushing to the stack
-                continue;
+            // MAIN LOGIC:
+            // If the top element has smaller time (it's faster) than the current one (the car behind)
+            // They can't become fleet (car behind won't catch up)
+            // Therefore, push (different fleet)
+            // Otherwise, don't push (same fleet)
+
+            if(stack[stack.length - 1] < currentTime) {
+                stack.push(currentTime);
             }
         }
 
     }
 
+    // Number of elements on the stack === number of fleets
     return stack.length;
     
 };
