@@ -1,7 +1,7 @@
 class Node {
     value: number;
     next: Node | null;
-    constructor(value) {
+    constructor(value: number) {
         this.value = value;
         this.next = null;
     }
@@ -11,19 +11,20 @@ class MyQueue {
     start: Node | null;
     end: Node | null;
     length: number;
+
     constructor() {
         this.start = null;
         this.end = null;
         this.length = 0;
     }
 
-    enqueue(value): MyQueue {
+    enqueue(value: number): MyQueue {
         const newNode = new Node(value);
-        if(!this.start) {
+        if (!this.start) {
             this.start = newNode;
             this.end = newNode;
         } else {
-            this.end.next = newNode;
+            this.end!.next = newNode;
             this.end = newNode;
         }
         this.length++;
@@ -31,14 +32,14 @@ class MyQueue {
     }
 
     dequeue(): number | undefined {
-        if(!this.start) {
+        if (!this.start) {
             return undefined;
         } else {
             const temp = this.start;
             this.start = this.start.next;
             temp.next = null;
             this.length--;
-            if(this.length === 0) {
+            if (this.length === 0) {
                 this.end = null;
             }
             return temp.value;
@@ -46,68 +47,58 @@ class MyQueue {
     }
 
     peek(): number | undefined {
-        if(!this.start) {
+        if (!this.start) {
             return undefined;
         } else {
             return this.start.value;
         }
     }
-    getEnd(): number | undefined {
-        if(!this.end) {
-            return undefined;
-        } else {
-            return this.end.value;
-        }
-    }
+
 }
 
 class MyStack {
 
-    queue1: MyQueue;
-    queue2: MyQueue;
+    queue: MyQueue;
 
     constructor() {
-        this.queue1 = new MyQueue();
-        this.queue2 = new MyQueue();
+        this.queue = new MyQueue();
     }
 
     push(x: number): void {
-        this.queue1.enqueue(x);
+        this.queue.enqueue(x);
     }
 
     pop(): number | undefined {
-        if(this.queue1.peek() === undefined) {
+        if (this.queue.length === 0) {
             return undefined;
         } else {
-            while(this.queue1.length > 1) {
-                this.queue2.enqueue(this.queue1.dequeue());
+            let n = this.queue.length;
+            while(n > 1) {
+                this.queue.enqueue(this.queue.dequeue());
+                n--;
             }
-            const temp = this.queue1.dequeue();
-            while(this.queue2.peek() !== undefined) {
-                this.queue1.enqueue(this.queue2.dequeue());
-            }
+            const temp = this.queue.dequeue();
             return temp;
         }
     }
 
     top(): number | undefined {
-        if(this.queue1.peek() === undefined) {
+        if (this.queue.length === 0) {
             return undefined;
         } else {
-            while(this.queue1.length > 1) {
-                this.queue2.enqueue(this.queue1.dequeue());
+            let n = this.queue.length;
+            while(n > 1) {
+                this.queue.enqueue(this.queue.dequeue());
+                n--;
             }
-            const temp = this.queue1.peek();
-            this.queue2.enqueue(this.queue1.dequeue());
-            while(this.queue2.peek() !== undefined) {
-                this.queue1.enqueue(this.queue2.dequeue());
-            }
+            const temp = this.queue.peek();
+            this.queue.enqueue(this.queue.dequeue());
             return temp;
         }
     }
 
     empty(): boolean {
-        return this.queue1.length === 0;
+        return this.queue.length === 0;
     }
 }
 
