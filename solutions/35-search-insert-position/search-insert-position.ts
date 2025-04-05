@@ -4,17 +4,15 @@ function searchInsert(nums: number[], target: number): number {
     let right = nums.length - 1;
 
     while(left <= right) {
+        const mid = Math.floor((left + right) / 2);
 
-        const middle = Math.floor(left + (right - left) /2);
-
-        if(nums[middle] > target) {
-            right = middle - 1;
-        } else if(nums[middle] < target) {
-            left = middle + 1;
+        if(nums[mid] > target) {
+            right = mid - 1;
+        } else if(nums[mid] < target) {
+            left = mid + 1;
         } else {
-            return middle;
+            return mid;
         }
-
     }
 
     return left;
