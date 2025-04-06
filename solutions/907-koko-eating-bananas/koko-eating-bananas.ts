@@ -1,7 +1,10 @@
 function minEatingSpeed(piles: number[], h: number): number {
 
+    // Left (min) must be 1
     let left = 1;
+    // Right (max) is the largest element
     let right = Math.max(...piles);
+    // Initialize speed to the max for now
     let bananasPerHour = right;
 
     while(left <= right) {
