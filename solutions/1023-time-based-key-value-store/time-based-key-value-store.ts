@@ -1,18 +1,20 @@
 class TimeMap {
 
-    store: { [key: string]: Array<[string, number]>};
+    store: Map<string, Array<[string, number]>>;
 
     constructor() {
-        this.store = {};
+        this.store = new Map();
     }
 
     set(key: string, value: string, timestamp: number): void {
 
-        if(this.store[key] === undefined) {
-            this.store[key] = [];
+        if(!this.store.has(key)) {
+
+            this.store.set(key, []);
+
         }
 
-        this.store[key].push([value, timestamp]);
+        this.store.get(key).push([value, timestamp]);
         
     }
 
@@ -20,11 +22,11 @@ class TimeMap {
 
         let result = "";
 
-        if(this.store[key] === undefined) {
+        if(!this.store.has(key)) {
             return result;
         } else {
 
-            const values = this.store[key];
+            const values = this.store.get(key);
 
             let left = 0;
             let right = values.length - 1;
