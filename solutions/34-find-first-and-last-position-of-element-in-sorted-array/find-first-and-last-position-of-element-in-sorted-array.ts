@@ -21,28 +21,35 @@ function searchRange(nums: number[], target: number): number[] {
         return [-1, -1];
     }
 
-    const firstPosition = binarySearch(nums, 0, nums.length - 1, target);
+    // Find any occurrence of the target first
+    const initialPosition = binarySearch(nums, 0, nums.length - 1, target);
 
-    if(firstPosition === -1) {
+    // If target not found at all, return [-1, -1]
+    if(initialPosition === -1) {
         return [-1, -1];
     } else {
-
-        let startPosition = firstPosition;
-        let tempLeft = startPosition;
-        while(startPosition !== -1) {
-            tempLeft = startPosition;
-            startPosition = binarySearch(nums, 0, startPosition - 1, target);
+        // Find leftmost occurrence by repeatedly searching in the left portion
+        let currentLeftSearch = initialPosition;
+        let leftmostPosition = currentLeftSearch;
+        while(currentLeftSearch !== -1) {
+            // Save the current position as the leftmost known position
+            leftmostPosition = currentLeftSearch;
+            // Search for target in the portion to the left of the current position
+            currentLeftSearch = binarySearch(nums, 0, currentLeftSearch - 1, target);
         }
 
-        let endPosition = firstPosition;
-        let tempRight = endPosition;
-        while(endPosition !== -1) {
-            tempRight = endPosition;
-            endPosition = binarySearch(nums, endPosition + 1, nums.length - 1, target);
+        // Find rightmost occurrence by repeatedly searching in the right portion
+        let currentRightSearch = initialPosition;
+        let rightmostPosition = currentRightSearch;
+        while(currentRightSearch !== -1) {
+            // Save the current position as the rightmost known position
+            rightmostPosition = currentRightSearch;
+            // Search for target in the portion to the right of the current position
+            currentRightSearch = binarySearch(nums, currentRightSearch + 1, nums.length - 1, target);
         }
 
-        return [tempLeft, tempRight];
-
+        // Return the range as [leftmost, rightmost] positions
+        return [leftmostPosition, rightmostPosition];
     }
     
 };
