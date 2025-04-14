@@ -11,54 +11,37 @@
  */
 
 function reverseBetween(head: ListNode | null, left: number, right: number): ListNode | null {
-
-    let currentPosition = 1;
-    let currentNode = head;
     
-    // Initialize beforeLeft to head instead of null to handle the edge case when left=1
-    // If left=1, we won't enter the first while loop, and beforeLeft would remain its initial value
-    // Later when we execute beforeLeft.next = prev, we'd get a null reference error if beforeLeft was null
-    // By starting with head, we ensure beforeLeft is a valid node reference even in the edge case
-    let beforeLeft = head;
+    // Creating a dummy node at the beginning to help with edge case where left = 1
+    // It will always point at the head
+    const dummy = new ListNode(0, head);
 
-    while(currentPosition < left) {
-        // Keeping 'beforeLeft' one step behind 'currentNode'
-        beforeLeft = currentNode;
-        currentNode = currentNode.next;
-        currentPosition++;
+    // Initializing pointers:
+    let beforeLeft = dummy; // Will point at 'right' (where 'prev' will end up at)
+    let current = head; // Will end up one step after 'right'
+
+    // Moving 'current' to the left's position
+    for(let i = 1; i < left; i++) {
+        // Keeping beforeLeft one step behind:
+        beforeLeft = current;
+        current = current.next;
     }
 
-    // to keep reference of the 'left' positioned node
-    let leftPtr = currentNode;
-
-    // This will be the new head if 'left' === 1
-    let prev = null;
-    // Reverse in between:
-    while(currentPosition >= left && currentPosition <= right) {
-        let next = currentNode.next;
-        currentNode.next = prev;
-        prev = currentNode;
-        currentNode = next;
-
-        currentPosition++;
+    // Reversal in range:
+    let prev = null; // will end up at 'right'
+    for(let i = 0; i < right - left + 1; i++) {
+        let next = current.next;
+        current.next = prev;
+        prev = current;
+        current = next;
     }
 
-    // now currentNode is one step ahead of 'right'
-    // prev is at 'right'
-
-    // reconnecting the list:
-    // The order matters!
-    // In the edge case where left = 1 and there's only one node:
-    // beforeLeft, leftPtr, and prev all reference the same node. 
+    // Re-linking
+    // Left to after 'right' (current) first:
+    beforeLeft.next.next = current;
+    // Before left to 'right' (prev)
     beforeLeft.next = prev;
-    leftPtr.next = currentNode;
 
-    // Edge Case: if left started at head
-    if(left > 1) {
-        return head;
-    } else {
-        // 'prev' will be new head
-        return prev;
-    }
-    
+    return dummy.next;
+
 };
