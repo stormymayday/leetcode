@@ -14,11 +14,10 @@ function reverseBetween(head: ListNode | null, left: number, right: number): Lis
     
     let current = head;
 
-    // start (initialized at head) - this caused an error!
-    // let beforeLeft = null;
+    // let beforeLeft = null; - this caused an error!
     let beforeLeft = head;
 
-    let counter = 1; // currentPosition
+    let counter = 1;
     while(counter < left) {
         beforeLeft = current;
         current = current.next;
@@ -26,25 +25,21 @@ function reverseBetween(head: ListNode | null, left: number, right: number): Lis
     }
 
     
-    let leftPtr = current; // tail
-    let prev = null; // newList
-    //let next = null;
+    let leftPtr = current;
+    let prev = null;
 
-    // while(counter < right) {
-     while(counter >= left && counter <= right) {
+    while(counter >= left && counter <= right) {
         let next = current.next;
         current.next = prev;
         prev = current;
         current = next;
 
-        // forgot that
         counter++;
     }
 
     beforeLeft.next = prev;
     leftPtr.next = current;
 
-    // return head;
     if(left > 1) {
         return head;
     } else {
