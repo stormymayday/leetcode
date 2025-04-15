@@ -24,22 +24,11 @@ function middleNode(head: ListNode | null): ListNode | null {
     }
 
     current = head;
-    let i = 1;
-    // Even
-    if(length % 2 === 0) {
-        while(i !== length/2 + 1) {
+    let i = 0;
+    while(i !== Math.floor(length/2)) {
             current = current.next;
             i++;
-        }
-        return current;
-    } 
-    // Odd
-    else {
-        while(i !== Math.ceil(length/2)) {
-            current = current.next;
-            i++;
-        }
-        return current;
     }
+    return current;
 
 };
