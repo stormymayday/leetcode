@@ -16,21 +16,32 @@ function detectCycle(head: ListNode | null): ListNode | null {
         return null;
     }
 
-    const set = new Set();
-    let current = head;
+    let slow = head;
+    let fast = head;
 
-    while(!set.has(current)) {
-
-        if(current.next === null) {
-            return null;
+    // while(fast.next && fast.next.next) {
+    while(fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if(slow === fast) {
+            break;
         }
-
-        set.add(current);
-
-        current = current.next;
-
     }
 
-    return current;
+    if(!fast || !fast.next) {
+
+        return null;
+
+    } else {
+        let current = head;
+        let meetingPoint = slow;
+
+        while(current !== meetingPoint) {
+            current = current.next;
+            meetingPoint = meetingPoint.next;
+        }
+
+        return current;
+    }
     
 };
