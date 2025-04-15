@@ -11,24 +11,25 @@
  */
 
 function middleNode(head: ListNode | null): ListNode | null {
-    
+
     if(!head || !head.next) {
         return head;
     }
 
-    let length = 1;
+    let length = 0;
     let current = head;
-    while(current.next) {
+    while(current !== null) {
         current = current.next;
         length++;
     }
 
+    let n = Math.floor(length/2);
     current = head;
-    let i = 0;
-    while(i !== Math.floor(length/2)) {
-            current = current.next;
-            i++;
+    while(n !== 0) {
+        current = current.next;
+        n--;
     }
-    return current;
 
+    return current;
+    
 };
