@@ -16,20 +16,14 @@ function middleNode(head: ListNode | null): ListNode | null {
         return head;
     }
 
-    let length = 0;
-    let current = head;
-    while(current !== null) {
-        current = current.next;
-        length++;
+    let slow = head;
+    let fast = head;
+
+    while(fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
     }
 
-    let n = Math.floor(length/2);
-    current = head;
-    while(n !== 0) {
-        current = current.next;
-        n--;
-    }
-
-    return current;
+    return slow;
     
 };
