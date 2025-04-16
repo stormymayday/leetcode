@@ -14,40 +14,51 @@
  Do not return anything, modify head in-place instead.
  */
 function reorderList(head: ListNode | null): void {
-    const dummyNode = new ListNode();
+    
+    // Lets create a dummy Node and attach it to the head
+    const dummyNode = new ListNode(-1, head);
+    // The next node will be the starting point of the reordered list
+
     let current = dummyNode;
 
-    let left = head;
+    while(head) {
+        
+        // attach head
+        current.next = head;
 
-    while (left) {
-        // left first
-        let temp = left;
-        left = left.next; // can be null
-        temp.next = null; // sever connection
-        current.next = temp; // attach left
+        // move head forward
+        head = head.next; // can be null
 
-        current = current.next; // move current
+        // move current forward
+        current = current.next;
+        
+        // Search for 'tail'
+        // start at 'new' head (was moved one step forward)
+        let prev = head; // can be null
+        if(prev) {
+            // if not null
+            let tail = prev.next; // can be null
 
-        // right last
-        let prev = left; // can be null
-        if (prev) {
-            let right = prev.next; // can be null
+            if(tail) {
 
-            if (right) {
-                while (right.next) {
-                    // stop when 'right' is last
-                    prev = right;
-                    right = right.next;
+                while(tail.next) {
+                    prev = tail;
+                    tail = tail.next;
                 }
 
-                current.next = right; // attach 'right'
-                prev.next = null; // sever connection
+                // attach 'tail'
+                current.next = tail;
 
-                current = current.next; // move current forward
+                // shit 'current' forward
+                current = current.next;
+
+                // sever of the tail from the original list
+                prev.next = null
+
             }
+
         }
+
     }
 
-    //return dummyNode.next;
-    // return is void
-}
+};
