@@ -11,10 +11,6 @@
  */
 
 function hasCycle(head: ListNode | null): boolean {
-    
-    if(!head) {
-        return false;
-    }
 
     const set = new Set();
     let current = head;
