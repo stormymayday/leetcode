@@ -12,17 +12,17 @@
 
 function hasCycle(head: ListNode | null): boolean {
 
-    const set = new Set();
-    let current = head;
+    let slow = head;
+    let fast = head;
 
-    while(current) {
+    while(fast && fast.next) {
 
-        if(set.has(current)) {
+        slow = slow.next;
+        fast = fast.next.next;
+
+        if(slow === fast) {
             return true;
         }
-
-        set.add(current);
-        current = current.next;
 
     }
 
