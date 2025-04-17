@@ -14,41 +14,32 @@ function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
 
     // Helps with edge cases
     const dummyNode = new ListNode(-1, head);
-    let current = dummyNode;
 
-    // 1. Figure out the length:
-    let length = 0;
-    while(current) {
-        current = current.next; // can be null
-        if(current) {
-            length++;
-        }
-    }
+    // Initialize two pointers
+    let left = head;
+    let right = head;
 
-    // Check if 'n' is in range
-    if(n > length) {
-        return null;
-    }
-    // Now we know that 'n' is in range
-
-    // 2. Get the 'target' node
-    const targetIndex = length - n + 1;
-    let prev = dummyNode;
-    current = head;
-    let i = 1;
-    while(i !== targetIndex) {
-        prev = current;
-        current = current.next;
+    // 1. Advance 'right' n positions forward
+    let i = 0;
+    while(i < n && right) {
+        right = right.next;
         i++;
     }
-    // now 'current' is at the target index
 
+    // 2. Move all pointers forward until 'right' goes out of bounds
+    let prev = dummyNode; // for deletion
+    while(right) {
+
+        prev = left; // keeping 'prev' one step behind 'left'
+        left = left.next;
+        right = right.next;
+
+    }
 
     // 3. Removal
-    prev.next = current.next;
-    current.next = null;
-    
-    // 4. Return the 'new' head
+    prev.next = left.next;
+    left.next = null; // optinal cleanup
+
     return dummyNode.next;
     
 };
