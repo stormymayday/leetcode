@@ -12,10 +12,6 @@
 
 function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
 
-    if(!head) {
-        return head;
-    }
-
     // Helps with edge cases
     const dummyNode = new ListNode(-1, head);
     let current = dummyNode;
