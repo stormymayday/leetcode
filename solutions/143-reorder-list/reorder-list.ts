@@ -17,16 +17,10 @@ function reorderList(head: ListNode | null): void {
 
     const dummyNode = new ListNode(-1, head);
     let current = dummyNode;
-    let tail = null; // will be used for merging
 
-    // Finding the length and the 'tail'
+    // Finding the length
     let length = 0;
     while(current) {
-
-        // Finding the 'tail'
-        if(current.next === null) {
-            tail = current;
-        }
 
         current = current.next;
         if(current) {
