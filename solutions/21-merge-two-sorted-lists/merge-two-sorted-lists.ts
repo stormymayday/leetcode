@@ -11,11 +11,10 @@
  */
 
 function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {
-
+    
     const dummyNode = new ListNode();
     let current = dummyNode;
 
-    // while both lists are not empty
     while(list1 && list2) {
 
         if(list1.val < list2.val) {
@@ -39,5 +38,5 @@ function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode
     }
 
     return dummyNode.next;
-    
+
 };
