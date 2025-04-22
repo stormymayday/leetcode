@@ -10,7 +10,7 @@
  * }
  */
 
-// Helper Method:
+// Helper method:
 function merge(list1: ListNode | null, list2: ListNode | null): ListNode | null {
     const dummyNode = new ListNode();
     let current = dummyNode;
@@ -31,37 +31,32 @@ function merge(list1: ListNode | null, list2: ListNode | null): ListNode | null 
         current.next = list2;
     }
     return dummyNode.next;
-} 
+}
 
 function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
-
-    // Edge Case: empty lists array:
+    // Edge Case: empty lists array
     if(lists.length === 0) {
         return null;
     }
 
-    // Keep reducing the lists to 1 element
-    while(lists.length > 1) {
+    // Interval represents the gap between lists to merge
+    // It doubles with each iteration (1, 2, 4, ...)
+    let interval = 1;
 
-        // temporary array
-        const mergedLists = [];
+    // Iterate until interval matches the length
+    while(interval < lists.length) {
 
-        // Merge adjacent pairs to halve the number of lists each round
-        for(let i = 0; i < lists.length; i+=2) {
-
-            const list1 = lists[i];
-            const list2 = lists[i + 1] || null; // can go out of bounds
-
-            mergedLists.push(merge(list1, list2));
-
+        // Merge pairs of lists with current interval
+        for(let i = 0; i < lists.length - interval; i += interval * 2) {
+            lists[i] = merge(lists[i], lists[i + interval]);
         }
 
-        // Overwrite / cut in half with each iteration
-        lists = mergedLists;
+        // Double the interval
+        interval *= 2;
 
     }
 
-    // In the end, lists will have only one element left
+    // The first list now contains the fully merged result
     return lists[0];
     
 };
