@@ -10,36 +10,42 @@
  * }
  */
 
-function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
+// Helper Method
+function merge(list1: ListNode | null, list2: ListNode | null): ListNode | null {
+    const dummyNode = new ListNode();
+    let current = dummyNode;
+    while(list1 && list2) {
+        if(list1.val < list2.val) {
+            current.next = list1;
+            list1 = list1.next;
+        } else {
+            current.next = list2;
+            list2 = list2.next;
+        }
+        current = current.next;
+    }
+    if(list1) {
+        current.next = list1;
+    }
+    if(list2) {
+        current.next = list2;
+    }
+    return dummyNode.next;
+}
 
+function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
+    
     // Edge Case: empty lists array
     if(lists.length === 0) {
         return null;
     }
 
-    // Step 1: Extract all the values
-    const values = [];
+    // Pairwise merge from left to right:
     for(let i = 0; i < lists.length; i++) {
-        let list = lists[i];
-        while(list) {
-            values.push(list.val);
-            list = list.next;
-        }
+        lists[i] = merge(lists[i - 1] || null, lists[i]);
     }
 
-    // Step 2: Sorting the values
-    values.sort((a, b) => a - b);
+    // The last list will now contain result of all previous merges:
+    return lists[lists.length - 1];
 
-    // Step 3: Create new sorted linked list
-    const dummyNode = new ListNode();
-    let current = dummyNode;
-    for(let i = 0; i < values.length; i++) {
-        const value = values[i];
-        const newNode = new ListNode(value);
-        current.next = newNode;
-        current = current.next;
-    }
-    
-    // Step 4: Return the sorted linked list
-    return dummyNode.next;
 };
