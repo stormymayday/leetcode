@@ -10,7 +10,7 @@
  * }
  */
 
-// Helper Method
+// Helper Method:
 function merge(list1: ListNode | null, list2: ListNode | null): ListNode | null {
     const dummyNode = new ListNode();
     let current = dummyNode;
@@ -31,21 +31,37 @@ function merge(list1: ListNode | null, list2: ListNode | null): ListNode | null 
         current.next = list2;
     }
     return dummyNode.next;
-}
+} 
 
 function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
-    
-    // Edge Case: empty lists array
+
+    // Edge Case: empty lists array:
     if(lists.length === 0) {
         return null;
     }
 
-    // Pairwise merge from left to right:
-    for(let i = 0; i < lists.length; i++) {
-        lists[i] = merge(lists[i - 1] || null, lists[i]);
+    // Keep reducing the lists to 1 element
+    while(lists.length > 1) {
+
+        // temporary array
+        const mergedLists = [];
+
+        // Merge adjacent pairs to halve the number of lists each round
+        for(let i = 0; i < lists.length; i+=2) {
+
+            const list1 = lists[i];
+            const list2 = lists[i + 1] || null; // can go out of bounds
+
+            mergedLists.push(merge(list1, list2));
+
+        }
+
+        // Overwrite / cut in half with each iteration
+        lists = mergedLists;
+
     }
 
-    // The last list will now contain result of all previous merges:
-    return lists[lists.length - 1];
-
+    // In the end, lists will have only one element left
+    return lists[0];
+    
 };
