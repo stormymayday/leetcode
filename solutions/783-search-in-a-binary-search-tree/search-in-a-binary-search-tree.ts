@@ -13,27 +13,27 @@
  */
 
 function searchBST(root: TreeNode | null, val: number): TreeNode | null {
-    
+
     // Edge Case: Empty Tree
-    if(!root) {
-        return null;
+    if(root === null) {
+        return root;
     }
 
-    // Start at the root
+    // start at the root
     let current = root;
-    // Iterate until we find the node or run into 'null'
+    // iterate until current runs into null or value is found
     while(current) {
         // value is less than current
         if(val < current.val) {
             current = current.left; // traverse left
-        } 
+        }
         // value is greater than current
         else if(val > current.val) {
             current = current.right; // traverse right
-        } 
-        // values is equal to current
+        }
+        // value equals to current
         else {
-            return current; // return the node
+            return current;
         }
     }
 
