@@ -13,44 +13,49 @@
  */
 
 function insertIntoBST(root: TreeNode | null, val: number): TreeNode | null {
-    
+
+    // Creating a new TreeNode with a given value
     const newNode = new TreeNode(val);
 
-    // Edge Case: Empty Tree
-    if(!root) {
-        root = newNode;
+    // Check if the tree is empty
+    if(root === null) {
+        root = newNode; // insert at the root
         return root;
     }
 
+    // Otherwise, start at the root
     let current = root;
     while(true) {
-
-        // Value is smaller than current
+        // value is less than current - check left
         if(val < current.val) {
-            // Left spot is empty
+            // left spot is open
             if(current.left === null) {
-                current.left = newNode;
+                current.left = newNode; // insert at left
                 return root;
-            } 
-            // Left spot is occupied
+            }
+            // left spot is occupied
             else {
                 current = current.left; // traverse left
             }
         }
-        // Value is larger than current
-        else {
-            // Right spot is empty
+        // value is greater than current - check right 
+        else if(val > current.val) {
+            // right spot is open
             if(current.right === null) {
-                current.right = newNode;
+                current.right = newNode; // insert at right
                 return root;
             }
-            // Right spot is occupied
+            // right is occupied
             else {
-                current = current.right; // tarverse right
+                current = current.right; // traverse right
             }
-
+        } 
+        // Optional: value already exists 
+        // It is guaranteed that the new value does not exist in the original BST
+        else {
+            return root;
         }
 
     }
-
+    
 };
