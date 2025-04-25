@@ -14,32 +14,33 @@
 
 function preorderTraversal(root: TreeNode | null): number[] {
 
+    // Edge Case: Empty Tree
     if(!root) {
         return [];
     }
 
-    let results = [];
+    const result = [];
 
     function traverse(node) {
 
-        // 1. Push the current value
-        results.push(node.val);
+        // 1. Process the node
+        result.push(node.val);
 
-        // 2. Recurse left
+        // 2. Left
         if(node.left) {
             traverse(node.left);
         }
 
-        // 3. Recurse right
+        // 3. Right
         if(node.right) {
             traverse(node.right);
         }
 
     }
 
-    // Kick of the recursion with root
+    // start with the root
     traverse(root);
 
-    return results;
+    return result;
     
 };
