@@ -12,108 +12,45 @@
  * }
  */
 
-class Node<T> {
-    value: T;
-    next: Node<T> | null;
-    constructor(value: T) {
-        this.value = value;
-        this.next = null;
-    }
-}
-
-class CustomQueue<T> {
-    first: Node<T> | null;
-    last: Node<T> | null;
-    length: number;
-
-    constructor() {
-        this.first = null;
-        this.last = null;
-        this.length = 0;
-    }
-
-    enqueue(value: T): CustomQueue<T> {
-        const newNode = new Node(value);
-
-        // check if queue is empty
-        if (this.length === 0) {
-            // queue is empty
-            this.first = newNode;
-            this.last = newNode;
-        } else {
-            // queue is not empty
-            this.last!.next = newNode;
-            this.last = newNode;
-        }
-        this.length++;
-        return this;
-    }
-
-    dequeue(): T | undefined {
-        if (this.length === 0) {
-            return undefined;
-        }
-
-        const temp = this.first;
-        this.first = this.first!.next;
-        temp!.next = null;
-        this.length--;
-        if (this.length === 0) {
-            this.last = null;
-        }
-        return temp!.value;
-    }
-}
-
 function levelOrder(root: TreeNode | null): number[][] {
 
-    // Edge Case: Empty Tree
     if(!root) {
         return [];
     }
 
-    // Initialize queue and results array
-    const queue = new CustomQueue();
-    const results = [];
+    const queue = [];
+    const result = [];
 
-    // Set a pointer at the root
     let current = root;
 
-    // Enqueue the root
-    queue.enqueue(current);
+    queue.push(current);
 
-    // Iterate while queue is not empty
     while(queue.length !== 0) {
 
-        // to hold values at each level
         let level = [];
 
-        // counter variable
-        let currentLevelLength = queue.length;
+        let currentQueueLength = queue.length;
 
-        for(let i = currentLevelLength; i > 0; i--) {
+        for(let i = currentQueueLength; i > 0; i--) {
 
-            // dequeue the node
-            current = queue.dequeue() as TreeNode;
+            current = queue.shift();
 
-            // push the value int current LEVEL array
             level.push(current.val);
 
-            // check left
             if(current.left) {
-                queue.enqueue(current.left);
+                queue.push(current.left);
             }
 
-            // check right
             if(current.right) {
-                queue.enqueue(current.right);
+                queue.push(current.right);
             }
 
         }
 
-        results.push(level);
+        result.push(level);
 
     }
 
-    return results;
+    return result;
+    
 };
