@@ -14,7 +14,6 @@
 
 function inorderTraversal(root: TreeNode | null): number[] {
 
-    // Edge Case: Empty Tree
     if(!root) {
         return [];
     }
@@ -27,7 +26,7 @@ function inorderTraversal(root: TreeNode | null): number[] {
             traverse(node.left);
         }
 
-        // 2. Visit Node
+        // 2. Visist current
         result.push(node.val);
 
         // 3. Right
@@ -37,7 +36,7 @@ function inorderTraversal(root: TreeNode | null): number[] {
     }
 
     traverse(root);
-
+    
     return result;
     
 };
