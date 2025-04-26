@@ -14,7 +14,6 @@
 
 function preorderTraversal(root: TreeNode | null): number[] {
 
-    // Edge Case: Empty Tree
     if(!root) {
         return [];
     }
@@ -22,8 +21,7 @@ function preorderTraversal(root: TreeNode | null): number[] {
     const result = [];
 
     function traverse(node) {
-
-        // 1. Process the node
+        // 1. Visit Current
         result.push(node.val);
 
         // 2. Left
@@ -35,10 +33,8 @@ function preorderTraversal(root: TreeNode | null): number[] {
         if(node.right) {
             traverse(node.right);
         }
-
     }
 
-    // start with the root
     traverse(root);
 
     return result;
