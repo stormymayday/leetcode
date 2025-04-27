@@ -13,21 +13,19 @@
  */
 
 function searchBST(root: TreeNode | null, val: number): TreeNode | null {
-    
-    // if(!root) {
-    //     return root;
-    // }
 
-    let current = root;
-    while(current) {
-        if(val < current.val) {
-            current = current.left;
-        } else if(val > current.val) {
-            current = current.right;
-        } else {
-            return current;
-        }
+    if(root === null) {
+        return root;
     }
-    return current;
+
+    if(root.val === val) {
+        return root;
+    }
+    
+    if(val < root.val) {
+        return searchBST(root.left, val);
+    } else {
+        return searchBST(root.right, val);
+    }
 
 };
