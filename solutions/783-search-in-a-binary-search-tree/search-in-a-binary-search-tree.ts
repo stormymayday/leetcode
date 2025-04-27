@@ -13,23 +13,21 @@
  */
 
 function searchBST(root: TreeNode | null, val: number): TreeNode | null {
-    // Base Case 1: No node exists
-    if (root === null) {
-        return null;
-    }
+    
+    // if(!root) {
+    //     return root;
+    // }
 
-    // Base Case 2: value equals current node's value
-    if (val === root.val) {
-        return root;
+    let current = root;
+    while(current) {
+        if(val < current.val) {
+            current = current.left;
+        } else if(val > current.val) {
+            current = current.right;
+        } else {
+            return current;
+        }
     }
+    return current;
 
-    // Recursive Cases:
-    // 1. Value is less than current node's value
-    if (val < root.val) {
-        return searchBST(root.left, val);
-    }
-    // 2. Value is greater than current node's value
-    else {
-        return searchBST(root.right, val);
-    }
-}
+};
