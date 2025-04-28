@@ -11,39 +11,36 @@
  *     }
  * }
  */
-function helper(val, currentNode) {
 
-    if(currentNode === null) {
-        return null;
+function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
+
+    // Base Case:
+    if(root === null) {
+        return root;
     }
 
-    if(val < currentNode.val) {
-        currentNode.left = helper(val, currentNode.left);
-    } else if(val > currentNode.val) {
-        currentNode.right = helper(val, currentNode.right);
+    if(key < root.val) {
+        root.left = deleteNode(root.left, key);
+    } else if(key > root.val) {
+        root.right = deleteNode(root.right, key);
     } else {
-        if(currentNode.left === null && currentNode.right === null) {
-            return null;
-        } else if(currentNode.left === null) {
-            currentNode = currentNode.right;
-        } else if(currentNode.right === null) {
-            currentNode = currentNode.left;
+        if(root.left === null) {
+            return root.right;
+        } else if(root.right === null) {
+            return root.left;
         } else {
-            const subTreeMin = minval(currentNode.right);
-            currentNode.val = subTreeMin;
-            currentNode.right = helper(subTreeMin, currentNode.right);
+            // Finding min value
+            let current = root.right;
+            while(current.left !== null) {
+                current = current.left;
+            }
+            // Assigning min value to current node
+            root.val = current.val;
+            // Deleting the node with min value from the right subtree
+            root.right = deleteNode(root.right, current.val);
         }
     }
 
-    return currentNode;
-}
-function minval(currentNode) {
-    while(currentNode.left !== null) {
-        currentNode = currentNode.left;
-    }
-    return currentNode.val;
-}
-function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
-    root = helper(key, root);
     return root;
+    
 };
