@@ -13,19 +13,35 @@
  */
 
 function insertIntoBST(root: TreeNode | null, val: number): TreeNode | null {
+
+    const newNode = new TreeNode(val);
+
+    if(!root) {
+        root = newNode;
+        return root;
+    }
+
+    let current = root;
+    while(true) {
+        
+        if(val < current.val) {
+            if(current.left === null) {
+                current.left = newNode;
+                return root;
+            } else {
+                current = current.left;
+            }
+        } else if(val > current.val) {
+            if(current.right === null) {
+                current.right = newNode;
+                return root;
+            } else {
+                current = current.right;
+            }
+        } else {
+            // Optional: Equals (can't happen)
+            return root;
+        }
+    }
     
-    // Edge Case: Empty Root
-    if(root === null) {
-        return new TreeNode(val);
-    }
-
-    // Recursive Cases
-    if(val < root.val) {
-        root.left = insertIntoBST(root.left, val);
-    } else if(val > root.val) {
-        root.right = insertIntoBST(root.right, val);
-    }
-
-    return root;
-
 };
