@@ -14,30 +14,41 @@
 
 function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
 
-    // Base Case:
+    // Base Case
     if(root === null) {
-        return root;
+        return null
     }
 
     if(key < root.val) {
+        // recurse left
         root.left = deleteNode(root.left, key);
     } else if(key > root.val) {
+        // recurse right
         root.right = deleteNode(root.right, key);
     } else {
-        if(root.left === null) {
-            return root.right;
-        } else if(root.right === null) {
-            return root.left;
-        } else {
-            // Finding min value
-            let current = root.right;
-            while(current.left !== null) {
-                current = current.left;
+        // Target is a leaf node
+        if(root.left === null && root.right === null) {
+            root = null;
+        }
+        // Target only has a left child
+        else if(root.right === null) {
+            root = root.left;
+        }
+        // Target only has a right child
+        else if(root.left === null) {
+            root = root.right;
+        }
+        // Target has both children
+        else {
+            // Find min for this sub tree
+            let subTreeMin = root.right;
+            while(subTreeMin.left !== null) {
+                subTreeMin = subTreeMin.left;
             }
-            // Assigning min value to current node
-            root.val = current.val;
-            // Deleting the node with min value from the right subtree
-            root.right = deleteNode(root.right, current.val);
+            // Re-assign root value
+            root.val = subTreeMin.val;
+            // Delete node with the min value
+            root.right = deleteNode(root.right, subTreeMin.val);
         }
     }
 
