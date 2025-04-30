@@ -13,98 +13,97 @@
  */
 
 function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
-
-    // Edge Case: Empty root
-    if(!root) {
-        return root;
+    // Edge case: empty tree
+    if (!root) {
+        return null;
     }
-
-    // Search for a node o remove (and it's parent)
-    let parent = null;
+    
+    // Special case: deleting the root with 0 or 1 child
+    if (root.val === key) {
+        if (!root.left) return root.right;
+        if (!root.right) return root.left;
+        
+        // Root has two children - handled below (falls through to main algorithm)
+    }
+    
+    // Find the node to delete and its parent
+    let parent: TreeNode | null = null;
     let current = root;
-    while(current && current.val !== key) {
+    
+    // Search for the node to delete
+    while (current && current.val !== key) {
         parent = current;
-        if(key < current.val) {
+        if (key < current.val) {
             current = current.left;
         } else {
             current = current.right;
         }
     }
-
-    // The node was not found
-    if(!current) {
+    
+    // If the key wasn't found in the tree
+    if (!current) {
         return root;
     }
-
-    // Otherwise, node exists
-    // Node has at most one child
-    if(!current.left || !current.right) {
-
-        // Can be left, right or null
+    
+    // Handle node deletion
+    // Case 1: Node has 0 or 1 child
+    if (!current.left || !current.right) {
+        // Determine which child exists (or null if no children)
         const child = current.left || current.right;
-
-        // Edge Case: target node is the root
-        if(!parent) {
-            // return child as the new root
+        
+        // Connect parent to child, bypassing current
+        if (parent) {
+            if (parent.left === current) {
+                parent.left = child;
+            } else {
+                parent.right = child;
+            }
+        } else {
+            // We're deleting the root (which has 0 or 1 child)
             return child;
         }
-
-        // if the target is on the left
-        if(parent.left === current) {
-            parent.left = child;
-        } 
-        // target is on the right
-        else {
-            parent.right = child;
-        }
-
-    } 
-    // target node has two children
-    else {
-
-        // Find the successor (smallest value in the right subtree)
-        let par = null; // Parent of the successor node
-        let delNode = current; // Save the node to be deleted
-
-        // Start by moving to the right subtree
-        current = current.right;
-        // Go as far left as possible to find the min value node
-        while(current.left) {
-            par = current;
-            current = current.left;
-        }
-
-        // After this, 'current' points to the successor (smallest node in right subtree)
-
-        // Scenario 1: If we moved left at least once (par is not null)
-        // We need to "extract" the successor from its current position
-        if(par) {
-            // The successor's parent points to the successor's right child (WHY?)
-            par.left = current.right;
-            // The successor takes the place of the deleted node, so it needs to point to the right subtree of the deleted node
-            current.right = delNode.right;
-        }
-
-        // Scenario 2: If we didn't move left at all (par is null)
-        // This means the direct right child of the node to delete is the successor
-        // We don't update the right pointer of the successor, as it's already correctly pointing to the rest of the right subtree
-
-        // This happens in both scenarios - the successor node needs to point to the left subtree of the deleted node.
-        current.left = delNode.left;
-
-        // Edge Case: Deleting the root
-        if(!parent) {
-            return current;  // Return the successor as the new root
-        }
-
-        // Otherwise, update parent's reference to point to the successor
-        if(parent.left === delNode) {
-            parent.left = current;
-        } else {
-            parent.right = current;
-        }
-
     }
-
+    // Case 2: Node has 2 children - use value swap approach
+    else {
+        // Find the minimum value in the right subtree (successor)
+        let successorVal = findMinValue(current.right);
+        
+        // Replace current's value with successor's value
+        current.val = successorVal;
+        
+        // Now delete the successor node (which has the value we just moved up)
+        // Note: we know the successor only has a right child (or no children)
+        deleteSuccessor(current, current.right, successorVal);
+    }
+    
     return root;
-};
+}
+
+// Helper function to find minimum value in a subtree
+function findMinValue(node: TreeNode): number {
+    let current = node;
+    while (current.left) {
+        current = current.left;
+    }
+    return current.val;
+}
+
+// Helper function to delete the successor node (node with minimum value)
+function deleteSuccessor(parent: TreeNode, node: TreeNode, value: number): void {
+    let prev = parent;
+    let current = node;
+    
+    // Find the successor node and its parent
+    while (current && current.val !== value) {
+        prev = current;
+        current = current.left; // The successor is always to the left
+    }
+    
+    // The successor is found, delete it
+    // Note: successor can only have a right child (or no children)
+    if (prev.left === current) {
+        prev.left = current.right;
+    } else {
+        prev.right = current.right;
+    }
+}
