@@ -12,98 +12,34 @@
  * }
  */
 
-class Node<T> {
-    value: T;
-    next: Node<T> | null;
-    constructor(value: T) {
-        this.value = value;
-        this.next = null;
-    }
-}
-
-class CustomQueue<T> {
-    first: Node<T> | null;
-    last: Node<T> | null;
-    length: number;
-
-    constructor() {
-        this.first = null;
-        this.last = null;
-        this.length = 0;
-    }
-
-    enqueue(value: T): CustomQueue<T> {
-        const newNode = new Node(value);
-
-        // check if queue is empty
-        if (this.length === 0) {
-            // queue is empty
-            this.first = newNode;
-            this.last = newNode;
-        } else {
-            // queue is not empty
-            this.last!.next = newNode;
-            this.last = newNode;
-        }
-        this.length++;
-        return this;
-    }
-
-    dequeue(): T | undefined {
-        if (this.length === 0) {
-            return undefined;
-        }
-
-        const temp = this.first;
-        this.first = this.first!.next;
-        temp!.next = null;
-        this.length--;
-        if (this.length === 0) {
-            this.last = null;
-        }
-        return temp!.value;
-    }
-}
-
 function levelOrder(root: TreeNode | null): number[][] {
 
-    // Edge Case: Empty Tree
     if(!root) {
         return [];
     }
+    
+    const queue = [];
+    const result = [];
 
-    // Initialize queue and results array
-    const queue = new CustomQueue<TreeNode>();
-    const result: number[][] = [];
+    queue.push(root);
 
-    // Set a pointer at the root
-    let current = root;
-
-    // Enqueue the root
-    queue.enqueue(current);
-
-    // Iterate while queue is not empty
     while(queue.length !== 0) {
 
-        // to hold values at each level
         const level = [];
-        const currentQueueLength = queue.length;
+
+        let currentQueueLength = queue.length;
         for(let i = currentQueueLength; i > 0; i--) {
 
-            // dequeue the node
-            current = queue.dequeue();
+            const currentNode = queue.shift();
 
-            // push the value int current LEVEL array
-            level.push(current.val);
+            level.push(currentNode.val);
 
-            // check left
-            if(current.left) {
-                queue.enqueue(current.left);
+            if(currentNode.left) {
+                queue.push(currentNode.left);
             }
 
-            // check right
-            if(current.right) {
-                queue.enqueue(current.right);
+            if(currentNode.right) {
+                queue.push(currentNode.right);
             }
 
         }
@@ -113,4 +49,5 @@ function levelOrder(root: TreeNode | null): number[][] {
     }
 
     return result;
+
 };
