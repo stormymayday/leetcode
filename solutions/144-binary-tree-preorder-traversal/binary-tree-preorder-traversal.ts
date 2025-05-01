@@ -13,32 +13,28 @@
  */
 
 function preorderTraversal(root: TreeNode | null): number[] {
-    
+
+    // Edge Case: Empty Root
     if(!root) {
         return [];
     }
 
     const result = [];
+    const stack = [root];
 
-    function traverse(node) {
-
-        // 1. Visit Node
-        result.push(node.val);
-
-        // 2. Recurse Left
-        if(node.left) {
-            traverse(node.left);
+    while(stack.length > 0) {
+        const currentNode = stack.pop();
+        result.push(currentNode.val);
+       
+        if(currentNode.right) {
+            stack.push(currentNode.right);
         }
-
-        // 3. Recurse Right
-        if(node.right) {
-            traverse(node.right);
+         // We push 'left' last to 'pop' it first
+        if(currentNode.left) {
+            stack.push(currentNode.left);
         }
-
     }
 
-    traverse(root);
-
     return result;
-
+    
 };
