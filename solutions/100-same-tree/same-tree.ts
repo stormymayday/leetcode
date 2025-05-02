@@ -14,17 +14,17 @@
 
 function isSameTree(p: TreeNode | null, q: TreeNode | null): boolean {
 
-    // Base Case 1: Structural Check - both are null
+    // Base Case 1: both reached null at the same time
     if(p === null && q === null) {
         return true;
     }
 
-    // Base Case 2: Structural Check - one is null
+    // Base Case 2: only one reached null
     if(p === null || q === null) {
         return false;
     }
 
-    // Base Case 3: Value Check - not equal
+    // Base Case 3: values are different
     if(p.val !== q.val) {
         return false;
     }
