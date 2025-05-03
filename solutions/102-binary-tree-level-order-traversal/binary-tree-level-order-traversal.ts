@@ -14,32 +14,39 @@
 
 function levelOrder(root: TreeNode | null): number[][] {
 
+    // Edge Case: empty root
     if(!root) {
         return [];
     }
 
     const levels = [];
 
-    const stack = [ {node: root, level: 0} ];
+    // helper
+    function fillLevels(root, levelsArray, currentLevel) {
 
-    while(stack.length > 0) {
-
-        const { node, level} = stack.pop();
-
-        if(levels[level] === undefined) {
-            levels[level] = [];
-        }
-        levels[level].push(node.val);
-
-        if(node.right) {
-            stack.push({node: node.right, level: level + 1});
+        // Base Case: if root is null, simply return
+        if(root === null) {
+            return;
         }
 
-        if(node.left) {
-            stack.push({node: node.left, level: level + 1});
+        // Otherwise, process the root
+        if(levelsArray[currentLevel] === undefined) {
+            // Inialize an empty array at the current level (index) if it does not exist
+            levelsArray[currentLevel] = [];
         }
+        // push the current root val into the designated subarray
+        levelsArray[currentLevel].push(root.val);
+
+        // Recurse Left incrementing the current level
+        fillLevels(root.left, levelsArray, currentLevel + 1);
+
+        // Recurse Right incrementing the current leve
+        fillLevels(root.right, levelsArray, currentLevel + 1);
 
     }
+
+    // kick off the recurions at the root (level 0)
+    fillLevels(root, levels, 0);
 
     return levels;
     
