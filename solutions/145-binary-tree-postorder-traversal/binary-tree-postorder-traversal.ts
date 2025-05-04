@@ -14,29 +14,30 @@
 
 function postorderTraversal(root: TreeNode | null): number[] {
 
+    // Edge Case: empty root
     if(!root) {
         return [];
     }
 
     const result = [];
+    const stack = [root];
 
-    function traverse(node) {
-        // 1. Left
-        if(node.left) {
-            traverse(node.left);
+    while(stack.length > 0) {
+
+        const current = stack.pop();
+
+        result.push(current.val);
+
+        if(current.left) {
+            stack.push(current.left);
         }
 
-        // 2. Right
-        if(node.right) {
-            traverse(node.right);
+        if(current.right) {
+            stack.push(current.right);
         }
-
-        // 3. Visit current
-        result.push(node.val);
+        
     }
 
-    traverse(root);
-
-    return result;
+    return result.reverse();
     
 };
