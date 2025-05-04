@@ -13,19 +13,17 @@
  */
 
 function insertIntoBST(root: TreeNode | null, val: number): TreeNode | null {
-    
-    // Base Case: 
-    if(!root) {
+
+    if(root === null) {
         return new TreeNode(val);
-        //return root;
     }
 
-    if(val < root.val) {
+    if(root.val > val) {
         root.left = insertIntoBST(root.left, val);
     } else {
         root.right = insertIntoBST(root.right, val);
     }
 
     return root;
-
+    
 };
