@@ -13,21 +13,18 @@
  */
 
 function invertTree(root: TreeNode | null): TreeNode | null {
-    // Base Case
+
     if(root === null) {
         return null;
     }
 
-    // Swap children
     const temp = root.left;
     root.left = root.right;
     root.right = temp;
 
-    // Traverse Left
     invertTree(root.left);
-
-    // Traverse Right
     invertTree(root.right);
 
     return root;
+    
 };
