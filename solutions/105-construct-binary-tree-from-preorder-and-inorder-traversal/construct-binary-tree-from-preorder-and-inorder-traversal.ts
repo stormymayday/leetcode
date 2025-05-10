@@ -12,26 +12,47 @@
  * }
  */
 
-function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
-
-    if(preorder.length === 0) {
+function buildTree(
+    preorder: number[],
+    inorder: number[],
+    inorderStart: number = 0,
+    inorderEnd: number = inorder.length - 1,
+    preorderStart: number = 0,
+    preorderEnd: number = preorder.length - 1
+): TreeNode | null {
+    
+    // Base Case: start and end pointers have crossed
+    if(inorderStart > inorderEnd) {
         return null;
     }
 
-    const value = preorder[0];
+    const value = preorder[preorderStart];
     const root = new TreeNode(value);
+    const mid = inorder.indexOf(value); // problematic: O(n)
 
-    const mid = inorder.indexOf(value);
+    // of the inorder
+    const leftSize = mid - inorderStart;
 
-    const leftIn = inorder.slice(0, mid);
-    const rightIn = inorder.slice(mid + 1);
+    // Build Left Subtree
+    root.left = buildTree(
+        preorder,
+        inorder,
+        inorderStart, // stays the same
+        mid - 1, // inorderEnd: one before current mid
+        preorderStart + 1, // skip one (root)
+        preorderStart + leftSize // preorderEnd: current preorderStart + leftSize
+    );
 
-    const leftPre = preorder.slice(1, leftIn.length + 1);
-    const rightPre = preorder.slice(leftIn.length + 1);
-
-    root.left = buildTree(leftPre, leftIn);
-    root.right = buildTree(rightPre, rightIn);
+    // Build Right Subtree
+    root.right = buildTree(
+        preorder,
+        inorder,
+        mid + 1, //inorderStart: one after current mid 
+        inorderEnd, // stays the same
+        preorderStart + leftSize + 1, // preOrderStart: same as left but + 1
+        preorderEnd, // stays the same
+    );
 
     return root;
-    
+
 };
