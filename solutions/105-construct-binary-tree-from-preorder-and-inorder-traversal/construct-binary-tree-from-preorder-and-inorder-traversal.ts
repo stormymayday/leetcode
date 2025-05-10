@@ -20,16 +20,17 @@ function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
 
     const value = preorder[0];
     const root = new TreeNode(value);
-    const midIndex = inorder.indexOf(value);
 
-    const leftInOrder = inorder.slice(0, midIndex);
-    const rightInOrder = inorder.slice(midIndex + 1);
+    const mid = inorder.indexOf(value);
 
-    const leftPreOrder = preorder.slice(1, leftInOrder.length + 1);
-    const rightPreOrder = preorder.slice(leftInOrder.length + 1);
+    const leftIn = inorder.slice(0, mid);
+    const rightIn = inorder.slice(mid + 1);
 
-    root.left = buildTree(leftPreOrder, leftInOrder);
-    root.right = buildTree(rightPreOrder, rightInOrder);
+    const leftPre = preorder.slice(1, leftIn.length + 1);
+    const rightPre = preorder.slice(leftIn.length + 1);
+
+    root.left = buildTree(leftPre, leftIn);
+    root.right = buildTree(rightPre, rightIn);
 
     return root;
     
