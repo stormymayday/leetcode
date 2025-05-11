@@ -15,44 +15,63 @@
 function buildTree(
     preorder: number[],
     inorder: number[],
-    inorderStart: number = 0,
-    inorderEnd: number = inorder.length - 1,
-    preorderStart: number = 0,
-    preorderEnd: number = preorder.length - 1
 ): TreeNode | null {
-    
-    // Base Case: start and end pointers have crossed
-    if(inorderStart > inorderEnd) {
-        return null;
+
+    const inorderIndexMap = new Map();
+    for(let i = 0; i < inorder.length; i++) {
+        const value = inorder[i];
+        inorderIndexMap.set(value, i);
     }
 
-    const value = preorder[preorderStart];
-    const root = new TreeNode(value);
-    const mid = inorder.indexOf(value); // problematic: O(n)
+    function helper(
+        preorder: number[],
+        inorder: number[],
+        inorderIndexMap,
+        inorderStart: number = 0,
+        inorderEnd: number = inorder.length - 1,
+        preorderStart: number = 0,
+        preorderEnd: number = preorder.length - 1
+    ): TreeNode | null {
+        
+        // Base Case: start and end pointers have crossed
+        if(inorderStart > inorderEnd) {
+            return null;
+        }
 
-    // of the inorder
-    const leftSize = mid - inorderStart;
+        const value = preorder[preorderStart];
+        const root = new TreeNode(value);
+        const mid = inorderIndexMap.get(value);
 
-    // Build Left Subtree
-    root.left = buildTree(
-        preorder,
-        inorder,
-        inorderStart, // stays the same
-        mid - 1, // inorderEnd: one before current mid
-        preorderStart + 1, // skip one (root)
-        preorderStart + leftSize // preorderEnd: current preorderStart + leftSize
-    );
+        // of the inorder
+        const leftSize = mid - inorderStart;
 
-    // Build Right Subtree
-    root.right = buildTree(
-        preorder,
-        inorder,
-        mid + 1, //inorderStart: one after current mid 
-        inorderEnd, // stays the same
-        preorderStart + leftSize + 1, // preOrderStart: same as left but + 1
-        preorderEnd, // stays the same
-    );
+        // Build Left Subtree
+        root.left = helper(
+            preorder,
+            inorder,
+            inorderIndexMap,
+            inorderStart, // stays the same
+            mid - 1, // inorderEnd: one before current mid
+            preorderStart + 1, // skip one (root)
+            preorderStart + leftSize // preorderEnd: current preorderStart + leftSize
+        );
 
-    return root;
+        // Build Right Subtree
+        root.right = helper(
+            preorder,
+            inorder,
+            inorderIndexMap,
+            mid + 1, //inorderStart: one after current mid 
+            inorderEnd, // stays the same
+            preorderStart + leftSize + 1, // preOrderStart: same as left but + 1
+            preorderEnd, // stays the same
+        );
 
-};
+        return root;
+
+    }
+
+    return helper(preorder, inorder, inorderIndexMap);
+
+}
+
