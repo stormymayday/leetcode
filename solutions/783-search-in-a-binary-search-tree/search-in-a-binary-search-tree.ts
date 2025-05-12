@@ -18,17 +18,17 @@ function searchBST(root: TreeNode | null, val: number): TreeNode | null {
         return root;
     }
 
-    const queue = [root];
-    while(queue.length > 0) {
-        const current = queue.shift();
+    const stack = [root];
+    while(stack.length > 0) {
+        const current = stack.pop();
         if(current.val === val) {
             return current;
         }
         if(current.left) {
-            queue.push(current.left);
+            stack.push(current.left);
         }
         if(current.right) {
-            queue.push(current.right);
+            stack.push(current.right);
         }
     }
     return null;
