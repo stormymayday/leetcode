@@ -13,24 +13,23 @@
  */
 
 function rangeSumBST(root: TreeNode | null, low: number, high: number): number {
-
-    if(!root) {
+    // Base Case
+    if(root === null) {
         return 0;
     }
 
-    let sum = 0;
-    const stack = [root];
-    while(stack.length > 0) {
-        const current = stack.pop();
-        if(current.val >= low && current.val <= high) {
-            sum+=current.val;
-        }
-        if(current.right) {
-            stack.push(current.right);
-        }
-        if(current.left) {
-            stack.push(current.left);
-        }
+    // If current val is greater than 'high'
+    if(root.val > high) {
+        // Search Left
+        return rangeSumBST(root.left, low, high);
     }
-    return sum;
+
+    // If current val is smaller than 'low'
+    if(root.val < low) {
+        // Search Right
+        return rangeSumBST(root.right, low, high); 
+    }
+
+    // Otherwise, the value is in range - sum it up
+    return root.val + rangeSumBST(root.left, low, high) + rangeSumBST(root.right, low, high); 
 };
