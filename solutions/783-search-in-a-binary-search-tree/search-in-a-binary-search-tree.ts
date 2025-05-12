@@ -18,18 +18,30 @@ function searchBST(root: TreeNode | null, val: number): TreeNode | null {
         return root;
     }
 
-    const stack = [root];
-    while(stack.length > 0) {
-        const current = stack.pop();
-        if(current.val === val) {
-            return current;
+    function traversePreOrder(root) {
+        // Base Case
+        if(root === null) {
+            return null;
         }
-        if(current.left) {
-            stack.push(current.left);
+
+        // 1. Visit Node
+        if(root.val === val) {
+            return root;
         }
-        if(current.right) {
-            stack.push(current.right);
+
+        // 2. Traverse Left
+        if(root.val > val) {
+            return traversePreOrder(root.left);
         }
+        
+
+        // 3. Traverse Right
+        if(root.val < val) {
+            return traversePreOrder(root.right);
+        }
+        
     }
-    return null;
+    
+    return traversePreOrder(root);
+
 };
