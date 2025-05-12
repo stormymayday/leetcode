@@ -18,9 +18,6 @@ function maxDepth(root: TreeNode | null): number {
         return 0;
     }
 
-    const leftTreeHeight = maxDepth(root.left);
-    const rightTreeHeight = maxDepth(root.right);
-
-    return 1 + Math.max(leftTreeHeight, rightTreeHeight);
+    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
     
 };
