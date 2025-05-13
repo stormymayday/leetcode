@@ -13,33 +13,44 @@
  */
 
 function binaryTreePaths(root: TreeNode | null): string[] {
-    if (!root) {
+
+    // Edge Case: empty tree
+    if(!root) {
         return [];
     }
-    
+
     const result: string[] = [];
-    
-    function dfs(node: TreeNode, path: string) {
-        // Current path includes the current node value
-        const currentPath = path ? `${path}->${node.val}` : `${node.val}`;
-        
-        // If leaf node, add the path to results
-        if (!node.left && !node.right) {
+
+    function helper(root: TreeNode, path: string):void {
+
+        // Handle current path
+        // if path exists: append current value
+        // otherwise: start with current value
+        const currentPath = path ? `${path}->${root.val}` : `${root.val}`;
+
+        // Base Case: leaf node
+        if(root.left === null && root.right === null) {
+            // current path is finished
+            // push it to the result
             result.push(currentPath);
             return;
         }
-        
-        // Process left subtree
-        if (node.left) {
-            dfs(node.left, currentPath);
+
+        // Recurse Left
+        if(root.left) {
+            helper(root.left, currentPath);
         }
-        
-        // Process right subtree
-        if (node.right) {
-            dfs(node.right, currentPath);
+
+        // Recurse Right
+        if(root.right) {
+            helper(root.right, currentPath);
         }
+
     }
-    
-    dfs(root, "");
+
+    // kick off the recursion
+    helper(root, "");
+
     return result;
-}
+    
+};
