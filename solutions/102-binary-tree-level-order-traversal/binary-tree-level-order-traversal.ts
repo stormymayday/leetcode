@@ -24,10 +24,11 @@ function levelOrder(root: TreeNode | null): number[][] {
     while(stack.length > 0) {
         const {node, level} = stack.pop();
         if(result[level] === undefined) {
-            result[level] = [];
+            result.push([node.val]);
+        } else {
+            result[level].push(node.val);
         }
-        result[level].push(node.val);
-
+        
         if(node.right) {
             stack.push({node: node.right, level: level + 1});
         }
