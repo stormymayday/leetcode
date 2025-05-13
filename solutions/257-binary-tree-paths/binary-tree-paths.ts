@@ -11,48 +11,42 @@
  *     }
  * }
  */
-function helper(root) {
-    // Base Case 1: null
-    if(root === null) {
-        return [];
-    }
-    // Base Case 2: leaf node
-    if(root.left === null && root.right === null) {
-        return [[root.val]];
-    }
 
-    const allPaths = [];
-
-    // Recurse Left
-    const leftSubPaths = helper(root.left);
-    for(const path of leftSubPaths) {
-        // adding root to the current sub path
-        path.push(root.val);
-        // adding current sub path to all paths
-        allPaths.push(path);
-    }
-
-    // Recurse Right
-    const rightSubPaths = helper(root.right);
-    for(const path of rightSubPaths) {
-        // adding root to the current sub path
-        path.push(root.val);
-        // adding current sub path to all paths
-        allPaths.push(path);
-    }
-
-    return allPaths;
-}
 function binaryTreePaths(root: TreeNode | null): string[] {
 
-    const paths = helper(root);
-    
-    // for(let path of paths) {
-    //     Issue: only changes the local variable path, not the array element itself.
-    //     path = path.reverse().join("->");
-    // }
-    
-    return paths.map(path => {
+    function helper(root) {
+
+        // Base Case 1: empty node
+        if(root === null) {
+            return [];
+        }
+
+        // Base Case 2: leaf node
+        if(root.left === null && root.right === null) {
+            return [[root.val]];
+        }
+
+        const allPaths = [];
+
+        const leftPaths = helper(root.left);
+        for(const path of leftPaths) {
+            path.push(root.val);
+            allPaths.push(path);
+        }
+
+        const rightPaths = helper(root.right);
+        for(const path of rightPaths) {
+            path.push(root.val);
+            allPaths.push(path);
+        }
+
+        return allPaths;
+
+    }
+
+    const result = helper(root);
+    return result.map((path) => {
         return path.reverse().join("->");
     });
+
 };
