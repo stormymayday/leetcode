@@ -14,29 +14,34 @@
 
 function levelOrder(root: TreeNode | null): number[][] {
 
-    // Edge Case: empty root
     if(!root) {
         return [];
     }
 
-    const result = [];
-    const stack = [{node: root, level: 0}];
-    while(stack.length > 0) {
-        const {node, level} = stack.pop();
-        if(result[level] === undefined) {
-            result.push([node.val]);
+    const levels = [];
+
+    function helper(root, level) {
+        // Base Case
+        if(root === null) {
+            return;
+        }
+
+        // Visit Node
+        if(levels[level] === undefined) {
+            levels.push([root.val]);
         } else {
-            result[level].push(node.val);
+            levels[level].push(root.val);
         }
-        
-        if(node.right) {
-            stack.push({node: node.right, level: level + 1});
-        }
-        if(node.left) {
-            stack.push({node: node.left, level: level + 1});
-        }
+
+        // Recurse Left
+        helper(root.left, level + 1);
+        // Recurse Right
+        helper(root.right, level + 1);
+
     }
 
-    return result;
+    helper(root, 0);
+
+    return levels;
     
 };
