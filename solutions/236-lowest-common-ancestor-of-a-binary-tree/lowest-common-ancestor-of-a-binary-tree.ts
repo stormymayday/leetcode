@@ -13,60 +13,60 @@
  */
 
 function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: TreeNode | null): TreeNode | null {
-
-    // Edge Case: either root, p or q is null
+    // Edge Case
     if(!root || !p || !q) {
         return null;
     }
 
-    // Find paths to both values
-    const path1 = findPath(root, p.val);
-    const path2 = findPath(root, q.val);
+    function pathfinder(root: TreeNode | null, target: number): TreeNode[] | null {
+        // Base Case 1: target not found
+        if(root === null) {
+            // if target was not found, return 'null'
+            return null;
+        }
 
-    // Edge Case: either of the paths is null
+        // Base Case 2: target found
+        if(root.val === target) {
+            // if target was found, return array containing node
+            return [root];
+        }
+
+        // Recurse Left
+        const leftPath = pathfinder(root.left, target);
+        // Recurse Right
+        const rightPath = pathfinder(root.right, target);
+
+        // target was found in the left subtree
+        if(leftPath !== null) {
+            leftPath.push(root);
+            return leftPath;
+        } 
+        // target was found in the right subtree
+        else if(rightPath !== null) {
+            rightPath.push(root);
+            return rightPath;
+        } 
+        // target was not found
+        else {
+            return null;
+        }
+    }
+
+    const path1: TreeNode[] | null = pathfinder(root, p.val);
+    const path2: TreeNode[] | null = pathfinder(root, q.val);
+
+    // If target was not found
     if(path1 === null || path2 === null) {
         return null;
     }
 
-     // Adding first path into a set for faster lookup
-    const set = new Set(path1);
-
-    // Iterating over the second path
+    // Creating a set from path1 for O(1) lookup
+    const set1 = new Set(path1);
+    // Iterating over path2
     for(const node of path2) {
-        // Find the first node in pathToVal2 that exists in pathToVal1
-        if(set.has(node)) {
-        return node;
+        if(set1.has(node)) {
+            return node;
         }
     }
 	
 };
-
-function findPath(root, target) {
-
-    // Base Case 1: reached null
-    if(root === null) {
-        return null;
-    }
-
-    // Base Case 2: reached target
-    if(root.val === target) {
-        return [root];
-    }
-
-    // Traverse Left
-    const leftPath = findPath(root.left, target);
-    if(leftPath !== null) {
-        leftPath.push(root);
-        return leftPath;
-    }
-
-    // Traverse Right
-    const rightPath = findPath(root.right, target);
-    if(rightPath !== null) {
-        rightPath.push(root);
-        return rightPath;
-    }
-
-    return null;
-
-}
