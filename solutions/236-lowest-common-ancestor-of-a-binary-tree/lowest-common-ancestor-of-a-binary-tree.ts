@@ -61,10 +61,14 @@ function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: Tree
     }
 
     // Creating a set from path1 for O(1) lookup
-    const set1 = new Set(path1);
+    const set1 = new Set();
+    for(const node of path1) {
+        set1.add(node.val);
+    }
+
     // Iterating over path2
     for(const node of path2) {
-        if(set1.has(node)) {
+        if(set1.has(node.val)) {
             return node;
         }
     }
