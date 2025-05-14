@@ -13,7 +13,6 @@
  */
 
 function invertTree(root: TreeNode | null): TreeNode | null {
-
     if(root === null) {
         return null;
     }
@@ -26,5 +25,4 @@ function invertTree(root: TreeNode | null): TreeNode | null {
     invertTree(root.right);
 
     return root;
-    
 };
