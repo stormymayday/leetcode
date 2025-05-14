@@ -13,35 +13,21 @@
  */
 
 function searchBST(root: TreeNode | null, val: number): TreeNode | null {
-
-    if(!root) {
-        return root;
-    }
-
-    function traversePreOrder(root) {
-        // Base Case
-        if(root === null) {
-            return null;
-        }
-
-        // 1. Visit Node
-        if(root.val === val) {
-            return root;
-        }
-
-        // 2. Traverse Left
-        if(root.val > val) {
-            return traversePreOrder(root.left);
-        }
-        
-
-        // 3. Traverse Right
-        if(root.val < val) {
-            return traversePreOrder(root.right);
-        }
-        
-    }
     
-    return traversePreOrder(root);
+    if(!root) {
+        return null;
+    }
+
+    let current = root;
+    while(current) {
+        if(current.val === val) {
+            return current; // found
+        } else if(current.val > val) {
+            current = current.left;
+        } else {
+            current = current.right;
+        }
+    }
+    return current; // will be null if not found
 
 };
