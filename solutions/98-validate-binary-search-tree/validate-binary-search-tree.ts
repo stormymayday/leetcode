@@ -13,21 +13,22 @@
  */
 
 function isValidBST(root: TreeNode | null): boolean {
-    let prev: number | null = null;
-    
-    function inorder(node: TreeNode | null): boolean {
-        if (!node) return true;
-        
-        // Check left subtree
-        if (!inorder(node.left)) return false;
-        
-        // Check current node - it should be greater than the previous value
-        if (prev !== null && node.val <= prev) return false;
-        prev = node.val;
-        
-        // Check right subtree
-        return inorder(node.right);
+
+    function helper(node, leftBound, rightBound) {
+        // Base Case 1: null node
+        if(node === null) {
+            return true;
+        }
+
+        // Base Case 2: out of bounds
+        if(node.val <= leftBound || node.val >= rightBound) {
+            return false;
+        }
+
+        // Recurse Left & Right
+        return helper(node.left, leftBound, node.val) && helper(node.right, node.val, rightBound);
     }
+
+    return helper(root, -Infinity, Infinity);
     
-    return inorder(root);
-}
+};
