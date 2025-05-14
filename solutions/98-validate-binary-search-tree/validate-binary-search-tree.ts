@@ -13,32 +13,21 @@
  */
 
 function isValidBST(root: TreeNode | null): boolean {
-
-    if(!root) {
-        return true;
-    }
-
-    const numbers = [];
-    // traverse and fill in the numbers array
-    function traverseInOrder(root) {
-        if(root === null) {
-            return;
-        }
-        traverseInOrder(root.left);
-        numbers.push(root.val);
-        traverseInOrder(root.right);
-    }
-    traverseInOrder(root); // kick off the recursion
-
-    if(numbers.length < 2) {
-        return true;
-    }
-
-    for(let i = 1; i < numbers.length; i++) {
-        if(numbers[i] <= numbers[i - 1]) {
-            return false;
-        }
-    }
-    return true;
+    let prev: number | null = null;
     
-};
+    function inorder(node: TreeNode | null): boolean {
+        if (!node) return true;
+        
+        // Check left subtree
+        if (!inorder(node.left)) return false;
+        
+        // Check current node - it should be greater than the previous value
+        if (prev !== null && node.val <= prev) return false;
+        prev = node.val;
+        
+        // Check right subtree
+        return inorder(node.right);
+    }
+    
+    return inorder(root);
+}
