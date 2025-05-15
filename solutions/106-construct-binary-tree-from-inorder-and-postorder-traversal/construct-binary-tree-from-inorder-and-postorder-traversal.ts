@@ -14,35 +14,54 @@
 
 function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
 
-    // Base Case: if either of the input arrays is empty
-    if(inorder.length === 0) {
-        return null;
+    const inorderIndexMap = new Map();
+    for(let i = 0; i < inorder.length; i++) {
+        inorderIndexMap.set(inorder[i], i);
     }
+
+    function helper(
+        inorder,
+        postorder,
+        inorderIndexMap,
+        inorderStart = 0,
+        inorderEnd = inorder.length - 1,
+        postorderStart = 0,
+        postorderEnd = postorder.length - 1
+    ) {
+
+        // Base Case
+        if (inorderStart > inorderEnd) {
+            return null;
+        }
+
+        const value = postorder[postorderEnd];
+        const root = new TreeNode(value);
+        const mid = inorderIndexMap.get(value);
+        const leftSize = mid - inorderStart;
+
+        root.left = helper(
+            inorder,
+            postorder,
+            inorderIndexMap,
+            inorderStart, // stays the same
+            mid - 1, // inorderEnd
+            postorderStart, // stays the same
+            postorderStart + leftSize - 1 // Postorder end index is inclusive, so it must be one before the right subtree start.
+        );
+
+        root.right = helper(
+            inorder,
+            postorder,
+            inorderIndexMap,
+            mid + 1,
+            inorderEnd, // stays the same
+            postorderStart + leftSize, // The right subtree starts immediately after the left subtree in postorder traversal.
+            postorderEnd - 1
+        );
+
+        return root;
+    }
+
+    return helper(inorder, postorder, inorderIndexMap);
     
-    // Grabbing the last element from the postOrder array
-    const value = postorder[postorder.length - 1];
-    // Creating a new root using that value
-    const root = new TreeNode(value);
-
-    // Grabbing the index of that value from inorder
-    const midIndex = inorder.indexOf(value);
-
-    // Split the inorder array into left and right subtrees
-    // Left subtree: all elements before the midIndex (non-inclusive)
-    const leftInOrder = inorder.slice(0, midIndex);
-    // Right subtree: all elements after the midIndex
-    const rightInOrder = inorder.slice(midIndex + 1);
-
-    // Split the postOrder array accordingly
-    // Left subtree postOrder: first 'leftInOrder.length' elements
-    const leftPostOrder = postorder.slice(0, leftInOrder.length);
-    // Right subtree postOrder: elements between end of left portion and before the current root value
-    const rightPostOrder = postorder.slice(leftInOrder.length, - 1);
-
-    // Recurse left to get the root of the left subtree and assign it as the left child for the current root
-    root.left = buildTree(leftInOrder, leftPostOrder);
-    // Recurse right to get the root of the right subtree and assign it as the right child for the current root
-    root.right = buildTree(rightInOrder, rightPostOrder);
-
-    return root; 
 };
