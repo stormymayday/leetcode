@@ -13,21 +13,21 @@ function isAnagram(s: string, t: string): boolean {
         }
     }
 
-    const freqMap2 = {};
     for(const char of t) {
-        if(freqMap2[char] === undefined) {
-            freqMap2[char] = 1;
+        if(freqMap1[char] === undefined) {
+            return false;
         } else {
-            freqMap2[char]++;
+            freqMap1[char]--;
+            if(freqMap1[char] === 0) {
+                delete freqMap1[char];
+            }
         }
     }
 
-    for(const key in freqMap1) {
-        const value = freqMap1[key];
-        if(freqMap2[key] !== value) {
-            return false;
-        }
+    if(Object.keys(freqMap1).length === 0) {
+        return true;
+    } else {
+        return false;
     }
-    return true;
     
 };
