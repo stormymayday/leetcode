@@ -9,7 +9,8 @@ function frequencySort(s: string): string {
         freqMap[char] += 1;
     }
 
-    const buckets = new Map(); // maps occurence (number) to characters (as an array)
+    // Reverse map: frequency to character (as an array)
+    const buckets = new Map();
     // Organize chars into buckets by frequency
     for(const char in freqMap) {
         const count = freqMap[char];
