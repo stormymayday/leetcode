@@ -1,21 +1,15 @@
 function findDisappearedNumbers(nums: number[]): number[] {
-    
-    const hashMap = {};
+
+    const hashSet = new Set();
+
     for(let i = 1; i <= nums.length; i++) {
-        hashMap[i] = 0;
+        hashSet.add(i);
     }
 
     for(const num of nums) {
-        hashMap[num]++;
+        hashSet.delete(num);
     }
 
-    const result = [];
-    for(const key in hashMap) {
-        if(hashMap[key] === 0) {
-            result.push(parseInt(key));
-        }
-    }
-
-    return result;
-
+    return Array.from(hashSet) as number[];
+    
 };
