@@ -13,11 +13,15 @@ function isAnagram(s: string, t: string): boolean {
     }
 
     const freqMap1 = buildFrequencyMap(s);
-    const freqMap2 = buildFrequencyMap(t);
 
-    for(const [key, value] of freqMap1) {
-        if(freqMap2.get(key) !== value) {
+    for(const char of t) {
+        if(!freqMap1.has(char)) {
             return false;
+        } else {
+            freqMap1.set(char, freqMap1.get(char) - 1);
+            if(freqMap1.get(char) === 0) {
+                freqMap1.delete(char);
+            }
         }
     }
     return true;
