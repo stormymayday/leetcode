@@ -23,11 +23,12 @@ function isAnagram(s: string, t: string): boolean {
             }
         }
     }
+    return true;
 
-    if(Object.keys(freqMap1).length === 0) {
-        return true;
-    } else {
-        return false;
-    }
+    // if(Object.keys(freqMap1).length === 0) {
+    //     return true;
+    // } else {
+    //     return false;
+    // }
     
 };
