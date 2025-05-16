@@ -2,7 +2,7 @@ function findDisappearedNumbers(nums: number[]): number[] {
     
     // Marking existing numbers as negative
     for(const num of nums) {
-        // Get index of the current number
+        // Get corresponding index for the current number
         const index = Math.abs(num) - 1;
 
         // Mark number at that index as negative
