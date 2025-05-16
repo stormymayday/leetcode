@@ -1,16 +1,27 @@
 function intersection(nums1: number[], nums2: number[]): number[] {
 
-    const hashSet: Set<number> = new Set(nums1);
-    const intersection = [];
-
-    for(let i = 0; i < nums2.length; i++) {
-        if(hashSet.has(nums2[i])) {
-            intersection.push(nums2[i]);
-            hashSet.delete(nums2[i])
+    // Create hashMap out of the first array
+    const hashMap1 = {};
+    for(const num of nums1) {
+        if(!(num in hashMap1)) {
+            hashMap1[num] = true;
         }
     }
 
-
-    return intersection;
+    // Create hashMap out of the second array
+    const hashMap2 = {};
+    for(const num of nums2) {
+        if(!(num in hashMap2)) {
+            hashMap2[num] = true;
+        }
+    }
     
+    // Iterate over either map and check if key exists in the other map
+    const result = [];
+    for(const key in hashMap1) {
+        if(key in hashMap2) {
+            result.push(parseInt(key));
+        }
+    }
+    return result;
 };
