@@ -1,39 +1,24 @@
+function buildFrequencyMap(str: string):Map<string, number> {
+    const map = new Map();
+    for(let i = 0; i < str.length; i++) {
+        const char = str[i];
+        map.set(char, (map.get(char) || 0) + 1);
+    }
+    return map;
+}
 function isAnagram(s: string, t: string): boolean {
-    // An anagram is a rearrangement of the exact same characters
-    // no more, no less.
-    if (s.length !== t.length) {
+    // Edge Case: different length
+    if(s.length !== t.length) {
         return false;
     }
 
-    const hashMap = {};
+    const freqMap1 = buildFrequencyMap(s);
+    const freqMap2 = buildFrequencyMap(t);
 
-    // filling the hashmap
-    for(let i = 0; i < s.length; i++) {
-        // If the character is not in the map
-        if(hashMap[s[i]] === undefined) {
-            // add the character as a key and set value to 1
-            hashMap[s[i]] = 1;
-        } else {
-            // otherwise, increment the value by 1
-            hashMap[s[i]]++;
-        }
-    }
-
-    for(let i = 0; i < t.length; i++) {
-        // if the character is in the map
-        if(hashMap[t[i]] !== undefined) {
-            // decrement count
-            hashMap[t[i]]--;
-            // delete the character when count reaches 0
-            if(hashMap[t[i]] === 0) {
-                delete hashMap[t[i]];
-            }
-        } else {
-            // otherwise, (character is not in the map) return 'false'
+    for(const [key, value] of freqMap1) {
+        if(freqMap2.get(key) !== value) {
             return false;
         }
     }
-
     return true;
-    
 };
