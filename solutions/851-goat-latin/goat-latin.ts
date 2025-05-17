@@ -14,16 +14,14 @@ function toGoatLatin(sentence: string): string {
         // word starts with a vowel
         if(set.has(word[0])) {
             processedWord = [...word];
-            processedWord.push('m');
-            processedWord.push('a');
         }
         // word starts with a consonant
         else {
             processedWord = [...word.slice(1)];
             processedWord.push(word[0]);
-            processedWord.push('m');
-            processedWord.push('a');
         }
+
+        processedWord.push('ma');
 
         // appending 'a' based on current index
         for(let j = 0; j <= i; j++) {
