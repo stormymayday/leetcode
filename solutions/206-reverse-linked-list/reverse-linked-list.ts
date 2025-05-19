@@ -11,16 +11,13 @@
  */
 
 function reverseList(head: ListNode | null): ListNode | null {
-    if(!head) {
-        return null;
-    }
     let current = head;
-    let before = null;
+    let prev = null;
     while(current) {
         let next = current.next;
-        current.next = before;
-        before = current;
+        current.next = prev;
+        prev = current;
         current = next;
     }
-    return before;
+    return prev;
 };
