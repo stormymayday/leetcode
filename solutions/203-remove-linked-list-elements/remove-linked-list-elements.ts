@@ -18,15 +18,11 @@ function removeElements(head: ListNode | null, val: number): ListNode | null {
 
     while(current) {
         if (current.val === val) {
-            const temp = current; // Save reference to the node to be deleted
-            const next = current.next; // Save current's next
-            prev.next = current.next; // Skip the current node
-            temp.next = null; // Explicitly unlink the node
-            current = next; // Move to the next node
+            prev.next = current.next; // delete current node by skipping over it
         } else {
-            prev = current; // advance prev
-            current = current.next; // advance current
+            prev = current; // advance prev pointer if not deleting   
         }
+        current = current.next; // advance current pointer
     }
 
     return dummyNode.next;
