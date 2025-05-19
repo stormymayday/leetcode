@@ -11,21 +11,16 @@
  */
 
 function reverseList(head: ListNode | null): ListNode | null {
-
-    // Edge Cases: list is empty or there is only one node
-    if(!head || !head.next) {
-        return head;
+    if(!head) {
+        return null;
     }
-
-    let prev = null;
     let current = head;
-
+    let before = null;
     while(current) {
         let next = current.next;
-        current.next = prev;
-        prev = current;
+        current.next = before;
+        before = current;
         current = next;
     }
-
-    return prev;
+    return before;
 };
