@@ -11,31 +11,29 @@
  */
 
 function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {
-
-    let dummyNode = new ListNode(0);
-    let tail = dummyNode;
-    let current1 = list1;
-    let current2 = list2;
-    
-    while(current1 && current2) {
-        if(current1.val < current2.val) {
-            tail.next = current1;
-            current1 = current1.next;
-        } else {
-            tail.next = current2;
-            current2 = current2.next;
-        }
-        tail = tail.next;
+    // Base Case 1
+    if(!list1 && !list2) {
+        return null;
     }
 
-    if(current1) {
-        tail.next = current1;
+    // Base Case 2
+    if(!list1) {
+        return list2;
     }
 
-    if(current2) {
-        tail.next = current2;
+    // Base Case 3
+    if(!list2) {
+        return list1;
     }
 
-    return dummyNode.next;
-    
+    // Recursive Step
+    if(list1.val < list2.val) {
+        const next1 = list1.next;
+        list1.next = mergeTwoLists(next1, list2);
+        return list1;
+    } else {
+        const next2 = list2.next;
+        list2.next = mergeTwoLists(next2, list1);
+        return list2;
+    }
 };
