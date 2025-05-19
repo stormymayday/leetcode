@@ -18,12 +18,11 @@ function removeElements(head: ListNode | null, val: number): ListNode | null {
 
     while(current) {
         if (current.val === val) {
-            prev.next = current.next;
+            prev.next = current.next; // skip the node
         } else {
-            prev = current;
+            prev = current; // advance prev only if not deleting
         }
-        current = current.next;
-
+        current = current.next; // always advance current
     }
 
     return dummyNode.next;
