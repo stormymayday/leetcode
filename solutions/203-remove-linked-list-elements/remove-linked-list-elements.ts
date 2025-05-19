@@ -19,7 +19,6 @@ function removeElements(head: ListNode | null, val: number): ListNode | null {
     while(current) {
         if (current.val === val) {
             prev.next = current.next;
-            // curr.next = null; // optional
         } else {
             prev = current;
         }
