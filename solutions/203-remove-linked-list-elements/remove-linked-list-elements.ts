@@ -15,16 +15,14 @@ function removeElements(head: ListNode | null, val: number): ListNode | null {
     const dummyNode = new ListNode(0, head);
     let prev = dummyNode;
     let current = head;
-
     while(current) {
-        if (current.val === val) {
-            prev.next = current.next; // delete current node by skipping over it
+        if(current.val === val) {
+            prev.next = current.next;
         } else {
-            prev = current; // advance prev pointer if not deleting   
+            prev = current;
         }
-        current = current.next; // advance current pointer
+        current = current.next;
     }
-
     return dummyNode.next;
     
 };
