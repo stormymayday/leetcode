@@ -10,13 +10,20 @@
  * }
  */
 
-function reverseList(head: ListNode | null, prev: ListNode | null = null): ListNode | null {
-    if(head === null) {
-        return prev;
+function reverseList(head: ListNode | null): ListNode | null {
+
+    if(!head || !head.next) {
+        return head;
     }
 
-    const next = head.next;
-    head.next = prev;
-
-    return reverseList(next, head);
+    let current = head;
+    let prev = null;
+    while(current) {
+        const next = current.next;
+        current.next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+    
 };
