@@ -1,24 +1,19 @@
 /**
  Do not return anything, modify nums in-place instead.
  */
-function swap(arr, i, j) {
-    const temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-}
 function moveZeroes(nums: number[]): void {
-
     let left = 0;
+    let right = 0;
+    while(right < nums.length) {
 
-    for(let right = 0; right < nums.length; right++) {
-        // if not zero
         if(nums[right] !== 0) {
-            // swap
-            swap(nums, left, right);
-            // increment left
+            const temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
             left++;
         }
 
+        right++;
+
     }
-    
 };
