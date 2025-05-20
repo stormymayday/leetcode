@@ -3,23 +3,23 @@ function compress(chars: string[]): number {
     let index = 0;
     let i = 0;
 
-    while (i < chars.length) {
+    while(i < chars.length) {
 
         let j = i;
 
         // Count consecutive characters
-        while (j < chars.length && chars[j] === chars[i]) {
+        while(j < chars.length && chars[i] === chars[j]) {
             j++;
         }
 
-        // Write the character
+        // inserting the character
         chars[index] = chars[i];
-        index++;
+        index++; // advancing the index
 
-        // Write the count (only if > 1)
-        if (j - i > 1) {
+        // Handling the count (if it is greater than 1)
+        if(j - i > 1) {
             const countStr = j - i + "";
-            for (const digit of countStr) {
+            for(const digit of countStr) {
                 chars[index] = digit;
                 index++;
             }
