@@ -38,7 +38,7 @@ function hasPathDFS(
 
         visited.add(current);
 
-        for (const neighbor of graph.get(current)) {
+        for (const neighbor of graph.get(current) ?? []) {
             stack.push(neighbor);
         }
     }
