@@ -3,31 +3,31 @@ function validPath(n: number, edges: number[][], source: number, destination: nu
     return hasPathDFS(graph, source, destination, new Set<number>());
 }
 
-function buildGraph(edges: number[][]): Record<number, number[]> {
+function buildGraph(edges: number[][]): Map<number, number[]> {
 
-    const aList: Record<number, number[]> = {};
+    const aList = new Map<number, number[]>();
 
     for (const [a, b] of edges) {
-        if (!(a in aList)) {
-            aList[a] = [];
+        if (!aList.has(a)) {
+            aList.set(a, []);
         }
-        if (!(b in aList)) {
-            aList[b] = [];
+        if (!aList.has(b)) {
+            aList.set(b, []);
         }
-        aList[a].push(b);
-        aList[b].push(a);
+        aList.get(a).push(b);
+        aList.get(b).push(a);
     }
 
     return aList;
 }
 
 function hasPathDFS(
-    graph: Record<number, number[]>,
+    graph: Map<number, number[]>,
     src: number,
     dst: number,
     visited: Set<number>
 ): boolean {
-    
+
     const stack: number[] = [src];
 
     while (stack.length > 0) {
@@ -38,7 +38,7 @@ function hasPathDFS(
 
         visited.add(current);
 
-        for (const neighbor of graph[current]) {
+        for (const neighbor of graph.get(current)) {
             stack.push(neighbor);
         }
     }
