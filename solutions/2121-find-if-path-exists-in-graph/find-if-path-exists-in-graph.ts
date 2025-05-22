@@ -1,47 +1,46 @@
-function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
-    const graph = buildGraph(edges);
-    return hasPathDFS(graph, source, destination, new Set<number>());
+function buildGraph(edges) {
+    const adjList = {};
+    for(const edge of edges) {
+        const [a, b] = edge;
+
+        if(!(a in adjList)) {
+            adjList[a] = [];
+        }
+        adjList[a].push(b);
+
+        if(!(b in adjList)) {
+            adjList[b] = [];
+        }
+        adjList[b].push(a);
+    }
+    return adjList;
 }
 
-function buildGraph(edges: number[][]): Map<number, number[]> {
-
-    const aList = new Map<number, number[]>();
-
-    for (const [a, b] of edges) {
-        if (!aList.has(a)) {
-            aList.set(a, []);
-        }
-        if (!aList.has(b)) {
-            aList.set(b, []);
-        }
-        aList.get(a).push(b);
-        aList.get(b).push(a);
+function hasPathRDFS(graph, src, dst, visited) {
+    // Base Case
+    if(src === dst) {
+        return true;
     }
 
-    return aList;
-}
+    // Handle Cycles
+    if(visited.has(src)) {
+        return false;
+    } else {
+        visited.add(src);
+    }
 
-function hasPathDFS(
-    graph: Map<number, number[]>,
-    src: number,
-    dst: number,
-    visited: Set<number>
-): boolean {
-
-    const stack: number[] = [src];
-
-    while (stack.length > 0) {
-        const current = stack.pop()!;
-        
-        if (current === dst) return true;
-        if (visited.has(current)) continue;
-
-        visited.add(current);
-
-        for (const neighbor of graph.get(current) ?? []) {
-            stack.push(neighbor);
+    // Recursive Step
+    for(const neighbor of graph[src]) {
+        if(hasPathRDFS(graph, neighbor, dst, visited) === true) {
+            return true;
         }
     }
 
+    // Visited all possible verticies and no match was found
     return false;
 }
+
+function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
+    const graph = buildGraph(edges);
+    return hasPathRDFS(graph, source, destination, new Set());
+};
