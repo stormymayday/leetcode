@@ -1,46 +1,42 @@
+function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
+    const graph = buildGraph(edges);
+    return dfs(graph, source, destination, new Set());
+};
+
 function buildGraph(edges) {
-    const adjList = {};
+    const adjList = new Map();
     for(const edge of edges) {
         const [a, b] = edge;
-
-        if(!(a in adjList)) {
-            adjList[a] = [];
+        if(!adjList.has(a)) {
+            adjList.set(a, []);
         }
-        adjList[a].push(b);
-
-        if(!(b in adjList)) {
-            adjList[b] = [];
+        adjList.get(a).push(b);
+        if(!adjList.has(b)) {
+            adjList.set(b, []);
         }
-        adjList[b].push(a);
+        adjList.get(b).push(a);
     }
     return adjList;
 }
 
-function hasPathRDFS(graph, src, dst, visited) {
-    // Base Case
-    if(src === dst) {
-        return true;
-    }
+function dfs(graph, src, dst, visited) {
 
-    // Handle Cycles
-    if(visited.has(src)) {
-        return false;
-    } else {
-        visited.add(src);
-    }
+    const stack = [src];
+    visited.add(src);
 
-    // Recursive Step
-    for(const neighbor of graph[src]) {
-        if(hasPathRDFS(graph, neighbor, dst, visited) === true) {
+    while(stack.length > 0) {
+        const current = stack.pop();
+        if(current === dst) {
             return true;
+        }
+        for(const neighbor of graph.get(current) ?? []) {
+            if(!visited.has(neighbor)) {
+                visited.add(neighbor);
+                stack.push(neighbor);
+            }
         }
     }
 
-    // Visited all possible verticies and no match was found
     return false;
-}
 
-function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
-    const graph = buildGraph(edges);
-    return hasPathRDFS(graph, source, destination, new Set());
-};
+}
