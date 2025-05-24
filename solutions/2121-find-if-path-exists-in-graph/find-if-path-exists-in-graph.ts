@@ -1,21 +1,21 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
-    const graph = buildGraph(edges);
+    const graph = buildGraph(n, edges);
     return dfs(graph, source, destination, new Set());
 };
 
-function buildGraph(edges) {
+function buildGraph(n, edges) {
     const adjList = new Map();
+
+    for(let i = 0; i < n; i++) {
+        adjList.set(i, []);
+    }
+
     for(const edge of edges) {
         const [a, b] = edge;
-        if(!adjList.has(a)) {
-            adjList.set(a, []);
-        }
         adjList.get(a).push(b);
-        if(!adjList.has(b)) {
-            adjList.set(b, []);
-        }
         adjList.get(b).push(a);
     }
+
     return adjList;
 }
 
@@ -26,9 +26,11 @@ function dfs(graph, src, dst, visited) {
 
     while(stack.length > 0) {
         const current = stack.pop();
+
         if(current === dst) {
             return true;
         }
+
         for(const neighbor of graph.get(current) ?? []) {
             if(!visited.has(neighbor)) {
                 visited.add(neighbor);
