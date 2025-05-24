@@ -21,24 +21,22 @@ function buildGraph(n, edges) {
 
 function dfs(graph, src, dst, visited) {
 
-    const stack = [src];
-    visited.add(src);
-
-    while(stack.length > 0) {
-        const current = stack.pop();
-
-        if(current === dst) {
-            return true;
-        }
-
-        for(const neighbor of graph.get(current) ?? []) {
-            if(!visited.has(neighbor)) {
-                visited.add(neighbor);
-                stack.push(neighbor);
-            }
-        }
-    }
-
+   if(visited.has(src)) {
     return false;
+   } else {
+    visited.add(src);
+   }
+
+   if(src === dst) {
+    return true;
+   }
+
+   for(const neighbor of graph.get(src) ?? []) {
+    if(dfs(graph, neighbor, dst, visited) === true) {
+        return true;
+    }
+   }
+
+   return false;
 
 }
