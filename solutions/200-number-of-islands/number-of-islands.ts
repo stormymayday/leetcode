@@ -32,7 +32,6 @@ function matrixDFS(grid, r, c, visited) {
         return false;
     }
 
-    // Explore Up, Down, Left & Right
     matrixDFS(grid, r - 1, c, visited);
     matrixDFS(grid, r + 1, c, visited);
     matrixDFS(grid, r, c - 1, visited);
