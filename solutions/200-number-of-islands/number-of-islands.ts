@@ -1,6 +1,6 @@
 function numIslands(grid: string[][]): number {
-    const visited = new Set();
     let count = 0;
+    const visited = new Set();
     for(let r = 0; r < grid.length; r++) {
         for(let c = 0; c < grid[0].length; c++) {
             if(matrixDFS(grid, r, c, visited) === true) {
@@ -19,24 +19,23 @@ function matrixDFS(grid, r, c, visited) {
         return false;
     }
 
-    // Base Case 2: Water
-    if(grid[r][c] === '0') {
-        return false;
-    }
-
-    // Base Case 3: Visited
-    const position = r + ',' + c;
+    // Base Case 2: Visited
+    const position = `${r},${c}`;
     if(visited.has(position)) {
         return false;
     } else {
         visited.add(position);
     }
 
-    // Explore Up, Down, Left, and Right
+    // Base Case 3: Water
+    if(grid[r][c] === '0') {
+        return false;
+    }
+
+    // Explore Up, Down, Left & Right
     matrixDFS(grid, r - 1, c, visited);
     matrixDFS(grid, r + 1, c, visited);
     matrixDFS(grid, r, c - 1, visited);
     matrixDFS(grid, r, c + 1, visited);
-
     return true;
 }
