@@ -20,19 +20,21 @@ function buildGraph(n, edges) {
 }
 
 function hasPath(graph, src, dst, visited) {
-    const queue = [src];
-    visited.add(src);
-    while(queue.length > 0) {
-        const current = queue.shift();
-        if(current === dst) {
-            return true;
-        }
-        for(const neighbor of graph.get(current) ?? []) {
-            if(!visited.has(neighbor)) {
-                visited.add(neighbor);
-                queue.push(neighbor);
-            }
-        }
+    if(visited.has(src)) {
+        return false;
+    } else {
+        visited.add(src);
     }
+
+    if(src === dst) {
+        return true;
+    }
+
+    for(const neighbor of graph.get(src) ?? []) {
+        if(hasPath(graph, neighbor, dst, visited) === true) {
+            return true;
+        } 
+    }
+
     return false;
 }
