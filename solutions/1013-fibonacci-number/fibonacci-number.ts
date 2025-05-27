@@ -1,13 +1,16 @@
-function fib(n: number): number {
-    if(n < 2) {
-        return n;
+function fib(n: number, memo: Record<string, number> = {}): number {
+    if(n in memo) {
+        return memo[n];
     }
-    let a = 0;
-    let b = 1;
-    for(let i = 2; i <= n; i++) {
-        const temp = b;
-        b = a + b;
-        a = temp;
+
+    if(n === 0) {
+        return 0;
     }
-    return b;
-}
+
+    if(n === 1) {
+        return 1;
+    }
+
+    memo[n] = fib(n - 1, memo) + fib(n - 2, memo);
+    return memo[n];
+};
