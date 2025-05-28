@@ -12,14 +12,12 @@ function numIslands(grid: string[][]): number {
 };
 
 function matrixDFS(grid, r, c, visited) {
-    // Base Case 1: Out of bounds
-    const rowInBounds = 0 <= r && r < grid.length;
-    const colInBounds = 0 <= c && c < grid[0].length;
-    if(!rowInBounds || !colInBounds) {
+    if(!isInBounds(grid, r, c)) {
         return false;
     }
-
-    // Base Case 2: Visited
+    if(grid[r][c] === '0') {
+        return false;
+    }
     const position = `${r},${c}`;
     if(visited.has(position)) {
         return false;
@@ -27,14 +25,16 @@ function matrixDFS(grid, r, c, visited) {
         visited.add(position);
     }
 
-    // Base Case 3: Water
-    if(grid[r][c] === '0') {
-        return false;
-    }
-
     matrixDFS(grid, r - 1, c, visited);
     matrixDFS(grid, r + 1, c, visited);
     matrixDFS(grid, r, c - 1, visited);
     matrixDFS(grid, r, c + 1, visited);
+
     return true;
+}
+
+function isInBounds(grid, r, c) {
+    const rowInBounds = 0 <= r && r < grid.length;
+    const colInBounds = 0 <= c && c < grid[0].length;
+    return rowInBounds && colInBounds;
 }
