@@ -1,23 +1,23 @@
 function maxAreaOfIsland(grid: number[][]): number {
-    let max = -Infinity;
+    let max = 0;
     const visited = new Set();
     for(let r = 0; r < grid.length; r++) {
         for(let c = 0; c < grid[0].length; c++) {
-            max = Math.max(max, matrixDFS(grid, r, c, visited));
+            if(grid[r][c] === 1) {
+                max = Math.max(max, matrixDFS(grid, r, c, visited));
+            }
         }
     }
     return max;
 };
 
 function matrixDFS(grid, r, c, visited) {
-    // Base Case 1: Out of bounds
-    const rowInBounds = 0 <= r && r < grid.length;
-    const colInBounds = 0 <= c && c < grid[0].length;
-    if(!rowInBounds || !colInBounds) {
+    if(isInBounds(grid, r, c) === false) {
         return 0;
     }
-
-    // Base Case 2: Visited
+    if(grid[r][c] === 0) {
+        return 0;
+    }
     const position = `${r},${c}`;
     if(visited.has(position)) {
         return 0;
@@ -25,15 +25,16 @@ function matrixDFS(grid, r, c, visited) {
         visited.add(position);
     }
 
-    // Base Case 3: Water
-    if(grid[r][c] === 0) {
-        return 0;
-    }
+    let count = 1;
+    count += matrixDFS(grid, r - 1, c, visited);
+    count += matrixDFS(grid, r + 1, c, visited);
+    count += matrixDFS(grid, r, c - 1, visited);
+    count += matrixDFS(grid, r, c + 1, visited);
+    return count;
+}
 
-    let size = 1;
-    size += matrixDFS(grid, r - 1, c, visited);
-    size += matrixDFS(grid, r + 1, c, visited);
-    size += matrixDFS(grid, r, c - 1, visited);
-    size += matrixDFS(grid, r, c + 1, visited);
-    return size;
+function isInBounds(grid, r, c) {
+    const rowInBounds = 0 <= r && r < grid.length;
+    const colInBounds = 0 <= c && c < grid[0].length;
+    return rowInBounds && colInBounds;
 }
