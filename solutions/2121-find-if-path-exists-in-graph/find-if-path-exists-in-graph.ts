@@ -4,22 +4,20 @@ function validPath(n: number, edges: number[][], source: number, destination: nu
 };
 
 function hasPathDFS(graph, src, dst, visited) {
-    if(visited.has(src)) {
-        return false;
-    } else {
-        visited.add(src);
-    }
-
-    if(src === dst) {
-        return true;
-    }
-
-    for(const neighbor of graph[src]) {
-        if(hasPathDFS(graph, neighbor, dst, visited) === true) {
+    const stack = [src];
+    visited.add(src);
+    while(stack.length > 0) {
+        const current = stack.pop();
+        if(current === dst) {
             return true;
         }
+        for(const neighbor of graph[current]) {
+            if(!visited.has(neighbor)) {
+                visited.add(neighbor);
+                stack.push(neighbor);
+            }
+        }
     }
-
     return false;
 }
 
