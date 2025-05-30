@@ -11,7 +11,7 @@ function uniquePaths(m: number, n: number, memo:Record<string, number> = {}): nu
         return memo[key2];
     }
 
-    if(m === 1 && n === 1) {
+    if(m === 1 || n === 1) {
         return 1;
     }
     if(m === 0 || n === 0) {
