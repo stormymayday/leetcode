@@ -14,14 +14,12 @@ function uniquePaths(m: number, n: number, memo: Record<string, number> = {}): n
     if(m === 1 && n === 1) {
         return 1;
     }
-
     if(m === 0 || n === 0) {
         return 0;
     }
 
-    const paths = uniquePaths(m - 1, n, memo) + uniquePaths(m, n - 1, memo);
+    const paths =  uniquePaths(m - 1, n, memo) + uniquePaths(m, n - 1, memo);
     memo[key1] = paths;
     memo[key2] = paths;
-
     return paths;
 };
