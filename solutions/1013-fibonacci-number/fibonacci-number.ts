@@ -1,4 +1,5 @@
-function fib(n: number, memo = {}): number {
+function fib(n: number, memo: Record<number, number> = {}): number {
+
     if(n in memo) {
         return memo[n];
     }
@@ -7,6 +8,6 @@ function fib(n: number, memo = {}): number {
         return n;
     }
 
-    memo[n] = fib(n - 1, memo) + fib(n - 2, memo);
+    memo[n] = fib(n-1, memo)+fib(n-2, memo);
     return memo[n];
- };
+};
