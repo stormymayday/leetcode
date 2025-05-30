@@ -10,6 +10,7 @@ function uniquePaths(m: number, n: number, memo: Record<string, number> = {}): n
         return memo[key2];
     }
     
+    // Any single row or column has exactly one path
     if(m === 1 || n === 1) {
         return 1;
     }
