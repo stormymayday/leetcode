@@ -1,25 +1,18 @@
-
-function uniquePaths(m: number, n: number, memo: Record<string, number> = {}): number {
-    const key1 = `${m},${n}`;
-    const key2 = `${n},${m}`;
+function uniquePaths(m: number, n: number, memo:Record<string, number> = {}): number {
     
+    const key1 = `${m},${n}`;
+
     if(key1 in memo) {
         return memo[key1];
     }
-    if(key2 in memo) {
-        return memo[key2];
-    }
-    
-    // Any single row or column has exactly one path
-    if(m === 1 || n === 1) {
+
+    if(m === 1 && n === 1) {
         return 1;
     }
     if(m === 0 || n === 0) {
         return 0;
     }
-    
-    const paths = uniquePaths(m - 1, n, memo) + uniquePaths(m, n - 1, memo);
-    memo[key1] = paths;
-    memo[key2] = paths;
-    return paths;
-}
+
+    memo[key1] = uniquePaths(m - 1, n, memo) + uniquePaths(m, n - 1, memo);
+    return memo[key1];
+};
