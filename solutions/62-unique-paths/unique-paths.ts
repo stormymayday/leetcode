@@ -1,4 +1,4 @@
-function uniquePaths(m: number, n: number, memo:Record<string, number> = {}): number {
+function uniquePaths(m: number, n: number, memo: Record<string ,number> = {}): number {
     
     const key1 = `${m},${n}`;
     const key2 = `${n},${m}`;
