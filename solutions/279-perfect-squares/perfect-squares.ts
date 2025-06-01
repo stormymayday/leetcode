@@ -1,11 +1,10 @@
 function numSquares(n: number, memo: Record<number, number> = {}): number {
-    
-    // Memo Base Case
+    // Base Case: memo fetching
     if(n in memo) {
         return memo[n];
     }
 
-    // Base Case
+    // Base Case: n reduced to zero
     if(n === 0) {
         return 0;
     }
@@ -14,10 +13,12 @@ function numSquares(n: number, memo: Record<number, number> = {}): number {
     let minSquares = Infinity;
     for(let i = 1; i <= Math.sqrt(n); i += 1) {
         const square = i * i;
-        minSquares = Math.min(minSquares, 1 + numSquares(n - square, memo));
+        const currentSquares = 1 + numSquares(n - square, memo);
+        minSquares = Math.min(minSquares, currentSquares);
     }
 
     // Caching
     memo[n] = minSquares;
+
     return minSquares;
 };
