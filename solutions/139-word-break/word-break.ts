@@ -1,28 +1,26 @@
-function wordBreak(s: string, wordDict: string[], memo: Record<string, boolean> = {}): boolean {
+function wordBreak(s: string, wordDict: string[], i:number = 0, memo: Record<string, boolean> = {}): boolean {
     // Base Case: memo fetching
-    if(s in memo) {
-        return memo[s];
+    if(i in memo) {
+        return memo[i];
     }
     
     // Base Case: Empty String
-    if(s === '') {
+    if(i === s.length) {
         return true;
     }
 
     // Recursive Step
     for(const word of wordDict) {
-        // Check if the word is a prefix of s
-        if(s.startsWith(word) === true) {
-            // Create a suffix using that word
-            const suffix = s.slice(word.length);
-            // Make a recursive call using the suffix
-            if(wordBreak(suffix, wordDict, memo) === true) {
-                memo[s] = true;
+        // Check if the word (at the current index i) is a prefix of s
+        if(s.startsWith(word, i) === true) {
+            // Make a recursive call shifting the index past the word length
+            if(wordBreak(s, wordDict, i + word.length, memo) === true) {
+                memo[i] = true;
                 return true;
             }
         }
     }
 
-    memo[s] = false;
+    memo[i] = false;
     return false;
 };
