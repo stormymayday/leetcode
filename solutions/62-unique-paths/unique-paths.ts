@@ -1,5 +1,4 @@
-function uniquePaths(m: number, n: number, memo: Record<string ,number> = {}): number {
-    
+function uniquePaths(m: number, n: number, memo: Record<string, number> = {}): number {
     const key1 = `${m},${n}`;
     const key2 = `${n},${m}`;
 
@@ -11,9 +10,10 @@ function uniquePaths(m: number, n: number, memo: Record<string ,number> = {}): n
         return memo[key2];
     }
 
-    if(m === 1 || n === 1) {
+    if(m === 1 && n === 1) {
         return 1;
     }
+
     if(m === 0 || n === 0) {
         return 0;
     }
