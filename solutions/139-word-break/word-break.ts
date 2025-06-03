@@ -8,14 +8,16 @@ function wordBreak(s: string, words: string[], i: number = 0, memo: Record<numbe
     }
 
     for(const word of words) {
-        // check if word is a perfix at current index
+        // check if prefix
         if(s.startsWith(word, i)) {
+            // Recurse
             if(wordBreak(s, words, i + word.length, memo) === true) {
                 memo[i] = true;
                 return true;
             }
         }
     }
+
     memo[i] = false;
     return false;
 };
