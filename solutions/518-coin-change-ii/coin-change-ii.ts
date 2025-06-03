@@ -1,24 +1,27 @@
-function change(amount: number, coins: number[], i: number = 0, memo: Map<string, number> = new Map()): number {
+function change(amount: number, coins: number[], i: number = 0, memo: Record<string, number> = {}): number {
     const key = `${amount},${i}`;
-    
-    if (memo.has(key)) {
-        return memo.get(key)!;
+
+    if(key in memo) {
+        return memo[key];
     }
-    
-    if (amount === 0) {
+
+    // Base Case: amount reduced to 0
+    if(amount === 0) {
         return 1;
     }
-    
-    if (i >= coins.length || amount < 0) {
+
+    // Base Case 2: index out of bounds or amount is below 0
+    if(i >= coins.length || amount < 0) {
         return 0;
     }
-    
-    // Two choices: include current coin or skip it
+
+    // include current coin (index stays the same)
     const include = change(amount - coins[i], coins, i, memo);
+    // exclude current coint (index moves to the next)
     const exclude = change(amount, coins, i + 1, memo);
-    
-    const result = include + exclude;
-    memo.set(key, result);
-    
-    return result;
-}
+
+    // Caching
+    memo[key] = include + exclude;
+
+    return memo[key];
+};
