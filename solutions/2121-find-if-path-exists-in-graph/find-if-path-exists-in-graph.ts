@@ -1,24 +1,28 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
     const graph = buildGraph(n, edges);
-    return bfs(graph, source, destination, new Set());
+    return dfs(graph, source, destination, new Set());
 };
 
-function bfs(graph, src, dst, visited) {
-    const queue = [src];
+function dfs(graph, src, dst, visited) {
+    
+    if(src === dst) {
+        return true;
+    }
+
+    if(visited.has(src)) {
+        return false;
+    }
+
     visited.add(src);
-    while(queue.length > 0) {
-        const current = queue.shift();
-        if(current === dst) {
+
+    for(const neighbor of graph.get(src)) {
+        if(dfs(graph, neighbor, dst, visited) === true) {
             return true;
         }
-        for(const neighbor of graph.get(current)) {
-            if(!visited.has(neighbor)) {
-                visited.add(neighbor);
-                queue.push(neighbor);
-            }
-        }
     }
+
     return false;
+
 }
 
 function buildGraph(n, edges) {
