@@ -3,8 +3,10 @@ function numIslands(grid: string[][]): number {
     const visited = new Set();
     for(let r = 0; r < grid.length; r++) {
         for(let c = 0; c < grid[0].length; c++) {
-            if(matrixDFS(grid, r, c, visited) === true) {
-                count += 1;
+            if(grid[r][c] === '1') {
+                if(matrixDFS(grid, r, c, visited) === true) {
+                    count += 1;
+                }
             }
         }
     }
@@ -12,18 +14,23 @@ function numIslands(grid: string[][]): number {
 };
 
 function matrixDFS(grid, r, c, visited) {
-    if(!isInBounds(grid, r, c)) {
+    // Out of bounds
+    if(isInBounds(grid, r, c) === false) {
         return false;
     }
+
+    // water
     if(grid[r][c] === '0') {
         return false;
     }
+
+    // visited
     const position = `${r},${c}`;
     if(visited.has(position)) {
         return false;
-    } else {
-        visited.add(position);
     }
+
+    visited.add(position);
 
     matrixDFS(grid, r - 1, c, visited);
     matrixDFS(grid, r + 1, c, visited);
