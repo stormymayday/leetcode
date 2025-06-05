@@ -24,10 +24,10 @@ function levelOrder(root: TreeNode | null): number[][] {
         for(let i = 0; i < queueLength; i += 1) {
             const current = queue.shift();
             level.push(current.val);
-            if(current.left) {
+            if(current.left !== null) {
                 queue.push(current.left);
             }
-            if(current.right) {
+            if(current.right !== null) {
                 queue.push(current.right);
             }
         }
