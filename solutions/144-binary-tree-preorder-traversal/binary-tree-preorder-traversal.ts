@@ -13,15 +13,18 @@
  */
 
 function preorderTraversal(root: TreeNode | null): number[] {
-    
-    // Base Case
-    if(!root) {
+    if(root === null) {
         return [];
     }
-
-    const leftValues = preorderTraversal(root.left);
-    const rightValues = preorderTraversal(root.right);
-
-    return [root.val, ...leftValues, ...rightValues];
-
+    const result = [];
+    function dfs(root) {
+        if(root === null) {
+            return;
+        }
+        result.push(root.val);
+        dfs(root.left);
+        dfs(root.right);
+    }
+    dfs(root);
+    return result;
 };
