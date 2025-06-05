@@ -1,7 +1,7 @@
 function shortestBridge(grid: number[][]): number {
     let firstIsland = null;
     outer: for(let r = 0; r < grid.length; r += 1) {
-        for(let c = 0; c <= grid[0].length; c += 1) {
+        for(let c = 0; c < grid[0].length; c += 1) {
             if(grid[r][c] === 1) {
                 firstIsland = dfs(grid, r, c, new Set());
                 break outer;
@@ -37,8 +37,8 @@ function dfs(grid, r, c, visited) {
 }
 
 function bfs(grid, firstIsland) {
-    const visited = new Set();
-    visited.add(firstIsland);
+    const visited = new Set(firstIsland);
+    // visited.add(firstIsland);
     const queue = [];
     for(const position of firstIsland) {
         const [r, c] = position.split(',').map(Number);
