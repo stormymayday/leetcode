@@ -13,30 +13,25 @@
  */
 
 function levelOrder(root: TreeNode | null): number[][] {
-
-    if(!root) {
+    if(root === null) {
         return [];
     }
-
     const result = [];
-    const stack = [{node: root, level: 0}];
-    while(stack.length > 0) {
-        const {node, level} = stack.pop();
-
-        if(result.length === level) {
-            result.push([node.val]);
-        } else {
-            result[level].push(node.val);
+    const queue = [root];
+    while(queue.length > 0) {
+        const level = [];
+        const queueLength = queue.length;
+        for(let i = 0; i < queueLength; i += 1) {
+            const current = queue.shift();
+            level.push(current.val);
+            if(current.left) {
+                queue.push(current.left);
+            }
+            if(current.right) {
+                queue.push(current.right);
+            }
         }
-
-        if(node.right) {
-            stack.push({node: node.right, level: level + 1});
-        }
-
-        if(node.left) {
-            stack.push({node: node.left, level: level + 1});
-        }
+        result.push(level);
     }
     return result;
-    
 };
