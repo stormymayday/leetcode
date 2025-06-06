@@ -14,23 +14,21 @@
 
 function findBottomLeftValue(root: TreeNode | null): number {
 
-  let result = null;
-  const queue = [root];
-  while(queue.length > 0) {
-
-    const current = queue.shift();
-
-    result = current;
-
-    if(current.right) {
-        queue.push(current.right);
+    if(root === null) {
+        return null;
     }
 
-    if(current.left) {
-        queue.push(current.left);
+    const result = [];
+    const queue = [root];
+    while(queue.length > 0) {
+        const current = queue.shift();
+        result.push(current.val);
+        if(current.right) {
+            queue.push(current.right);
+        }
+        if(current.left) {
+            queue.push(current.left);
+        }
     }
-
-  }
-  return result.val;
-
+    return result[result.length - 1];
 };
