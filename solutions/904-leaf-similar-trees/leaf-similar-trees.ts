@@ -13,7 +13,6 @@
  */
 
 function leafSimilar(root1: TreeNode | null, root2: TreeNode | null): boolean {
-    
     const leafList1 = leafList(root1);
     const leafList2 = leafList(root2);
 
@@ -31,25 +30,17 @@ function leafSimilar(root1: TreeNode | null, root2: TreeNode | null): boolean {
 };
 
 function leafList(root) {
-    if(root === null) {
-        return [];
-    }
     const result = [];
-    const stack = [root];
-    while(stack.length > 0) {
-        const current = stack.pop();
-
-        if(current.left === null && current.right === null) {
-            result.push(current.val);
+    function helper(root) {
+        if(root === null) {
+            return;
         }
-
-        if(current.right !== null) {
-            stack.push(current.right);
+        if(root.left === null && root.right === null) {
+            result.push(root.val);
         }
-
-        if(current.left !== null) {
-            stack.push(current.left);
-        }
+        helper(root.left);
+        helper(root.right);
     }
+    helper(root);
     return result;
 }
