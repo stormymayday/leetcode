@@ -17,36 +17,31 @@ function averageOfLevels(root: TreeNode | null): number[] {
         return [];
     }
 
-    const levels = [];
-    const stack = [{node: root, levelNum: 0}];
-    while(stack.length > 0) {
-
-        const { node, levelNum } = stack.pop();
-
-        if(levels[levelNum] === undefined) {
-            levels[levelNum] = [];
-        }
-        levels[levelNum].push(node.val);
-
-        if(node.right !== null) {
-            stack.push({node: node.right, levelNum: levelNum + 1});
-        }
-
-        if(node.left !== null) {
-            stack.push({node: node.left, levelNum: levelNum + 1});
-        }
-
-    }
-
     const averages = [];
-    for(const level of levels) {
+    
+    const queue = [root];
+    while(queue.length > 0) {
+
+        const queueLength = queue.length;
         let levelSum = 0;
-        for(let i = 0; i < level.length; i += 1) {
-            levelSum += level[i];
+
+        for(let i = 0; i < queueLength; i += 1) {
+
+            const current = queue.shift();
+
+            levelSum += current.val;
+
+            if(current.left) {
+                queue.push(current.left);
+            }
+            if(current.right) {
+                queue.push(current.right);
+            }
+
         }
-        averages.push(levelSum/level.length);
+
+        averages.push(levelSum/queueLength);
     }
 
     return averages;
-
 };
