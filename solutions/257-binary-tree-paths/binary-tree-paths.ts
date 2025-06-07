@@ -13,44 +13,33 @@
  */
 
 function binaryTreePaths(root: TreeNode | null): string[] {
-
-    // Edge Case: empty tree
-    if(!root) {
-        return [];
-    }
-
-    const result: string[] = [];
-
-    function helper(root: TreeNode, path: string):void {
-
-        // Handle current path
-        // if path exists: append current value
-        // otherwise: start with current value
-        const currentPath = path ? `${path}->${root.val}` : `${root.val}`;
-
-        // Base Case: leaf node
+    const result = helper(root);
+    function helper(root) {
+        if(root === null) {
+            return [];
+        }
         if(root.left === null && root.right === null) {
-            // current path is finished
-            // push it to the result
-            result.push(currentPath);
-            return;
+            return [[root.val]];
         }
 
-        // Recurse Left
-        if(root.left) {
-            helper(root.left, currentPath);
+        const allPaths = [];
+
+        const leftPaths = helper(root.left);
+        for(const path of leftPaths) {
+            path.push(root.val);
+            allPaths.push(path);
         }
 
-        // Recurse Right
-        if(root.right) {
-            helper(root.right, currentPath);
+        const rightPaths = helper(root.right);
+        for(const path of rightPaths) {
+            path.push(root.val);
+            allPaths.push(path);
         }
 
+        return allPaths;
     }
-
-    // kick off the recursion
-    helper(root, "");
-
-    return result;
     
+    return result.map((arr) => {
+        return arr.reverse().join('->');
+    });
 };
