@@ -1,15 +1,15 @@
 function scoreOfParentheses(s: string): number {
     const stack = [0];
     for(let i = 0; i < s.length; i += 1) {
-        const current = s[i];
-        if(current === "(") {
+        const paren = s[i];
+        if(paren === '(') {
             stack.push(0);
         } else {
-            const popped = stack.pop();
-            if(popped === 0) {
+            const poppedNum = stack.pop();
+            if(poppedNum === 0) {
                 stack[stack.length - 1] += 1;
-            } else {
-                stack[stack.length - 1] += popped * 2;
+            } else if(poppedNum > 0) {
+                stack[stack.length - 1] += poppedNum * 2;
             }
         }
     }
