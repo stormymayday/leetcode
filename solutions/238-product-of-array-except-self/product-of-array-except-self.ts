@@ -1,24 +1,17 @@
 function productExceptSelf(nums: number[]): number[] {
     const n = nums.length;
-    const result = new Array(n);
+    const result = new Array(n).fill(1);
 
-    let product = 1;
-    const prefix = new Array(n);
+    let prefix = 1;
     for(let i = 0; i < n; i += 1) {
-        product *= nums[i];
-        prefix[i] = product;
+        result[i] = prefix;
+        prefix *= nums[i];
     }
-    
-    product = 1;
-    const postfix = new Array(n);
+
+    let postfix = 1;
     for(let i = n - 1; i >= 0; i -= 1) {
-        product *= nums[i];
-        postfix[i] = product;
-    }
-
-    for(let i = 0; i < n; i += 1) {
-        const product = (i > 0 ? prefix[i - 1] : 1) * (i < n - 1 ? postfix[i + 1] : 1);
-        result[i] = product;
+        result[i] *= postfix;
+        postfix *= nums[i];
     }
 
     return result;
