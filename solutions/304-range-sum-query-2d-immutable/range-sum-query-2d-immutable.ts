@@ -12,7 +12,7 @@ class NumMatrix {
             let prefixSum = 0;
             for(let c = 0; c < COLS; c += 1) {
                 prefixSum += matrix[r][c];
-                const above = this.sumMatrix[r][c+1];
+                const above = this.sumMatrix[r][c + 1];
                 this.sumMatrix[r + 1][c + 1] = prefixSum + above;
             }
         }
@@ -24,7 +24,7 @@ class NumMatrix {
         col1 += 1;
         col2 += 1;
         const bottomRight = this.sumMatrix[row2][col2];
-        const above = this.sumMatrix[row1 -1][col2];
+        const above = this.sumMatrix[row1 - 1][col2];
         const left = this.sumMatrix[row2][col1 - 1];
         const topLeft = this.sumMatrix[row1 - 1][col1 - 1];
         return bottomRight - above - left + topLeft;
