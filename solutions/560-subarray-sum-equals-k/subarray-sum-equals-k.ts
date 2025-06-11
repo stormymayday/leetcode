@@ -1,17 +1,17 @@
 function subarraySum(nums: number[], k: number): number {
     let count = 0;
-    let currSum = 0;
     const prefixSums = { 0: 1};
+    let prefixSum = 0;
     for(const num of nums) {
-        currSum += num;
-        const diff = currSum - k;
-        if(diff in prefixSums) {
-            count += prefixSums[diff];
+        prefixSum += num;
+        const difference = prefixSum - k;
+        if(difference in prefixSums) {
+            count += prefixSums[difference];
         }
-        if(currSum in prefixSums) {
-            prefixSums[currSum] += 1;
+        if(prefixSum in prefixSums) {
+            prefixSums[prefixSum] += 1;
         } else {
-            prefixSums[currSum] = 1;
+            prefixSums[prefixSum] = 1;
         }
     }
     return count;
