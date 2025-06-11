@@ -1,12 +1,10 @@
 function defangIPaddr(address: string): string {
     const result = [];
-    // const arr = Array.from(address);
-    const arr = address.split("");
-    for(const char of arr) {
-        if(char === '.') {
+    for(let i = 0; i < address.length; i += 1) {
+        if(address[i] === '.') {
             result.push('[.]');
         } else {
-            result.push(char);
+            result.push(address[i]);
         }
     }
     return result.join("");
