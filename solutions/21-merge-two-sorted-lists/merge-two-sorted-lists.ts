@@ -11,8 +11,8 @@
  */
 
 function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {
-    const dummyNode = new ListNode(0);
-    let tail = dummyNode;
+    const dummy = new ListNode();
+    let tail = dummy;
     let p1 = list1;
     let p2 = list2;
     while(p1 && p2) {
@@ -31,5 +31,5 @@ function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode
     if(p2) {
         tail.next = p2;
     }
-    return dummyNode.next;
+    return dummy.next;
 };
