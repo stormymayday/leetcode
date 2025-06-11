@@ -1,41 +1,35 @@
-function merge(arr1, arr2) {
-    const result = [];
-
-    let i = 0;
-    let j = 0;
-
-    while(i < arr1.length && j < arr2.length) {
-        if(arr1[i] < arr2[j]) {
-            result.push(arr1[i]);
-            i++;
-        } else {
-            result.push(arr2[j]);
-            j++
-        }
-    }
-
-    while(i < arr1.length) {
-        result.push(arr1[i]);
-        i++;
-    }
-
-    while(j < arr2.length) {
-        result.push(arr2[j]);
-        j++
-    }
-
-    return result;
-}
 function sortArray(nums: number[]): number[] {
-
     if(nums.length <= 1) {
         return nums;
     }
 
-    const mid = Math.floor(nums.length / 2);
-    const left = sortArray(nums.slice(0, mid));
-    const right = sortArray(nums.slice(mid));
+    const mid = Math.floor(nums.length/2);
+    const leftSorted = sortArray(nums.slice(0, mid));
+    const rightSorted = sortArray(nums.slice(mid));
 
-    return merge(left, right);
-    
+    return merge(leftSorted, rightSorted);
 };
+
+function merge(nums1, nums2) {
+    const merged = [];
+    let p1 = 0;
+    let p2 = 0;
+    while(p1 < nums1.length && p2 < nums2.length) {
+        if(nums1[p1] < nums2[p2]) {
+            merged.push(nums1[p1]);
+            p1 += 1;
+        } else {
+            merged.push(nums2[p2]);
+            p2 += 1;
+        }
+    }
+    while(p1 < nums1.length) {
+        merged.push(nums1[p1]);
+        p1 += 1;
+    }
+    while(p2 < nums2.length) {
+        merged.push(nums2[p2]);
+        p2 += 1;
+    }
+    return merged;
+}
