@@ -11,20 +11,33 @@
  */
 
 function isPalindrome(head: ListNode | null): boolean {
-    const arr = [];
-    let current = head;
-    while(current) {
-        arr.push(current.val);
-        current = current.next;
+    // 1. Find middle
+    let slow = head;
+    let fast = head;
+    while(fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
     }
-    let left = 0;
-    let right = arr.length - 1;
-    while(left < right) {
-        if(arr[left] !== arr[right]) {
+    // 'slow' is at the middle now
+
+    // 2. Reverse second half (using slow as a head for the second half)
+    let prev = null;
+    while(slow) {
+        const temp = slow.next;
+        slow.next = prev;
+        prev = slow;
+        slow = temp;
+    }
+
+    // 3. Check if palindrome using two pointers
+    let left = head;
+    let right = prev;
+    while(right) {
+        if(left.val !== right.val) {
             return false;
         }
-        left += 1;
-        right -= 1;
+        left = left.next;
+        right = right.next;
     }
     return true;
 };
