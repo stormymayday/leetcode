@@ -1,108 +1,37 @@
-class Node {
-    value: number;
-    next: Node | null;
-    constructor(value) {
-        this.value = value;
-        this.next = null;
-    }
-}
-
-class MyStack {
-    top: Node | null;
-    bottom: Node | null;
-    height: number;
-    constructor() {
-        this.top = null;
-        this.bottom = null;
-        this.height = 0;
-    }
-    push(value): MyStack {
-        const newNode = new Node(value);
-        if(!this.top) {
-            this.top = newNode;
-            this.bottom = newNode;
-        } else {
-            newNode.next = this.top;
-            this.top = newNode;
-        }
-        this.height++;
-        return this;
-    }
-
-    pop():number | undefined {
-        if(!this.top) {
-            return undefined;
-        } else {
-            const temp = this.top;
-            this.top = this.top.next;
-            temp.next = null;
-            this.height--;
-            if(this.height === 0) {
-                this.bottom = null;
-            }
-            return temp.value;
-        }
-    }
-
-    peek():number | undefined {
-        if(!this.top) {
-            return undefined;
-        } else {
-            return this.top.value;
-        }
-    }
-
-    getBottom():number | undefined {
-        if(!this.bottom) {
-            return undefined;
-        } else {
-            return this.bottom.value;
-        }
-    }
-}
-
 class MyQueue {
 
-    pushStack: MyStack;
-    popStack: MyStack;
+    pushStack: number[];
+    popStack: number[];
 
     constructor() {
-        this.pushStack = new MyStack();
-        this.popStack = new MyStack();
+        this.pushStack = [];
+        this.popStack = [];
     }
 
     push(x: number): void {
         this.pushStack.push(x);
     }
 
-    pop(): number | undefined {
-        if(this.empty()) {
-            return undefined;
-        } else {
-            if(this.popStack.height === 0) {
-                while(this.pushStack.height > 0) {
-                    this.popStack.push(this.pushStack.pop());
-                }
-            }
-            return this.popStack.pop();
+    pop(): number {
+        while(this.pushStack.length > 0) {
+            this.popStack.push(this.pushStack.pop());
         }
+
+        const result = this.popStack.pop();
+
+        while(this.popStack.length > 0) {
+            this.pushStack.push(this.popStack.pop());
+        }
+
+        return result;
     }
 
-    peek(): number | undefined {
-        if(this.empty()) {
-            return undefined;
-        } else {
-            if(this.popStack.height === 0) {
-                while(this.pushStack.height > 0) {
-                    this.popStack.push(this.pushStack.pop());
-                }
-            }
-            return this.popStack.peek();
-        }
+    peek(): number {
+        return this.pushStack[0];
     }
 
     empty(): boolean {
-        return this.pushStack.height === 0 && this.popStack.height === 0;
+        return this.pushStack.length === 0;
     }
 }
 
