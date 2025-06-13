@@ -11,42 +11,42 @@
  */
 
 function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+    const dummyNode = new ListNode();
+    let tail = dummyNode;
 
-    const dummyNode = new ListNode(-1, null);
-    let current = dummyNode;
-
+    let p1 = l1;
+    let p2 = l2;
     let carry = 0;
-    // Edge Case: check if carry remains
-    while(l1 || l2 || carry) {
 
-        // extracting the value if nodes exist
-        const num1 = l1 ? l1.val : 0;
-        const num2 = l2 ? l2.val : 0;
+    while(p1 !== null || p2 !== null || carry !== 0) {
 
-        // cacluating the result
-        let result = num1 + num2 + carry;
+        const val1 = p1 !== null ? p1.val : 0;
+        const val2 = p2 !== null ? p2.val : 0;
 
-        // calculating carry
-        carry = Math.floor(result/10); // if result is less than 10 carry will be zero
+        const currentSum = val1 + val2 + carry;
+        let digit = 0;
 
-        // if result is less than 10, modding it by 10 will not change it
-        // otherwise, it will get the 'ones' place
-        result = result % 10;
-
-        const newNode = new ListNode(result);
-        current.next = newNode;
-
-        // Updating pointers
-        current = current.next;
-        if(l1) {
-            l1 = l1.next;
+        if(currentSum > 9) {
+            digit = currentSum % 10;
+            carry = 1;
+        } else {
+            digit = currentSum;
+            carry = 0;
         }
-        if(l2) {
-            l2 = l2.next;
+
+        const newNode = new ListNode(digit);
+        tail.next = newNode;
+        tail = newNode;
+
+        if(p1 !== null) {
+            p1 = p1.next;
+        }
+
+        if(p2 !== null) {
+            p2 = p2.next;
         }
 
     }
 
     return dummyNode.next;
-    
 };
