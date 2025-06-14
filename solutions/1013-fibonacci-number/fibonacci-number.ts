@@ -1,13 +1,15 @@
-function fib(n: number, memo: Record<number, number> = {}): number {
-
-    if(n in memo) {
-        return memo[n];
-    }
-
+function fib(n: number): number {
     if(n < 2) {
         return n;
     }
 
-    memo[n] = fib(n - 1, memo) + fib(n - 2, memo);
-    return memo[n];
+    const nums = [0, 1];
+    let i = 2;
+    while(i <= n) {
+        const temp = nums[1];
+        nums[1] = nums[0] + nums[1];
+        nums[0] = temp;
+        i += 1;
+    }
+    return nums[1];
 };
