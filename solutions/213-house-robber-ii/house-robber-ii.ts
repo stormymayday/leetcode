@@ -1,12 +1,25 @@
 function rob(nums: number[]): number {
+
+    // Edge Case 1: empty array (technically, works without this)
+    if(nums.length === 0) {
+        return 0; 
+    }
     
-    // Edge Case 1: single element
+    // Edge Case 2: single element
     if(nums.length === 1) {
         return nums[0];
     }
 
+    // Optional optimization: two elements
+    if(nums.length === 2) {
+        return Math.max(nums[0], nums[1]);
+    }
+
+    // including first element, excluding last
     const max1 = helper(nums, 0, nums.length - 1, {});
+    // excluding first element, includin last
     const max2 = helper(nums, 1, nums.length, {});
+
     return Math.max(max1, max2);
 };
 
