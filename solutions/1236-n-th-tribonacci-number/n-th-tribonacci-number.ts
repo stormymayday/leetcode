@@ -1,16 +1,17 @@
-function tribonacci(n: number, memo = new Map()): number {
-    if(memo.has(n)) {
-        return memo.get(n);
+function tribonacci(n: number, memo: Record<number, number> = {}): number {
+
+    if(n in memo) {
+        return memo[n];
+    }
+
+    if(n == 1 || n == 2) {
+        return 1;
     }
 
     if(n === 0) {
         return 0;
     }
 
-    if(n === 1 || n === 2) {
-        return 1;
-    }
-
-    memo.set(n, tribonacci(n - 1, memo) + tribonacci(n - 2, memo) + tribonacci(n - 3, memo));
-    return memo.get(n);
+    memo[n] = tribonacci(n - 3, memo) + tribonacci(n - 2, memo) + tribonacci(n - 1, memo);
+    return memo[n];
 };
