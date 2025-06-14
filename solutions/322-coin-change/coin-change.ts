@@ -7,22 +7,24 @@ function coinChange(coins: number[], amount: number): number {
     }
 };
 
-function helper(amount, coins, memo: Record<number, number> = {}) {
+function helper(amount: number, coins: number[], memo: Record<number, number> = {}) {
+
     if(amount in memo) {
         return memo[amount];
     }
+
     if(amount < 0) {
         return Infinity;
     }
+
     if(amount === 0) {
         return 0;
     }
 
-    let minCoins = Infinity;
+    let minChange = Infinity;
     for(const coin of coins) {
-        const numCoins = 1 + helper(amount - coin, coins, memo);
-        minCoins = Math.min(minCoins, numCoins);
+        minChange = Math.min(minChange, 1 + helper(amount - coin, coins, memo));
     }
-    memo[amount] = minCoins;
-    return minCoins;
+    memo[amount] = minChange;
+    return minChange;
 }
