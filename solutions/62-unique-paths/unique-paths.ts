@@ -1,11 +1,15 @@
 function uniquePaths(m: number, n: number, memo: Record<string, number> = {}): number {
     
-    const key = `${m},${n}`;
+    const key1 = `${m},${n}`;
+    const key2 = `${n},${m}`;
 
-    if(key in memo) {
-        return memo[key];
+    if(key1 in memo) {
+        return memo[key1];
     }
 
+    if(key2 in memo) {
+        return memo[key2];
+    }
 
     if(m === 0 || n === 0) {
         return 0;
@@ -14,8 +18,10 @@ function uniquePaths(m: number, n: number, memo: Record<string, number> = {}): n
         return 1;
     }
 
-    const down = uniquePaths(m - 1, n, memo);
-    const right = uniquePaths(m, n - 1, memo);
-    memo[key] = down + right;
-    return memo[key];
+    const downPaths = uniquePaths(m - 1, n, memo);
+    const rightPaths = uniquePaths(m, n - 1, memo);
+    const paths = downPaths + rightPaths;
+    memo[key1] = paths;
+    memo[key2] = paths;
+    return paths;
 };
