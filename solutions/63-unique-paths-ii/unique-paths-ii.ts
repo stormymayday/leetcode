@@ -1,19 +1,24 @@
-function uniquePathsWithObstacles(grid: number[][], row: number = 0, col: number = 0, memo: Record<string, number> = {}): number {
+function uniquePathsWithObstacles(grid: number[][], r: number = 0, c: number = 0, memo: Record<string, number> = {}): number {
     
-    const key = `${row},${col}`;
+    const key = `${r},${c}`;
 
     if(key in memo) {
         return memo[key];
     }
 
-    if(row === grid.length || col === grid[0].length || grid[row][col] === 1) {
+    if(r === grid.length || c === grid[0].length) {
         return 0;
     }
 
-    if(row === grid.length - 1 && col === grid[0].length - 1) {
+    if(grid[r][c] === 1) {
+        return 0;
+    }
+
+    if(r === grid.length - 1 && c === grid[0].length - 1) {
         return 1;
     }
 
-    memo[key] = uniquePathsWithObstacles(grid, row + 1, col, memo) + uniquePathsWithObstacles(grid, row, col + 1, memo);
+    memo[key] = uniquePathsWithObstacles(grid, r + 1, c, memo) + uniquePathsWithObstacles(grid, r, c + 1, memo);
+
     return memo[key];
 };
