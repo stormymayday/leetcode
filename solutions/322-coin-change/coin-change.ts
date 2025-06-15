@@ -7,8 +7,8 @@ function coinChange(coins: number[], amount: number): number {
     }
 };
 
-function helper(amount: number, coins: number[], memo: Record<number, number> = {}) {
-
+function helper(amount: number, coins: number[], memo: Record<number, number> = {}): number {
+    
     if(amount in memo) {
         return memo[amount];
     }
@@ -21,10 +21,11 @@ function helper(amount: number, coins: number[], memo: Record<number, number> = 
         return 0;
     }
 
-    let minChange = Infinity;
+    let minCoins = Infinity;
     for(const coin of coins) {
-        minChange = Math.min(minChange, 1 + helper(amount - coin, coins, memo));
+        minCoins = Math.min(minCoins, 1 + helper(amount - coin, coins, memo));
     }
-    memo[amount] = minChange;
-    return minChange;
+    
+    memo[amount] = minCoins;
+    return minCoins;
 }
