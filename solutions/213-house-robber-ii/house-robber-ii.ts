@@ -11,8 +11,9 @@ function rob(nums: number[]): number {
         return Math.max(nums[0], nums[1]);
     }
 
-    const includeFirst = helper(nums, 0, nums.length - 1, {});
-    const excludeFirst = helper(nums, 1, nums.length, {});
+    const memo = {};
+    const includeFirst = helper(nums, 0, nums.length - 1, memo);
+    const excludeFirst = helper(nums, 1, nums.length, memo);
 
     return Math.max(includeFirst, excludeFirst);
 
@@ -20,8 +21,10 @@ function rob(nums: number[]): number {
 
 function helper(nums, start, end, memo) {
 
-    if(start in memo) {
-        return memo[start];
+    const key = `${start},${end}`;
+
+    if(key in memo) {
+        return memo[key];
     }
 
     if(start >= end) {
@@ -31,7 +34,7 @@ function helper(nums, start, end, memo) {
     const include = nums[start] + helper(nums, start + 2, end, memo);
     const exclude = helper(nums, start + 1, end, memo);
 
-    memo[start] = Math.max(include, exclude);
+    memo[key] = Math.max(include, exclude);
 
-    return memo[start];
+    return memo[key];
 }
