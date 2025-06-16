@@ -17,21 +17,25 @@ function levelOrder(root: TreeNode | null): number[][] {
     if(root === null) {
         return result;
     }
-    const queue = [root];
-    while(queue.length > 0) {
-        const queueLen = queue.length;
-        const level = [];
-        for(let i = 0; i < queueLen; i += 1) {
-            const current = queue.shift();
-            level.push(current.val);
-            if(current.left) {
-                queue.push(current.left);
-            }
-            if(current.right) {
-                queue.push(current.right);
-            }
+    const stack = [{node: root, depth: 0}];
+    while(stack.length > 0) {
+        const {node, depth} = stack.pop();
+        if(result[depth] === undefined) {
+            result[depth] = [];
         }
-        result.push(level);
+        result[depth].push(node.val);
+        if(node.right) {
+            stack.push({
+                node: node.right,
+                depth: depth + 1,
+            });
+        }
+        if(node.left) {
+            stack.push({
+                node: node.left,
+                depth: depth + 1,
+            });
+        }
     }
     return result;
 };
