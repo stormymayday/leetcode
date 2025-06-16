@@ -1,4 +1,4 @@
-function canJump(nums: number[], i: number = 0, memo: Record<number, boolean> = {}): boolean {
+function canJump(nums: number[], i:number = 0, memo: Record<number, boolean> = {}): boolean {
     
     if(i in memo) {
         return memo[i];
@@ -8,9 +8,9 @@ function canJump(nums: number[], i: number = 0, memo: Record<number, boolean> = 
         return true;
     }
 
-    const currentMaxJumps = nums[i];
-    for(let jump = 1; jump <= currentMaxJumps; jump += 1) {
-        if(canJump(nums, i + jump, memo) === true) {
+    const maxJumps = nums[i];
+    for(let jumps = 1; jumps <= maxJumps; jumps += 1) {
+        if(canJump(nums, i + jumps, memo) === true) {
             memo[i] = true;
             return true;
         }
