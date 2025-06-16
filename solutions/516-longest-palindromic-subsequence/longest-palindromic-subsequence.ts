@@ -1,38 +1,26 @@
-function longestPalindromeSubseq(s: string, i: number = 0, j: number = s.length - 1, memo: Record<string, number> = {}): number {
+function longestPalindromeSubseq(s: string, left: number = 0, right: number = s.length - 1, memo: Record<string, number> = {}): number {
     
-    const key = `${i},${j}`;
+    const key = `${left},${right}`;
 
-    // Base Case: memo fetching
     if(key in memo) {
         return memo[key];
     }
 
-    // Base Case: pointers are equal (single character)
-    if(i === j) {
+    if(left === right) {
         return 1;
     }
 
-    // Base Case: pointers have crossed (empty string)
-    if(i > j) {
+    if(left > right) {
         return 0;
     }
 
-    // Recrsive Step
-    // characters match
-    if(s[i] === s[j]) {
-        // add two skipping both characters
-        memo[key] = 2 + longestPalindromeSubseq(s, i + 1, j - 1, memo);
-        
-    }
-    // characters don't match
-    else {
-        // Branch out
-        const skipFirst = longestPalindromeSubseq(s, i + 1, j, memo);
-        const skipLast = longestPalindromeSubseq(s, i, j - 1, memo);
-        // Take maximum
+    if(s[left] === s[right]) {
+        memo[key] = 2 + longestPalindromeSubseq(s, left + 1, right - 1, memo);
+    } else {
+        const skipFirst = longestPalindromeSubseq(s, left + 1, right, memo);
+        const skipLast = longestPalindromeSubseq(s, left, right - 1, memo);
         memo[key] = Math.max(skipFirst, skipLast);
     }
 
     return memo[key];
-
 };
