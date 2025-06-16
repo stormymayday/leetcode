@@ -1,5 +1,5 @@
 function numSquares(n: number, memo: Record<number, number> = {}): number {
-
+    
     if(n in memo) {
         return memo[n];
     }
@@ -13,6 +13,7 @@ function numSquares(n: number, memo: Record<number, number> = {}): number {
         const square = i * i;
         minSquares = Math.min(minSquares, 1 + numSquares(n - square, memo));
     }
+
     memo[n] = minSquares;
     return minSquares;
 };
