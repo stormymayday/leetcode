@@ -13,20 +13,16 @@
  */
 
 function preorderTraversal(root: TreeNode | null): number[] {
-    if(root === null) {
-        return [];
-    }
     const result = [];
-    const stack = [root];
-    while(stack.length > 0) {
-        const current = stack.pop();
-        result.push(current.val);
-        if(current.right) {
-            stack.push(current.right);
-        }
-        if(current.left) {
-            stack.push(current.left);
-        }
-    }
-    return result;
+    return traverse(root, result);
 };
+
+function traverse(root: TreeNode | null, arr: number[]): number[] {
+    if(root === null) {
+        return arr;
+    }
+    arr.push(root.val);
+    traverse(root.left, arr);
+    traverse(root.right, arr);
+    return arr;
+}
