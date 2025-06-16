@@ -19,13 +19,9 @@ function searchBST(root: TreeNode | null, val: number): TreeNode | null {
 
     if(root.val < val) {
         return searchBST(root.right, val);
-    }
-
-    if(root.val > val) {
+    } else if(root.val > val) {
         return searchBST(root.left, val);
-    }
-
-    if(root.val === val) {
+    } else {
         return root;
     }
 };
