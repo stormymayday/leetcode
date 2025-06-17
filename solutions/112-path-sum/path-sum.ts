@@ -12,16 +12,18 @@
  * }
  */
 
-function hasPathSum(root: TreeNode | null, targetSum: number, currSum: number = 0): boolean {
+function hasPathSum(root: TreeNode | null, targetSum: number): boolean {
     if(root === null) {
         return false;
     }
 
-    currSum += root.val;
-
     if(!root.left && !root.right) {
-        return currSum === targetSum;
+        return root.val === targetSum;
     }
 
-    return hasPathSum(root.left, targetSum, currSum) || hasPathSum(root.right, targetSum, currSum);
+    let remainder = targetSum - root.val;
+
+    return hasPathSum(root.left, remainder) || hasPathSum(root.right, remainder);
+
+
 };
