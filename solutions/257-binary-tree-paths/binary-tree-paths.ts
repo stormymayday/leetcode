@@ -24,14 +24,14 @@ function binaryTreePaths(root: TreeNode | null): string[] {
         // If leaf node, save copy of current path
         if(node.left === null && node.right === null) {
             result.push([...currentPath]); // O(P) copy only at leaves
-        } else {
-            // Recurse on children
-            if(node.left) {
-                helper(node.left);
-            }
-            if(node.right) {
-                helper(node.right);
-            }
+        }
+        
+        // Recurse on children
+        if(node.left) {
+            helper(node.left);
+        }
+        if(node.right) {
+            helper(node.right);
         }
         
         // Backtrack - remove current node - O(1)
