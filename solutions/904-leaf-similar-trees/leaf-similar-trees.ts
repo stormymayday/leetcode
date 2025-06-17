@@ -13,25 +13,22 @@
  */
 
 function leafSimilar(root1: TreeNode | null, root2: TreeNode | null): boolean {
-    const leafList1 = leafList(root1);
-    const leafList2 = leafList(root2);
-
-    if(leafList1.length !== leafList2.length) {
+    const list1 = leafList(root1);
+    const list2 = leafList(root2);
+    if(list1.length !== list2.length) {
         return false;
     }
-
-    for(let i = 0; i < leafList1.length; i += 1) {
-        if(leafList1[i] !== leafList2[i]) {
+    for(let i = 0; i < list1.length; i += 1) {
+        if(list1[i] !== list2[i]) {
             return false;
         }
     }
-
     return true;
 };
 
-function leafList(root) {
+function leafList(root: TreeNode | null): number[] {
     const result = [];
-    function helper(root) {
+    function helper(root: TreeNode | null):number[] {
         if(root === null) {
             return;
         }
