@@ -28,16 +28,21 @@ function leafSimilar(root1: TreeNode | null, root2: TreeNode | null): boolean {
 
 function leafList(root: TreeNode | null): number[] {
     const result = [];
-    function helper(root: TreeNode | null):number[] {
-        if(root === null) {
-            return;
-        }
-        if(root.left === null && root.right === null) {
-            result.push(root.val);
-        }
-        helper(root.left);
-        helper(root.right);
+    if(root == null) {
+        return result;
     }
-    helper(root);
+    const stack = [root];
+    while(stack.length > 0) {
+        const current = stack.pop();
+        if(current.left === null && current.right === null) {
+            result.push(current.val);
+        }
+        if(current.right !== null) {
+            stack.push(current.right);
+        }
+        if(current.left !== null) {
+            stack.push(current.left);
+        }
+    }
     return result;
 }
