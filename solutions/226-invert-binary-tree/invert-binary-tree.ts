@@ -17,11 +17,12 @@ function invertTree(root: TreeNode | null): TreeNode | null {
         return null;
     }
 
-    const left = invertTree(root.left);
-    const right = invertTree(root.right);
+    const temp = root.left;
+    root.left = root.right;
+    root.right = temp;
 
-    root.left = right;
-    root.right = left;
+    invertTree(root.left);
+    invertTree(root.right);
 
     return root;
 };
