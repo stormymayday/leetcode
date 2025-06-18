@@ -13,55 +13,28 @@
  */
 
 function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
-
-    const inorderIndexMap = new Map();
-    for(let i = 0; i < inorder.length; i++) {
-        inorderIndexMap.set(inorder[i], i);
+    if(inorder.length === 0) {
+        return null;
     }
-
-    function helper(
-        inorder,
-        postorder,
-        inorderIndexMap,
-        inorderStart = 0,
-        inorderEnd = inorder.length - 1,
-        postorderStart = 0,
-        postorderEnd = postorder.length - 1
-    ) {
-
-        // Base Case
-        if (inorderStart > inorderEnd) {
-            return null;
-        }
-
-        const value = postorder[postorderEnd];
-        const root = new TreeNode(value);
-        const mid = inorderIndexMap.get(value);
-        const leftSize = mid - inorderStart;
-
-        root.left = helper(
-            inorder,
-            postorder,
-            inorderIndexMap,
-            inorderStart, // stays the same
-            mid - 1, // inorderEnd
-            postorderStart, // stays the same
-            postorderStart + leftSize - 1 // Postorder end index is inclusive, so it must be one before the right subtree start.
-        );
-
-        root.right = helper(
-            inorder,
-            postorder,
-            inorderIndexMap,
-            mid + 1,
-            inorderEnd, // stays the same
-            postorderStart + leftSize, // The right subtree starts immediately after the left subtree in postorder traversal.
-            postorderEnd - 1
-        );
-
-        return root;
-    }
-
-    return helper(inorder, postorder, inorderIndexMap);
     
+    // last element of postorder is the curret root
+    const rootVal = postorder[postorder.length - 1];
+    const root = new TreeNode(rootVal);
+
+    // getting the middle of inorder
+    const mid = inorder.indexOf(rootVal);
+
+    // building left and right inorder arrays
+    const leftInOrder = inorder.slice(0, mid);
+    const rightInOrder = inorder.slice(mid + 1);
+
+    // building left and right postorder arrays
+    const leftPostOrder = postorder.slice(0, leftInOrder.length);
+    const rightPostOrder = postorder.slice(leftInOrder.length, - 1);
+
+    // Recursive Step
+    root.left = buildTree(leftInOrder, leftPostOrder);
+    root.right = buildTree(rightInOrder, rightPostOrder);
+
+    return root;
 };
