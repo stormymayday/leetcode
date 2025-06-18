@@ -12,16 +12,14 @@
  * }
  */
 
-function isValidBST(root: TreeNode | null): boolean {
-    function dfs(root: TreeNode | null, left: number, right: number) {
-        if(root === null) {
-            return true;
-        }
-        if(!(left < root.val && root.val < right)) {
-            return false;
-        }
-
-        return dfs(root.left, left, root.val) && dfs(root.right, root.val, right);
+function isValidBST(root: TreeNode | null, left: number = - Infinity, right: number = Infinity): boolean {
+    if(root === null) {
+        return true;
     }
-    return dfs(root, -Infinity, Infinity);
+
+    if(!(left < root.val && root.val < right)) {
+        return false;
+    }
+
+    return isValidBST(root.left, left, root.val) && isValidBST(root.right, root.val, right);
 };
