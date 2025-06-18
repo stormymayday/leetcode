@@ -13,22 +13,28 @@
  */
 
 function isValidBST(root: TreeNode | null): boolean {
-
-    function helper(node, leftBound, rightBound) {
-        // Base Case 1: null node
-        if(node === null) {
-            return true;
-        }
-
-        // Base Case 2: out of bounds
-        if(node.val <= leftBound || node.val >= rightBound) {
+    const result = dfsInOrder(root);
+    if(result.length < 2) {
+        return true;
+    }
+    for(let i = 0; i < result.length - 1; i += 1) {
+        if(result[i] >= result[i + 1]) {
             return false;
         }
-
-        // Recurse Left & Right
-        return helper(node.left, leftBound, node.val) && helper(node.right, node.val, rightBound);
     }
-
-    return helper(root, -Infinity, Infinity);
-    
+    return true;
 };
+
+function dfsInOrder(root: TreeNode | null): number[] {
+    const result = [];
+    function traverse(root: TreeNode | null):void {
+        if(root === null) {
+            return;
+        }
+        traverse(root.left);
+        result.push(root.val);
+        traverse(root.right);
+    }
+    traverse(root);
+    return result;
+}
