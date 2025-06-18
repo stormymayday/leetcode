@@ -17,21 +17,18 @@ function rightSideView(root: TreeNode | null): number[] {
     if(root === null) {
         return result;
     }
-    const queue = [root];
-    while(queue.length > 0) {
-        const queueLength = queue.length;
-        const level = [];
-        for(let i = 0; i < queueLength; i += 1) {
-            const current = queue.shift();
-            level.push(current.val);
-            if(current.left) {
-                queue.push(current.left);
-            }
-            if(current.right) {
-                queue.push(current.right);
-            }
+    function dfs(root: TreeNode | null, level: number) {
+        if(root === null) {
+            return;
         }
-        result.push(level[level.length - 1]);
+
+        if(result.length === level) {
+            result.push(root.val);
+        }
+
+        dfs(root.right, level + 1);
+        dfs(root.left, level + 1);
     }
+    dfs(root, 0);
     return result;
 };
