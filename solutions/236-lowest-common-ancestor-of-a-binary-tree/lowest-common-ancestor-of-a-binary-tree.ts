@@ -13,20 +13,48 @@
  */
 
 function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: TreeNode | null): TreeNode | null {
-	if(root === null) {
+	if(root === null || p === null || q === null) {
         return null;
     }
 
-    if(root === p || root === q) {
-        return root;
+    const path1 = findPath(root, q);
+    const path2 = findPath(root, p);
+
+    if(path1 === null || path2 === null) {
+        return null;
     }
 
-    const left = lowestCommonAncestor(root.left, p, q);
-    const right = lowestCommonAncestor(root.right, p, q);
+    const set = new Set(path1);
 
-    if(left && right) {
-        return root;
-    } else {
-        return left || right;
+    for(const node of path2) {
+        if(set.has(node)) {
+            return node;
+        }
     }
+
+    return null;
 };
+
+function findPath(root: TreeNode | null, target: TreeNode | null): TreeNode[] | null {
+    if(root === null) {
+        return null;
+    }
+
+    if(root === target) {
+        return [root];
+    }
+
+    const left = findPath(root.left, target);
+    if(left !== null) {
+        left.push(root);
+        return left;
+    }
+
+    const right = findPath(root.right, target);
+    if(right !== null) {
+        right.push(root);
+        return right;
+    }
+
+    return null;
+}
