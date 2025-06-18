@@ -14,15 +14,12 @@
 
 function rightSideView(root: TreeNode | null): number[] {
     const result = [];
-    if(root === null) {
-        return result;
-    }
-    function dfs(root: TreeNode | null, level: number) {
+    function dfs(root, level) {
         if(root === null) {
             return;
         }
 
-        if(result[level] === undefined) {
+        if(result.length === level) {
             result.push(root.val);
         }
 
