@@ -22,7 +22,7 @@ function rightSideView(root: TreeNode | null): number[] {
             return;
         }
 
-        if(result.length === level) {
+        if(result[level] === undefined) {
             result.push(root.val);
         }
 
