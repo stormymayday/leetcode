@@ -13,27 +13,18 @@
  */
 
 function postorderTraversal(root: TreeNode | null): number[] {
-
     const result = [];
-
-    function traverse(root) {
-
-        // Base Case
+    if(root === null) {
+        return result;
+    }
+    function dfs(root: TreeNode | null): void {
         if(root === null) {
             return;
         }
-
-        // 1. Recurse Left
-        traverse(root.left);
-
-        // 2. Recurse Right
-        traverse(root.right);
-
-        // 3. Visit Node
+        dfs(root.left);
+        dfs(root.right);
         result.push(root.val);
-
     }
-
-    traverse(root);
+    dfs(root);
     return result;
 };
