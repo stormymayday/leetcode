@@ -13,15 +13,23 @@
  */
 
 function rangeSumBST(root: TreeNode | null, low: number, high: number): number {
+    let sum = 0;
     if(root === null) {
-        return 0;
+        return sum;
     }
+    const queue = [root];
+    while(queue.length > 0) {
+        const current = queue.shift();
+        if(current.val >= low && current.val <= high) {
+            sum += current.val;
+        }
+        if(current.left !== null && current.val >= low) {
+            queue.push(current.left);
+        }
+        if(current.right !== null && current.val <= high) {
+            queue.push(current.right);
+        }
 
-    if(root.val > high) {
-        return rangeSumBST(root.left, low, high);
-    } else if(root.val < low) {
-        return rangeSumBST(root.right, low, high);
-    } else {
-        return root.val + rangeSumBST(root.left, low, high) + rangeSumBST(root.right, low, high);
     }
+    return sum;
 };
