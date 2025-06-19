@@ -13,9 +13,7 @@
  */
 
 function isBalanced(root: TreeNode | null): boolean {
-
-    function helper(root) {
-        // Base Case
+    function helper(root: TreeNode | null): number {
         if(root === null) {
             return 0;
         }
@@ -36,7 +34,5 @@ function isBalanced(root: TreeNode | null): boolean {
             return 1 + Math.max(leftHeight, rightHeight);
         }
     }
-
     return helper(root) > -1;
-    
 };
