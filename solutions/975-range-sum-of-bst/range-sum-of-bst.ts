@@ -17,13 +17,11 @@ function rangeSumBST(root: TreeNode | null, low: number, high: number): number {
         return 0;
     }
 
-    if(root.val < low) {
-        return rangeSumBST(root.right, low, high);
-    }
-
     if(root.val > high) {
         return rangeSumBST(root.left, low, high);
+    } else if(root.val < low) {
+        return rangeSumBST(root.right, low, high);
+    } else {
+        return root.val + rangeSumBST(root.left, low, high) + rangeSumBST(root.right, low, high);
     }
-
-    return root.val + rangeSumBST(root.left, low, high) + rangeSumBST(root.right, low, high);
 };
