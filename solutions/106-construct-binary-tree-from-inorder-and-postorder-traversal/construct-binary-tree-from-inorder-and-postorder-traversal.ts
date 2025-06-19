@@ -13,28 +13,28 @@
  */
 
 function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
-    if(inorder.length === 0) {
-        return null;
+
+    const inOrderIndex = {};
+    for(let i = 0; i < inorder.length; i += 1) {
+        const value = inorder[i];
+        inOrderIndex[value] = i;
     }
-    
-    // last element of postorder is the curret root
-    const rootVal = postorder[postorder.length - 1];
-    const root = new TreeNode(rootVal);
 
-    // getting the middle of inorder
-    const mid = inorder.indexOf(rootVal);
+    function helper(inOrderStart, inOrderEnd, postOrderStart, postOrderEnd) {
+        if(inOrderStart > inOrderEnd) {
+            return null;
+        }
+        
+        const rootValue = postorder[postOrderEnd];
+        const root = new TreeNode(rootValue);
 
-    // building left and right inorder arrays
-    const leftInOrder = inorder.slice(0, mid);
-    const rightInOrder = inorder.slice(mid + 1);
+        const mid = inOrderIndex[rootValue];
 
-    // building left and right postorder arrays
-    const leftPostOrder = postorder.slice(0, leftInOrder.length);
-    const rightPostOrder = postorder.slice(leftInOrder.length, - 1);
+        root.left = helper(inOrderStart, mid - 1, postOrderStart, postOrderStart + (mid - inOrderStart) - 1);
+        root.right = helper(mid + 1, inOrderEnd, postOrderStart + (mid - inOrderStart), postOrderEnd - 1);
 
-    // Recursive Step
-    root.left = buildTree(leftInOrder, leftPostOrder);
-    root.right = buildTree(rightInOrder, rightPostOrder);
+        return root;
+    }
 
-    return root;
+    return helper(0, inorder.length - 1, 0, postorder.length - 1);
 };
