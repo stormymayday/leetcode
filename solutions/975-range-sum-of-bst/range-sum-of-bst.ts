@@ -1,15 +1,17 @@
 function rangeSumBST(root: TreeNode | null, low: number, high: number): number {
-    if (!root) return 0;
-    
+    if (!root) {
+        return 0;
+    }
+
     let sum = 0;
     if (root.val >= low && root.val <= high) {
         sum += root.val;
     }
     
-    if (root.val > low) {
+    if (root.val >= low) {
         sum += rangeSumBST(root.left, low, high);
     }
-    if (root.val < high) {
+    if (root.val <= high) {
         sum += rangeSumBST(root.right, low, high);
     }
     
