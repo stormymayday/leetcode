@@ -14,14 +14,18 @@
 
 function searchBST(root: TreeNode | null, val: number): TreeNode | null {
     if(root === null) {
-        return null;
+        return root;
     }
 
-    if(root.val === val) {
-        return root;
-    } else if(root.val < val) {
-        return searchBST(root.right, val);
-    } else {
-        return searchBST(root.left, val);
+    let current = root;
+    while(current) {
+        if(current.val < val) {
+            current = current.right;
+        } else if(current.val > val) {
+            current = current.left;
+        } else {
+            return current;
+        }
     }
+    return null;
 };
