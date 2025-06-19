@@ -17,16 +17,14 @@ function preorderTraversal(root: TreeNode | null): number[] {
     if(root === null) {
         return result;
     }
-    const stack = [root];
-    while(stack.length > 0) {
-        const current = stack.pop();
-        result.push(current.val);
-        if(current.right) {
-            stack.push(current.right);
+    function helper(root: TreeNode | null): void {
+        if(root === null) {
+            return;
         }
-        if(current.left) {
-            stack.push(current.left);
-        }
+        result.push(root.val);
+        helper(root.left);
+        helper(root.right);
     }
+    helper(root);
     return result;
 };
