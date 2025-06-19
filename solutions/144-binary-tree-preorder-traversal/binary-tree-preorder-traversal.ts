@@ -14,15 +14,19 @@
 
 function preorderTraversal(root: TreeNode | null): number[] {
     const result = [];
-    return traverse(root, result);
-};
-
-function traverse(root: TreeNode | null, arr: number[]): number[] {
     if(root === null) {
-        return arr;
+        return result;
     }
-    arr.push(root.val);
-    traverse(root.left, arr);
-    traverse(root.right, arr);
-    return arr;
-}
+    const stack = [root];
+    while(stack.length > 0) {
+        const current = stack.pop();
+        result.push(current.val);
+        if(current.right) {
+            stack.push(current.right);
+        }
+        if(current.left) {
+            stack.push(current.left);
+        }
+    }
+    return result;
+};
