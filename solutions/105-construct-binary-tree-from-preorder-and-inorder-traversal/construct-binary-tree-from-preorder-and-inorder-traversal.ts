@@ -13,23 +13,59 @@
  */
 
 function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
-    if(preorder.length === 0) {
-        return null;
+    // Create a value to index mapping for inorder to find root index in O(1) time
+    const inOrderIndex = {};
+    for(let i = 0; i < inorder.length; i += 1) {
+        const value = inorder[i];
+        inOrderIndex[value] = i;
     }
 
-    const rootVal = preorder[0];
-    const root = new TreeNode(rootVal);
+    function helper(
+        inorder,
+        preorder,
+        inOrderIndex,
+        inOrderStart = 0,
+        inOrderEnd = inorder.length - 1,
+        preOrderStart = 0,
+        preOrderEnd = preorder.length - 1
+    ) {
 
-    const mid = inorder.indexOf(rootVal);
+        // Base Case: indicies have crossed (can use either inorder, postorder, or both)
+        if(inOrderStart > inOrderEnd) {
+            return null;
+        }
 
-    const leftInOrder = inorder.slice(0, mid);
-    const rightInOrder = inorder.slice(mid + 1);
+        // first element of the preorder is the current root
+        const rootVal = preorder[preOrderStart];
+        const root = new TreeNode(rootVal);
 
-    const leftPreOrder = preorder.slice(1, leftInOrder.length + 1);
-    const rightPreOrder = preorder.slice(leftInOrder.length + 1);
+        // using hashMap to get the root index from inorder
+        const mid = inOrderIndex[rootVal];
 
-    root.left = buildTree(leftPreOrder, leftInOrder);
-    root.right = buildTree(rightPreOrder, rightInOrder);
+        // Recursive Step
+        root.left = helper(
+            inorder,
+            preorder,
+            inOrderIndex,
+            inOrderStart, // stays the same
+            mid - 1, // inOrderEnd (right before mid)
+            preOrderStart + 1, // preOrderStart (original plus one)
+            preOrderStart + (mid - inOrderStart) // preOrderEnd (preOrderStart start plus the length of the inorder 'left')
+        );
 
-    return root;
+        root.right = helper(
+            inorder,
+            preorder,
+            inOrderIndex,
+            mid + 1, // inOrderStart (right after mid)
+            inOrderEnd, // stays the same
+            preOrderStart + (mid - inOrderStart) + 1, // same left side but plus 1
+            preOrderEnd // stays the same
+        );
+
+        return root;
+    }
+
+    return helper(inorder, preorder, inOrderIndex);
+
 };
