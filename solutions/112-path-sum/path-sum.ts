@@ -21,9 +21,8 @@ function hasPathSum(root: TreeNode | null, targetSum: number): boolean {
         return root.val === targetSum;
     }
 
-    let remainder = targetSum - root.val;
-
-    return hasPathSum(root.left, remainder) || hasPathSum(root.right, remainder);
+    let difference = targetSum - root.val;
+    return hasPathSum(root.left, difference) || hasPathSum(root.right, difference);
 
 
 };
