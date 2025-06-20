@@ -14,19 +14,19 @@
 
 function levelOrder(root: TreeNode | null): number[][] {
     const result = [];
-    return dfs(root, 0, result);
+    function dfs(root, level) {
+        if(root === null) {
+            return;
+        }
+
+        if(result.length === level) {
+            result[level] = [];
+        }
+        result[level].push(root.val);
+
+        dfs(root.left, level + 1);
+        dfs(root.right, level + 1);
+    }
+    dfs(root, 0);
+    return result;
 };
-
-function dfs(root: TreeNode | null, depth: number, arr: number[][]): number[][] {
-    if(root === null) {
-        return arr;
-    }
-
-    if(arr[depth] === undefined) {
-        arr[depth] = [];
-    }
-    arr[depth].push(root.val);
-    dfs(root.left, depth + 1, arr);
-    dfs(root.right, depth + 1, arr);
-    return arr;
-}
