@@ -13,7 +13,7 @@
  */
 
 function isBalanced(root: TreeNode | null): boolean {
-    function helper(root: TreeNode | null): number {
+    function helper(root: TreeNode | null):number {
         if(root === null) {
             return 0;
         }
@@ -33,6 +33,7 @@ function isBalanced(root: TreeNode | null): boolean {
         } else {
             return 1 + Math.max(leftHeight, rightHeight);
         }
+
     }
     return helper(root) > -1;
 };
