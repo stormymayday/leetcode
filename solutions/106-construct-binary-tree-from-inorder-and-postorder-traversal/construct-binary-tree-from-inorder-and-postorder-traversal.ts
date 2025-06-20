@@ -13,28 +13,22 @@
  */
 
 function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
-
-    const inOrderIndex = {};
-    for(let i = 0; i < inorder.length; i += 1) {
-        const value = inorder[i];
-        inOrderIndex[value] = i;
+    if(inorder.length === 0) {
+        return null;
     }
 
-    function helper(inOrderStart, inOrderEnd, postOrderStart, postOrderEnd) {
-        if(inOrderStart > inOrderEnd) {
-            return null;
-        }
-        
-        const rootValue = postorder[postOrderEnd];
-        const root = new TreeNode(rootValue);
+    const rootVal = postorder[postorder.length - 1];
+    const root = new TreeNode(rootVal);
+    const mid = inorder.indexOf(rootVal);
 
-        const mid = inOrderIndex[rootValue];
+    const inOrderLeft = inorder.slice(0, mid);
+    const inOrderRight = inorder.slice(mid + 1);
 
-        root.left = helper(inOrderStart, mid - 1, postOrderStart, postOrderStart + (mid - inOrderStart) - 1);
-        root.right = helper(mid + 1, inOrderEnd, postOrderStart + (mid - inOrderStart), postOrderEnd - 1);
+    const postOrderLeft = postorder.slice(0, inOrderLeft.length);
+    const postOrderRight = postorder.slice(inOrderLeft.length, -1);
 
-        return root;
-    }
-
-    return helper(0, inorder.length - 1, 0, postorder.length - 1);
+    root.left = buildTree(inOrderLeft, postOrderLeft);
+    root.right = buildTree(inOrderRight, postOrderRight);
+    
+    return root;
 };
