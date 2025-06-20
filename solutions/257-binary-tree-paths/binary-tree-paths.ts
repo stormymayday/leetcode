@@ -13,33 +13,39 @@
  */
 
 function binaryTreePaths(root: TreeNode | null): string[] {
-    if(!root) return [];
-    const result: number[][] = [];
-    const currentPath: number[] = [];
-    
-    function helper(node: TreeNode): void {
-        // Add current node to path - O(1)
-        currentPath.push(node.val);
-        
-        // If leaf node, save copy of current path
-        if(node.left === null && node.right === null) {
-            result.push([...currentPath]); // O(P) copy only at leaves
+    function helper(root: TreeNode | null): number[][] {
+        if(root === null) {
+            return [];
         }
-        
-        // Recurse on children
-        if(node.left) {
-            helper(node.left);
+
+        if(root.left === null && root.right === null) {
+            return [[root.val]];
         }
-        if(node.right) {
-            helper(node.right);
+
+        const allPaths = [];
+
+        const leftPaths = helper(root.left);
+        for(const path of leftPaths) {
+            path.push(root.val);
+            allPaths.push(path);
         }
-        
-        // Backtrack - remove current node - O(1)
-        currentPath.pop();
+
+        const rightPaths = helper(root.right);
+        for(const path of rightPaths) {
+            path.push(root.val);
+            allPaths.push(path);
+        }
+
+        return allPaths;
     }
-    
-    helper(root);
-    
-    // Convert number arrays to strings at the end - O(L × P)
-    return result.map(path => path.join('->'));
+    const result = helper(root);
+    for(const path of result) {
+        path.reverse();
+    }
+
+    return result.map((path) => {
+        return path.join("->");
+    })
+
 };
+
