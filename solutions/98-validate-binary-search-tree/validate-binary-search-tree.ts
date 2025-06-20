@@ -13,28 +13,16 @@
  */
 
 function isValidBST(root: TreeNode | null): boolean {
-    const inorder = dfs(root);
-    if(inorder.length < 2) {
-        return true;
-    }
-    for(let i = 0; i < inorder.length - 1; i += 1) {
-        if(inorder[i] >= inorder[i + 1]) {
+    function dfs(root: TreeNode | null, left: number, right:number):boolean {
+        if(root === null) {
+            return true;
+        }
+
+        if(left >= root.val || root.val >= right) {
             return false;
         }
-    }
-    return true;
-};
 
-function dfs(root: TreeNode | null):number [] {
-    const result = [];
-    function inOrder(root: TreeNode | null):void {
-        if(root === null) {
-            return null;
-        }
-        inOrder(root.left);
-        result.push(root.val);
-        inOrder(root.right);
+        return dfs(root.left, left, root.val) && dfs(root.right, root.val, right);
     }
-    inOrder(root);
-    return result;
-}
+    return dfs(root, -Infinity, Infinity);
+};
