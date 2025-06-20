@@ -12,14 +12,29 @@
  * }
  */
 
-function isValidBST(root: TreeNode | null, left: number = - Infinity, right: number = Infinity): boolean {
-    if(root === null) {
+function isValidBST(root: TreeNode | null): boolean {
+    const inorder = dfs(root);
+    if(inorder.length < 2) {
         return true;
     }
-
-    if(!(left < root.val && root.val < right)) {
-        return false;
+    for(let i = 0; i < inorder.length - 1; i += 1) {
+        if(inorder[i] >= inorder[i + 1]) {
+            return false;
+        }
     }
-
-    return isValidBST(root.left, left, root.val) && isValidBST(root.right, root.val, right);
+    return true;
 };
+
+function dfs(root: TreeNode | null):number [] {
+    const result = [];
+    function inOrder(root: TreeNode | null):void {
+        if(root === null) {
+            return null;
+        }
+        inOrder(root.left);
+        result.push(root.val);
+        inOrder(root.right);
+    }
+    inOrder(root);
+    return result;
+}
