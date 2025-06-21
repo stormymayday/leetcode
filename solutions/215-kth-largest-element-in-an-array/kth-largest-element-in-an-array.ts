@@ -21,7 +21,7 @@ class MinHeap {
             }
         }
     }
-    delete(): number | null {
+    extractMin(): number | null {
         // Edge Case: Empty array
         if(this.data.length === 0) {
             return null;
@@ -67,8 +67,8 @@ function findKthLargest(nums: number[], k: number): number {
     for(let i = 0; i < nums.length; i += 1) {
         minHeap.insert(nums[i]);
         if(minHeap.data.length > k) {
-            minHeap.delete();
+            minHeap.extractMin();
         }
     }
-    return minHeap.delete();
+    return minHeap.extractMin();
 };
