@@ -16,7 +16,7 @@ class CustomPriorityQueue {
         let current = this.points.length - 1;
         while(current > 0) {
             const parentIndex = Math.floor((current - 1)/2);
-            if(this.points[current].distance < this.points[parentIndex].distance) {
+            if(this.points[current].distance > this.points[parentIndex].distance) {
                 this.swap(current, parentIndex);
                 current = parentIndex;
             } else {
@@ -49,13 +49,13 @@ class CustomPriorityQueue {
         while(current < this.points.length - 1) {
             const leftChildIndex = 2 * current + 1;
             const rightChildIndex = 2 * current + 2;
-            const leftChildValue = this.points[leftChildIndex] === undefined ? Infinity : this.points[leftChildIndex].distance;
-            const rightChildValue = this.points[rightChildIndex] === undefined ? Infinity : this.points[rightChildIndex].distance;
-            const smallerChildIndex = leftChildValue < rightChildValue ? leftChildIndex : rightChildIndex;
-            const smallerChildValue = leftChildValue < rightChildValue ? leftChildValue : rightChildValue;
-            if(this.points[current].distance > smallerChildValue) {
-                this.swap(current, smallerChildIndex);
-                current = smallerChildIndex;
+            const leftChildValue = this.points[leftChildIndex] === undefined ? -Infinity : this.points[leftChildIndex].distance;
+            const rightChildValue = this.points[rightChildIndex] === undefined ? -Infinity : this.points[rightChildIndex].distance;
+            const largerChildIndex = leftChildValue > rightChildValue ? leftChildIndex : rightChildIndex;
+            const largerChildValue = leftChildValue > rightChildValue ? leftChildValue : rightChildValue;
+            if(this.points[current].distance < largerChildValue) {
+                this.swap(current, largerChildIndex);
+                current = largerChildIndex;
             } else {
                 break;
             }
@@ -79,12 +79,13 @@ function kClosest(points: number[][], k: number): number[][] {
         nodes.push(newNode);
     }
     pq.heapify(nodes);
+    while(pq.size() > k) {
+        pq.pop();
+    }
     const result = [];
-    let i = k;
-    while(i !== 0 && pq.size() !== 0) {
+    while(pq.size() !== 0) {
         const node = pq.pop();
         result.push(node.point);
-        i -= 1;
     }
     return result;
 };
