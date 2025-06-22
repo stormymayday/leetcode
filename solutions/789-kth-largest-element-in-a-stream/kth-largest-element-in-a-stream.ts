@@ -81,19 +81,16 @@ class KthLargest {
         this.minHeap = new MinHeap;
         this.k = k;
         this.minHeap.heapify(nums);
+        while(this.minHeap.size() > this.k) {
+            this.minHeap.pop();
+        }
     }
 
     add(val: number): number {
         this.minHeap.push(val);
-        while(this.minHeap.size() > this.k) {
+        if(this.minHeap.size() > this.k) {
             this.minHeap.pop();
         }
         return this.minHeap.array[0];
     }
 }
-
-/**
- * Your KthLargest object will be instantiated and called as such:
- * var obj = new KthLargest(k, nums)
- * var param_1 = obj.add(val)
- */
