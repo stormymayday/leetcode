@@ -20,6 +20,8 @@ class CustomPriorityQueue {
             if(this.points[current].distance > this.points[parentIndex].distance) {
                 this.swap(current, parentIndex);
                 current = parentIndex;
+            } else {
+                break;
             }
         }
     }
@@ -76,14 +78,13 @@ function kClosest(points: number[][], k: number): number[][] {
     }
 
     const pq = new CustomPriorityQueue();
-    const nodes = [];
+
     for(let i = 0; i < points.length; i += 1) {
         const newNode = new Node(points[i]);
-        nodes.push(newNode);
-    }
-    pq.heapify(nodes);
-    while(pq.size() > k) {
-        pq.pop();
+        pq.push(newNode);
+        if(pq.size() > k) {
+            pq.pop();
+        }
     }
     const result = [];
     while(pq.size() > 0) {
