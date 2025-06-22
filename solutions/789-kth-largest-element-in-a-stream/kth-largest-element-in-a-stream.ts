@@ -1,17 +1,14 @@
 class MinHeap {
-
-    array: number[];
-
+    values: number[];
     constructor() {
-        this.array = [];
+        this.values = [];
     }
-
     push(val: number):void {
-        this.array.push(val);
-        let current = this.array.length - 1;
+        this.values.push(val);
+        let current = this.values.length - 1;
         while(current > 0) {
             const parentIndex = Math.floor((current - 1)/2);
-            if(this.array[current] < this.array[parentIndex]) {
+            if(this.values[current] < this.values[parentIndex]) {
                 this.swap(current, parentIndex);
                 current = parentIndex;
             } else {
@@ -19,39 +16,36 @@ class MinHeap {
             }
         }
     }
-
     pop(): number | null {
-        if(this.array.length === 0) {
+        if(this.size() === 0) {
             return null;
         }
-        if(this.array.length === 1) {
-            return this.array.pop();
+        if(this.size() === 1) {
+            return this.values.pop();
         }
-        const min = this.array[0];
-        this.array[0] = this.array.pop();
+        const min = this.values[0];
+        this.values[0] = this.values.pop();
         this.siftDown(0);
         return min;
     }
-    
-    heapify(nums: number []):void {
-        this.array = nums;
-        let current = this.array.length - 1;
+    heapify(nums: number[]):void {
+        this.values = nums;
+        let current = this.values.length - 1;
         while(current >= 0) {
             this.siftDown(current);
             current -= 1;
         }
     }
-
-    siftDown(index: number): void {
+    siftDown(index: number):void {
         let current = index;
-        while(current < this.array.length - 1) {
+        while(current < this.size() - 1) {
             const leftChildIndex = 2 * current + 1;
             const rightChildIndex = 2 * current + 2;
-            const leftChildValue = this.array[leftChildIndex] === undefined ? Infinity : this.array[leftChildIndex];
-            const rightChildValue = this.array[rightChildIndex] === undefined ? Infinity : this.array[rightChildIndex];
+            const leftChildValue = this.values[leftChildIndex] === undefined ? Infinity : this.values[leftChildIndex];
+            const rightChildValue = this.values[rightChildIndex] === undefined ? Infinity : this.values[rightChildIndex];
             const smallerChildIndex = leftChildValue < rightChildValue ? leftChildIndex : rightChildIndex;
             const smallerChildValue = leftChildValue < rightChildValue ? leftChildValue : rightChildValue;
-            if(this.array[current] > smallerChildValue) {
+            if(this.values[current] > smallerChildValue) {
                 this.swap(current, smallerChildIndex);
                 current = smallerChildIndex;
             } else {
@@ -59,29 +53,26 @@ class MinHeap {
             }
         }
     }
-
-    swap(index1: number, index2: number):void {
-        const temp = this.array[index1];
-        this.array[index1] = this.array[index2];
-        this.array[index2] = temp;
+    swap(index1: number, index2: number): void {
+        const temp = this.values[index1];
+        this.values[index1] = this.values[index2];
+        this.values[index2] = temp;
     }
-
     size():number {
-        return this.array.length;
+        return this.values.length;
     }
-
+    peak():number | undefined {
+        return this.values[0];
+    }
 }
-
 class KthLargest {
-
     minHeap: MinHeap;
     k: number;
-
     constructor(k: number, nums: number[]) {
-        this.minHeap = new MinHeap;
+        this.minHeap = new MinHeap();
         this.k = k;
         this.minHeap.heapify(nums);
-        while(this.minHeap.size() > this.k) {
+        while(this.minHeap.size() > k) {
             this.minHeap.pop();
         }
     }
@@ -91,6 +82,12 @@ class KthLargest {
         if(this.minHeap.size() > this.k) {
             this.minHeap.pop();
         }
-        return this.minHeap.array[0];
+        return this.minHeap.peak();
     }
 }
+
+/**
+ * Your KthLargest object will be instantiated and called as such:
+ * var obj = new KthLargest(k, nums)
+ * var param_1 = obj.add(val)
+ */
