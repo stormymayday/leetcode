@@ -63,53 +63,6 @@ class MaxHeap {
         return this.values.length;
     }
 }
-function leastInterval(tasks: string[], n: number): number {
-    // Count frequency of each task
-    const freqMap = new Map();
-    for(const task of tasks) {
-        if(!freqMap.has(task)) {
-            freqMap.set(task, 1);
-        } else {
-            freqMap.set(task, freqMap.get(task) + 1);
-        }
-    }
-
-    // Extract frequencies and push them to the heap
-    const maxHeap = new MaxHeap();
-    for(const [task, frequency] of freqMap.entries()) {
-        maxHeap.push(frequency);
-    }
-
-    // track time
-    let time = 0;
-
-    const queue = new CustomQueue<[number, number]>(); // [frequency, nextAvailableTime]
-
-    // iterate while either heap or queue have items
-    while(maxHeap.size() > 0 || queue.length > 0) {
-        // increment time with each iteration
-        time += 1;
-
-        // If we have tasks available in the heap, execute one
-        if(maxHeap.size() > 0) {
-            const frequency = maxHeap.pop() - 1; // Decrease frequency by 1
-            if(frequency > 0) {
-                // Task still has remaining executions, add to cooldown queue
-                queue.enqueue([frequency, time + n]);
-            }
-        }
-
-        // Check if any task in the queue is ready to be executed again
-        if(queue.length > 0 && queue.peek()[1] === time) {
-            // deque and push it back to the heap
-            const [frequency, nextAvailableTime] = queue.deque();
-            maxHeap.push(frequency);
-        }
-
-    }
-
-    return time;
-};
 
 type Node<T> = {
     value: T;
@@ -162,4 +115,58 @@ class CustomQueue<T> {
     peek(): T | undefined {
         return this.head?.value;
     }
+
+    size(): number {
+        return this.length;
+    }
 }
+
+function leastInterval(tasks: string[], n: number): number {
+    // 1. Create a task to count map
+    const taskCount = new Map();
+    for(const task of tasks) {
+        if(!taskCount.has(task)) {
+            taskCount.set(task, 1);
+        } else {
+            taskCount.set(task, taskCount.get(task) + 1);
+        }
+    }
+
+    // 2. Initialize a priority queue and push task count values
+    const prioQueue = new MaxHeap();
+    for(const [task, count] of taskCount.entries()) {
+        prioQueue.push(count);
+    }
+
+    // 3. Set up a time count and a cooldown queue
+    let time = 0;
+    const cooldownQueue = new CustomQueue<[number, number]>(); // [count, nextAvailableTime (time + n)]
+
+    // 4. Iterate while either priority queue or cooldown queue are not empty
+    while(prioQueue.size() > 0 || cooldownQueue.size() > 0) {
+
+        // 4.1 increment total time
+        time += 1;
+
+        // 4.2 check if there are items in the prioQueue
+        if(prioQueue.size() > 0) {
+            // 4.2.1 pop and decrement the count by 1 (task processed)
+            const count = prioQueue.pop() - 1;
+            // 4.2.2 if the count is not zero push it to the cooldown queue together with it's next available time (time + n)
+            if(count > 0) {
+                cooldownQueue.enqueue([count, time + n]);
+            }
+        }
+
+        // 4.3 check if cooldownQueue is not empty AND the next item is off cooldown (next available time === current time)
+        if(cooldownQueue.size() > 0 && cooldownQueue.peek()[1] === time) {
+            // 4.3.1 pop the item and push 'count' to the prioQueue
+            const [count, nextAvailableTime] = cooldownQueue.deque();
+            prioQueue.push(count);
+        }
+
+    }
+
+    // 5. return total time
+    return time;
+};
