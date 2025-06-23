@@ -64,6 +64,7 @@ class MaxHeap {
     }
 }
 function leastInterval(tasks: string[], n: number): number {
+    // Count frequency of each task
     const freqMap = new Map();
     for(const task of tasks) {
         if(!freqMap.has(task)) {
@@ -73,30 +74,34 @@ function leastInterval(tasks: string[], n: number): number {
         }
     }
 
-    const frequencies = [];
+    // Extract frequencies and push them to the heap
+    const maxHeap = new MaxHeap();
     for(const [task, frequency] of freqMap.entries()) {
-        frequencies.push(frequency);
+        maxHeap.push(frequency);
     }
 
-    const maxHeap = new MaxHeap();
-    maxHeap.heapify(frequencies);
-
+    // track time
     let time = 0;
-    const queue = []; // [frequency, time + n]
+    const queue = []; // [frequency, nextAvailableTime]
 
+    // iterate while either heap or queue have items
     while(maxHeap.size() > 0 || queue.length > 0) {
-
+        // increment time with each iteration
         time += 1;
 
+        // If we have tasks available in the heap, execute one
         if(maxHeap.size() > 0) {
-            const frequency = maxHeap.pop() - 1;
+            const frequency = maxHeap.pop() - 1; // Decrease frequency by 1
             if(frequency > 0) {
+                // Task still has remaining executions, add to cooldown queue
                 queue.push([frequency, time + n]);
             }
         }
 
+        // Check if any task in the queue is ready to be executed again
         if(queue.length > 0 && queue[0][1] === time) {
-            const [frequency, time] = queue.shift();
+            // deque and push it back to the heap
+            const [frequency, nextAvailableTime] = queue.shift();
             maxHeap.push(frequency);
         }
 
