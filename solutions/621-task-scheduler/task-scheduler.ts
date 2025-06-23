@@ -82,7 +82,8 @@ function leastInterval(tasks: string[], n: number): number {
 
     // track time
     let time = 0;
-    const queue = []; // [frequency, nextAvailableTime]
+
+    const queue = new CustomQueue<[number, number]>(); // [frequency, nextAvailableTime]
 
     // iterate while either heap or queue have items
     while(maxHeap.size() > 0 || queue.length > 0) {
@@ -94,14 +95,14 @@ function leastInterval(tasks: string[], n: number): number {
             const frequency = maxHeap.pop() - 1; // Decrease frequency by 1
             if(frequency > 0) {
                 // Task still has remaining executions, add to cooldown queue
-                queue.push([frequency, time + n]);
+                queue.enqueue([frequency, time + n]);
             }
         }
 
         // Check if any task in the queue is ready to be executed again
-        if(queue.length > 0 && queue[0][1] === time) {
+        if(queue.length > 0 && queue.peek()[1] === time) {
             // deque and push it back to the heap
-            const [frequency, nextAvailableTime] = queue.shift();
+            const [frequency, nextAvailableTime] = queue.deque();
             maxHeap.push(frequency);
         }
 
@@ -109,3 +110,56 @@ function leastInterval(tasks: string[], n: number): number {
 
     return time;
 };
+
+type Node<T> = {
+    value: T;
+    next?: Node<T>;
+};
+
+class CustomQueue<T> {
+    public length: number;
+
+    private head?: Node<T>;
+    private tail?: Node<T>;
+
+    constructor() {
+        this.head = this.tail = undefined;
+        this.length = 0;
+    }
+
+    enqueue(item: T): void {
+        const node = { value: item } as Node<T>;
+        this.length++;
+        if (!this.tail) {
+            this.tail = this.head = node;
+            return;
+        }
+
+        this.tail.next = node;
+        this.tail = node;
+    }
+
+    deque(): T | undefined {
+        if (!this.head) {
+            return undefined;
+        }
+
+        this.length--;
+
+        const head = this.head;
+        this.head = this.head.next;
+
+        // free
+        head.next = undefined;
+
+        if (this.length === 0) {
+            this.tail = undefined;
+        }
+
+        return head.value;
+    }
+
+    peek(): T | undefined {
+        return this.head?.value;
+    }
+}
