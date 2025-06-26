@@ -5,7 +5,6 @@ function combine(n: number, k: number, start: number = 1): number[][] {
     if(k > n) {
         return [];
     }
-
     const first = start;
     const partialCombos = combine(n - 1, k - 1, start + 1);
     const combosWithFirst = [];
@@ -16,5 +15,4 @@ function combine(n: number, k: number, start: number = 1): number[][] {
     const combosWithoutFirst = combine(n - 1, k, start + 1);
 
     return [...combosWithFirst, ...combosWithoutFirst];
-
 };
