@@ -9,7 +9,7 @@ function permute(nums: number[]): number[][] {
     for(const partialPerm of partialPerms) {
         for(let i = 0; i <= partialPerm.length; i += 1) {
             fullPerms.push([
-                ...partialPerm.slice(0, i),
+                ...partialPerm.slice(0, i ),
                 first,
                 ...partialPerm.slice(i)
             ]);
