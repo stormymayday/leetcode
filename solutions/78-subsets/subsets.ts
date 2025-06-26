@@ -4,11 +4,10 @@ function subsets(nums: number[]): number[][] {
     }
 
     const first = nums[0];
-    const subsetsWithoutFirst = subsets(nums.slice(1));
-    const subsetsWithFirst = [];
-    for(const subset of subsetsWithoutFirst) {
-        subsetsWithFirst.push([first, ...subset]);
+    const withoutFirst = subsets(nums.slice(1));
+    const withFirst = [];
+    for(const subset of withoutFirst) {
+        withFirst.push([first, ...subset]);
     }
-
-    return [...subsetsWithoutFirst, ...subsetsWithFirst];
+    return [...withoutFirst, ...withFirst];
 };
