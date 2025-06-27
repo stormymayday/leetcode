@@ -6,15 +6,17 @@ function permute(nums: number[]): number[][] {
     const first = nums[0];
     const partialPerms = permute(nums.slice(1));
     const fullPerms = [];
-    for(const partialPerm of partialPerms) {
-        for(let i = 0; i <= partialPerm.length; i += 1) {
+
+    for(const perm of partialPerms) {
+        for(let i = 0; i <= perm.length; i += 1) {
             fullPerms.push([
-                ...partialPerm.slice(0, i ),
+                ...perm.slice(0, i),
                 first,
-                ...partialPerm.slice(i)
+                ...perm.slice(i)
             ]);
         }
     }
 
     return fullPerms;
+
 };
