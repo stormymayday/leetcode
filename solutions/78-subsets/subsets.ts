@@ -9,5 +9,6 @@ function subsets(nums: number[]): number[][] {
     for(const subset of withoutFirst) {
         withFirst.push([first, ...subset]);
     }
-    return [...withoutFirst, ...withFirst];
+
+    return [...withFirst, ...withoutFirst];
 };
