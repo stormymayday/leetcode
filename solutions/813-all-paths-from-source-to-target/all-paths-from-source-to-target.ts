@@ -1,6 +1,6 @@
-function allPathsSourceTarget(graph: number[][], src:number = 0): number[][] {
-    if(src === graph.length - 1) {
-        return [[graph.length - 1]];
+function allPathsSourceTarget(graph: number[][], src:number = 0, dst:number = graph.length -1): number[][] {
+    if(src === dst) {
+        return [[src]];
     }
 
     if(graph[src].length === 0) {
@@ -9,7 +9,7 @@ function allPathsSourceTarget(graph: number[][], src:number = 0): number[][] {
 
     const allPaths = [];
     for(const neighbor of graph[src]) {
-        const neighborPaths = allPathsSourceTarget(graph, neighbor);
+        const neighborPaths = allPathsSourceTarget(graph, neighbor, dst);
         for(const neighborPath of neighborPaths) {
             allPaths.push([src, ...neighborPath]);
         }
