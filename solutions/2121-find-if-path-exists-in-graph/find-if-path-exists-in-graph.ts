@@ -6,7 +6,8 @@ function validPath(n: number, edges: number[][], source: number, destination: nu
 
 function bfs(adjList, src, dst, visited) {
 
-    // visited.add(src);
+    // adding source right away to prevent it from being re-queued if it appears as a neighbor of other nodes
+    visited.add(src);
 
     const queue = [src];
 
