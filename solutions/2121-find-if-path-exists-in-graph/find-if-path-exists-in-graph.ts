@@ -1,7 +1,34 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
     const adjList = buildAdjList(n, edges);
-    return dfs(adjList, source, destination, new Set());
+    // return dfs(adjList, source, destination, new Set());
+    return bfs(adjList, source, destination, new Set());
 };
+
+function bfs(adjList, src, dst, visited) {
+
+    visited.add(src);
+
+    const queue = [src];
+
+    while(queue.length > 0) {
+        const current = queue.shift();
+
+        if(current === dst) {
+            return true;
+        }
+
+        for(const neighbor of adjList.get(current)) {
+            if(!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push(neighbor);
+            }
+        }
+
+    }
+
+    return false;
+
+}
 
 function dfs(adjList, src, dst, visited) {
     if(src === dst) {
