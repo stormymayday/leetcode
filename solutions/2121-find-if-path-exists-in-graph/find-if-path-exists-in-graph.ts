@@ -1,7 +1,7 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
     const adjList = buildAdjList(n, edges);
-    // return dfs(adjList, source, destination, new Set());
-    return bfs(adjList, source, destination, new Set());
+    return dfs(adjList, source, destination, new Set());
+    // return bfs(adjList, source, destination, new Set());
 };
 
 function bfs(adjList, src, dst, visited) {
@@ -33,9 +33,9 @@ function bfs(adjList, src, dst, visited) {
 
 function dfs(adjList, src, dst, visited) {
 
-    if(visited.has(src)) {
-        return false;
-    }
+    // if(visited.has(src)) {
+    //     return false;
+    // }
 
     if(src === dst) {
         return true;
