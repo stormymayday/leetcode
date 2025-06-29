@@ -6,7 +6,7 @@ function validPath(n: number, edges: number[][], source: number, destination: nu
 
 function bfs(adjList, src, dst, visited) {
 
-    visited.add(src);
+    // visited.add(src);
 
     const queue = [src];
 
