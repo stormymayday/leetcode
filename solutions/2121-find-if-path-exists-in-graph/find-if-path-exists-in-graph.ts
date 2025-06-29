@@ -32,9 +32,16 @@ function bfs(adjList, src, dst, visited) {
 }
 
 function dfs(adjList, src, dst, visited) {
+
+    if(visited.has(src)) {
+        return false;
+    }
+
     if(src === dst) {
         return true;
     }
+
+    visited.add(src);
 
     for(const neighbor of adjList.get(src)) {
         if(!visited.has(neighbor)) {
