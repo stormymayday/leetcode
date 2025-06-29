@@ -1,39 +1,34 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
-    const graph = buildGraph(n, edges);
-    return dfs(graph, source, destination, new Set());
+    const adjList = buildAdjList(n, edges);
+    return dfs(adjList, source, destination, new Set());
 };
 
-function dfs(graph, src, dst, visited) {
-    
+function dfs(adjList, src, dst, visited) {
     if(src === dst) {
         return true;
     }
 
-    if(visited.has(src)) {
-        return false;
-    }
-
-    visited.add(src);
-
-    for(const neighbor of graph.get(src)) {
-        if(dfs(graph, neighbor, dst, visited) === true) {
-            return true;
+    for(const neighbor of adjList.get(src)) {
+        if(!visited.has(neighbor)) {
+            visited.add(neighbor);
+            if(dfs(adjList, neighbor, dst, visited) === true) {
+                return true;
+            }
         }
     }
 
     return false;
-
 }
 
-function buildGraph(n, edges) {
+function buildAdjList(n: number, edges:number[][]):Map<number, Set<number>> {
     const adjList = new Map();
     for(let i = 0; i < n; i += 1) {
-        adjList.set(i, []);
+        adjList.set(i, new Set());
     }
     for(const edge of edges) {
-        const [a, b] = edge;
-        adjList.get(a).push(b);
-        adjList.get(b).push(a);
+        const [src, dst] = edge;
+        adjList.get(src).add(dst);
+        adjList.get(dst).add(src);
     }
     return adjList;
 }
