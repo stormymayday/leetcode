@@ -41,7 +41,7 @@ function dfs(adjList, src, dst, visited) {
         return true;
     }
 
-    visited.add(src);
+    // visited.add(src);
 
     for(const neighbor of adjList.get(src)) {
         if(!visited.has(neighbor)) {
