@@ -1,28 +1,25 @@
 function shortestPathBinaryMatrix(grid: number[][]): number {
-    if (grid[0][0] !== 0 || grid[grid.length - 1][grid[0].length - 1] !== 0) {
-        return -1;
-    }
-    const visited = new Set();
-    return matrixBFS(grid, 0, 0, visited);
+    const visited = new Set<string>();
+    return bfs(grid, 0, 0, visited);
 };
 
-function matrixBFS(grid, r, c, visited) {
+function bfs(grid: number[][], r: number, c: number, visited: Set<string>):number {
+    // Edge Case: starting position is a wall
+    if(grid[r][c] === 1) {
+        return -1;
+    }
 
-    const queue = [{row: r, col: c, distance: 1}];
     visited.add(`${r},${c}`);
-
+    const queue = [[r, c, 1]];
     while(queue.length > 0) {
-
-        const {row, col, distance} = queue.shift();
-
-        if(row === grid.length - 1 && col === grid[0].length - 1) {
+        const [row, col, distance] = queue.shift();
+        if(row === grid.length -1 && col === grid[0].length - 1) {
             return distance;
         }
-
         const deltas = [
             [-1, -1], [-1, 0], [-1, 1],
             [0, -1],           [0, 1],
-            [1, -1],  [1, 0],  [1, 1]
+            [1, -1], [1, 0],   [1, 1]
         ];
         for(const delta of deltas) {
             const [rowDelta, colDelta] = delta;
@@ -31,24 +28,23 @@ function matrixBFS(grid, r, c, visited) {
             const neighborPosition = `${neighborRow},${neighborCol}`;
             if(
                 isInBounds(grid, neighborRow, neighborCol) === true
-                && grid[neighborRow][neighborCol] !== 1
                 && !visited.has(neighborPosition)
+                && grid[neighborRow][neighborCol] !== 1
             ) {
                 visited.add(neighborPosition);
-                queue.push({
-                    row: neighborRow,
-                    col: neighborCol,
-                    distance: distance + 1
-                });
+                queue.push([
+                    neighborRow,
+                    neighborCol,
+                    distance + 1
+                ]);
             }
         }
     }
-
     return -1;
 }
 
-function isInBounds(grid, r, c) {
-    const rowInBounds = 0 <= r && r < grid.length;
-    const colInBounds = 0 <= c && c < grid[0].length;
-    return rowInBounds && colInBounds;
+function isInBounds(grid:number[][], r: number, c: number):boolean {
+    const rowInBounds:boolean = 0 <= r && r < grid.length;
+    const colInBounds:boolean = 0 <= c && c < grid[0].length;
+    return rowInBounds === true && colInBounds === true;
 }
