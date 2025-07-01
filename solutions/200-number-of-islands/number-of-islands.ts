@@ -4,7 +4,7 @@ function numIslands(grid: string[][]): number {
     for(let r = 0; r < grid.length; r += 1) {
         for(let c = 0; c < grid[0].length; c += 1) {
             if(grid[r][c] === '1') {
-                if(matrixDFS(grid, r, c, visited)) {
+                if(matrixBFS(grid, r, c, visited)) {
                     count += 1;
                 }
             }
@@ -12,6 +12,40 @@ function numIslands(grid: string[][]): number {
     }
     return count;
 };
+
+function matrixBFS(grid, r, c, visited) {
+
+    if(visited.has(`${r},${c}`)) {
+        return false;
+    }
+
+    visited.add(`${r},${c}`);
+    const queue = [[r, c]];
+    while(queue.length > 0) {
+        const [row, col] = queue.shift();
+        const deltas = [
+            [-1, 0],
+            [1, 0],
+            [0, -1],
+            [0, 1]
+        ];
+        for(const delta of deltas) {
+            const [rowDelta, colDelta] = delta;
+            const neighborRow = row + rowDelta;
+            const neighborCol = col + colDelta;
+            const neighborPosition = `${neighborRow},${neighborCol}`;
+            if(
+                isInBounds(grid, neighborRow, neighborCol) === true
+                && !visited.has(neighborPosition)
+                && grid[neighborRow][neighborCol] !== '0'
+            ) {
+                visited.add(neighborPosition);
+                queue.push([neighborRow, neighborCol]);
+            }
+        }
+    }
+    return true;
+}
 
 function matrixDFS(grid, r, c, visited) {
     // Base Case: out of bounds check
