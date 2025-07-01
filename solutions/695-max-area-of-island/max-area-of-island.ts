@@ -1,25 +1,28 @@
 function maxAreaOfIsland(grid: number[][]): number {
-    let largest = 0;
-    const visited = new Set();
-    for(let r = 0; r < grid.length; r += 1) {
-        for(let c = 0; c < grid[0].length; c += 1) {
-            if(grid[r][c] === 1) {
-                largest = Math.max(largest, matrixDFS(grid, r, c, visited));
-            }
+  const visited = new Set<string>();
+  let largest = 0;
+  for(let r = 0; r < grid.length; r += 1) {
+    for(let c = 0; c < grid[0].length; c += 1) {
+        if(grid[r][c] === 1 && !visited.has(`${r},${c}`)) {
+            largest = Math.max(largest, dfs(grid, r, c, visited));
         }
     }
-    return largest;
+  }
+  return largest;
 };
 
-function matrixDFS(grid, r, c, visited) {
+function dfs(grid: number[][], r:number, c:number, visited: Set<string>):number {
+    // Base Case: out of bounds
     if(isInBounds(grid, r, c) === false) {
         return 0;
     }
 
+    // Base Case: water
     if(grid[r][c] === 0) {
         return 0;
     }
 
+    // Base Case: visited
     const position = `${r},${c}`;
     if(visited.has(position)) {
         return 0;
@@ -27,17 +30,16 @@ function matrixDFS(grid, r, c, visited) {
 
     visited.add(position);
 
-    let count = 1;
-    count += matrixDFS(grid, r - 1, c, visited);
-    count += matrixDFS(grid, r + 1, c, visited);
-    count += matrixDFS(grid, r, c - 1, visited);
-    count += matrixDFS(grid, r, c + 1, visited);
-
-    return count;
+    let size = 1;
+    size += dfs(grid, r - 1, c, visited);
+    size += dfs(grid, r + 1, c, visited);
+    size += dfs(grid, r, c - 1, visited);
+    size += dfs(grid, r, c + 1, visited);
+    return size;
 }
 
-function isInBounds(grid, r, c) {
-    const rowInBounds = 0 <= r && r < grid.length;
-    const colInBounds = 0 <= c && c < grid[0].length;
-    return rowInBounds && colInBounds;
+function isInBounds(grid:number[][], r: number, c: number):boolean {
+    const rowInBounds: boolean = 0 <= r && r < grid.length;
+    const colInBounds: boolean = 0 <= c && c < grid[0].length;
+    return rowInBounds === true && colInBounds === true;
 }
