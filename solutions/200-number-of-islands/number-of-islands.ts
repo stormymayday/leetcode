@@ -4,7 +4,7 @@ function numIslands(grid: string[][]): number {
     for(let r = 0; r < grid.length; r += 1) {
         for(let c = 0; c < grid[0].length; c += 1) {
             if(grid[r][c] === '1' && !visited.has(`${r},${c}`)) {
-                if(matrixRDFS(grid, r, c, visited) === true) {
+                if(matrixBFS(grid, r, c, visited) === true) {
                     count += 1;
                 }
             }
