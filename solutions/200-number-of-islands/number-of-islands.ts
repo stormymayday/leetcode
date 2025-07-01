@@ -4,7 +4,7 @@ function numIslands(grid: string[][]): number {
     for(let r = 0; r < grid.length; r += 1) {
         for(let c = 0; c < grid[0].length; c += 1) {
             if(grid[r][c] === '1' && !visited.has(`${r},${c}`)) {
-                if(matrixDFS(grid, r, c, visited)) {
+                if(matrixRDFS(grid, r, c, visited) === true) {
                     count += 1;
                 }
             }
@@ -38,7 +38,7 @@ function matrixBFS(grid, r, c, visited) {
             if(
                 isInBounds(grid, neighborRow, neighborCol) === true
                 && !visited.has(neighborPosition)
-                && grid[neighborRow][neighborCol] !== '0'
+                && grid[neighborRow][neighborCol] === '1'
             ) {
                 visited.add(neighborPosition);
                 queue.push([neighborRow, neighborCol]);
@@ -76,7 +76,7 @@ function matrixDFS(grid, r, c, visited) {
             if(
                 isInBounds(grid, neighborRow, neighborCol) === true
                 && !visited.has(neighborPosition)
-                && grid[neighborRow][neighborCol] !== '0'
+                && grid[neighborRow][neighborCol] === '1'
             ) {
                 visited.add(neighborPosition);
                 stack.push([neighborRow, neighborCol]);
@@ -106,10 +106,10 @@ function matrixRDFS(grid, r, c, visited) {
 
     visited.add(position);
 
-    matrixDFS(grid, r - 1, c, visited);
-    matrixDFS(grid, r + 1, c, visited);
-    matrixDFS(grid, r, c - 1, visited);
-    matrixDFS(grid, r, c + 1, visited);
+    matrixRDFS(grid, r - 1, c, visited);
+    matrixRDFS(grid, r + 1, c, visited);
+    matrixRDFS(grid, r, c - 1, visited);
+    matrixRDFS(grid, r, c + 1, visited);
 
     return true;
 
