@@ -21,6 +21,7 @@ function matrixBFS(grid, r, c, visited) {
 
     visited.add(`${r},${c}`);
     const queue = [[r, c]];
+
     while(queue.length > 0) {
         const [row, col] = queue.shift();
         const deltas = [
@@ -48,6 +49,45 @@ function matrixBFS(grid, r, c, visited) {
 }
 
 function matrixDFS(grid, r, c, visited) {
+
+    if(visited.has(`${r},${c}`)) {
+        return false;
+    }
+
+    visited.add(`${r},${c}`);
+
+    const stack = [[r,c]];
+    while(stack.length > 0) {
+
+        const [row, col] = stack.pop();
+
+        const deltas = [
+            [-1, 0],
+            [1, 0],
+            [0, -1],
+            [0, 1]
+        ];
+
+        for(const delta of deltas) {
+            const [rowDelta, colDelta] = delta;
+            const neighborRow = row + rowDelta;
+            const neighborCol = col + colDelta;
+            const neighborPosition = `${neighborRow},${neighborCol}`;
+            if(
+                isInBounds(grid, neighborRow, neighborCol) === true
+                && !visited.has(neighborPosition)
+                && grid[neighborRow][neighborCol] !== '0'
+            ) {
+                visited.add(neighborPosition);
+                stack.push([neighborRow, neighborCol]);
+            }
+        }
+        
+    }
+    return true;
+}
+
+function matrixRDFS(grid, r, c, visited) {
     // Base Case: out of bounds check
     if(isInBounds(grid, r, c) === false) {
         return false;
