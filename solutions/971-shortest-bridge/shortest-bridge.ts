@@ -47,8 +47,8 @@ function dfs(grid: number[][], r: number, c:number, visited) {
 
 function bfs(grid:number[][], firstIsland: Set<string>):number {
 
-    // const visited = new Set();
-    const visited = new Set(firstIsland);
+    const visited = new Set();
+    // const visited = new Set(firstIsland);
     const queue = [];
     for(const position of firstIsland) {
 
@@ -80,8 +80,8 @@ function bfs(grid:number[][], firstIsland: Set<string>):number {
             if(
                 isInBounds(grid, neighborRow, neighborCol) === true
                 && !visited.has(neighborPosition)
+                // Note: must explore water as well
                 // && grid[neighborRow][neighborCol] !== 0
-                // check if it's a first island position?
             ) {
                 visited.add(neighborPosition);
                 queue.push([
