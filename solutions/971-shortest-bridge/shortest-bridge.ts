@@ -46,7 +46,7 @@ function dfs(grid: number[][], r: number, c:number, visited) {
 
 function bfs(grid:number[][], firstIsland: Set<string>):number {
 
-    const visited = new Set();
+    // const visited = new Set();
 
     const queue = [];
     for(const position of firstIsland) {
@@ -60,31 +60,25 @@ function bfs(grid:number[][], firstIsland: Set<string>):number {
 
         const [row, col, distance] = queue.shift();
 
-        // Check if we are on a piece of land AND it's not the first island
-        if(grid[row][col] === 1 && !firstIsland.has(`${row},${col}`)) {
-            // Found the second island!
-            return distance - 1;
-        }
-
         const deltas = [[-1, 0], [1, 0], [0, -1], [0, 1]];
         for(const delta of deltas) {
             const [rowDelta, colDelta] = delta;
             const neighborRow = rowDelta + row;
             const neighborCol = colDelta + col;
             const neighborPosition = `${neighborRow},${neighborCol}`;
-            if(
-                isInBounds(grid, neighborRow, neighborCol) === true
-                && !visited.has(neighborPosition)
-                // Note: must explore water as well
-                // && grid[neighborRow][neighborCol] !== 0
-            ) {
-                visited.add(neighborPosition);
-                queue.push([
-                    neighborRow,
-                    neighborCol,
-                    distance + 1
-                ]);
+            // Out of bounds or Visited
+            if(isInBounds(grid, neighborRow, neighborCol) === false || firstIsland.has(neighborPosition)) {
+                continue;
             }
+
+            // If it's a land then we found the second island
+            if(grid[neighborRow][neighborCol] === 1) {
+                return distance;
+            }
+            
+            // Otherwise, mark as visited and enqueue the neighbor increasing the distance
+            firstIsland.add(neighborPosition);
+            queue.push([neighborRow, neighborCol, distance + 1]);
         }
 
     }
