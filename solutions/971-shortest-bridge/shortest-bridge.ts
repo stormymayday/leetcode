@@ -1,19 +1,18 @@
 function shortestBridge(grid: number[][]): number {
     // 1. Looking for the first island
     const firstIsland = new Set<string>();
-    outer: for(let r = 0; r < grid.length; r += 1) {
+    for(let r = 0; r < grid.length; r += 1) {
         for(let c = 0; c < grid[0].length; c += 1) {
             // Found a piece of land
             if(grid[r][c] === 1) {
                 // 2. Explore the first island to capture it's position/coordinates
                 dfs(grid, r, c, firstIsland);
-                break outer;
+                // 3. Run bfs from the first island towards the second island
+                return bfs(grid, firstIsland);
             }
         }
     }
-
-    // 3. Run bfs from the first island towards the second island
-    return bfs(grid, firstIsland);
+    
 };
 
 function dfs(grid: number[][], r: number, c:number, visited) {
