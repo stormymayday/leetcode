@@ -48,16 +48,12 @@ function dfs(grid: number[][], r: number, c:number, visited) {
 function bfs(grid:number[][], firstIsland: Set<string>):number {
 
     const visited = new Set();
-    // const visited = new Set(firstIsland);
+
     const queue = [];
     for(const position of firstIsland) {
-
-        // Do we need to add firstIsland positions into visited?
-        // probably not because we need to explore outwards
-
         // unpacking the position string into numbers
         const rowCol = position.split(",");
-        // enqueueing the position as integers add distance of 0
+        // enqueueing the position as integers and adding distance of 0
         queue.push([parseInt(rowCol[0]), parseInt(rowCol[1]), 0]);
     }
 
