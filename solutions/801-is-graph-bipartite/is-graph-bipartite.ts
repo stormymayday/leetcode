@@ -3,14 +3,42 @@ function isBipartite(graph: number[][]): boolean {
     const state = new Map<number, boolean>();
 
     for(let i = 0; i < graph.length; i += 1) {
-        if(bfs(graph, i, state) === false) {
-            return false;
+        
+        if(!state.has(i)) {
+
+            // if(bfs(graph, i, state) === false) {
+            //     return false;
+            // }
+
+            // arbitrarily setting the value to true
+            if(dfs(graph, i, state, true) === false) {
+                return false;
+            }
+
         }
+       
     }
 
     return true;
 
 };
+
+function dfs(adjList: number[][], src: number, state: Map<number, boolean>, stateVal:boolean):boolean {
+    // Base Case: if already visited, check if state value matches
+    if(state.has(src)) {
+        return state.get(src) === stateVal;
+    }
+
+    state.set(src, stateVal);
+
+    for(const neighbor of adjList[src]) {
+        if(dfs(adjList, neighbor, state, !stateVal) === false) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 function bfs(adjList: number[][], src: number, state: Map<number, boolean>):boolean {
 
