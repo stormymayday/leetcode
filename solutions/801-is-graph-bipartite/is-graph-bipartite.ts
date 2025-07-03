@@ -6,14 +6,14 @@ function isBipartite(graph: number[][]): boolean {
         
         if(!state.has(i)) {
 
-            // if(bfs(graph, i, state) === false) {
-            //     return false;
-            // }
-
-            // arbitrarily setting the value to true
-            if(dfs(graph, i, state, true) === false) {
+            if(bfs(graph, i, state) === false) {
                 return false;
             }
+
+            // arbitrarily setting the value to true
+            // if(dfs(graph, i, state, true) === false) {
+            //     return false;
+            // }
 
         }
        
