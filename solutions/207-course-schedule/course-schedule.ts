@@ -46,8 +46,8 @@ function buildAdjList(n:number, edges: number[][]):Map<number, Set<number>> {
     }
 
     for(const edge of edges) {
-        const [src, dst] = edge;
-        adjList.get(dst).add(src);
+        const [course, prereq] = edge;
+        adjList.get(course).add(prereq);
     }
 
     return adjList;
