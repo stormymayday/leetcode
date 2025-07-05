@@ -1,21 +1,16 @@
 function canFinish(numCourses: number, prerequisites: number[][]): boolean {
-    
     const adjList = buildAdjList(numCourses, prerequisites);
-
     const visiting = new Set<number>();
     const visited = new Set<number>();
-
-    for(const course of adjList.keys()) {
-        if(cycleDetect(adjList, course, visiting, visited) === true) {
-            return false; // cycle detected -> can't finish
+    for(const node of adjList.keys()) {
+        if(hasCycle(adjList, node, visiting, visited) === true) {
+            return false;
         }
     }
-
-    return true; // no cycle -> can finish
-
+    return true;
 };
 
-function cycleDetect(adjList: Map<number, Set<number>>, src: number, visiting: Set<number>, visited: Set<number>):boolean {
+function hasCycle(adjList: Map<number, Set<number>>, src: number, visiting: Set<number>, visited: Set<number>):boolean {
     if(visited.has(src)) {
         return false;
     }
@@ -27,7 +22,7 @@ function cycleDetect(adjList: Map<number, Set<number>>, src: number, visiting: S
     visiting.add(src);
 
     for(const neighbor of adjList.get(src)) {
-        if(cycleDetect(adjList, neighbor, visiting, visited) === true) {
+        if(hasCycle(adjList, neighbor, visiting, visited) === true) {
             return true;
         }
     }
@@ -38,17 +33,14 @@ function cycleDetect(adjList: Map<number, Set<number>>, src: number, visiting: S
     return false;
 }
 
-function buildAdjList(n:number, edges: number[][]):Map<number, Set<number>> {
-    const adjList = new Map<number, Set<number>>();
-
+function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
+    const adjList = new Map();
     for(let i = 0; i < n; i += 1) {
-        adjList.set(i, new Set<number>());
+        adjList.set(i, new Set());
     }
-
     for(const edge of edges) {
-        const [course, prereq] = edge;
-        adjList.get(prereq).add(course);
+        const [src, dst] = edge;
+        adjList.get(src).add(dst);
     }
-
     return adjList;
 }
