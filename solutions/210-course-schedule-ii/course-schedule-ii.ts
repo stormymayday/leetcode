@@ -1,6 +1,5 @@
 function findOrder(numCourses: number, prerequisites: number[][]): number[] {
     const adjList = buildAdjList(numCourses, prerequisites);
-    // return kahn(adjList);
     return dfs(adjList);
 };
 
@@ -42,48 +41,6 @@ function dfs(adjList: Map<number, Set<number>>):number[] {
         topOrder.push(src);
 
         return true;
-    }
-
-}
-
-function kahn(adjList: Map<number, Set<number>>): number[] {
-    // 1. Get parent count
-    const numParents = new Map<number, number>();
-    for(const node of adjList.keys()) {
-        numParents.set(node, 0);
-    }
-    for(const node of adjList.keys()) {
-        for(const child of adjList.get(node)) {
-            numParents.set(child, numParents.get(child) + 1);
-        }
-    }
-
-    // 2. Get nodes with no parents
-    const ready = [];
-    for(const node of numParents.keys()) {
-        if(numParents.get(node) === 0) {
-            ready.push(node);
-        }
-    }
-
-    // 3. get topological order
-    const topologicalOrder = [];
-    while(ready.length > 0) {
-        const current = ready.pop();
-        topologicalOrder.push(current);
-        for(const child of adjList.get(current)) {
-            numParents.set(child, numParents.get(child) - 1);
-            if(numParents.get(child) === 0) {
-                ready.push(child);
-            }
-        }
-    }
-
-    // 4. Check for cycles
-    if(topologicalOrder.length !== adjList.size) {
-        return [];
-    } else {
-        return topologicalOrder.reverse();
     }
 
 }
