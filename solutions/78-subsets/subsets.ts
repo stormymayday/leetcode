@@ -8,12 +8,7 @@ function subsets(nums: number[]): number[][] {
         const withoutFirst = helper(nums, index + 1);
         const withFirst = [];
         for(const subset of withoutFirst) {
-            const temp = [];
-            temp.push(first);
-            for(const element of subset) {
-                temp.push(element);
-            }
-            withFirst.push(temp);
+            withFirst.push([first, ...subset]);
         }
         return [...withoutFirst, ...withFirst];
 
