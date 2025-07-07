@@ -13,14 +13,19 @@
  */
 
 function hasPathSum(root: TreeNode | null, targetSum: number): boolean {
-    if(root === null) {
-        return false;
+
+    function dfs(root: TreeNode | null, sum: number):boolean {
+
+        if(root === null) {
+            return false;
+        }
+
+        if(root.left === null && root.right === null) {
+            return root.val + sum === targetSum;
+        }
+
+        return dfs(root.left, sum + root.val) || dfs(root.right, sum + root.val);
     }
 
-    if(root.left === null && root.right === null) {
-        return root.val === targetSum; // true / false
-    }
-
-    return hasPathSum(root.left, targetSum - root.val) || hasPathSum(root.right, targetSum - root.val);
-
+    return dfs(root, 0);
 };
