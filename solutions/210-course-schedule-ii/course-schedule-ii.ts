@@ -1,7 +1,40 @@
 function findOrder(numCourses: number, prerequisites: number[][]): number[] {
     const adjList = buildAdjList(numCourses, prerequisites);
-    return kahnsAlgorithm(adjList);
+    // return kahnsAlgorithm(adjList);
+    return dfs(adjList);
 };
+
+function dfs(adjList: Map<number, Set<number>>):number [] {
+    const topOrder:number[] = [];
+    const visiting = new Set<number>();
+    const visited = new Set<number>();
+    function traverse(src: number):boolean {
+        if(visited.has(src)) {
+            return true;
+        }
+        if(visiting.has(src)) {
+            return false;
+        }
+        visiting.add(src);
+        for(const neighbor of adjList.get(src)) {
+            if(traverse(neighbor) === false) {
+                return false;
+            }
+        }
+        visiting.delete(src);
+        visited.add(src);
+        topOrder.push(src);
+        return true;
+    }
+    for(const node of adjList.keys()) {
+        if(!visited.has(node)) {
+            if(traverse(node) === false) {
+                return [];
+            }
+        }
+    }
+    return topOrder;
+}
 
 function kahnsAlgorithm(adjList: Map<number, Set<number>>):number [] {
     const numParents = new Map<number, number>();;
