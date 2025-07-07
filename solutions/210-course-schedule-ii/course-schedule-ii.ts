@@ -1,51 +1,46 @@
 function findOrder(numCourses: number, prerequisites: number[][]): number[] {
     const adjList = buildAdjList(numCourses, prerequisites);
-    return dfs(adjList);
+    return kahnsAlgorithm(adjList);
 };
 
-function dfs(adjList: Map<number, Set<number>>):number[] {
-
-    const topOrder = [];
-    const visiting = new Set();
-    const visited = new Set();
-
+function kahnsAlgorithm(adjList: Map<number, Set<number>>):number [] {
+    const numParents = new Map<number, number>();;
     for(const node of adjList.keys()) {
-        if(!visited.has(node)) {
-            if(traverse(node) === false) {
-                return [];
+        numParents.set(node, 0);
+    }
+    for(const node of adjList.keys()) {
+        for(const child of adjList.get(node)) {
+            numParents.set(child, numParents.get(child) + 1);
+        }
+    }
+
+    const ready: number[] = [];
+    for(const node of numParents.keys()) {
+        if(numParents.get(node) === 0) {
+            ready.push(node);
+        }
+    }
+
+    const topOrder: number[] = [];
+    while(ready.length > 0) {
+        const current = ready.pop();
+        topOrder.push(current);
+        for(const child of adjList.get(current)) {
+            numParents.set(child, numParents.get(child) - 1);
+            if(numParents.get(child) === 0) {
+                ready.push(child);
             }
         }
     }
 
-    return topOrder;
-
-    function traverse(src) {
-        if(visited.has(src)) {
-            return true;
-        }
-
-        if(visiting.has(src)) {
-            return false;
-        }
-
-        visiting.add(src)
-
-        for(const neighbor of adjList.get(src)) {
-            if(traverse(neighbor) === false) {
-                return false;
-            }
-        }
-
-        visiting.delete(src);
-        visited.add(src);
-        topOrder.push(src);
-
-        return true;
+    if(topOrder.length === adjList.size) {
+        return topOrder.reverse();
+    } else {
+        return [];
     }
-
 }
 
-function buildAdjList(n: number, edges: number[][]) {
+function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
     const adjList = new Map();
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, new Set());
