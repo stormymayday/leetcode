@@ -1,18 +1,19 @@
-function combine(n: number, k: number, start: number = 1): number[][] {
-    if(k === 0) {
-        return [[]];
+function combine(n: number, k: number): number[][] {
+    const result: number[][] = [];
+    const combination: number[] = [];
+    function helper(i: number):void {
+        if(combination.length === k) {
+            result.push([...combination]);
+            return;
+        }
+        if(i > n) {
+            return;
+        }
+        combination.push(i);
+        helper(i + 1);
+        combination.pop();
+        helper(i + 1);
     }
-    if(k > n) {
-        return [];
-    }
-    const first = start;
-    const partialCombos = combine(n - 1, k - 1, start + 1);
-    const combosWithFirst = [];
-    for(const partialCombo of partialCombos) {
-        combosWithFirst.push([first, ...partialCombo]);
-    }
-
-    const combosWithoutFirst = combine(n - 1, k, start + 1);
-
-    return [...combosWithFirst, ...combosWithoutFirst];
+    helper(1);
+    return result;   
 };
