@@ -1,48 +1,15 @@
 function findOrder(numCourses: number, prerequisites: number[][]): number[] {
     const adjList = buildAdjList(numCourses, prerequisites);
-    // return kahnsAlgorithm(adjList);
-    return dfs(adjList);
+    return kahns(adjList);
 };
 
-function dfs(adjList: Map<number, Set<number>>):number [] {
-    const topOrder:number[] = [];
-    const visiting = new Set<number>();
-    const visited = new Set<number>();
-    function traverse(src: number):boolean {
-        if(visited.has(src)) {
-            return true;
-        }
-        if(visiting.has(src)) {
-            return false;
-        }
-        visiting.add(src);
-        for(const neighbor of adjList.get(src)) {
-            if(traverse(neighbor) === false) {
-                return false;
-            }
-        }
-        visiting.delete(src);
-        visited.add(src);
-        topOrder.push(src);
-        return true;
-    }
-    for(const node of adjList.keys()) {
-        if(!visited.has(node)) {
-            if(traverse(node) === false) {
-                return [];
-            }
-        }
-    }
-    return topOrder;
-}
-
-function kahnsAlgorithm(adjList: Map<number, Set<number>>):number [] {
-    const numParents = new Map<number, number>();;
+function kahns(adjList: Map<number, Set<number>>):number[] {
+    const numParents = new Map<number, number>();
     for(const node of adjList.keys()) {
         numParents.set(node, 0);
     }
     for(const node of adjList.keys()) {
-        for(const child of adjList.get(node)) {
+        for(const child of adjList.get(node)){
             numParents.set(child, numParents.get(child) + 1);
         }
     }
@@ -54,7 +21,7 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>):number [] {
         }
     }
 
-    const topOrder: number[] = [];
+    const topOrder:number[] = [];
     while(ready.length > 0) {
         const current = ready.pop();
         topOrder.push(current);
@@ -66,15 +33,15 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>):number [] {
         }
     }
 
-    if(topOrder.length === adjList.size) {
-        return topOrder.reverse();
-    } else {
+    if(topOrder.length !== adjList.size) {
         return [];
+    } else {
+        return topOrder.reverse();
     }
 }
 
-function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
-    const adjList = new Map();
+function buildAdjList(n: number, edges: number[][]):Map<number, Set<number>> {
+    const adjList = new Map<number, Set<number>>();
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, new Set());
     }
