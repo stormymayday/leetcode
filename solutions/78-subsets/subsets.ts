@@ -1,17 +1,22 @@
 function subsets(nums: number[]): number[][] {
-    function helper(nums: number[], index: number) {
-        if(index === nums.length) {
-            return [[]];
-        }
-
-        const first = nums[index];
-        const withoutFirst = helper(nums, index + 1);
-        const withFirst = [];
-        for(const subset of withoutFirst) {
-            withFirst.push([first, ...subset]);
-        }
-        return [...withoutFirst, ...withFirst];
-
-    }
-    return helper(nums, 0);
+    const result: number[][] = [];
+    const curSet: number[] = [];
+    helper(0, nums, curSet, result);
+    return result;
 };
+
+function helper(i: number, nums: number[], curSet: number[], result: number[][]):void {
+    // Base Case
+    if(i === nums.length) {
+        result.push([...curSet]);
+        return;
+    }
+
+    // include
+    curSet.push(nums[i]);
+    helper(i + 1, nums, curSet, result);
+    curSet.pop();
+
+    // exclude
+    helper(i + 1, nums, curSet, result);
+}
