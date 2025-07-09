@@ -1,20 +1,19 @@
 function permute(nums: number[]): number[][] {
-    if(nums.length === 0) {
-        return [[]];
-    }
-
-    const current = nums[0];
-
-    const partialPerms = permute(nums.slice(1));
-    const fullPerms = [];
-    for(const perm of partialPerms) {
-        for(let i = 0; i <= perm.length; i += 1) {
-            fullPerms.push([
-                ...perm.slice(0, i),
-                current,
-                ...perm.slice(i)
-            ]);
+    function helper(index: number):number[][] {
+        if(index === nums.length) {
+            return [[]];
         }
+
+        const fullPerms = [];
+        const partialPerms = helper(index + 1);
+        for(const perm of partialPerms) {
+            for(let i = 0; i <= perm.length; i += 1) {
+                const copy = [...perm];
+                copy.splice(i, 0, nums[index]);
+                fullPerms.push(copy);
+            }
+        }
+        return fullPerms;
     }
-    return fullPerms;
+    return helper(0);
 };
