@@ -1,24 +1,13 @@
 function subsets(nums: number[]): number[][] {
-    const result = [];
-    const curSet = [];
-    function helper(index) {
-
-        if(index === nums.length) {
-            result.push([...curSet]);
-            return;
-        }
-
-        // include
-        curSet.push(nums[index]);
-        helper(index + 1);
-
-        // backtrack
-        curSet.pop();
-
-        // exclude
-        helper(index + 1);
-
+    if(nums.length === 0) {
+        return [[]];
     }
-    helper(0);
-    return result;
+
+    const current = nums[0];
+    const withCurrent = [];
+    const withoutCurrent = subsets(nums.slice(1));
+    for(const subset of withoutCurrent) {
+        withCurrent.push([current, ...subset]);
+    }
+    return [...withCurrent, ...withoutCurrent];
 };
