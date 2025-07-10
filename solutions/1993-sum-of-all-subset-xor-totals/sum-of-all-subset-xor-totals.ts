@@ -1,21 +1,9 @@
 function subsetXORSum(nums: number[]): number {
-    let res = 0;
-    const subset = [];
-    function helper(index) {
+    function helper(index: number, total: number):number {
         if(index === nums.length) {
-            let xorr = 0;
-            for(const num of subset) {
-                xorr ^= num; 
-            }
-            res += xorr;
-            return;
+            return total;
         }
-
-        subset.push(nums[index]);
-        helper(index + 1);
-        subset.pop();
-        helper(index + 1);
+        return helper(index + 1, total ^ nums[index]) + helper(index + 1, total);
     }
-    helper(0);
-    return res;
+    return helper(0, 0);
 };
