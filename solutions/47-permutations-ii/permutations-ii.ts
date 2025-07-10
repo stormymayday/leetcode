@@ -6,25 +6,22 @@ function permuteUnique(nums: number[]): number[][] {
     }
     const res = [];
     const perm = [];
-    function helper(index) {
+    function helper() {
         if(perm.length === n) {
             res.push([...perm]);
-            return;
-        }
-        if(index === n) {
             return;
         }
         for(const [num, count] of numCount.entries()) {
             if(count > 0) {
                 perm.push(num);
                 numCount.set(num, count - 1);
-                helper(index + 1);
+                helper();
 
                 perm.pop();
                 numCount.set(num, count);
             }
         }
     }
-    helper(0);
+    helper();
     return res;
 };
