@@ -20,12 +20,10 @@ function letterCombinations(digits: string): string[] {
             res.push(combo.join(""));
             return;
         }
-        for(const chars of digitToChar[digits[index]]) {
-            for(const char of chars) {
-                combo.push(char);
-                helper(index + 1);
-                combo.pop();
-            }
+        for(const char of digitToChar[digits[index]]) {
+            combo.push(char);
+            helper(index + 1);
+            combo.pop();
         }
     }
     helper(0);
