@@ -1,13 +1,20 @@
 function subsets(nums: number[]): number[][] {
-    if(nums.length === 0) {
-        return [[]];
-    }
+    const res = [];
+    const subset = [];
+    function helper(index: number):void {
 
-    const current = nums[0];
-    const withCurrent = [];
-    const withoutCurrent = subsets(nums.slice(1));
-    for(const subset of withoutCurrent) {
-        withCurrent.push([current, ...subset]);
+        if(index === nums.length) {
+            res.push([...subset]);
+            return;
+        }
+
+        subset.push(nums[index]);
+        helper(index + 1);
+
+        subset.pop();
+
+        helper(index + 1);
     }
-    return [...withCurrent, ...withoutCurrent];
+    helper(0);
+    return res;
 };
