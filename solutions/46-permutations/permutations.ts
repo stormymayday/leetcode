@@ -1,18 +1,27 @@
 function permute(nums: number[]): number[][] {
-    function helper(index) {
-        if(index === nums.length) {
-            return [[]];
+    const n = nums.length;
+    const numCount = new Map();
+    for(const num of nums) {
+        numCount.set(num, 1);
+    }
+    const res = [];
+    const perm = [];
+    function helper() {
+        if(perm.length === n) {
+            res.push([...perm]);
+            return;
         }
-        const fullPerms = [];
-        const partialPerms = helper(index + 1);
-        for(const perm of partialPerms) {
-            for(let i = 0; i <= perm.length; i += 1) {
-                const copy = [...perm];
-                copy.splice(i, 0, nums[index]);
-                fullPerms.push(copy);
+        for(const [num, count] of numCount.entries()) {
+            if(count > 0) {
+                perm.push(num);
+                numCount.set(num, count - 1);
+                helper();
+
+                perm.pop();
+                numCount.set(num, count);
             }
         }
-        return fullPerms;
     }
-    return helper(0);
+    helper();
+    return res;
 };
