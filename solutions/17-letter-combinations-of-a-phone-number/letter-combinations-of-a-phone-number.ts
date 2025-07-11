@@ -16,12 +16,16 @@ function letterCombinations(digits: string): string[] {
     const res = [];
     const combo = [];
     function helper(index) {
-        if(index === n) {
-            res.push(combo.join(""));
+        if(
+            // combo.length === n
+            index === n
+            ) {
+            res.push(combo.join("")); // O(n)
             return;
         }
-        for(const char of digitToChar[digits[index]]) {
-            combo.push(char);
+
+        for(const digit of digitToChar[digits[index]]) {
+            combo.push(digit);
             helper(index + 1);
             combo.pop();
         }
