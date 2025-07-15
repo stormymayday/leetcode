@@ -1,23 +1,22 @@
-function wordBreak(s: string, wordDict: string[], memo: Record<string, boolean> = {}): boolean {
+function wordBreak(s: string, wordDict: string[], index: number = 0, memo: Record<number, boolean> = {}): boolean {
 
-    if(s in memo) {
-        return memo[s];
+    if(index in memo) {
+        return memo[index];
     }
 
-    if(s.length === 0) {
+    if(index === s.length) {
         return true;
     }
 
     for(let i = 0; i < wordDict.length; i += 1) {
-        if(s.startsWith(wordDict[i])) {
-            const substr = s.substring(wordDict[i].length);
-            if(wordBreak(substr, wordDict, memo) === true) {
-                memo[s] = true;
+        if(s.startsWith(wordDict[i], index)) {
+            if(wordBreak(s, wordDict, index + wordDict[i].length, memo) === true) {
+                memo[index] = true;
                 return true;
             }
         }
     }
 
-    memo[s] = false;
+    memo[index] = false;
     return false;
 };
