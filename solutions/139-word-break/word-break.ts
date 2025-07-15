@@ -1,24 +1,23 @@
-function wordBreak(s: string, wordDict: string[], index: number = 0, memo: Record<number, boolean> = {}): boolean {
-    
-    if(index in memo) {
-        return memo[index];
+function wordBreak(s: string, wordDict: string[], memo: Record<string, boolean> = {}): boolean {
+
+    if(s in memo) {
+        return memo[s];
     }
 
-    // Base Case: index reaches the end
-    if(index === s.length) {
+    if(s.length === 0) {
         return true;
     }
 
-    for(const word of wordDict) {
-        // check if word is a prefix
-        if(s.startsWith(word, index)) {
-            if(wordBreak(s, wordDict, index + word.length, memo) === true) {
-                memo[index] = true;
+    for(let i = 0; i < wordDict.length; i += 1) {
+        if(s.startsWith(wordDict[i])) {
+            const substr = s.substring(wordDict[i].length);
+            if(wordBreak(substr, wordDict, memo) === true) {
+                memo[s] = true;
                 return true;
             }
         }
     }
 
-    memo[index] = false;
+    memo[s] = false;
     return false;
 };
