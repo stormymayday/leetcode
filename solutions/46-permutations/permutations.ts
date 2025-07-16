@@ -1,6 +1,6 @@
 function permute(nums: number[]): number[][] {
     const n: number = nums.length;
-    const picked: boolean[] = new Array(n).fill(true);
+    const picked: boolean[] = new Array(n).fill(false);
     const res: number[][] = [];
     const curr: number[] = [];
     function helper() {
@@ -10,16 +10,16 @@ function permute(nums: number[]): number[][] {
         }
         for(let i = 0; i < nums.length; i += 1) {
             // If current value was not pickeded
-            if(picked[i] === true) {
+            if(picked[i] === false) {
                 // choose current
-                picked[i] = false;
+                picked[i] = true;
                 curr.push(nums[i]);
 
                 // explore with current
                 helper();
 
                 // backtrack
-                picked[i] = true;
+                picked[i] = false;
                 curr.pop();
             }
         }
