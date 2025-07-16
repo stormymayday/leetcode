@@ -1,27 +1,32 @@
 function permute(nums: number[]): number[][] {
-    const n = nums.length;
-    const numCount = new Map();
-    for(const num of nums) {
-        numCount.set(num, 1);
-    }
-    const res = [];
-    const perm = [];
+    const n: number = nums.length;
+    const picked: boolean[] = new Array(n).fill(true);
+    const res: number[][] = [];
+    const curr: number[] = [];
     function helper() {
-        if(perm.length === n) {
-            res.push([...perm]);
+        if(curr.length === n) {
+            res.push([...curr]); // O(n) for copying curr
             return;
         }
-        for(const [num, count] of numCount.entries()) {
-            if(count > 0) {
-                perm.push(num);
-                numCount.set(num, count - 1);
+        for(let i = 0; i < nums.length; i += 1) {
+            // If current value was not pickeded
+            if(picked[i] === true) {
+                // choose current
+                picked[i] = false;
+                curr.push(nums[i]);
+
+                // explore with current
                 helper();
 
-                perm.pop();
-                numCount.set(num, count);
+                // backtrack
+                picked[i] = true;
+                curr.pop();
             }
         }
     }
     helper();
     return res;
+    // Time: O(n x n!) - n for copying curr and n! for generating permutations
+    // Space: O(n + n!) - n for recursion stack and n! for storing permutations
+    // where n is the length of nums
 };
