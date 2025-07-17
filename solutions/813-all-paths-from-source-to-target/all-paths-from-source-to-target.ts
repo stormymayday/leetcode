@@ -1,18 +1,21 @@
-function allPathsSourceTarget(graph: number[][], src:number = 0, dst:number = graph.length -1): number[][] {
-    if(src === dst) {
-        return [[src]];
-    }
+function allPathsSourceTarget(graph: number[][]): number[][] {
+    const res: number[][] = [];
+    const path: number[] = [];
+    function helper(node: number): void {
 
-    if(graph[src].length === 0) {
-        return [];
-    }
+        path.push(node);
 
-    const allPaths = [];
-    for(const neighbor of graph[src]) {
-        const neighborPaths = allPathsSourceTarget(graph, neighbor, dst);
-        for(const neighborPath of neighborPaths) {
-            allPaths.push([src, ...neighborPath]);
+        if(node === graph.length - 1) {
+            res.push([...path]);
         }
+
+        for(const neighbor of graph[node]) {
+            helper(neighbor);
+        }
+
+        path.pop();
+        
     }
-    return allPaths;
+    helper(0);
+    return res;
 };
