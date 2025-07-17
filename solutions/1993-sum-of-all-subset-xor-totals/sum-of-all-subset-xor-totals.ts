@@ -1,10 +1,17 @@
 function subsetXORSum(nums: number[]): number {
-    function helper(index, sum) {
+    let XORTotals = 0;
+    const curr = [];
+    function helper(index): void {
         if(index === nums.length) {
-            return sum;
+            XORTotals += curr.reduce((acc, curr) => acc ^ curr, 0);
+            return;
         }
 
-        return helper(index + 1, sum ^ nums[index]) + helper(index + 1, sum);
+        curr.push(nums[index]);
+        helper(index + 1);
+        curr.pop();
+        helper(index + 1);
     }
-    return helper(0, 0);
+    helper(0);
+    return XORTotals;
 };
