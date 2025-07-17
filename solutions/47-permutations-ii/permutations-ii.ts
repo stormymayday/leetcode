@@ -2,23 +2,27 @@ function permuteUnique(nums: number[]): number[][] {
     const n = nums.length;
     const numCount = new Map();
     for(const num of nums) {
-        numCount.set(num, (numCount.get(num) || 0) + 1);
+        if(!numCount.has(num)) {
+            numCount.set(num, 0);
+        }
+        numCount.set(num, numCount.get(num) + 1);
     }
-    const res = [];
-    const perm = [];
+    const res: number[][] = [];
+    const curr: number[] = [];
     function helper() {
-        if(perm.length === n) {
-            res.push([...perm]);
+        if(curr.length === n) {
+            res.push([...curr]);
             return;
         }
         for(const [num, count] of numCount.entries()) {
             if(count > 0) {
-                perm.push(num);
-                numCount.set(num, count - 1);
+                curr.push(num);
+                numCount.set(num, numCount.get(num) - 1);
+
                 helper();
 
-                perm.pop();
-                numCount.set(num, count);
+                curr.pop();
+                numCount.set(num, numCount.get(num) + 1);
             }
         }
     }
