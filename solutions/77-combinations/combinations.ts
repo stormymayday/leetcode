@@ -1,19 +1,21 @@
 function combine(n: number, k: number): number[][] {
-    const result: number[][] = [];
-    const combination: number[] = [];
-    function helper(i: number):void {
-        if(combination.length === k) {
-            result.push([...combination]);
+    const res: number[][] = [];
+    const curr: number[] = [];
+    function helper(num: number): void {
+        if(curr.length === k) {
+            res.push([...curr]);
             return;
         }
-        if(i > n) {
+        if(num > n) {
             return;
         }
-        combination.push(i);
-        helper(i + 1);
-        combination.pop();
-        helper(i + 1);
+
+        // O(2^n)
+        curr.push(num);
+        helper(num + 1);
+        curr.pop();
+        helper(num + 1);
     }
     helper(1);
-    return result;   
+    return res;
 };
