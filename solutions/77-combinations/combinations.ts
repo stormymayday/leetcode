@@ -11,10 +11,17 @@ function combine(n: number, k: number): number[][] {
         }
 
         // O(2^n)
-        curr.push(num);
-        helper(num + 1);
-        curr.pop();
-        helper(num + 1);
+        // curr.push(num);
+        // helper(num + 1);
+        // curr.pop();
+        // helper(num + 1);
+
+        // O(n choose k)
+        for(let i = num; i <= n; i += 1) {
+            curr.push(i);
+            helper(i + 1);
+            curr.pop();
+        }
     }
     helper(1);
     return res;
