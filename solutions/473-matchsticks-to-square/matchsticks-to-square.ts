@@ -1,51 +1,40 @@
 function makesquare(matchsticks: number[]): boolean {
-
-    // Check if total length % 4 is zero
-    const totalLength = matchsticks.reduce((acc, curr) => {
-        return acc + curr;
-    }, 0);
-    
+    // 1. Get total length of all matchsticks
+    const totalLength = matchsticks.reduce((acc, curr) => acc + curr, 0);
+    // 2. Check if total lenght is evenly divible by 4
     if(totalLength % 4 !== 0) {
-        // if the remainder is not zero,
-        // we won't be able to divide given matchsticks into 4 equal sizes
         return false;
     }
-
-    // Sort in descending order
+    // 3. Calculate length of a side
+    const sideLength = totalLength / 4;
+    // 4. Sort the matchsticks in descending order
     const sorted = matchsticks.sort((a, b) => b - a);
-    // Calculate the target side length
-    const targetSideLength = totalLength / 4;
-    // if largest matchstick is longer than target side length
-    if(sorted[0] > targetSideLength) {
-        // we can exit early
+    // 5. Check if the largest matchstick longer than sideLength
+    if(sorted[0] > sideLength) {
         return false;
     }
-
+    // 6. Sides array
     const sides = new Array(4).fill(0);
     function helper(index: number): boolean {
-        // Base Case
-        if(index === matchsticks.length) {
+        if(index === sorted.length) {
             return true;
         }
 
-        for(let j = 0; j < 4; j += 1) {
-            // if adding this matchstick does not exceeds target side length
-            if(sides[j] + sorted[index] <= targetSideLength) {
-                // make a choice to use this matchstick
-                sides[j] += sorted[index];
-                // recurse
+        for(let i = 0; i < 4; i += 1) {
+
+            if(sides[i] + sorted[index] <= sideLength) {
+                sides[i] += sorted[index];
                 if(helper(index + 1) === true) {
                     return true;
                 }
-                // backtrack
-                sides[j] -= sorted[index];
+                sides[i] -= sorted[index];
             }
+
         }
 
         return false;
 
     }
-
     return helper(0);
 
 };
