@@ -1,14 +1,13 @@
 function subsetXORSum(nums: number[]): number {
-    let XORTotals = 0;
-    function helper(index: number, XORSum: number): void {
+    let xorTotal = 0;
+    function helper(index: number, xorSum: number): void {
         if(index === nums.length) {
-            XORTotals += XORSum;
+            xorTotal += xorSum;
             return;
         }
-
-        helper(index + 1, XORSum ^ nums[index]);
-        helper(index + 1, XORSum);
+        helper(index + 1, xorSum ^ nums[index]);
+        helper(index + 1, xorSum);
     }
     helper(0, 0);
-    return XORTotals;
+    return xorTotal;
 };
