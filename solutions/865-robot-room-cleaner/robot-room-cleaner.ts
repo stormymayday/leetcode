@@ -19,10 +19,16 @@
 
 function cleanRoom(robot: Robot) {
     const directions = [
+        // clockwise
+        // [-1, 0], // up
+        // [0, 1], // right
+        // [1, 0], // down
+        // [0, -1] // left
+        // counter clockwise
         [-1, 0], // up
-        [0, 1], // right
+        [0, -1], // left
         [1, 0], // down
-        [0, -1] // left
+        [0, 1] // right
     ];
     const visited = new Set<string>();
     function helper(row: number, col: number, direction: number): void {
