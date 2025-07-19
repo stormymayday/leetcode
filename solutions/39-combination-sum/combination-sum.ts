@@ -1,33 +1,29 @@
 function combinationSum(candidates: number[], target: number): number[][] {
-    const res = [];
-    const combo = [];
-    let curSum = 0;
-    (function helper(index: number):void {
-        // Base Case 1
-        if(curSum === target) {
-            res.push([...combo]);
-            return;
-        }
-        // Base Case 2
-        if(curSum > target) {
-            return;
-        }
-        // Base Case 3
+    const res: number[][] = [];
+    const combo: number[] = [];
+    function helper(index: number, sum: number): void {
         if(index === candidates.length) {
             return;
         }
 
-        // Include
+        if(sum > target) {
+            return;
+        }
+
+        if(sum === target) {
+            res.push([...combo]);
+            return;
+        }
+        
+
         combo.push(candidates[index]);
-        curSum += candidates[index];
-        helper(index); // stay on current
 
-        // Backtrack
+        helper(index, sum + candidates[index]);
+
         combo.pop();
-        curSum -= candidates[index];
-
-        // Exclude (move to the next)
-        helper(index + 1);
-    }(0))
+        
+        helper(index + 1, sum);
+    }
+    helper(0, 0);
     return res;
 };
