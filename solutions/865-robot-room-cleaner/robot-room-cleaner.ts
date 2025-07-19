@@ -53,7 +53,7 @@ function cleanRoom(robot: Robot) {
 
             }
 
-            robot.turnRight();
+            robot.turnLeft();
 
         }
     }
