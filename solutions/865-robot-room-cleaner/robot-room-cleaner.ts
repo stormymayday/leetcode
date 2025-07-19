@@ -18,21 +18,24 @@
  */
 
 function cleanRoom(robot: Robot) {
-    const directions: number[][] = [
-        [-1, 0], // 0 - up
-        [0, 1], // 1 - right
-        [1, 0], // 2 - down
-        [0, -1] // 3 - left
+    const directions = [
+        [-1, 0], // up
+        [0, 1], // right
+        [1, 0], // down
+        [0, -1] // left
     ];
     const visited = new Set<string>();
     function helper(row: number, col: number, direction: number): void {
         robot.clean();
         visited.add(`${row},${col}`);
         for(let i = 0; i < 4; i += 1) {
+
             const newDirection = (direction + i) % 4;
             const neighborRow = row + directions[newDirection][0];
             const neighborCol = col + directions[newDirection][1];
+
             if(!visited.has(`${neighborRow},${neighborCol}`) && robot.move()) {
+
                 helper(neighborRow, neighborCol, newDirection);
 
                 robot.turnRight();
@@ -40,9 +43,12 @@ function cleanRoom(robot: Robot) {
                 robot.move();
                 robot.turnRight();
                 robot.turnRight();
+
             }
+
             robot.turnRight();
+
         }
     }
-    helper(0, 0, 0);
+    helper(0,0,0);
 };
