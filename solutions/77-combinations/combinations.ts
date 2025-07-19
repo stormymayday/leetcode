@@ -10,10 +10,11 @@ function combine(n: number, k: number): number[][] {
             return;
         }
 
-        combo.push(num);
-        helper(num + 1);
-        combo.pop();
-        helper(num + 1);
+        for(let i = num; i <= n; i += 1) {
+            combo.push(i);
+            helper(i + 1);
+            combo.pop();
+        }
     }
     helper(1);
     return res;
