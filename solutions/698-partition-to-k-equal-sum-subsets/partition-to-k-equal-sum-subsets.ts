@@ -1,15 +1,10 @@
 function canPartitionKSubsets(nums: number[], k: number): boolean {
-    // Get total sum
-    const total = nums.reduce((acc, curr) => acc + curr, 0);
-    // Check if total is evenly divisble by k
-    if(total % k !== 0) {
+    const totalSum = nums.reduce((acc, curr) => acc + curr, 0);
+    if(totalSum % k !== 0) {
         return false;
-    } 
-    // Calculate target 'bucket' size
-    const bucketSize = total / k;
-    // Sort nums in descending order
+    }
     const sorted = nums.sort((a, b) => b - a);
-    // Check if largest 'num' is greater than bucketSize
+    const bucketSize = totalSum / k;
     if(sorted[0] > bucketSize) {
         return false;
     }
