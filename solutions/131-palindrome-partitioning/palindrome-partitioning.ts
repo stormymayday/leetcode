@@ -1,33 +1,32 @@
 function partition(s: string): string[][] {
-    const validPartitions: string[][] = [];
-    const partitionInProgress: string[] = [];
-    (function helper(buildPointer: number): void {
-        // Base Case: current partitions are valid
-        if(buildPointer === s.length) {
-            validPartitions.push([...partitionInProgress]);
+    function isPalindrome(str: string): boolean {
+        let left = 0;
+        let right = str.length - 1;
+        while(left < right) {
+            if(str[left] !== str[right]) {
+                return false;
+            }
+            left += 1;
+            right -= 1;
+        }
+        return true;
+    }
+    const res: string[][] = [];
+    const part: string[] = [];
+    function helper(index: number):void {
+        if(index === s.length) {
+            res.push([...part]);
             return;
         }
-        for(let i = buildPointer; i < s.length; i += 1) {
-            const substring = s.substring(buildPointer, i + 1);
-            if(isPalindrome(substring) === true) {
-                partitionInProgress.push(substring);
+        for(let i = index; i < s.length; i += 1) {
+            const str = s.substring(index, i + 1);
+            if(isPalindrome(str)) {
+                part.push(str);
                 helper(i + 1);
-                partitionInProgress.pop();
+                part.pop();
             }
         }
-    }(0));
-    return validPartitions;
-};
-
-function isPalindrome(s: string): boolean {
-    let l = 0;
-    let r = s.length - 1;
-    while(l < r) {
-        if(s[l] !== s[r]) {
-            return false;
-        }
-        l += 1;
-        r -= 1;
     }
-    return true;
-}
+    helper(0);
+    return res;
+};
