@@ -1,49 +1,45 @@
 function exist(board: string[][], word: string): boolean {
-    for(let r = 0; r < board.length; r += 1) {
-        for(let c = 0; c < board[0].length; c += 1) {
-            if(board[r][c] === word[0]) {
-                if(dfs(board, r, c, 0, word) === true) {
+    function helper(row: number, col: number, index: number, visited: Set<string>):boolean {
+        if(index === word.length) {
+            return true;
+        }
+
+        const rowInBounds = 0 <= row && row < board.length;
+        const colInBounds = 0 <= col && col < board[0].length;
+        if(!rowInBounds || !colInBounds) {
+            return false;
+        }
+
+        if(board[row][col] !== word[index]) {
+            return false;
+        }
+
+        const position = `${row},${col}`;
+        if(visited.has(position)) {
+            return false;
+        }
+
+        visited.add(position);
+
+        const result = helper(row - 1, col, index + 1, visited) ||
+            helper(row, col + 1, index + 1, visited) ||
+            helper(row + 1, col, index + 1, visited) ||
+            helper(row, col - 1, index + 1, visited);
+
+        visited.delete(position);
+
+        return result;
+    }
+
+    for(let row = 0; row < board.length; row += 1) {
+        for(let col = 0; col < board[0].length; col += 1) {
+            if(board[row][col] === word[0]) {
+                if(helper(row, col, 0, new Set()) === true) {
                     return true;
                 }
             }
         }
     }
+
     return false;
 };
-
-function dfs(grid: string[][], r: number, c: number, index: number, word: string):boolean {
-    // Base Case: word found
-    if(index === word.length) {
-        return true;
-    }
-
-    // Base Case: out of bounds
-    const rowInBounds = 0 <= r && r < grid.length;
-    const colInBounds = 0 <= c && c < grid[0].length;
-    if(!rowInBounds || !colInBounds) {
-        return false;
-    }
-
-    // Base Case: char mismatch
-    if(grid[r][c] !== word[index]) {
-        return false;
-    }
-
-    // Base Case: visited
-    if(grid[r][c] === '*') {
-        return false;
-    }
-
-    const char = grid[r][c];
-    grid[r][c] = '*';
-
-    const result = dfs(grid, r - 1, c, index + 1, word) ||
-        dfs(grid, r + 1, c, index + 1, word) ||
-        dfs(grid, r, c - 1, index + 1, word) ||
-        dfs(grid, r, c + 1, index + 1, word);
-
-    // Backtrack
-    grid[r][c] = char;
-
-    return result;
-} 
