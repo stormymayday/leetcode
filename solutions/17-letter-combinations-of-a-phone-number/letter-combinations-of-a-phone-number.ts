@@ -1,9 +1,8 @@
 function letterCombinations(digits: string): string[] {
-    const n = digits.length;
-    if(n === 0) {
+    if(digits.length === 0) {
         return [];
     }
-    const digitToChar = {
+    const numberToLetters = {
         "2": "abc",
         "3": "def",
         "4": "ghi",
@@ -13,22 +12,24 @@ function letterCombinations(digits: string): string[] {
         "8": "tuv",
         "9": "wxyz"
     };
-    const res = [];
-    const combo = [];
-    function helper(index) {
-        if(
-            // combo.length === n
-            index === n
-            ) {
-            res.push(combo.join("")); // O(n)
+    const res: string[] = [];
+    const curr: string[] = [];
+    function helper(index: number):void {
+        if(curr.length === digits.length) {
+            res.push(curr.join("")); // O(n)
             return;
         }
-
-        for(const digit of digitToChar[digits[index]]) {
-            combo.push(digit);
-            helper(index + 1);
-            combo.pop();
+        if(index === digits.length) {
+            return;
         }
+        for(let i = index; i < digits.length; i += 1) {
+            for(const char of numberToLetters[digits[index]]) {
+                curr.push(char);
+                helper(i + 1); // i or index
+                curr.pop();
+            }
+        }
+
     }
     helper(0);
     return res;
