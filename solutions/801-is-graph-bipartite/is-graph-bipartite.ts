@@ -1,41 +1,37 @@
 function isBipartite(graph: number[][]): boolean {
+    const state = new Map<number, boolean>();
     for(let i = 0; i < graph.length; i += 1) {
-        if(bfs(graph, i) === false) {
-            return false;
-        } 
+        if(!state.has(i)) {
+            if(bfs(graph, i, state) === false) {
+                return false;
+            }
+        }
     }
     return true;
 };
 
-function bfs(graph: number[][], src: number): boolean {
-    const red = new Set<number>();
-    const blue = new Set<number>();
-    red.add(src); // adding first node into red
-    const queue = [[src, 'red']];
+function bfs(graph: number[][], src: number, state: Map<number, boolean>): boolean {
+    if(!state.has(src)) {
+        state.set(src, true);
+    }
+
+    const queue: [number, boolean][] = [[src, state.get(src)]];
+
     while(queue.length > 0) {
-        const [node, neighborColor] = queue.shift();
+
+        const [node, stateVal] = queue.shift();
+
         for(const neighbor of graph[node]) {
-            if(neighborColor === 'red') {
-                if(red.has(neighbor)) {
+            if(state.has(neighbor)) {
+                if(state.get(neighbor) === stateVal) {
                     return false;
-                } else if(blue.has(neighbor)) {
-                    continue;
-                } else {
-                    blue.add(neighbor);
-                    queue.push([neighbor, 'blue']);
                 }
             } else {
-                if(blue.has(neighbor)) {
-                    return false;
-                } else if(red.has(neighbor)) {
-                    continue;
-                } else {
-                    red.add(neighbor);
-                    queue.push([neighbor, 'red']);
-                }
-                
+                state.set(neighbor, !stateVal);
+                queue.push([neighbor, !stateVal]);
             }
         }
     }
+
     return true;
 }
