@@ -1,48 +1,33 @@
 function findOrder(numCourses: number, prerequisites: number[][]): number[] {
     const adjList = buildAdjList(numCourses, prerequisites);
-    return kahns(adjList);
+    const visiting = new Set<number>();
+    const visited = new Set<number>();
+    const topOrder: number[] = [];
+    for(const node of adjList.keys()) {
+        if(postOrderDFSWhiteGrayBlack(adjList, node, visiting, visited, topOrder) === true) {
+            return []; // found a cycle
+        }
+    }
+    return topOrder;
 };
 
-
-function kahns(adjList: Map<number, Set<number>>): number[] {
-    const numParents = new Map<number, number>();
-    for(const node of adjList.keys()) {
-        if(!numParents.has(node)) {
-            numParents.set(node, 0);
+function postOrderDFSWhiteGrayBlack(adjList: Map<number, Set<number>>, src: number, visiting: Set<number>, visited: Set<number>, topOrder: number[]): boolean {
+    if(visited.has(src)) {
+        return false; // no cycle
+    }
+    if(visiting.has(src)) {
+        return true; // cycle
+    }
+    visiting.add(src);
+    for(const neighbor of adjList.get(src)) {
+        if(postOrderDFSWhiteGrayBlack(adjList, neighbor, visiting, visited, topOrder) === true) {
+            return true; // cycle
         }
     }
-    for(const parent of adjList.keys()) {
-        for(const child of adjList.get(parent)) {
-            numParents.set(child, numParents.get(child) + 1);
-        }
-    }
-
-    const queue: number[] = [];
-    for(const [node, inDegree] of numParents.entries()) {
-        if(inDegree === 0) {
-            queue.push(node);
-        }
-    }
-
-    const topOrder: number[] = [];
-    while(queue.length > 0) {
-        const current = queue.shift();
-        topOrder.push(current);
-        for(const child of adjList.get(current)) {
-            if(numParents.has(child)) {
-                numParents.set(child, numParents.get(child) - 1);
-                if(numParents.get(child) === 0) {
-                    queue.push(child);
-                }
-            }
-        }
-    }
-
-    if(topOrder.length === adjList.size) {
-        return topOrder.reverse();
-    } else {
-        return [];
-    }
+    visiting.delete(src);
+    visited.add(src);
+    topOrder.push(src);
+    return false; // no cycle
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
