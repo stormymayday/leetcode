@@ -3,42 +3,41 @@ function findOrder(numCourses: number, prerequisites: number[][]): number[] {
     return kahns(adjList);
 };
 
+
 function kahns(adjList: Map<number, Set<number>>): number[] {
-    // child to parents mapping
-    const nodeParents = new Map<number, Set<number>>();
-    for(const parent of adjList.keys()) {
-        if(!nodeParents.has(parent)) {
-            nodeParents.set(parent, new Set());
-        }
-        for(const child of adjList.get(parent)) {
-            if(!nodeParents.has(child)) {
-                nodeParents.set(child, new Set());
-            }
-            nodeParents.get(child).add(parent);
+    const numParents = new Map<number, number>();
+    for(const node of adjList.keys()) {
+        if(!numParents.has(node)) {
+            numParents.set(node, 0);
         }
     }
-    // queue nodes with no parents
-    const queue: number[] = [];
-    for(const child of nodeParents.keys()) {
-        if(nodeParents.get(child).size === 0) {
-            queue.push(child);
+    for(const parent of adjList.keys()) {
+        for(const child of adjList.get(parent)) {
+            numParents.set(child, numParents.get(child) + 1);
         }
     }
 
-    // Topological Ordering
+    const queue: number[] = [];
+    for(const [node, inDegree] of numParents.entries()) {
+        if(inDegree === 0) {
+            queue.push(node);
+        }
+    }
+
     const topOrder: number[] = [];
     while(queue.length > 0) {
         const current = queue.shift();
         topOrder.push(current);
         for(const child of adjList.get(current)) {
-            if(nodeParents.has(child)) {
-                nodeParents.get(child).delete(current);
-                if(nodeParents.get(child).size === 0) {
+            if(numParents.has(child)) {
+                numParents.set(child, numParents.get(child) - 1);
+                if(numParents.get(child) === 0) {
                     queue.push(child);
                 }
             }
         }
     }
+
     if(topOrder.length === adjList.size) {
         return topOrder.reverse();
     } else {
