@@ -1,36 +1,49 @@
 function canFinish(numCourses: number, prerequisites: number[][]): boolean {
     const adjList = buildAdjList(numCourses, prerequisites);
-    const visiting = new Set<number>();
-    const visited = new Set<number>();
-    for(const node of adjList.keys()) {
-        if(hasCycle(adjList, node, visiting, visited) === true) {
-            return false;
-        }
-    }
-    return true;
+    return kahns(adjList);
 };
 
-function hasCycle(adjList: Map<number, Set<number>>, src: number, visiting: Set<number>, visited: Set<number>):boolean {
-    if(visited.has(src)) {
-        return false;
+function kahns(adjList: Map<number, Set<number>>): boolean {
+    // child to parents mapping
+    const nodeParents = new Map<number, Set<number>>();
+    for(const parent of adjList.keys()) {
+        if(!nodeParents.has(parent)) {
+            nodeParents.set(parent, new Set());
+        }
+        for(const child of adjList.get(parent)) {
+            if(!nodeParents.has(child)) {
+                nodeParents.set(child, new Set());
+            }
+            nodeParents.get(child).add(parent);
+        }
     }
-
-    if(visiting.has(src)) {
-        return true;
-    }
-
-    visiting.add(src);
-
-    for(const neighbor of adjList.get(src)) {
-        if(hasCycle(adjList, neighbor, visiting, visited) === true) {
-            return true;
+    // queue nodes with no parents
+    const queue: number[] = [];
+    for(const child of nodeParents.keys()) {
+        if(nodeParents.get(child).size === 0) {
+            queue.push(child);
         }
     }
 
-    visiting.delete(src);
-    visited.add(src);
-
-    return false;
+    // Topological Ordering
+    const topOrder: number[] = [];
+    while(queue.length > 0) {
+        const current = queue.shift();
+        topOrder.push(current);
+        for(const child of adjList.get(current)) {
+            if(nodeParents.has(child)) {
+                nodeParents.get(child).delete(current);
+                if(nodeParents.get(child).size === 0) {
+                    queue.push(child);
+                }
+            }
+        }
+    }
+    if(topOrder.length === adjList.size) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
