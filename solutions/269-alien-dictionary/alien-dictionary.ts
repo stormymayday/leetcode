@@ -38,38 +38,32 @@ function alienOrder(words: string[]): string {
         }
     }
     
-    // Kahn's Algorithm
-    const inDegree = new Map<string, number>();
-    for(const node of adjList.keys()) {
-        if(!inDegree.has(node)) {
-            inDegree.set(node, 0);
+    // postOrder DFS with White Gray Black
+    function dfs(src: string): boolean {
+        if(visited.has(src)) {
+            return false; // no cycle
         }
-    }
-    for(const parent of adjList.keys()) {
-        for(const child of adjList.get(parent)) {
-            inDegree.set(child, inDegree.get(child) + 1);
+        if(visiting.has(src)) {
+            return true; // cycle
         }
-    }
-    const queue: string[] = [];
-    for(const [node, count] of inDegree.entries()) {
-        if(count === 0) {
-            queue.push(node);
-        }
-    }
-    const topOrder: string[] = [];
-    while(queue.length > 0) {
-        const current = queue.shift();
-        topOrder.push(current);
-        for(const child of adjList.get(current)) {
-            inDegree.set(child, inDegree.get(child) - 1);
-            if(inDegree.get(child) === 0) {
-                queue.push(child);
+        visiting.add(src);
+        for(const neighbor of adjList.get(src)) {
+            if(dfs(neighbor) === true) {
+                return true; // cycle
             }
         }
+        visiting.delete(src);
+        visited.add(src);
+        topOrder.push(src);
+        return false; // no cycle
     }
-    if(topOrder.length === adjList.size) {
-        return topOrder.join("");
-    } else {
-        return "";
+    const visiting = new Set<string>();
+    const visited = new Set<string>();
+    const topOrder: string[] = [];
+    for(const node of adjList.keys()) {
+        if(dfs(node) === true) {
+            return "";
+        }
     }
+    return topOrder.reverse().join("");
 };
