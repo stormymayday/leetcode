@@ -1,31 +1,36 @@
 function canFinish(numCourses: number, prerequisites: number[][]): boolean {
     const adjList = buildAdjList(numCourses, prerequisites);
-    const visiting = new Set<number>();
-    const visited = new Set<number>();
-    for(const node of adjList.keys()) {
-        if(whiteGrayBlack(adjList, node, visiting, visited) === true) {
-            return false; // cycle detected - can't finish
-        }
-    }
-    return true; // can finish all courses
+    return kahnsAlgorithm(adjList);
 };
 
-function whiteGrayBlack(adjList: Map<number, Set<number>>, src: number, visiting: Set<number>, visited: Set<number>): boolean {
-    if(visited.has(src)) {
-        return false; // no cycle
+function kahnsAlgorithm(adjList: Map<number, Set<number>>):boolean {
+    const inDegree = new Map<number, number>();
+    for(const node of adjList.keys()) {
+        inDegree.set(node, 0);
     }
-    if(visiting.has(src)) {
-        return true; // cycle found
-    }
-    visiting.add(src);
-    for(const neighbor of adjList.get(src)) {
-        if(whiteGrayBlack(adjList, neighbor, visiting, visited) === true) {
-            return true; // cycle found
+    for(const prereq of adjList.keys()) {
+        for(const course of adjList.get(prereq)) {
+            inDegree.set(course, inDegree.get(course) + 1);
         }
     }
-    visiting.delete(src);
-    visited.add(src);
-    return false; // no cycle
+    const queue: number[] = [];
+    for(const [node, count] of inDegree.entries()) {
+        if(count === 0) {
+            queue.push(node);
+        }
+    }
+    let nodesVisited = 0;
+    while(queue.length > 0) {
+        const current = queue.shift();
+        nodesVisited += 1;
+        for(const course of adjList.get(current)) {
+            inDegree.set(course, inDegree.get(course) - 1);
+            if(inDegree.get(course) ===  0) {
+                queue.push(course);
+            }
+        }
+    }
+    return nodesVisited === adjList.size;
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
@@ -34,8 +39,8 @@ function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
         adjList.set(i, new Set());
     }
     for(const edge of edges) {
-        const [src, dst] = edge;
-        adjList.get(dst).add(src);
+        const [course, prereq] = edge;
+        adjList.get(prereq).add(course);
     }
     return adjList;
 }
