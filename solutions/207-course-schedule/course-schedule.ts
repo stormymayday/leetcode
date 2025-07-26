@@ -1,7 +1,33 @@
 function canFinish(numCourses: number, prerequisites: number[][]): boolean {
     const adjList = buildAdjList(numCourses, prerequisites);
-    return kahnsAlgorithm(adjList);
+    // return kahnsAlgorithm(adjList);
+    const visiting = new Set<number>();
+    const visited = new Set<number>();
+    for(const node of adjList.keys()) {
+        if(postOrderDFSWhiteGrayBlack(adjList, node, visiting, visited) === true) {
+            return false; // cycle therefore not possible
+        }
+    }
+    return true; // no cycle therefore possible
 };
+
+function postOrderDFSWhiteGrayBlack(adjList: Map<number, Set<number>>, src: number, visiting: Set<number>, visited: Set<number>):boolean {
+    if(visited.has(src)) {
+        return false; // no cycle
+    }
+    if(visiting.has(src)) {
+        return true; // cycle
+    }
+    visiting.add(src);
+    for(const neighbor of adjList.get(src)) {
+        if(postOrderDFSWhiteGrayBlack(adjList, neighbor, visiting, visited) === true) {
+            return true; // cycle
+        }
+    }
+    visiting.delete(src);
+    visited.add(src);
+    return false; // no cycle
+}
 
 function kahnsAlgorithm(adjList: Map<number, Set<number>>):boolean {
     const inDegree = new Map<number, number>();
