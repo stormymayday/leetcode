@@ -1,51 +1,53 @@
 function findMinHeightTrees(n: number, edges: number[][]): number[] {
-    
-    // Edge Case: Single Node
-    if(n === 1) {
+    // Edge Case: 1 Node / 0 Edges
+    if(n === 1 || edges.length === 0) {
         return [0];
     }
-    
+
     const adjList = buildAdjList(n, edges);
-    
-    return bfs(adjList);
+    return kahnsAlgorithm(adjList);
 };
 
-function bfs(adjList: Map<number, Set<number>>): number[] {
-    // 1. Create a neighbour count map
-    const neighborCount = new Map<number, number>();
-    for(const [node, neighbors] of adjList.entries()) {
-        neighborCount.set(node, neighbors.size);
-    }
-    
-    // 2. Queue up the leaves (nodes with neighbor count of 1)
-    let leaves = [];
-    for(const [node, count] of neighborCount.entries()) {
-        if(count === 1) {
+function kahnsAlgorithm(adjList: Map<number, Set<number>>): number[] {
+    // 1. Get the edge count for each node and Queue up nodes with edge count of 1 (leaves)
+    // let leaves: number[] = []; 
+    // const edgeCount = new Map<number, number>();
+    // for(const [node, neighbors] of adjList.entries()) {
+    //     edgeCount.set(node, neighbors.size);
+    //     if(neighbors.size === 1) {
+    //         leaves.push(node);
+    //     }
+    // }
+
+    // 1. Queue up nodes with 1 neighbor (leaves)
+    let leaves: number[] = [];
+    for(const [node, neighbours] of adjList.entries()) {
+        if(neighbours.size === 1) {
             leaves.push(node);
         }
     }
-    
-    // 3. Process leaves layer by layer until there are at most 2 nodes left (centroids)
-    let nodeCount = adjList.size;
-    while(nodeCount > 2) {
-        // update the node count
-        nodeCount -= leaves.length;
-        const nextLayerLeaves = [];
-        // Process current layer leaves
-        while(leaves.length > 0) {
-            const current = leaves.shift();
-            for(const neighbor of adjList.get(current)) {
-                neighborCount.set(neighbor, neighborCount.get(neighbor) - 1);
-                if(neighborCount.get(neighbor) === 1) {
-                    // next layer leaves
-                    nextLayerLeaves.push(neighbor);
-                }
-            }
+
+    // 2. process nodes layer by layer (BFS) until there are at most 2 nodes left (centroids)
+    let nodesRemaining = adjList.size;
+    while(nodesRemaining > 2) {
+        nodesRemaining -= leaves.length;
+        const nextLayerLeaves: number[] = [];
+        // process every leaf on current layer
+        for(const leaf of leaves) {
+            // A leaf in a tree should only have 1 neighbor (parent)
+            const neighbours = adjList.get(leaf); // this returns a set
+            const parent = [...neighbours][0]; // extract the parent
+
+            // delete the leaf from parent's list
+            adjList.get(parent).delete(leaf);
+            // if parent's neighbour count is 1, push it into nextLayerLeaves
+            if(adjList.get(parent).size === 1) {
+                nextLayerLeaves.push(parent);
+            }   
         }
-        // queue up next layer leaves
+        // update the leaves
         leaves = nextLayerLeaves;
     }
-    // return the centroid(s)
     return leaves;
 }
 
@@ -55,10 +57,9 @@ function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
         adjList.set(i, new Set());
     }
     for(const edge of edges) {
-        const [src, dst] = edge;
-        adjList.get(src).add(dst);
-        adjList.get(dst).add(src);
+        const [a, b] = edge;
+        adjList.get(a).add(b);
+        adjList.get(b).add(a);
     }
     return adjList;
 }
-
