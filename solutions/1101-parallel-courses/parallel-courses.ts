@@ -25,12 +25,12 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>): number {
     while(true) {
         nodesRemaining -= queue.length;
         const nextLayer: number[] = [];
-        // Version 1: Shifting from queue
-        // while(queue.length > 0) {
-        //     const current = queue.shift();
-        // Version 2: Iterating over the queue
-        for(let i = 0; i < queue.length; i += 1) {
-            const current = queue[i];
+        // Option 1: Shifting from queue
+        while(queue.length > 0) {
+            const current = queue.shift();
+        // Option 2: Iterating over the queue
+        // for(let i = 0; i < queue.length; i += 1) {
+        //     const current = queue[i];
             for(const child of adjList.get(current)) {
                 inDegree.set(child, inDegree.get(child) - 1);
                 if(inDegree.get(child) === 0) {
