@@ -1,7 +1,35 @@
 function findOrder(numCourses: number, prerequisites: number[][]): number[] {
     const adjList = buildAdjList(numCourses, prerequisites);
-    return kahnsAlgorithm(adjList);
+    // return kahnsAlgorithm(adjList);
+    const topOrder: number[] = [];
+    const visiting = new Set<number>();
+    const visited = new Set<number>();
+    for(const node of adjList.keys()) {
+        if(postOrderDFSWhiteGrayBlack(adjList, node, visiting, visited, topOrder) === true) {
+            return []; // cycle found, exit early
+        }
+    }
+    return topOrder.reverse(); // no cycle
 };
+
+function postOrderDFSWhiteGrayBlack(adjList: Map<number, Set<number>>, src: number, visiting: Set<number>, visited: Set<number>, topOrder: number[]):boolean {
+    if(visited.has(src)) {
+        return false; // no cycle
+    }
+    if(visiting.has(src)) {
+        return true; // cycle
+    }
+    visiting.add(src);
+    for(const neighbor of adjList.get(src)) {
+        if(postOrderDFSWhiteGrayBlack(adjList, neighbor, visiting, visited, topOrder) === true) {
+            return true; // cycle
+        }
+    }
+    visiting.delete(src);
+    visited.add(src);
+    topOrder.push(src);
+    return false; // no cycle
+}
 
 function kahnsAlgorithm(adjList: Map<number, Set<number>>):number[] {
     const inDegree = new Map<number, number>();
