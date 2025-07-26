@@ -9,16 +9,6 @@ function findMinHeightTrees(n: number, edges: number[][]): number[] {
 };
 
 function kahnsAlgorithm(adjList: Map<number, Set<number>>): number[] {
-    // 1. Get the edge count for each node and Queue up nodes with edge count of 1 (leaves)
-    // let leaves: number[] = []; 
-    // const edgeCount = new Map<number, number>();
-    // for(const [node, neighbors] of adjList.entries()) {
-    //     edgeCount.set(node, neighbors.size);
-    //     if(neighbors.size === 1) {
-    //         leaves.push(node);
-    //     }
-    // }
-
     // 1. Queue up nodes with 1 neighbor (leaves)
     let leaves: number[] = [];
     for(const [node, neighbours] of adjList.entries()) {
@@ -48,6 +38,7 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>): number[] {
         // update the leaves
         leaves = nextLayerLeaves;
     }
+    // Trees don't have cycles. Thus, just return leaves
     return leaves;
 }
 
