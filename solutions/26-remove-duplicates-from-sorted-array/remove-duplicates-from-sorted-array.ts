@@ -1,31 +1,22 @@
 function removeDuplicates(nums: number[]): number {
-
-    if(!nums.length) {
-        return 0;
-    }
-    
-    let i = 0;
-
-    for(let j = 1; j < nums.length; j++) {
-
-        if(nums[i] === nums[j]) {
-            // duplucate
-            
-            // keep i where it is
-
-            // move j forward
-        } else {
-            // not a duplicate
-
-            // move i one step forward
-            i++;
-
-            // replace the value
-            nums[i] = nums[j];
+    let curr = 0;
+    let index = 0;
+    while(curr < nums.length - 1) {
+        // duplicate
+        if(nums[curr] === nums[curr + 1]) {
+            // index stays
+            // curr moves forward
+            curr += 1;
         }
-
+        // not a duplicate 
+        else {
+            // move index one spot (to a duplicate spot)
+            index += 1;
+            // overwrite
+            nums[index] = nums[curr + 1];
+            // move curr one spot
+            curr += 1;
+        }
     }
-
-    return i + 1;
-
+    return index + 1;
 };
