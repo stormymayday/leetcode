@@ -10,20 +10,26 @@ function checkIfPrerequisite(numCourses: number, prerequisites: number[][], quer
 
 function dfs(adjList: Map<number, Set<number>>, src: number, dst: number, visited: Set<number>):boolean {
 
-    if(visited.has(src)) {
-        return false;
-    }
+    // if(visited.has(src)) {
+    //     return false;
+    // }
+
+    // Mark the current node src as visited
+    visited.add(src);
 
     if(src === dst) {
         return true;
     }
 
-    visited.add(src);
+    // visited.add(src);
 
     for(const neighbor of adjList.get(src)) {
-        if(dfs(adjList, neighbor, dst, visited) === true) {
-            return true;
+        if(!visited.has(neighbor)) {
+            if(dfs(adjList, neighbor, dst, visited) === true) {
+                return true;
+            }
         }
+        
     }
 
     return false;
