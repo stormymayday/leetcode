@@ -10,28 +10,26 @@ function checkIfPrerequisite(numCourses: number, prerequisites: number[][], quer
 
 function dfs(adjList: Map<number, Set<number>>, src: number, dst: number, visited: Set<number>):boolean {
 
-    // if(visited.has(src)) {
-    //     return false;
-    // }
-
     // Mark the current node src as visited
     visited.add(src);
 
+    // we found the path
     if(src === dst) {
         return true;
     }
 
-    // visited.add(src);
-
     for(const neighbor of adjList.get(src)) {
+        // If neighbor has not been visited yet
         if(!visited.has(neighbor)) {
+            // recursively call the DFS to check if a path exists from neighbor to target.
             if(dfs(adjList, neighbor, dst, visited) === true) {
+                // Return the true if the result of at least one recursive call is true
                 return true;
             }
         }
         
     }
-
+    //  Otherwise, return false
     return false;
 }
 
