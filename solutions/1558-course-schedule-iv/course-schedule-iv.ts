@@ -36,19 +36,18 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>): Map<number, Set<numb
     }
 
     while (queue.length > 0) {
-        const prereq = queue.shift()!;
-
-        for (const course of adjList.get(prereq)!) {
+        const prereq = queue.shift();
+        for (const course of adjList.get(prereq)) {
             // Add direct prerequisite
-            courseToPrereqs.get(course)!.add(prereq);
+            courseToPrereqs.get(course).add(prereq);
 
             // Add all transitive prerequisites of the current prereq
-            for (const pre of courseToPrereqs.get(prereq)!) {
-                courseToPrereqs.get(course)!.add(pre);
+            for (const pre of courseToPrereqs.get(prereq)) {
+                courseToPrereqs.get(course).add(pre);
             }
 
             // Decrease in-degree and enqueue if ready
-            inDegree.set(course, inDegree.get(course)! - 1);
+            inDegree.set(course, inDegree.get(course) - 1);
             if (inDegree.get(course) === 0) {
                 queue.push(course);
             }
@@ -57,39 +56,6 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>): Map<number, Set<numb
 
     return courseToPrereqs;
 }
-
-// function kahnsAlgorithm(adjList: Map<number, Set<number>>): Map<number, Set<number>> {
-//     const courseToPrereqs = new Map<number, Set<number>>();
-//     const inDegree = new Map<number, number>();
-//     for(const node of adjList.keys()) {
-//         inDegree.set(node, 0);
-//         courseToPrereqs.set(node, new Set());
-//     }
-//     for(const prereq of adjList.keys()) {
-//         for(const course of adjList.get(prereq)) {
-//             inDegree.set(course, inDegree.get(course) + 1);
-//         }
-//     }
-
-//     const queue: number[] = [];
-//     for(const [course, count] of inDegree.entries()) {
-//         if(count === 0) {
-//             queue.push(course);
-//         }
-//     }
-
-//     while(queue.length > 0) {
-//         const prereq = queue.shift();
-//         for(const course of adjList.get(prereq)) {
-//             courseToPrereqs.get(course).add(prereq);
-//             inDegree.set(course, inDegree.get(course) - 1);
-//             if(inDegree.get(course) === 0) {
-//                 queue.push(course);
-//             }
-//         }
-//     }
-//     return courseToPrereqs;
-// }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
     const adjList = new Map();
