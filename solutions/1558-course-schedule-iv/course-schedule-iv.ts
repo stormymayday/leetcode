@@ -1,36 +1,38 @@
 function checkIfPrerequisite(numCourses: number, prerequisites: number[][], queries: number[][]): boolean[] {
     const adjList = buildAdjList(numCourses, prerequisites);
+
+    const prereqForCourses = new Map<number, Set<number>>();
+    for(const course of adjList.keys()) {
+        dfs(adjList, course, prereqForCourses);
+    }
+
     let result: boolean[] = [];
     for(const query of queries) {
         const [src, dst] = query;
-        result.push(dfs(adjList, src, dst, new Set()));
+        // result.push(dfs(adjList, src, dst, new Set()));
+        result.push(prereqForCourses.get(src).has(dst));
     }
     return result;
 };
 
-function dfs(adjList: Map<number, Set<number>>, src: number, dst: number, visited: Set<number>):boolean {
+function dfs(adjList: Map<number, Set<number>>, src: number, prereqForCourses: Map<number, Set<number>>):Set<number> {
 
-    // Mark the current node src as visited
-    visited.add(src);
-
-    // we found the path
-    if(src === dst) {
-        return true;
+    if (prereqForCourses.has(src)) {
+        return prereqForCourses.get(src)!;
     }
 
-    for(const neighbor of adjList.get(src)) {
-        // If neighbor has not been visited yet
-        if(!visited.has(neighbor)) {
-            // recursively call the DFS to check if a path exists from neighbor to target.
-            if(dfs(adjList, neighbor, dst, visited) === true) {
-                // Return the true if the result of at least one recursive call is true
-                return true;
-            }
+    const prereqs = new Set<number>();
+
+    for (const neighbor of adjList.get(src)!) {
+        prereqs.add(neighbor);
+        const neighborPrereqs = dfs(adjList, neighbor, prereqForCourses);
+        for (const p of neighborPrereqs) {
+            prereqs.add(p);
         }
-        
     }
-    //  Otherwise, return false
-    return false;
+
+    prereqForCourses.set(src, prereqs);
+    return prereqs;
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
