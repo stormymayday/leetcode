@@ -1,39 +1,93 @@
 function checkIfPrerequisite(numCourses: number, prerequisites: number[][], queries: number[][]): boolean[] {
     const adjList = buildAdjList(numCourses, prerequisites);
-
-    const prereqForCourses = new Map<number, Set<number>>();
-    for(const course of adjList.keys()) {
-        dfs(adjList, course, prereqForCourses);
-    }
-
-    let result: boolean[] = [];
+    const courseToPrereqs = kahnsAlgorithm(adjList);
+    const result: boolean[] = [];
     for(const query of queries) {
-        const [src, dst] = query;
-        // result.push(dfs(adjList, src, dst, new Set()));
-        result.push(prereqForCourses.get(src).has(dst));
+        const [u, v] = query;
+        // Is u a prerequisite of v?
+        result.push(courseToPrereqs.get(v).has(u));
     }
     return result;
 };
 
-function dfs(adjList: Map<number, Set<number>>, src: number, prereqForCourses: Map<number, Set<number>>):Set<number> {
+function kahnsAlgorithm(adjList: Map<number, Set<number>>): Map<number, Set<number>> {
+    const courseToPrereqs = new Map<number, Set<number>>();
+    const inDegree = new Map<number, number>();
 
-    if (prereqForCourses.has(src)) {
-        return prereqForCourses.get(src)!;
+    // Initialize
+    for (const node of adjList.keys()) {
+        inDegree.set(node, 0);
+        courseToPrereqs.set(node, new Set());
     }
 
-    const prereqs = new Set<number>();
-
-    for (const neighbor of adjList.get(src)!) {
-        prereqs.add(neighbor);
-        const neighborPrereqs = dfs(adjList, neighbor, prereqForCourses);
-        for (const p of neighborPrereqs) {
-            prereqs.add(p);
+    // Build inDegree map
+    for (const prereq of adjList.keys()) {
+        for (const course of adjList.get(prereq)!) {
+            inDegree.set(course, inDegree.get(course)! + 1);
         }
     }
 
-    prereqForCourses.set(src, prereqs);
-    return prereqs;
+    // Initialize queue with nodes that have no prerequisites
+    const queue: number[] = [];
+    for (const [course, degree] of inDegree.entries()) {
+        if (degree === 0) queue.push(course);
+    }
+
+    while (queue.length > 0) {
+        const prereq = queue.shift()!;
+
+        for (const course of adjList.get(prereq)!) {
+            // Add direct prerequisite
+            courseToPrereqs.get(course)!.add(prereq);
+
+            // Add all transitive prerequisites of the current prereq
+            for (const pre of courseToPrereqs.get(prereq)!) {
+                courseToPrereqs.get(course)!.add(pre);
+            }
+
+            // Decrease in-degree and enqueue if ready
+            inDegree.set(course, inDegree.get(course)! - 1);
+            if (inDegree.get(course) === 0) {
+                queue.push(course);
+            }
+        }
+    }
+
+    return courseToPrereqs;
 }
+
+// function kahnsAlgorithm(adjList: Map<number, Set<number>>): Map<number, Set<number>> {
+//     const courseToPrereqs = new Map<number, Set<number>>();
+//     const inDegree = new Map<number, number>();
+//     for(const node of adjList.keys()) {
+//         inDegree.set(node, 0);
+//         courseToPrereqs.set(node, new Set());
+//     }
+//     for(const prereq of adjList.keys()) {
+//         for(const course of adjList.get(prereq)) {
+//             inDegree.set(course, inDegree.get(course) + 1);
+//         }
+//     }
+
+//     const queue: number[] = [];
+//     for(const [course, count] of inDegree.entries()) {
+//         if(count === 0) {
+//             queue.push(course);
+//         }
+//     }
+
+//     while(queue.length > 0) {
+//         const prereq = queue.shift();
+//         for(const course of adjList.get(prereq)) {
+//             courseToPrereqs.get(course).add(prereq);
+//             inDegree.set(course, inDegree.get(course) - 1);
+//             if(inDegree.get(course) === 0) {
+//                 queue.push(course);
+//             }
+//         }
+//     }
+//     return courseToPrereqs;
+// }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
     const adjList = new Map();
