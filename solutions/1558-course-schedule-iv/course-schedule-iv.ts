@@ -3,9 +3,11 @@ function checkIfPrerequisite(numCourses: number, prerequisites: number[][], quer
     const courseToPrereqs = kahnsAlgorithm(adjList);
     const result: boolean[] = [];
     for(const query of queries) {
-        const [u, v] = query;
+        // const [u, v] = query;
         // Is u a prerequisite of v?
-        result.push(courseToPrereqs.get(v).has(u));
+        const [prereq, course] = query;
+        // result.push(courseToPrereqs.get(v).has(u));
+        result.push(courseToPrereqs.get(course).has(prereq));
     }
     return result;
 };
