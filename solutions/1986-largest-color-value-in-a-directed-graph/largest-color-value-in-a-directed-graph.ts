@@ -41,7 +41,7 @@ function kahns(adjList: Map<number, Set<number>>, colors: string): number {
         maxColorCount = Math.max(maxColorCount, colorCountMap.get(current)[colorIndex]);
         for(const neighbor of adjList.get(current)) {
 
-            // propagate color count to the neighbors
+            // Propagate the maximum color counts to neighbors
             for(let color = 0; color < 26; color += 1) {
                 colorCountMap.get(neighbor)[color] = Math.max(colorCountMap.get(neighbor)[color], colorCountMap.get(current)[color]);
             }
