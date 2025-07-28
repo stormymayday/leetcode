@@ -1,40 +1,31 @@
 function canFinish(numCourses: number, prerequisites: number[][]): boolean {
     const adjList = buildAdjList(numCourses, prerequisites);
-    return kahns(adjList);
+    const visiting = new Set<number>();
+    const visited = new Set<number>();
+    for(const node of adjList.keys()) {
+        if(postOrderDFS_WhiteGrayBlack(adjList, node, visiting, visited) === true) {
+            return false; /// cycle -> can't finish
+        }
+    }
+    return true; // no cycle -> can finish
 };
 
-function kahns(adjList: Map<number, Set<number>>): boolean {
-    const inDegree = new Map<number, number>();
-    for(const node of adjList.keys()) {
-        inDegree.set(node, 0);
+function postOrderDFS_WhiteGrayBlack(adjList: Map<number, Set<number>>, src: number, visiting: Set<number>, visited: Set<number>):boolean {
+    if(visited.has(src)) {
+        return false; // no cycle
     }
-    for(const node of adjList.keys()) {
-        for(const neighbor of adjList.get(node)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
+    if(visiting.has(src)) {
+        return true; // cycle
+    }
+    visiting.add(src);
+    for(const neighbor of adjList.get(src)) {
+        if(postOrderDFS_WhiteGrayBlack(adjList, neighbor, visiting, visited) === true) {
+            return true; // cycle
         }
     }
-    const stack: number[] = [];
-    for(const [node, count] of inDegree.entries()) {
-        if(count === 0) {
-            stack.push(node);
-        }
-    }
-    let visited = 0;
-    while(stack.length > 0) {
-        const current = stack.pop();
-        visited += 1;
-        for(const neighbor of adjList.get(current)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) - 1);
-            if(inDegree.get(neighbor) === 0) {
-                stack.push(neighbor);
-            }
-        }
-    }
-    if(visited === adjList.size) {
-        return true;
-    } else {
-        return false;
-    }
+    visiting.delete(src);
+    visited.add(src);
+    return false; // no cycle
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
