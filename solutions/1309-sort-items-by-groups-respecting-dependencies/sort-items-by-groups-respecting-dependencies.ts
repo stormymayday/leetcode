@@ -10,40 +10,25 @@ function sortItems(n: number, m: number, group: number[], beforeItems: number[][
         }
     }
 
-    // 2. Setting up adjacency Lists and in-degree maps for items and groups
+    // 2. Setting up adjacency Lists for items and groups
     const itemAdjList = new Map();
-    // const itemInDegree = new Map();
     for(let item = 0; item < n; item += 1) {
         itemAdjList.set(item, new Set());
-        // itemInDegree.set(item, 0);
     }
     const groupAdjList = new Map();
-    // const groupInDegree = new Map();
     for(let id = 0; id < groupId; id += 1) {
         groupAdjList.set(id, new Set());
-        // groupInDegree.set(id, 0);
     }
 
     for(let item = 0; item < n; item += 1) {
         for(const prev of beforeItems[item]) {
             // Each (prev -> item) represents an edge in the item graph
             itemAdjList.get(prev).add(item);
-            // itemInDegree.set(item, itemInDegree.get(item) + 1);
 
             //  If they belong to different groups, add an edge in the group graph.
             if(group[item] !== group[prev]) {
                 groupAdjList.get(group[prev]).add(group[item]);
-                // groupInDegree.set(group[item], groupInDegree.get(group[item]) + 1);
             }
-            // if (group[item] !== group[prev]) {
-            //     const fromGroup = group[prev];
-            //     const toGroup = group[item];
-            //     const neighbors = groupAdjList.get(fromGroup);
-            //     if (!neighbors.has(toGroup)) {
-            //         neighbors.add(toGroup);
-            //         groupInDegree.set(toGroup, groupInDegree.get(toGroup) + 1);
-            //     }
-            // }
         }
 
     }
