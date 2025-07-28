@@ -81,7 +81,7 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>): number[] {
     } 
     const topOrder: number[] = [];
     while(queue.length > 0) {
-        const current = queue.shift();
+        const current = queue.pop();
         topOrder.push(current);
         for(const neighbor of adjList.get(current)) {
             inDegree.set(neighbor, inDegree.get(neighbor) - 1);
