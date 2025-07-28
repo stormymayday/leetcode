@@ -73,20 +73,20 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>): number[] {
         }
     }
 
-    const queue: number[] = [];
+    const stack: number[] = [];
     for(const [item, count] of inDegree.entries()) {
         if(count === 0) {
-            queue.push(item);
+            stack.push(item);
         }
     } 
     const topOrder: number[] = [];
-    while(queue.length > 0) {
-        const current = queue.pop();
+    while(stack.length > 0) {
+        const current = stack.pop();
         topOrder.push(current);
         for(const neighbor of adjList.get(current)) {
             inDegree.set(neighbor, inDegree.get(neighbor) - 1);
             if(inDegree.get(neighbor) === 0) {
-                queue.push(neighbor);
+                stack.push(neighbor);
             }
         }
     }
