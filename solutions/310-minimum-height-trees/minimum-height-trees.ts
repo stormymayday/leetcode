@@ -1,45 +1,44 @@
 function findMinHeightTrees(n: number, edges: number[][]): number[] {
-    // Edge Case: 1 Node / 0 Edges
+    // Edge Case: single node => no edges
     if(n === 1 || edges.length === 0) {
         return [0];
     }
-
     const adjList = buildAdjList(n, edges);
-    return kahnsAlgorithm(adjList);
+    return kahns(adjList);
 };
 
-function kahnsAlgorithm(adjList: Map<number, Set<number>>): number[] {
-    // 1. Queue up nodes with 1 neighbor (leaves)
-    let leaves: number[] = [];
-    for(const [node, neighbours] of adjList.entries()) {
-        if(neighbours.size === 1) {
-            leaves.push(node);
+function kahns(adjList: Map<number, Set<number>>): number[] {
+    const inDegree = new Map<number, number>();
+    for(const node of adjList.keys()) {
+        inDegree.set(node, 0);
+    }
+    for(const node of adjList.keys()) {
+        for(const neighbor of adjList.get(node)) {
+            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
         }
     }
-
-    // 2. process nodes layer by layer (BFS) until there are at most 2 nodes left (centroids)
+    let queue: number[] = [];
+    for(const [node, count] of inDegree.entries()) {
+        if(count === 1) {
+            queue.push(node);
+        }
+    }
     let nodesRemaining = adjList.size;
     while(nodesRemaining > 2) {
-        nodesRemaining -= leaves.length;
+        nodesRemaining -= queue.length;
         const nextLayerLeaves: number[] = [];
-        // process every leaf on current layer
-        for(const leaf of leaves) {
-            // A leaf in a tree should only have 1 neighbor (parent)
-            const neighbours = adjList.get(leaf); // this returns a set
-            const parent = [...neighbours][0]; // extract the parent
-
-            // delete the leaf from parent's list
-            adjList.get(parent).delete(leaf);
-            // if parent's neighbour count is 1, push it into nextLayerLeaves
-            if(adjList.get(parent).size === 1) {
-                nextLayerLeaves.push(parent);
-            }   
+        // process current layer leaves
+        for(const node of queue) {
+            for(const neighbor of adjList.get(node)) {
+                inDegree.set(neighbor, inDegree.get(neighbor) - 1);
+                if(inDegree.get(neighbor) === 1) {
+                    nextLayerLeaves.push(neighbor);
+                }
+            }
         }
-        // update the leaves
-        leaves = nextLayerLeaves;
+        queue = nextLayerLeaves;
     }
-    // Trees don't have cycles. Thus, just return leaves
-    return leaves;
+    return queue;
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
