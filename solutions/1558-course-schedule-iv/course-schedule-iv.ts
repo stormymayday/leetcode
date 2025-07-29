@@ -1,41 +1,60 @@
 function checkIfPrerequisite(numCourses: number, prerequisites: number[][], queries: number[][]): boolean[] {
     const adjList = buildAdjList(numCourses, prerequisites);
-
-    const prereqForCourses = new Map<number, Set<number>>();
-    for(const prereq of adjList.keys()) {
-        dfs(adjList, prereq, prereqForCourses);
-    }
-
+    const courseToPrereqs = kahnsAlgorithm(adjList);
     const result: boolean[] = [];
     for(const query of queries) {
         const [prereq, course] = query;
-        result.push(prereqForCourses.get(prereq).has(course));
+        result.push(courseToPrereqs.get(course).has(prereq));
     }
     return result;
 };
 
-function dfs(adjList: Map<number, Set<number>>, src: number, prereqForCourses: Map<number, Set<number>>): Set<number> {
-    
-    if(prereqForCourses.has(src)) {
-        return prereqForCourses.get(src);
+function kahnsAlgorithm(adjList: Map<number, Set<number>>): Map<number, Set<number>> {
+    const courseToPrereqs = new Map<number, Set<number>>();
+    const inDegree = new Map<number, number>();
+
+    // Initialize
+    for (const node of adjList.keys()) {
+        inDegree.set(node, 0);
+        courseToPrereqs.set(node, new Set());
     }
 
-    const allCourses = new Set<number>();
-
-    for(const directCourse of adjList.get(src)) {
-        allCourses.add(directCourse);
-        const indirectCourses = dfs(adjList, directCourse, prereqForCourses);
-        for(const indirectCourse of indirectCourses) {
-            allCourses.add(indirectCourse);
+    // Build inDegree map
+    for (const prereq of adjList.keys()) {
+        for (const course of adjList.get(prereq)!) {
+            inDegree.set(course, inDegree.get(course)! + 1);
         }
     }
 
-    prereqForCourses.set(src, allCourses);
-    return allCourses;
-    
+    // Initialize queue with nodes that have no prerequisites
+    const queue: number[] = [];
+    for (const [course, degree] of inDegree.entries()) {
+        if (degree === 0) queue.push(course);
+    }
+
+    while (queue.length > 0) {
+        const prereq = queue.shift();
+        for (const course of adjList.get(prereq)) {
+            // Add direct prerequisite
+            courseToPrereqs.get(course).add(prereq);
+
+            // Add all transitive prerequisites of the current prereq
+            for (const transPrereq of courseToPrereqs.get(prereq)) {
+                courseToPrereqs.get(course).add(transPrereq);
+            }
+
+            // Decrease in-degree and enqueue if ready
+            inDegree.set(course, inDegree.get(course) - 1);
+            if (inDegree.get(course) === 0) {
+                queue.push(course);
+            }
+        }
+    }
+
+    return courseToPrereqs;
 }
 
-function buildAdjList(n: number, edges: number[][]):Map<number, Set<number>> {
+function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
     const adjList = new Map();
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, new Set());
