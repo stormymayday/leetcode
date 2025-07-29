@@ -1,16 +1,16 @@
 function minimumSemesters(n: number, relations: number[][]): number {
     const adjList = buildAdjList(n, relations);
-    return kahnsAlgorithm(adjList);
+    return kahns(adjList);
 };
 
-function kahnsAlgorithm(adjList: Map<number, Set<number>>): number {
+function kahns(adjList: Map<number, Set<number>>): number {
     const inDegree = new Map<number, number>();
     for(const node of adjList.keys()) {
         inDegree.set(node, 0);
     }
-    for(const parent of adjList.keys()) {
-        for(const child of adjList.get(parent)) {
-            inDegree.set(child, inDegree.get(child) + 1);
+    for(const node of adjList.keys()) {
+        for(const neighbor of adjList.get(node)) {
+            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
         }
     }
     let queue: number[] = [];
@@ -19,35 +19,30 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>): number {
             queue.push(node);
         }
     }
-    
     let nodesRemaining = adjList.size;
-    let layers = 1;
+    let result = 1; // one layer is already in the queue
     while(true) {
         nodesRemaining -= queue.length;
-        const nextLayer: number[] = [];
-        // Option 1: Shifting from queue
-        while(queue.length > 0) {
-            const current = queue.shift();
-        // Option 2: Iterating over the queue
-        // for(let i = 0; i < queue.length; i += 1) {
-        //     const current = queue[i];
-            for(const child of adjList.get(current)) {
-                inDegree.set(child, inDegree.get(child) - 1);
-                if(inDegree.get(child) === 0) {
-                    nextLayer.push(child);
+        const nextLayerNodes: number[] = [];
+        // process all nodes at the current layer
+        for(const node of queue) {
+            for(const neighbor of adjList.get(node)) {
+                inDegree.set(neighbor, inDegree.get(neighbor) - 1);
+                if(inDegree.get(neighbor) === 0) {
+                    nextLayerNodes.push(neighbor);
                 }
             }
         }
-        if(nextLayer.length === 0) {
+        if(nextLayerNodes.length === 0) {
             break;
         }
-        queue = nextLayer;
-        layers += 1;
+        result += 1;
+        queue = nextLayerNodes;
     }
     if(nodesRemaining === 0) {
-        return layers;
+        return result;
     } else {
-        return -1;
+        return -1; // cycle
     }
 }
 
