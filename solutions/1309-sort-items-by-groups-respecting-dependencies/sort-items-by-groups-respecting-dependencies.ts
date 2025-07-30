@@ -1,68 +1,62 @@
 function sortItems(n: number, m: number, group: number[], beforeItems: number[][]): number[] {
-    // 1. If an item does not belong to a  group, assign it a unique group id
+    // 1. Assign groups to items with no group
     let groupId = m;
-    for(let item = 0; item < n; item += 1) {
-        // if item has no group (-1)
-        if(group[item] === -1) {
-            // assign a group id
-            group[item] = groupId;
-            groupId += 1;
+    for(let i = 0; i < group.length; i += 1) {
+        if(group[i] === -1) {
+            group[i] = groupId;
+            groupId +=1;
         }
     }
 
-    // 2. Setting up adjacency Lists for items and groups
-    const itemAdjList = new Map();
-    for(let item = 0; item < n; item += 1) {
-        itemAdjList.set(item, new Set());
+    // 2. Building Adjacency Lists
+    const itemAdjList = new Map<number, Set<number>>();
+    const groupAdjList = new Map<number, Set<number>>();
+    for(let i = 0; i < n; i += 1) {
+        itemAdjList.set(i, new Set());
     }
-    const groupAdjList = new Map();
-    for(let id = 0; id < groupId; id += 1) {
-        groupAdjList.set(id, new Set());
+    for(let i = 0; i < groupId; i += 1) {
+        groupAdjList.set(i, new Set());
     }
-
+    //for(const item of itemAdjList.key()) {
     for(let item = 0; item < n; item += 1) {
         for(const prev of beforeItems[item]) {
-            // Each (prev -> item) represents an edge in the item graph
             itemAdjList.get(prev).add(item);
 
-            //  If they belong to different groups, add an edge in the group graph.
-            if(group[item] !== group[prev]) {
+            if(group[prev] !== group[item]) {
                 groupAdjList.get(group[prev]).add(group[item]);
             }
         }
-
     }
 
-    // 3. Perform Topological Ordering
-    const itemTopOrder = kahnsAlgorithm(itemAdjList);
-    const groupTopOrder = kahnsAlgorithm(groupAdjList);
+    const itemOrder = kahns(itemAdjList);
+    const groupOrder = kahns(groupAdjList);
 
-    // 4. Check for cycles
-    if(itemTopOrder.length === 0 || groupTopOrder.length === 0) {
+    if(itemOrder.length === 0 || groupOrder.length === 0) {
         return []; // there was a cycle
     }
 
-    // 5. Items are sorted regardless of groups, we need to 
-    // differentiate them by the groups they belong to.
-    const orderedGroups: number[][] = new Array(groupId);
-    for(let i = 0; i < orderedGroups.length; i += 1) {
-        orderedGroups[i] = [];
+    // push items into groups
+    const grouppedItems: number[][] = new Array(groupId);
+    for(let i = 0; i < groupId; i += 1) {
+        grouppedItems[i] = [];
     }
-    for(const item of itemTopOrder) {
-        orderedGroups[group[item]].push(item);
+    for(let i = 0; i < itemOrder.length; i += 1) {
+        const item = itemOrder[i];
+        const itemGroup = group[item];
+        grouppedItems[itemGroup].push(item);
     }
 
-    // 6. Concatenate sorted items in all sorted groups
+    // sort groups
     const result: number[] = [];
-    for(let i = 0; i < groupTopOrder.length; i += 1) {
-        const groupIndex = groupTopOrder[i];
-        result.push(...orderedGroups[groupIndex]);
+    for(let i = 0; i < groupOrder.length; i += 1) {
+        // const group groupOrder[i];
+        result.push(...grouppedItems[groupOrder[i]]);
     }
     return result;
+
 };
 
-function kahnsAlgorithm(adjList: Map<number, Set<number>>): number[] {
-
+function kahns(adjList: Map<number, Set<number>>): number[] {
     const inDegree = new Map<number, number>();
     for(const node of adjList.keys()) {
         inDegree.set(node, 0);
@@ -72,28 +66,26 @@ function kahnsAlgorithm(adjList: Map<number, Set<number>>): number[] {
             inDegree.set(neighbor, inDegree.get(neighbor) + 1);
         }
     }
-
-    const stack: number[] = [];
-    for(const [item, count] of inDegree.entries()) {
+    const queue: number[] = [];
+    for(const [node, count] of inDegree.entries()) {
         if(count === 0) {
-            stack.push(item);
+            queue.push(node);
         }
-    } 
+    }
     const topOrder: number[] = [];
-    while(stack.length > 0) {
-        const current = stack.pop();
+    while(queue.length > 0) {
+        const current = queue.shift();
         topOrder.push(current);
         for(const neighbor of adjList.get(current)) {
             inDegree.set(neighbor, inDegree.get(neighbor) - 1);
             if(inDegree.get(neighbor) === 0) {
-                stack.push(neighbor);
+                queue.push(neighbor);
             }
         }
     }
-    // Check for cycles
-    if(topOrder.length !== adjList.size) {
-        return []; // cycle
-    } else {
+    if(topOrder.length === adjList.size) {
         return topOrder;
+    } else {
+        return []; // cycle
     }
 }
