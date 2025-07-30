@@ -3,7 +3,6 @@ function largestPathValue(colors: string, edges: number[][]): number {
     return kahns(adjList, colors);
 };
 
-
 function kahns(adjList: Map<number, Set<number>>, colors: string): number {
     const inDegree = new Map<number, number>();
     for(const node of adjList.keys()) {
@@ -14,49 +13,43 @@ function kahns(adjList: Map<number, Set<number>>, colors: string): number {
             inDegree.set(neighbor, inDegree.get(neighbor) + 1);
         }
     }
-    const stack: number[] = [];
+    const queue: number[] = [];
     for(const [node, count] of inDegree.entries()) {
         if(count === 0) {
-            stack.push(node);
+            queue.push(node);
         }
     }
-    let visited = 0;
-    let maxColorCount = 0;
-    const colorCountMap = new Map<number, number[]>();
+    const colorCount = new Map<number, number[]>();
     for(let i = 0; i < colors.length; i += 1) {
-        // i is a node
-        colorCountMap.set(i, new Array<number>(26).fill(0));
-
-        // setting color for this node
-        // const colorIndex = colors.charCodeAt(i) - 'a'.charCodeAt(0);
-        // colorCountMap.get(i)[colorIndex] = 1; 
+        colorCount.set(i, new Array<number>(26).fill(0));
     }
-    while(stack.length > 0) {
-        const current = stack.pop();
-        visited += 1;
-        const colorIndex = colors.charCodeAt(current) - 'a'.charCodeAt(0);
-        // increment count current nodes color
-        colorCountMap.get(current)[colorIndex] += 1;
-        // update max
-        maxColorCount = Math.max(maxColorCount, colorCountMap.get(current)[colorIndex]);
+    let maxColor = 0;
+    let visitedNodes = 0;
+    while(queue.length > 0) {
+        const current = queue.shift();
+        visitedNodes += 1;
+        const currentColorIndex = colors.charCodeAt(current) - 'a'.charCodeAt(0);
+        colorCount.get(current)[currentColorIndex] += 1;
+        maxColor = Math.max(maxColor, colorCount.get(current)[currentColorIndex])
         for(const neighbor of adjList.get(current)) {
 
-            // Propagate the maximum color counts to neighbors
-            for(let color = 0; color < 26; color += 1) {
-                colorCountMap.get(neighbor)[color] = Math.max(colorCountMap.get(neighbor)[color], colorCountMap.get(current)[color]);
+            for(let c = 0; c < 26; c += 1) {
+                colorCount.get(neighbor)[c] = Math.max(colorCount.get(neighbor)[c], colorCount.get(current)[c])
             }
 
             inDegree.set(neighbor, inDegree.get(neighbor) - 1);
             if(inDegree.get(neighbor) === 0) {
-                stack.push(neighbor);
+                queue.push(neighbor);
             }
+
         }
     }
-    if(visited === adjList.size) {
-        return maxColorCount;
+    if(visitedNodes === colors.length) {
+        return maxColor;
     } else {
-        return -1; // there was a cycle
+        return -1; // cycle
     }
+
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
