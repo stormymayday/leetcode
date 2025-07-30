@@ -17,7 +17,6 @@ function sortItems(n: number, m: number, group: number[], beforeItems: number[][
     for(let i = 0; i < groupId; i += 1) {
         groupAdjList.set(i, new Set());
     }
-    //for(const item of itemAdjList.key()) {
     for(let item = 0; item < n; item += 1) {
         for(const prev of beforeItems[item]) {
             itemAdjList.get(prev).add(item);
@@ -46,11 +45,12 @@ function sortItems(n: number, m: number, group: number[], beforeItems: number[][
         grouppedItems[itemGroup].push(item);
     }
 
-    // sort groups
+    // sort by groups
     const result: number[] = [];
     for(let i = 0; i < groupOrder.length; i += 1) {
-        // const group groupOrder[i];
-        result.push(...grouppedItems[groupOrder[i]]);
+        const groupIndex = groupOrder[i];
+        result.push(...grouppedItems[groupIndex]);
+        // result.push(...grouppedItems[groupOrder[i]]);
     }
     return result;
 
