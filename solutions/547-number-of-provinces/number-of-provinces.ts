@@ -25,9 +25,8 @@ class UnionFind {
         }
     }
     find(x: number): number {
-        const parent = this.roots.get(x);
-        if (parent !== x) {
-            this.roots.set(x, this.find(parent));
+        if (this.roots.get(x) !== x) {
+            this.roots.set(x, this.find(this.roots.get(x)));
         }
         return this.roots.get(x);
     }
