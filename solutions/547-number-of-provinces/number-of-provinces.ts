@@ -25,12 +25,11 @@ class UnionFind {
         }
     }
     find(x: number): number {
-        let root = this.roots.get(x);
-        while(root !== this.roots.get(root)) {
-            this.roots.set(root, this.roots.get(this.roots.get(root)));
-            root = this.roots.get(root);
+        const parent = this.roots.get(x);
+        if (parent !== x) {
+            this.roots.set(x, this.find(parent));
         }
-        return root;
+        return this.roots.get(x);
     }
     union(x: number, y: number): boolean {
         let rootX = this.find(x);
