@@ -19,14 +19,15 @@ class UnionFind {
         this.roots = new Map();
         this.heights = new Map();
         this.numComponents = n;
-        for(let i = 0; i < n; i += 1) {
+        for(let i = 1; i <= n; i += 1) {
             this.roots.set(i, i);
             this.heights.set(i, 1);
         }
     }
     find(x: number): number {
-        if (this.roots.get(x) !== x) {
-            this.roots.set(x, this.find(this.roots.get(x)));
+        const parent = this.roots.get(x);
+        if (parent !== x) {
+            this.roots.set(x, this.find(parent));
         }
         return this.roots.get(x);
     }
