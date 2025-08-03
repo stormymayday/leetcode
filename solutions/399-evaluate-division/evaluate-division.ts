@@ -3,27 +3,24 @@ function calcEquation(equations: string[][], values: number[], queries: string[]
     const result = [];
     for(const query of queries) {
         const [a, b] = query;
-        result.push(bfs(adjList, a, b, new Set()));
+        result.push(dfs(adjList, a, b, new Set()));
     }
     return result;
 };
 
-function bfs(adjList, src, dst, visited) {
+function dfs(adjList, src, dst, visited) {
     if(!adjList.has(src) || !adjList.has(dst)) {
         return -1;
     }
+    if(src === dst) {
+        return 1;
+    }
     visited.add(src);
-    const queue: [string, number][] = [];
-    queue.push([src, 1]);
-    while(queue.length > 0) {
-        const [current, totalWeight] = queue.shift();
-        if(current === dst) {
-            return totalWeight;
-        }
-        for(const [neighbor, weight] of adjList.get(current)) {
-            if(!visited.has(neighbor)) {
-                visited.add(neighbor);
-                queue.push([neighbor, totalWeight * weight]);
+    for(const [neighbor, weight] of adjList.get(src)) {
+        if(!visited.has(neighbor)) {
+            const result = dfs(adjList, neighbor, dst, visited);
+            if(result !== -1) {
+                return result * weight;
             }
         }
     }
