@@ -1,45 +1,62 @@
+class ModifiedUnionFind {
+    private roots: Map<string, string>;
+    private weights: Map<string, number>;
+    constructor() {
+        this.roots = new Map();
+        this.weights = new Map();
+    }
+
+    add(x: string): void {
+        if (!this.roots.has(x)) {
+            this.roots.set(x, x);
+            this.weights.set(x, 1);
+        }
+    }
+
+    find(x: string): string {
+        const parent = this.roots.get(x)!;
+        if (parent !== x) {
+            const root = this.find(parent);
+            this.roots.set(x, root);
+            this.weights.set(x, this.weights.get(x)! * this.weights.get(parent)!);
+            return root;
+        }
+        return parent;
+    }
+
+    union(dividend: string, divisor: string, quotient: number): void {
+        this.add(dividend);
+        this.add(divisor);
+        const rootX = this.find(dividend);
+        const rootY = this.find(divisor);
+        if (rootX !== rootY) {
+            this.roots.set(rootX, rootY);
+            this.weights.set(rootX, (quotient * this.weights.get(divisor)!) / this.weights.get(dividend)!);
+        }
+    }
+
+    getRatio(dividend: string, divisor: string): number {
+        if (!this.roots.has(dividend) || !this.roots.has(divisor)) {
+            return -1;
+        }
+        if (this.find(dividend) !== this.find(divisor)) {
+            return -1;
+        }
+        return this.weights.get(dividend)! / this.weights.get(divisor)!;
+    }
+}
+
 function calcEquation(equations: string[][], values: number[], queries: string[][]): number[] {
-    const adjList = buildAdjList(equations, values);
-    const result = [];
+    const uf = new ModifiedUnionFind();
+    for(let i = 0; i < equations.length; i += 1) {
+        const [dividend, divisor] = equations[i];
+        const quotient = values[i];
+        uf.union(dividend, divisor, quotient);
+    }
+    const result: number[] = [];
     for(const query of queries) {
-        const [a, b] = query;
-        result.push(dfs(adjList, a, b, new Set()));
+        const [dividend, divisor] = query;
+        result.push(uf.getRatio(dividend, divisor));
     }
     return result;
 };
-
-function dfs(adjList, src, dst, visited) {
-    if(!adjList.has(src) || !adjList.has(dst)) {
-        return -1;
-    }
-    if(src === dst) {
-        return 1;
-    }
-    visited.add(src);
-    for(const [neighbor, weight] of adjList.get(src)) {
-        if(!visited.has(neighbor)) {
-            const result = dfs(adjList, neighbor, dst, visited);
-            if(result !== -1) {
-                return result * weight;
-            }
-        }
-    }
-    return -1;
-}
-
-function buildAdjList(equations: string[][], values: number[]): Map<string, [string, number][]> {
-    const adjList = new Map();
-    for(let i = 0; i < equations.length; i += 1) {
-        const [x, y] = equations[i];
-        const value = values[i];
-        if(!adjList.has(x)) {
-            adjList.set(x, []);
-        }
-        if(!adjList.has(y)) {
-            adjList.set(y, []);
-        }
-        adjList.get(x).push([y, value]);
-        adjList.get(y).push([x, 1/value]);
-    }
-    return adjList;
-}
