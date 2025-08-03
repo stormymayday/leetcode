@@ -17,20 +17,16 @@ class ModifiedUnionFind {
 
     // Finds the root of x, applies path compression, and updates weights
     find(x: string): string {
-        const parent = this.roots.get(x);
-        if (parent !== x) {
-            // Recursively find the root of x's parent
-            // const root = this.find(parent);
+        const root = this.roots.get(x);
+        if (root !== x) {
 
-            // Path compression: directly link x to its root
-            this.roots.set(x, this.find(parent));
+            // Path compression
+            this.roots.set(x, this.find(root));
 
-            // Update the weight: x / root = (x / parent) * (parent / root)
-            this.weights.set(x, this.weights.get(x)! * this.weights.get(parent)!);
+            // Update the weight
+            this.weights.set(x, this.weights.get(x)! * this.weights.get(root)!);
 
-            // return root;
         }
-        // return parent!;
         return this.roots.get(x);
     }
 
