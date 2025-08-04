@@ -3,7 +3,7 @@ function longestConsecutive(nums: number[]): number {
     const numSet = new Set(nums);
     for(let i = 0; i < nums.length; i += 1) {
         const num = nums[i];
-        if(numSet.has(num + 1)) {
+        if(numSet.has(num + 1) && uf.find(num) !== uf.find(num + 1)) {
             uf.union(num, num + 1);
         }
     }
