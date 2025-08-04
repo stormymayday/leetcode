@@ -1,4 +1,11 @@
 function makeConnected(n: number, connections: number[][]): number {
+
+    // Check the size of connections, if it is less than n - 1
+    if(connections.length < n - 1) {
+        // we don't have enough edges to connect the entire graph
+        return -1;
+    }
+
     const uf = new UnionFind(n);
 
     let cablesUsed = 0;
