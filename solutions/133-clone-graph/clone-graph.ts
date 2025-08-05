@@ -12,32 +12,35 @@
  * 
  */
 
-
 function cloneGraph(node: _Node | null): _Node | null {
-    // hash map (key: original, value: clone) acts as visited set
-	const originalToClone = new Map<_Node, _Node>();
-    function dfs(node: _Node | null): _Node | null {
-        // Base Case 1: (edge case) null input
-        if(node === null) {
-            return node;
-        }
-        // Base Case 2: node already in the hash map (visited)
-        if(originalToClone.has(node)) {
-            // return clone
-            return originalToClone.get(node);
-        }
-        // Create clone
-        const clone = new _Node(node.val, []);
-        // Add entry to the hash map (key: original, value: clone)
-        originalToClone.set(node, clone);
-        // Iterate over ALL neighbors and add their clones
-        for(const neighbor of node.neighbors) {
-            const neighborClone = dfs(neighbor);
-            if(neighborClone !== null) {
-                clone.neighbors.push(dfs(neighbor));
-            }
-        }
-        return clone;
+    return bfs(node);
+}
+
+function bfs(node: _Node | null): _Node | null {
+    // Edge Case: null input
+    if (node === null) {
+        return node;
     }
-    return dfs(node);
-};
+
+    const originalToClone = new Map<_Node, _Node>();
+    const queue: _Node[] = [node];
+    const clone = new _Node(node.val, []);
+    originalToClone.set(node, clone);
+    
+    while (queue.length > 0) {
+        const current = queue.shift();
+        
+        for (const neighbor of current.neighbors) {
+            if (!originalToClone.has(neighbor)) {
+                // Create clone with neighbor's value
+                const neighborClone = new _Node(neighbor.val, []);
+                originalToClone.set(neighbor, neighborClone);
+                queue.push(neighbor);
+            }
+            // Add the neighbor's clone to current's clone neighbors
+            originalToClone.get(current).neighbors.push(originalToClone.get(neighbor));
+        }
+    }
+
+    return originalToClone.get(node)!;
+}
