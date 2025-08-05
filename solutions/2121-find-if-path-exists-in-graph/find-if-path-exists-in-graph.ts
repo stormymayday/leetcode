@@ -1,20 +1,24 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
     const adjList = buildAdjList(n, edges);
-    return dfs(adjList, source, destination, new Set<number>());
+    return bfs(adjList, source, destination, new Set<number>());
 };
 
-function dfs(adjList: Map<number, Set<number>>, src: number, dst: number, visited: Set<number>):boolean {
-    if(src === dst) {
-        return true;
-    }
+function bfs(adjList: Map<number, Set<number>>, src: number, dst: number, visited: Set<number>):boolean {
+    const queue: number[] = [];
+    queue.push(src);
     visited.add(src);
-    for(const neighbor of adjList.get(src)) {
-        if(!visited.has(neighbor)) {
-            if(dfs(adjList, neighbor, dst, visited) === true) {
-                return true;
+    while(queue.length > 0) {
+        const current = queue.shift();
+        if(current === dst) {
+            return true;
+        }
+        for(const neighbor of adjList.get(current)) {
+            if(!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push(neighbor);
             }
         }
-    }
+    } 
     return false;
 }
 
