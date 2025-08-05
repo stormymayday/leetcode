@@ -1,15 +1,13 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
     const adjList = buildAdjList(n, edges);
-    return dfs(adjList, source, destination, new Set());
+    return dfs(adjList, source, destination, new Set<number>());
 };
 
 function dfs(adjList: Map<number, Set<number>>, src: number, dst: number, visited: Set<number>):boolean {
     if(src === dst) {
         return true;
     }
-    
     visited.add(src);
-    
     for(const neighbor of adjList.get(src)) {
         if(!visited.has(neighbor)) {
             if(dfs(adjList, neighbor, dst, visited) === true) {
@@ -17,11 +15,10 @@ function dfs(adjList: Map<number, Set<number>>, src: number, dst: number, visite
             }
         }
     }
-    
     return false;
 }
 
-function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
+function buildAdjList(n:number, edges: number[][]):Map<number, Set<number>> {
     const adjList = new Map();
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, new Set());
