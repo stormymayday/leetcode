@@ -1,20 +1,23 @@
 function allPathsSourceTarget(graph: number[][]): number[][] {
-    const res: number[][] = [];
+
+    const result: number[][] = [];
     const path: number[] = [];
-    function helper(src) {
 
-        path.push(src);
+    function helperDFS(node) {
 
-        if(src === graph.length - 1) {
-            res.push([...path]);
+        path.push(node);
+
+        if(node === graph.length - 1) {
+            result.push([...path]);
         }
 
-        for(const neighbor of graph[src]) {
-            helper(neighbor);
+        for(const neighbor of graph[node]) {
+            helperDFS(neighbor);
         }
 
         path.pop();
+
     }
-    helper(0);
-    return res;
+    helperDFS(0);
+    return result;
 };
