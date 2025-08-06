@@ -1,12 +1,13 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
     const adjList = buildAdjList(n, edges);
-    return bfs(adjList, source, destination, new Set<number>());
+    return bfs(adjList, source, destination);
 };
 
-function bfs(adjList: Map<number, Set<number>>, src: number, dst: number, visited: Set<number>):boolean {
+function bfs(adjList: Map<number, Set<number>>, src: number, dst: number): boolean {
+    const visited = new Set<number>();
     const queue: number[] = [];
-    queue.push(src);
     visited.add(src);
+    queue.push(src);
     while(queue.length > 0) {
         const current = queue.shift();
         if(current === dst) {
@@ -18,11 +19,11 @@ function bfs(adjList: Map<number, Set<number>>, src: number, dst: number, visite
                 queue.push(neighbor);
             }
         }
-    } 
+    }
     return false;
 }
 
-function buildAdjList(n:number, edges: number[][]):Map<number, Set<number>> {
+function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
     const adjList = new Map();
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, new Set());
