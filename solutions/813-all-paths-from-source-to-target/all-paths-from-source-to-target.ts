@@ -4,7 +4,7 @@ function allPathsSourceTarget(graph: number[][]): number[][] {
     function dfsHelper(src) {
         if(src === graph.length - 1) {
             result.push([...path]);
-            return;
+            // return;
         }
         for(const neighbor of graph[src]) {
             path.push(neighbor);
