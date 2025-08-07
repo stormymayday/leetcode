@@ -15,38 +15,28 @@
  */
 
 function connect(root: _Node | null): _Node | null {
-    // Edge Case: null root
     if(root === null) {
-        return root;
+        return null;
     }
-
-    let queue: _Node[] = [];
-    queue.push(root);
+    let queue: _Node[] = [root];
     while(queue.length > 0) {
-
-        const nextLevel: _Node[] = [];
-        const currentQueueLength = queue.length;
-
-        for(let i = 0; i < currentQueueLength; i += 1) {
-
+        const nextLayer: _Node[] = [];
+        const n = queue.length;
+        for(let i = 0; i < n; i += 1) {
             const current = queue.shift();
-            let next = null;
-            if(i + 1 < currentQueueLength) {
+            let next: _Node | null = null;
+            if(i + 1 < n) {
                 next = queue[0];
             }
             current.next = next;
-
             if(current.left !== null) {
-                nextLevel.push(current.left);
+                nextLayer.push(current.left);
             }
             if(current.right !== null) {
-                nextLevel.push(current.right);
+                nextLayer.push(current.right);
             }
-
         }
-
-        queue = nextLevel;
-
+        queue = nextLayer;
     }
     return root;
 };
