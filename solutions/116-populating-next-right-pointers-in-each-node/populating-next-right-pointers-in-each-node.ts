@@ -15,28 +15,27 @@
  */
 
 function connect(root: _Node | null): _Node | null {
+    // Edge Case: null root
     if(root === null) {
         return null;
     }
-    let queue: _Node[] = [root];
-    while(queue.length > 0) {
-        const nextLayer: _Node[] = [];
-        const n = queue.length;
-        for(let i = 0; i < n; i += 1) {
-            const current = queue.shift();
-            let next: _Node | null = null;
-            if(i + 1 < n) {
-                next = queue[0];
+    let leftmost: _Node | null = root;
+    while(leftmost.left !== null) {
+        let temp = leftmost; // for moving horizontally
+        while(temp) {
+            // 1. Connect children of the same parent
+            temp.left.next = temp.right;
+
+            // Check if temp can move right
+            if(temp.next) {
+                // 2. Connect left parent's right node to the right parent's left node
+                temp.right.next = temp.next.left;
             }
-            current.next = next;
-            if(current.left !== null) {
-                nextLayer.push(current.left);
-            }
-            if(current.right !== null) {
-                nextLayer.push(current.right);
-            }
+
+            // move temp to the right
+            temp = temp.next;
         }
-        queue = nextLayer;
+        leftmost = leftmost.left; // go down to the next level
     }
     return root;
 };
