@@ -4,9 +4,15 @@ class KthLargest {
     constructor(k: number, nums: number[]) {
         this.minHeap = new MinHeap;
         this.k = k;
-        this.minHeap.heapify(nums);
-        while(this.minHeap.length > k) {
-            this.minHeap.pop();
+        for(let i = 0; i < nums.length; i += 1) {
+            if(this.minHeap.length < k) {
+                this.minHeap.push(nums[i]);
+            } else {
+                if(nums[i] > this.minHeap.peek()) {
+                    this.minHeap.pop();
+                    this.minHeap.push(nums[i]);
+                }
+            }
         }
     }
 
