@@ -1,60 +1,59 @@
 function findKthLargest(nums: number[], k: number): number {
     const minHeap = new MinHeap();
-    for(let i = 0; i < nums.length; i += 1 ) {
-        minHeap.push(nums[i]);
-        if(minHeap.length > k) {
-            minHeap.pop();
-        }
+    minHeap.heapify(nums);
+    while(minHeap.length > k) {
+        minHeap.pop();
     }
-    return minHeap.top();
+    return minHeap.peek();
 };
 
 class MinHeap {
-    private heap: number[];
+    private data: number[];
     public length: number;
     constructor() {
-        this.heap = [];
+        this.data = [];
         this.length = 0;
     }
     push(val: number):void {
-        this.heap.push(val);
+        this.data.push(val);
         this.length += 1;
-        let currIdx = this.heap.length - 1;
+        let currIdx = this.data.length - 1;
         let parentIdx = Math.floor((currIdx - 1)/2);
-        while(currIdx > 0 && this.heap[currIdx] < this.heap[parentIdx]) {
-            const temp = this.heap[currIdx];
-            this.heap[currIdx] = this.heap[parentIdx];
-            this.heap[parentIdx] = temp;
+        while(currIdx > 0 && this.data[currIdx] < this.data[parentIdx]) {
+            const temp = this.data[currIdx];
+            this.data[currIdx] = this.data[parentIdx];
+            this.data[parentIdx] = temp;
             currIdx = parentIdx;
             parentIdx = Math.floor((currIdx - 1)/2);
         }
     }
     pop():number | null {
-        if(this.heap.length === 0) {
+        if(this.length === 0) {
             return null;
         }
-        if(this.heap.length === 1) {
+        if(this.length === 1) {
             this.length -= 1;
-            return this.heap.pop();
+            return this.data.pop();
         }
-        const result = this.heap[0];
-        this.heap[0] = this.heap.pop();
+        const root = this.data[0];
+        this.data[0] = this.data.pop();
         this.length -= 1;
-        this.sinkDown(0);
-        return result;
+        this.siftDown(0);
+        return root;
     }
-    sinkDown(index: number):void {
-        let currIdx = index;
-        while(currIdx < this.heap.length - 1) {
+    siftDown(idx:number):void {
+        let currIdx = idx;
+        while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
-            const leftChildVal = this.heap[leftChildIdx] === undefined ? Infinity : this.heap[leftChildIdx];
-            const rightChildVal = this.heap[rightChildIdx] === undefined ? Infinity : this.heap[rightChildIdx];
+            const leftChildVal = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx];
+            const rightChildVal = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx];
             const smallerChildIdx = leftChildVal < rightChildVal ? leftChildIdx : rightChildIdx;
-            if(this.heap[currIdx] > this.heap[smallerChildIdx]) {
-                const temp = this.heap[currIdx];
-                this.heap[currIdx] = this.heap[smallerChildIdx];
-                this.heap[smallerChildIdx] = temp;
+            const smallerChildVal = leftChildVal < rightChildVal ? leftChildVal : rightChildVal;
+            if(this.data[currIdx] > smallerChildVal) {
+                const temp = this.data[currIdx];
+                this.data[currIdx] = smallerChildVal;
+                this.data[smallerChildIdx] = temp;
                 currIdx = smallerChildIdx;
             } else {
                 break;
@@ -62,15 +61,15 @@ class MinHeap {
         }
     }
     heapify(nums: number[]):void {
-        this.heap = [...nums]; // Make a copy to avoid mutating original
-        this.length = this.heap.length;
-        let currIdx = this.heap.length - 1;
+        this.data = [...nums];
+        this.length = nums.length;
+        let currIdx = Math.floor((this.length - 2) / 2);
         while(currIdx >= 0) {
-            this.sinkDown(currIdx);
+            this.siftDown(currIdx);
             currIdx -= 1;
         }
     }
-    top(): number | null {
-        return this.heap.length > 0 ? this.heap[0] : null;
+    peek():number | null {
+        return this.length > 0 ? this.data[0] : null;
     }
 }
