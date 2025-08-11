@@ -1,8 +1,14 @@
 function findKthLargest(nums: number[], k: number): number {
     const minHeap = new MinHeap();
-    minHeap.heapify(nums);
-    while(minHeap.length > k) {
-        minHeap.pop();
+    for(let i = 0; i < nums.length; i += 1) {
+        if(minHeap.length < k) {
+            minHeap.push(nums[i]);
+        } else {
+            if(minHeap.peek() < nums[i]) {
+                minHeap.pop();
+                minHeap.push(nums[i]);
+            }
+        }
     }
     return minHeap.peek();
 };
