@@ -1,95 +1,90 @@
-class Node {
-    point: number[];
-    distance: number;
-    constructor(point) {
-        this.point = point;
-        this.distance = Math.sqrt(point[0]**2 + point[1]**2);
-    }
-}
-class CustomPriorityQueue {
-    points: Node[];
-    constructor() {
-        this.points = [];
-    }
-    push(pointNode: Node):void {
-        this.points.push(pointNode);
-        let current = this.points.length - 1;
-        // sift up
-        while(current > 0) {
-            const parentIndex = Math.floor((current - 1)/2);
-            if(this.points[current].distance > this.points[parentIndex].distance) {
-                this.swap(current, parentIndex);
-                current = parentIndex;
-            } else {
-                break;
-            }
-        }
-    }
-    pop():Node | null {
-        if(this.points.length === 0) {
-            return null;
-        }
-        if(this.points.length === 1) {
-            return this.points.pop();
-        }
-        const max = this.points[0];
-        this.points[0] = this.points.pop();
-        this.siftDown(0);
-        return max;
-    }
-    heapify(nodes: Node[]):void {
-        this.points = nodes;
-        let current = Math.floor((this.points.length - 2) / 2);
-        while(current >= 0) {
-            this.siftDown(current);
-            current -= 1;
-        }
-    }
-    siftDown(index: number):void {
-        let current = index;
-        while(current < this.points.length - 1) {
-            const leftChildIndex = 2 * current + 1;
-            const rightChildIndex = 2 * current + 2;
-            const leftChildValue = this.points[leftChildIndex] === undefined ? -Infinity : this.points[leftChildIndex].distance;
-            const rightChildValue = this.points[rightChildIndex] === undefined ? -Infinity : this.points[rightChildIndex].distance;
-            const largerChildIndex = leftChildValue > rightChildValue ? leftChildIndex : rightChildIndex;
-            const largerChildValue = leftChildValue > rightChildValue ? leftChildValue : rightChildValue;
-            if(this.points[current].distance < largerChildValue) {
-                this.swap(current, largerChildIndex);
-                current = largerChildIndex;
-            } else {
-                break;
-            }
-        }
-    }
-    swap(index1: number, index2: number):void {
-        const temp = this.points[index1];
-        this.points[index1] = this.points[index2];
-        this.points[index2] = temp;
-    }
-    size():number {
-        return this.points.length;
-    }
-}
 function kClosest(points: number[][], k: number): number[][] {
-    // Optimization
-    if(points.length < k) {
-        return points;
-    }
-
-    const pq = new CustomPriorityQueue();
-
-    for(let i = 0; i < points.length; i += 1) {
-        const newNode = new Node(points[i]);
-        pq.push(newNode);
-        if(pq.size() > k) {
-            pq.pop();
+    const maxPQ = new CustomMaxPriorityQueue<number[]>();
+    for(const point of points) {
+        const [x, y] = point;
+        const distance = x * x + y * y;
+        if(maxPQ.length < k) {
+            maxPQ.enqueue([x,y], distance);
+        } else {
+            if(distance < maxPQ.peek()) {
+                maxPQ.dequeue();
+                maxPQ.enqueue([x,y], distance);
+            }
         }
     }
-    const result = [];
-    while(pq.size() > 0) {
-        const pointNode = pq.pop();
-        result.push(pointNode.point);
+
+    const result: number[][] = [];
+    while(maxPQ.length !== 0) {
+        const queueNode = maxPQ.dequeue();
+        result.push(queueNode.val);
     }
     return result;
 };
+
+class QueueNode<T> {
+    val: T;
+    prio: number;
+    constructor(val: T, prio: number) {
+        this.val = val;
+        this.prio = prio;
+    }
+}
+
+class CustomMaxPriorityQueue<T> {
+    private data: QueueNode<T>[];
+    public length: number;
+    constructor() {
+        this.data = [];
+        this.length = 0;
+    }
+    enqueue(val: T, prio: number):void {
+        const newNode = new QueueNode(val, prio);
+        this.data.push(newNode);
+        this.length += 1;
+        let currIdx = this.length - 1;
+        let parentIdx = Math.floor((currIdx-1)/2);
+        while(currIdx > 0 && this.data[currIdx].prio > this.data[parentIdx].prio) {
+            const temp = this.data[currIdx];
+            this.data[currIdx] = this.data[parentIdx];
+            this.data[parentIdx] = temp;
+            currIdx = parentIdx;
+            parentIdx = Math.floor((currIdx-1)/2);
+        }
+    }
+    dequeue():QueueNode<T> | null {
+        if(this.length === 0) {
+            return null;
+        }
+        if(this.length === 1) {
+            this.length -= 1;
+            return this.data.pop();
+        }
+        const root = this.data[0];
+        this.data[0] = this.data.pop();
+        this.length -= 1;
+        this.siftDown(0);
+        return root;
+    }
+    siftDown(idx: number):void {
+        let currIdx = idx;
+        while(currIdx < this.length - 1) {
+            const leftChildIdx = currIdx * 2 + 1;
+            const rightChildIdx = currIdx * 2 + 2;
+            const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].prio
+            const rightChildPrio = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx].prio;
+            const biggerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
+            const biggerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
+            if(this.data[currIdx].prio < biggerChildPrio) {
+                const temp = this.data[currIdx];
+                this.data[currIdx] = this.data[biggerChildIdx];
+                this.data[biggerChildIdx] = temp;
+                currIdx = biggerChildIdx;
+            } else {
+                break;
+            }
+        }
+    }
+    peek():number | null {
+        return this.length > 0 ? this.data[0].prio : null;
+    }
+}
