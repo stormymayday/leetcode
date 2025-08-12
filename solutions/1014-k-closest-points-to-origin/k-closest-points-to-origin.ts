@@ -1,4 +1,9 @@
 function kClosest(points: number[][], k: number): number[][] {
+    // Optimization
+    if(points.length < k) {
+        return points;
+    }
+    
     const maxPQ = new CustomMaxPriorityQueue<number[]>();
     for(const point of points) {
         const [x, y] = point;
