@@ -3,24 +3,25 @@ function kClosest(points: number[][], k: number): number[][] {
     if(points.length < k) {
         return points;
     }
-    
-    const maxPQ = new CustomMaxPriorityQueue<number[]>();
+
+    const queueNodes: QueueNode<number[]>[] = [];
     for(const point of points) {
         const [x, y] = point;
         const distance = x * x + y * y;
-        if(maxPQ.length < k) {
-            maxPQ.enqueue([x,y], distance);
-        } else {
-            if(distance < maxPQ.peek()) {
-                maxPQ.dequeue();
-                maxPQ.enqueue([x,y], distance);
-            }
-        }
+        const newNode = new QueueNode([x,y], distance);
+        queueNodes.push(newNode);
+    }
+
+    const maxPQ = new CustomMaxPriorityQueue<number[]>();
+    maxPQ.heapify(queueNodes);
+
+    while(maxPQ.length > k) {
+        maxPQ.dequeue();
     }
 
     const result: number[][] = [];
     while(maxPQ.length !== 0) {
-        const queueNode = maxPQ.dequeue();
+        const queueNode: QueueNode<number[]> = maxPQ.dequeue();
         result.push(queueNode.val);
     }
     return result;
@@ -91,5 +92,16 @@ class CustomMaxPriorityQueue<T> {
     }
     peek():number | null {
         return this.length > 0 ? this.data[0].prio : null;
+    }
+    heapify(values: QueueNode<T>[]): void {
+        this.data = [...values];
+        this.length = values.length;
+        //let currIdx = this.length - 1;
+        // Optimization: skipping leaves
+        let currIdx = Math.floor((this.length - 2)/2);
+        while(currIdx >= 0) {
+            this.siftDown(currIdx);
+            currIdx -= 1;
+        }
     }
 }
