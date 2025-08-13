@@ -8,7 +8,7 @@ function topKFrequent(nums: number[], k: number): number[] {
         frequencyCount.set(nums[i], frequencyCount.get(nums[i]) + 1);
     }
     // 2. Priority Queue
-    const pq = new CustomPriorityQueue<number>();
+    const pq = new CustomMaxPriorityQueue<number>();
     for(const [num, frequency] of frequencyCount.entries()) {
         pq.push(num, frequency);
     }
@@ -33,7 +33,7 @@ class QueueNode<T> {
     }
 }
 
-class CustomPriorityQueue<T> {
+class CustomMaxPriorityQueue<T> {
     private data: QueueNode<T>[];
     public length: number;
     constructor() {
