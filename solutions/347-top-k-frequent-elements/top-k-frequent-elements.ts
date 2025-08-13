@@ -8,90 +8,95 @@ function topKFrequent(nums: number[], k: number): number[] {
         frequencyCount.set(nums[i], frequencyCount.get(nums[i]) + 1);
     }
     // 2. Priority Queue
-    const pq = new CustomMaxPriorityQueue<number>();
+    const pq = new CustomMinPriorityQueue<number>();
     for(const [num, frequency] of frequencyCount.entries()) {
-        pq.push(num, frequency);
+        if(pq.length < k) {
+            pq.push(num, frequency);
+        } else {
+            if(frequency > pq.peek()) {
+                pq.pop();
+                pq.push(num, frequency);
+            }
+        }
     }
 
     // 3. Result
     const result: number[] = [];
-    let i = 0;
-    while(i < k) {
+    while(pq.length !== 0) {
         const queueNode = pq.pop();
-        result.push(queueNode.value);
-        i += 1;
+        result.push(queueNode.val);
     }
     return result;
 };
 
 class QueueNode<T> {
-    value: T;
+    val: T;
     priority: number;
-    constructor(value: T, priority: number) {
-        this.value = value;
+    constructor(val: T, priority: number) {
+        this.val = val;
         this.priority = priority;
     }
 }
 
-class CustomMaxPriorityQueue<T> {
-    private data: QueueNode<T>[];
+class CustomMinPriorityQueue<T> {
+    private heap: QueueNode<T>[];
     public length: number;
     constructor() {
-        this.data = [];
+        this.heap = [];
         this.length = 0;
     }
-    push(val: T, priority: number):void {
+    push(val: T, priority: number): void {
         const newNode = new QueueNode(val, priority);
-        this.data.push(newNode);
+        this.heap.push(newNode);
         this.length += 1;
-        let currIdx = this.length - 1;
+        let currIdx = this.heap.length - 1;
         this.siftUp(currIdx);
     }
     siftUp(idx: number): void {
         let currIdx = idx;
-        let parentIdx = Math.floor((currIdx - 1)/2);
-        while(currIdx > 0 && this.data[currIdx].priority > this.data[parentIdx].priority) {
-            const temp = this.data[currIdx];
-            this.data[currIdx] = this.data[parentIdx];
-            this.data[parentIdx] = temp;
+        let parentIdx = Math.floor((currIdx - 1) / 2);
+        while(currIdx > 0 && this.heap[currIdx].priority < this.heap[parentIdx].priority) {
+            const temp = this.heap[currIdx];
+            this.heap[currIdx] = this.heap[parentIdx];
+            this.heap[parentIdx] = temp;
             currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1)/2);
+            parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    pop():QueueNode<T> | null {
-        if(this.length === 0) {
+    pop(): QueueNode<T> | null {
+        if(this.heap.length === 0) {
             return null;
         }
-        if(this.length === 1) {
+        if(this.heap.length === 1) {
             this.length -= 1;
-            return this.data.pop();
+            return this.heap.pop();
         }
-        const max = this.data[0];
-        this.data[0] = this.data.pop();
+        const result = this.heap[0];
+        this.heap[0] = this.heap.pop();
         this.length -= 1;
         this.siftDown(0);
-        return max;
+        return result;
     }
-    siftDown(idx: number): void {
+    siftDown(idx: number):void {
         let currIdx = idx;
-        while(currIdx < this.length - 1) {
+        while(currIdx < this.heap.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
-            const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].priority;
-            const rightChildPrio = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx].priority;
-            const biggerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
-            const biggerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].priority < biggerChildPrio) {
-                const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[biggerChildIdx];
-                this.data[biggerChildIdx] = temp;
-                currIdx = biggerChildIdx;
+            const leftChildPriority = this.heap[leftChildIdx] === undefined ? Infinity : this.heap[leftChildIdx].priority;
+            const rightChildPriority = this.heap[rightChildIdx] === undefined ? Infinity : this.heap[rightChildIdx].priority;
+            const smallerChildPrioIdx = leftChildPriority < rightChildPriority ? leftChildIdx : rightChildIdx;
+            const smallerChildPrio = leftChildPriority < rightChildPriority ? leftChildPriority : rightChildPriority;
+            if(this.heap[currIdx].priority > smallerChildPrio) {
+                const temp = this.heap[currIdx];
+                this.heap[currIdx] = this.heap[smallerChildPrioIdx];
+                this.heap[smallerChildPrioIdx] = temp;
+                currIdx = smallerChildPrioIdx;
             } else {
                 break;
             }
         }
     }
     peek():number | null {
-        return this.length > 0 ? this.data[0].priority : null;
+        return this.length > 0 ? this.heap[0].priority : null;
     }
 }
