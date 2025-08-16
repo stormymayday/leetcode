@@ -1,90 +1,106 @@
 function medianSlidingWindow(nums: number[], k: number): number[] {
     const medians: number[] = [];
-    const hashTable = new Map<number, number>(); // Lazy deletion: tracks count of elements to remove
-    const smallNumbers = new MaxHeap(); // Max heap for smaller half  
-    const largeNumbers = new MinHeap(); // Min heap for larger half 
-    
-    let i = 0; // Index of current element being processed
-    
-    // PHASE 1: Initialize the first window
-    // Put all k elements into max heap first
-    while (i < k) {
-        smallNumbers.push(nums[i++]);
-    }
-    
-    // Move half of them to min heap to establish the invariant
-    // After this: smallNumbers has ceil(k/2) elements, largeNumbers has floor(k/2) elements
-    for (let j = 0; j < Math.floor(k / 2); j++) {
-        largeNumbers.push(smallNumbers.pop());
-    }
-    
-    // PHASE 2: Process sliding windows
-    while (true) {
-        // Extract median from current window
-        // Odd k: median is smallNumbers.top() (max heap has one extra element)
-        // Even k: median is average of smallNumbers.top() and largeNumbers.top()
-        medians.push(k & 1 ? smallNumbers.top() : (smallNumbers.top() * 0.5 + largeNumbers.top() * 0.5));
-        
-        if (i >= nums.length) {
-            break; // All elements processed
+    const markedForRemoval = new Map<number, number>();
+    const smallNums = new MaxHeap();
+    const largeNums = new MinHeap();
+
+    // 1. Initialzing the heaps with first k elements
+    for(let i = 0; i < k; i += 1) {
+        // If lengths are equal, push to small (allowing smallNums to have 1 more element)
+        if(smallNums.length === largeNums.length) {
+            // rebalance through largeNums
+            largeNums.push(nums[i]);
+            // push-pop to small
+            smallNums.push(largeNums.pop());
+        } 
+        // smallNums already has 1 more element, push to large
+        else {
+            // rebalance through smallNums
+            smallNums.push(nums[i]);
+            // push-pop to large
+            largeNums.push(smallNums.pop());
         }
-        
-        // SLIDING WINDOW OPERATION
-        const outNum = nums[i - k]; // Element leaving the window
-        const inNum = nums[i++]; // Element entering the window  
-        let balance = 0; // Tracks heap size imbalance
-        
-        // STEP 1: Handle outgoing element (lazy deletion)
-        // Determine which heap the outgoing element affects
-        balance += (outNum <= smallNumbers.top() ? -1 : 1);
-        hashTable.set(outNum, (hashTable.get(outNum) || 0) + 1); // Mark for lazy deletion
-        
-        // STEP 2: Handle incoming element
-        // Add to appropriate heap based on comparison with smallNumbers.top()
-        if (smallNumbers.length !== 0 && inNum <= smallNumbers.top()) {
-            balance++; // smallNumbers gains an element
-            smallNumbers.push(inNum);
+    }
+
+    // Calculate median of the first k elements
+    if(k % 2 === 0) {
+        medians.push((smallNums.top() + largeNums.top()) / 2);
+    } else {
+        medians.push(smallNums.top());
+    }
+
+    // Sliding Window
+    for(let i = k; i < nums.length; i += 1) {
+
+        const outNum = nums[i - k];
+        const inNum = nums[i];
+        // let balance = 0; // starting with neutral balance
+
+        // mark the outNum and adjust balance
+        if(!markedForRemoval.has(outNum)) {
+            markedForRemoval.set(outNum, 0);
+        }
+        markedForRemoval.set(outNum, markedForRemoval.get(outNum) + 1);
+
+        // outNum is in the smallNums
+        // if(outNum <= smallNums.top()) {
+        //     balance -= 1;
+        // } 
+        // // outNum is in the largeNums
+        // else {
+        //     balance += 1;
+        // }
+        let balance = outNum <= medians[medians.length - 1] ? -1 : 1;
+
+        // process inNum and adjust balance
+        if(inNum <= smallNums.top()) {
+            smallNums.push(inNum);
+            balance += 1;
         } else {
-            balance--; // largeNumbers gains an element
-            largeNumbers.push(inNum);
+            largeNums.push(inNum);
+            balance -= 1;
         }
-        
-        // STEP 3: Rebalance heaps if necessary
-        // balance < 0: smallNumbers has too few valid elements
-        if (balance < 0) {
-            smallNumbers.push(largeNumbers.pop());
-            balance++;
+
+        // rebalance
+        // Not enough in the smallNums
+        if(balance < 0) {
+            // transfer to smallNums
+            smallNums.push(largeNums.pop());
+            balance += 1;
         }
-        // balance > 0: largeNumbers has too few valid elements
-        if (balance > 0) {
-            largeNumbers.push(smallNumbers.pop());
-            balance--;
+        // Not enough in the largeNums
+        if(balance > 0) {
+            // transfer to largeNums
+            largeNums.push(smallNums.pop());
+            balance -= 1;
         }
-        
-        // STEP 4: Clean up lazy-deleted elements from heap tops
-        // Remove invalid elements from smallNumbers's top
-        while (hashTable.get(smallNumbers.top())) {
-            const top = smallNumbers.top();
-            hashTable.set(top, hashTable.get(top)! - 1);
-            if (hashTable.get(top) === 0) {
-                hashTable.delete(top);
+
+        // Lazy Deletion
+        while(markedForRemoval.has(smallNums.top())) {
+            const num = smallNums.pop();
+            markedForRemoval.set(num, markedForRemoval.get(num) - 1);
+            if(markedForRemoval.get(num) === 0) {
+                markedForRemoval.delete(num);
             }
-            smallNumbers.pop();
+        }
+        while(markedForRemoval.has(largeNums.top())) {
+            const num = largeNums.pop();
+            markedForRemoval.set(num, markedForRemoval.get(num) - 1);
+            if(markedForRemoval.get(num) === 0) {
+                markedForRemoval.delete(num);
+            }
+        }
+
+        if(k % 2 === 0) {
+            medians.push((smallNums.top() + largeNums.top()) / 2);
+        } else {
+            medians.push(smallNums.top());
         }
         
-        // Remove invalid elements from largeNumbers's top  
-        while (largeNumbers.length !== 0 && hashTable.get(largeNumbers.top())) {
-            const top = largeNumbers.top();
-            hashTable.set(top, hashTable.get(top)! - 1);
-            if (hashTable.get(top) === 0) {
-                hashTable.delete(top);
-            }
-            largeNumbers.pop();
-        }
     }
-    
+
     return medians;
-}
+};
 
 class MinHeap {
     private data: number[];
