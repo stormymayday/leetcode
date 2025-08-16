@@ -34,7 +34,7 @@ function medianSlidingWindow(nums: number[], k: number): number[] {
 
         const outNum = nums[i - k];
         const inNum = nums[i];
-        // let balance = 0; // starting with neutral balance
+        let balance = 0; // starting with neutral balance
 
         // mark the outNum and adjust balance
         if(!markedForRemoval.has(outNum)) {
@@ -43,14 +43,14 @@ function medianSlidingWindow(nums: number[], k: number): number[] {
         markedForRemoval.set(outNum, markedForRemoval.get(outNum) + 1);
 
         // outNum is in the smallNums
-        // if(outNum <= smallNums.top()) {
-        //     balance -= 1;
-        // } 
-        // // outNum is in the largeNums
-        // else {
-        //     balance += 1;
-        // }
-        let balance = outNum <= medians[medians.length - 1] ? -1 : 1;
+        if(outNum <= smallNums.top()) {
+            balance -= 1;
+        } 
+        // outNum is in the largeNums
+        else {
+            balance += 1;
+        }
+        // let balance = outNum <= medians[medians.length - 1] ? -1 : 1;
 
         // process inNum and adjust balance
         if(inNum <= smallNums.top()) {
