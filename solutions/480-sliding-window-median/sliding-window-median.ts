@@ -50,7 +50,6 @@ function medianSlidingWindow(nums: number[], k: number): number[] {
         else {
             balance += 1;
         }
-        // let balance = outNum <= medians[medians.length - 1] ? -1 : 1;
 
         // process inNum and adjust balance
         if(inNum <= smallNums.top()) {
