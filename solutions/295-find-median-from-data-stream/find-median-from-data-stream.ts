@@ -7,113 +7,37 @@ class MedianFinder {
     }
 
     addNum(num: number): void {
-        // Arbitraritly adding to the small nums
-        this.smallNums.push(num);
-
-        // Every item in smallNums must be smaller than every item in the largeNums
-        if(
-            // Both heaps must not be empty first
-            this.smallNums.peek() !== null && this.largeNums.peek() !== null &&
-            this.smallNums.peek() > this.largeNums.peek()
-
-        ) {
+        // If lengths are equal push to the smallNums
+        if(this.smallNums.length === this.largeNums.length) {
+            // Rebalance
+            this.largeNums.push(num);
+            // Push to the smallNums as it is allowed to have 1 element more than largeNums
+            this.smallNums.push(this.largeNums.pop());
+        } 
+        // Otherwise, smallNums must already have 1 more element than largeNums
+        else {
+            // Rebalance
+            this.smallNums.push(num);
+            // Push to largeNums
             this.largeNums.push(this.smallNums.pop());
-        }
-
-        // Compare lengths, difference should not be more than 1
-        if(Math.abs(this.smallNums.length - this.largeNums.length) > 1) {
-            if(this.smallNums.length > this.largeNums.length) {
-                this.largeNums.push(this.smallNums.pop());
-            } else {
-                this.smallNums.push(this.largeNums.pop());
-            }
         }
     }
 
     findMedian(): number {
-        if(this.smallNums.length > 0 || this.largeNums.length > 0) {
-            if(this.smallNums.length > this.largeNums.length) {
-                return this.smallNums.peek();
-            } else if(this.largeNums.length > this.smallNums.length) {
-                return this.largeNums.peek();
-            } else {
-                return (this.smallNums.peek() + this.largeNums.peek()) / 2;
-            }
-        } else {
-            return -Infinity; // heaps are empty (should not happen)
+        // If lengths are equal
+        if(this.smallNums.length === this.largeNums.length) {
+            // median is in both heaps
+            return (this.smallNums.top() + this.largeNums.top()) / 2;
+        } 
+        // Otherwise, it is in the smallNums
+        else {
+            return this.smallNums.top();
         }
-    }
-}
-
-class MinHeap {
-    private data: number[];
-    public length: number;
-    constructor() {
-        this.data = [];
-        this.length = 0;
-    }
-    push(val: number): void {
-        this.data.push(val);
-        this.length += 1;
-        let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx] < this.data[parentIdx]) {
-            const temp = this.data[currIdx];
-            this.data[currIdx] = this.data[parentIdx];
-            this.data[parentIdx] = temp;
-            currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
-        }
-    }
-    pop(): number | null {
-        if(this.length === 0) {
-            return null;
-        }
-        if(this.length === 1) {
-            this.length = 0;
-            return this.data.pop();
-        }
-        const root = this.data[0];
-        this.data[0] = this.data.pop();
-        this.length -= 1;
-        this.siftDown(0);
-        return root;
-    }
-    siftDown(idx: number): void {
-        let currIdx = idx;
-        while(currIdx < this.length - 1) {
-            const leftChildIdx = currIdx * 2 + 1;
-            const rightChildIdx = currIdx * 2 + 2;
-            const leftChildVal = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx];
-            const rightChildVal = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx];
-            const smallerChildIdx = leftChildVal < rightChildVal ? leftChildIdx :rightChildIdx;
-            const smallerChildVal = leftChildVal < rightChildVal ? leftChildVal : rightChildVal;
-            if(this.data[currIdx] > smallerChildVal) {
-                const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[smallerChildIdx];
-                this.data[smallerChildIdx] = temp;
-                currIdx = smallerChildIdx;
-            } else {
-                break;
-            }
-        }
-    }
-    heapify(nums: number[]): void {
-        this.data = [...nums];
-        this.length = nums.length;
-        let currIdx = Math.floor((this.length - 2) / 2);
-        while(currIdx >= 0) {
-            this.siftDown(currIdx);
-            currIdx -= 1;
-        }
-    }
-    peek(): number | null {
-        return this.length > 0 ? this.data[0] : null;
     }
 }
 
 class MaxHeap {
-    private data: number[];
+    private data: number[] = [];
     public length: number;
     constructor() {
         this.data = [];
@@ -124,12 +48,15 @@ class MaxHeap {
         this.length += 1;
         let currIdx = this.length - 1;
         let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx] > this.data[parentIdx]) {
-            const temp = this.data[currIdx];
-            this.data[currIdx] = this.data[parentIdx];
-            this.data[parentIdx] = temp;
-            currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
+        while(
+            currIdx > 0 && 
+            this.data[currIdx] > this.data[parentIdx] // Diff 1
+            )  {
+                const temp = this.data[currIdx];
+                this.data[currIdx] = this.data[parentIdx];
+                this.data[parentIdx] = temp;
+                currIdx = parentIdx;
+                parentIdx = Math.floor((currIdx -  1) / 2);
         }
     }
     pop(): number | null {
@@ -151,10 +78,15 @@ class MaxHeap {
         while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
+            // Diff 2
             const leftChildVal = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx];
+            // Diff 3
             const rightChildVal = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx];
-            const biggerChildIdx = leftChildVal > rightChildVal ? leftChildIdx :rightChildIdx;
+            // Diff 4
+            const biggerChildIdx = leftChildVal > rightChildVal ? leftChildIdx : rightChildIdx;
+            // Diff 5
             const biggerChildVal = leftChildVal > rightChildVal ? leftChildVal : rightChildVal;
+            // Diff 6
             if(this.data[currIdx] < biggerChildVal) {
                 const temp = this.data[currIdx];
                 this.data[currIdx] = this.data[biggerChildIdx];
@@ -174,7 +106,82 @@ class MaxHeap {
             currIdx -= 1;
         }
     }
-    peek(): number | null {
+    top(): number | null {
+        return this.length > 0 ? this.data[0] : null;
+    }
+}
+
+class MinHeap {
+    private data: number[] = [];
+    public length: number;
+    constructor() {
+        this.data = [];
+        this.length = 0;
+    }
+    push(val: number): void {
+        this.data.push(val);
+        this.length += 1;
+        let currIdx = this.length - 1;
+        let parentIdx = Math.floor((currIdx - 1) / 2);
+        while(
+            currIdx > 0 && 
+            this.data[currIdx] < this.data[parentIdx] // Diff 1
+            )  {
+                const temp = this.data[currIdx];
+                this.data[currIdx] = this.data[parentIdx];
+                this.data[parentIdx] = temp;
+                currIdx = parentIdx;
+                parentIdx = Math.floor((currIdx -  1) / 2);
+        }
+    }
+    pop(): number | null {
+        if(this.length === 0) {
+            return null;
+        }
+        if(this.length === 1) {
+            this.length = 0;
+            return this.data.pop();
+        }
+        const root = this.data[0];
+        this.data[0] = this.data.pop();
+        this.length -= 1;
+        this.siftDown(0);
+        return root;
+    }
+    siftDown(idx: number): void {
+        let currIdx = idx;
+        while(currIdx < this.length - 1) {
+            const leftChildIdx = currIdx * 2 + 1;
+            const rightChildIdx = currIdx * 2 + 2;
+            // Diff 2
+            const leftChildVal = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx];
+            // Diff 3
+            const rightChildVal = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx];
+            // Diff 4
+            const smallerChildIdx = leftChildVal < rightChildVal ? leftChildIdx : rightChildIdx;
+            // Diff 5
+            const smallerChildVal = leftChildVal < rightChildVal ? leftChildVal : rightChildVal;
+            // Diff 6
+            if(this.data[currIdx] > smallerChildVal) {
+                const temp = this.data[currIdx];
+                this.data[currIdx] = this.data[smallerChildIdx];
+                this.data[smallerChildIdx] = temp;
+                currIdx = smallerChildIdx;
+            } else {
+                break;
+            }
+        }
+    }
+    heapify(nums: number[]): void {
+        this.data = [...nums];
+        this.length = nums.length;
+        let currIdx = Math.floor((this.length - 2) / 2);
+        while(currIdx >= 0) {
+            this.siftDown(currIdx);
+            currIdx -= 1;
+        }
+    }
+    top(): number | null {
         return this.length > 0 ? this.data[0] : null;
     }
 }
