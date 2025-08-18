@@ -75,19 +75,18 @@ class CustomMinPriorityQueue<T> {
     }
 
     pop(): QueueNode<T> | null {
-        if (this.length === 0) {
+        if(this.data.length === 0) {
             return null;
         }
-        if (this.length === 1) {
-            this.length = 0;
-            return this.data.pop()!;
+        if(this.data.length === 1) {
+            this.length -= 1;
+            return this.data.pop();
         }
-
-        const root = this.data[0];
+        const result = this.data[0];
         this.data[0] = this.data.pop();
         this.length -= 1;
         this.siftDown(0);
-        return root;
+        return result;
     }
 
     siftDown(idx: number): void {
