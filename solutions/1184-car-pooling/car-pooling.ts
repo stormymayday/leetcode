@@ -6,11 +6,11 @@ function carPooling(trips: number[][], capacity: number): boolean {
     let cap = 0;
     for(let i = 0; i < trips.length; i += 1) {
         let [currCap, start, end] = trips[i];
+        cap += currCap;
         while(minPQ.length > 0 && minPQ.top() <= start) {
             const {val: prevCap, prio: prevEnd} = minPQ.pop();
             cap -= prevCap;
         }
-        cap += currCap;
         if(cap > capacity) {
             return false;
         }
