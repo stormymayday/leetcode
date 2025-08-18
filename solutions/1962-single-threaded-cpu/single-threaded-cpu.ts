@@ -31,7 +31,7 @@ function getOrder(tasks: number[][]): number[] {
             currTime = withIndex[currIndex][0];
         } else {
             // Process the task with shortest processing time
-            const { val: index } = minPQ.pop()!;
+            const { val: index } = minPQ.pop();
             // Get the original processing time from the tasks array using the original index
             const processingTime = tasks[index][1];
 
