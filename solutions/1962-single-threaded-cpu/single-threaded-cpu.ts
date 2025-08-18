@@ -100,9 +100,7 @@ class CustomMinPriorityQueue<T> {
             const smallerChildIdx = leftChildPrio < rightChildPrio ? leftChildIdx : rightChildIdx;
             const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
             if (this.data[currIdx].prio > smallerChildPrio) {
-                const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[smallerChildIdx];
-                this.data[smallerChildIdx] = temp;
+                this.swap(currIdx, smallerChildIdx);
                 currIdx = smallerChildIdx;
             } else {
                 break;
