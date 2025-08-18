@@ -85,8 +85,7 @@ class CustomMinPriorityQueue<T> {
         
         const root = this.data[0];
         // Fix: properly handle the last element
-        this.data[0] = this.data[this.length - 1];
-        this.data.pop();
+        this.data[0] = this.data.pop();
         this.length -= 1;
         this.siftDown(0);
         return root;
