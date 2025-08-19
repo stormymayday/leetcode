@@ -1,33 +1,31 @@
 function kClosest(points: number[][], k: number): number[][] {
-    // Optimization
-    if(points.length < k) {
-        return points;
+
+    // 1. Intialzie a max priority queue
+    const maxPQ = new CustomMaxPriorityQueue<[number, number]>();
+    for(let i = 0; i < points.length; i += 1) {
+        const [x, y] = points[i];
+        const euclideanDistance = Math.sqrt(x * x + y * y);
+        if(maxPQ.length < k) {
+            maxPQ.push([x, y], euclideanDistance);
+        } else {
+            if(euclideanDistance < maxPQ.top()) {
+                maxPQ.pop();
+                maxPQ.push([x, y], euclideanDistance);
+            }
+        }
     }
 
-    const queueNodes: QueueNode<number[]>[] = [];
-    for(const point of points) {
-        const [x, y] = point;
-        const distance = x * x + y * y;
-        const newNode = new QueueNode([x,y], distance);
-        queueNodes.push(newNode);
+    // 2. Get the K Closest Points
+    const res: number[][] = [];
+    while(maxPQ.length > 0) {
+        const { val } = maxPQ.pop();
+        res.push(val);
     }
-
-    const maxPQ = new CustomMaxPriorityQueue<number[]>();
-    maxPQ.heapify(queueNodes);
-
-    while(maxPQ.length > k) {
-        maxPQ.dequeue();
-    }
-
-    const result: number[][] = [];
-    while(maxPQ.length !== 0) {
-        const queueNode: QueueNode<number[]> = maxPQ.dequeue();
-        result.push(queueNode.val);
-    }
-    return result;
+    return res;
+    
 };
 
-class QueueNode<T> {
+class PriorityQueueNode<T> {
     val: T;
     prio: number;
     constructor(val: T, prio: number) {
@@ -37,32 +35,30 @@ class QueueNode<T> {
 }
 
 class CustomMaxPriorityQueue<T> {
-    private data: QueueNode<T>[];
+    private data: PriorityQueueNode<T>[];
     public length: number;
     constructor() {
         this.data = [];
         this.length = 0;
     }
-    enqueue(val: T, prio: number):void {
-        const newNode = new QueueNode(val, prio);
+    push(val: T, prio: number): void {
+        const newNode = new PriorityQueueNode<T>(val, prio);
         this.data.push(newNode);
         this.length += 1;
         let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx-1)/2);
+        let parentIdx = Math.floor((currIdx - 1) / 2);
         while(currIdx > 0 && this.data[currIdx].prio > this.data[parentIdx].prio) {
-            const temp = this.data[currIdx];
-            this.data[currIdx] = this.data[parentIdx];
-            this.data[parentIdx] = temp;
+            this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx-1)/2);
+            parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    dequeue():QueueNode<T> | null {
+    pop(): PriorityQueueNode<T> | null {
         if(this.length === 0) {
             return null;
         }
         if(this.length === 1) {
-            this.length -= 1;
+            this.length = 0;
             return this.data.pop();
         }
         const root = this.data[0];
@@ -71,37 +67,38 @@ class CustomMaxPriorityQueue<T> {
         this.siftDown(0);
         return root;
     }
-    siftDown(idx: number):void {
+    siftDown(idx: number): void {
         let currIdx = idx;
         while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
-            const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].prio
+            const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].prio;
             const rightChildPrio = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx].prio;
-            const biggerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
-            const biggerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio < biggerChildPrio) {
-                const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[biggerChildIdx];
-                this.data[biggerChildIdx] = temp;
-                currIdx = biggerChildIdx;
+            const largerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
+            const largerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
+            if(this.data[currIdx].prio < largerChildPrio) {
+                this.swap(currIdx, largerChildIdx);
+                currIdx = largerChildIdx;
             } else {
                 break;
             }
         }
     }
-    peek():number | null {
+    top(): number | null {
         return this.length > 0 ? this.data[0].prio : null;
     }
-    heapify(values: QueueNode<T>[]): void {
+    heapify(values: PriorityQueueNode<T>[]): void {
         this.data = [...values];
         this.length = values.length;
-        //let currIdx = this.length - 1;
-        // Optimization: skipping leaves
-        let currIdx = Math.floor((this.length - 2)/2);
+        let currIdx = Math.floor((this.length - 2) / 2);
         while(currIdx >= 0) {
             this.siftDown(currIdx);
             currIdx -= 1;
         }
+    }
+    swap(idx1: number, idx2: number): void {
+        const temp = this.data[idx1];
+        this.data[idx1] = this.data[idx2];
+        this.data[idx2] = temp;
     }
 }
