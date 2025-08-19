@@ -11,15 +11,15 @@ function leastInterval(tasks: string[], n: number): number {
 
     // 2. Initialze priority queue
     const maxPQ = new CustomMaxPriorityQueue<string>();
-    const queueNodes: QueueNode<string>[] = [];
+    const queueNodes: PriorityQueueNode<string>[] = [];
     for(const [char, count] of freqCount.entries()) {
-        const newNode = new QueueNode<string>(char, count);
+        const newNode = new PriorityQueueNode<string>(char, count);
         queueNodes.push(newNode);
     }
     maxPQ.heapify(queueNodes);
 
     // 3. Main Logic
-    const cooldownQueue: [string, number, number][] = [];
+    const cooldownQueue = new CustomQueue<[string, number, number]>();
     let time = 0;
     while(maxPQ.length > 0 || cooldownQueue.length > 0) {
 
@@ -33,13 +33,13 @@ function leastInterval(tasks: string[], n: number): number {
             count -= 1;
             // 2.2 put char into the cooldown queue (if count is greater than 0)
             if(count > 0) {
-                cooldownQueue.push([char, count, time + n]);
+                cooldownQueue.enqueue([char, count, time + n]);
             }
         }
 
         // 3. check the cooldown queue
-        if(cooldownQueue.length > 0 && cooldownQueue[0][2] <= time) {
-            const [char, count, availableTime] = cooldownQueue.shift();
+        if(cooldownQueue.length > 0 && cooldownQueue.peek()[2] <= time) {
+            const [char, count, availableTime] = cooldownQueue.dequeue();
             // put item back into the priority queue
             maxPQ.push(char, count);
         }
@@ -47,7 +47,7 @@ function leastInterval(tasks: string[], n: number): number {
     return time;
 };
 
-class QueueNode<T> {
+class PriorityQueueNode<T> {
     val: T;
     prio: number;
     constructor(val: T, prio: number) {
@@ -57,14 +57,14 @@ class QueueNode<T> {
 }
 
 class CustomMaxPriorityQueue<T> {
-    private data: QueueNode<T>[];
+    private data: PriorityQueueNode<T>[];
     public length: number;
     constructor() {
         this.data = [];
         this.length = 0;
     }
     push(val: T, prio: number): void {
-        const newNode = new QueueNode<T>(val, prio);
+        const newNode = new PriorityQueueNode<T>(val, prio);
         this.data.push(newNode);
         this.length += 1;
         let currIdx = this.length - 1;
@@ -75,7 +75,7 @@ class CustomMaxPriorityQueue<T> {
             parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    pop(): QueueNode<T> | null {
+    pop(): PriorityQueueNode<T> | null {
         if(this.length === 0) {
             return null;
         }
@@ -109,7 +109,7 @@ class CustomMaxPriorityQueue<T> {
     top(): number | null {
         return this.length > 0 ? this.data[0].prio : null;
     }
-    heapify(values: QueueNode<T>[]): void {
+    heapify(values: PriorityQueueNode<T>[]): void {
         this.data = [...values];
         this.length = values.length;
         let currIdx = Math.floor((this.length - 2) / 2);
@@ -122,5 +122,53 @@ class CustomMaxPriorityQueue<T> {
         const temp = this.data[idx1];
         this.data[idx1] = this.data[idx2];
         this.data[idx2] = temp;
+    }
+}
+
+class QueueNode<T> {
+    val: T;
+    next: QueueNode<T> | null;
+    constructor(val: T) {
+        this.val = val;
+        this.next = null;
+    }
+}
+
+class CustomQueue<T> {
+    start: QueueNode<T> | null;
+    end: QueueNode<T> | null;
+    length: number;
+    constructor() {
+        this.start = null;
+        this.end = null;
+        this.length = 0;
+    }
+    enqueue(val: T): void {
+        const newNode = new QueueNode<T>(val);
+        if(this.length === 0) {
+            this.start = newNode;
+            this.end = newNode;
+        } else {
+            this.end.next = newNode;
+            this.end = newNode;
+        }
+        this.length += 1;
+    }
+    dequeue(): T | null {
+        if(this.length === 0) {
+            return null;
+        } else {
+            const temp = this.start;
+            this.start = this.start.next;
+            temp.next = null;
+            this.length -= 1;
+            if(this.length === 0) {
+                this.end = null;
+            }
+            return temp.val;
+        }
+    }
+    peek(): T | null {
+        return this.length > 0 ? this.start.val : null;
     }
 }
