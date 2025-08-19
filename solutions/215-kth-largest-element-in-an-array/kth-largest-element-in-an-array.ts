@@ -1,16 +1,10 @@
 function findKthLargest(nums: number[], k: number): number {
     const minHeap = new MinHeap();
-    for(let i = 0; i < nums.length; i += 1) {
-        if(minHeap.length < k) {
-            minHeap.push(nums[i]);
-        } else {
-            if(minHeap.peek() < nums[i]) {
-                minHeap.pop();
-                minHeap.push(nums[i]);
-            }
-        }
+    minHeap.heapify(nums);
+    while(minHeap.length > k) {
+        minHeap.pop();
     }
-    return minHeap.peek();
+    return minHeap.pop();
 };
 
 class MinHeap {
@@ -20,25 +14,23 @@ class MinHeap {
         this.data = [];
         this.length = 0;
     }
-    push(val: number):void {
+    push(val: number): void {
         this.data.push(val);
         this.length += 1;
-        let currIdx = this.data.length - 1;
-        let parentIdx = Math.floor((currIdx - 1)/2);
+        let currIdx = this.length - 1;
+        let parentIdx = Math.floor((currIdx - 1) / 2);
         while(currIdx > 0 && this.data[currIdx] < this.data[parentIdx]) {
-            const temp = this.data[currIdx];
-            this.data[currIdx] = this.data[parentIdx];
-            this.data[parentIdx] = temp;
+            this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1)/2);
+            parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    pop():number | null {
+    pop(): number | null {
         if(this.length === 0) {
             return null;
         }
         if(this.length === 1) {
-            this.length -= 1;
+            this.length = 0;
             return this.data.pop();
         }
         const root = this.data[0];
@@ -47,7 +39,7 @@ class MinHeap {
         this.siftDown(0);
         return root;
     }
-    siftDown(idx:number):void {
+    siftDown(idx: number): void {
         let currIdx = idx;
         while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
@@ -57,16 +49,14 @@ class MinHeap {
             const smallerChildIdx = leftChildVal < rightChildVal ? leftChildIdx : rightChildIdx;
             const smallerChildVal = leftChildVal < rightChildVal ? leftChildVal : rightChildVal;
             if(this.data[currIdx] > smallerChildVal) {
-                const temp = this.data[currIdx];
-                this.data[currIdx] = smallerChildVal;
-                this.data[smallerChildIdx] = temp;
+                this.swap(currIdx, smallerChildIdx);
                 currIdx = smallerChildIdx;
             } else {
                 break;
             }
         }
     }
-    heapify(nums: number[]):void {
+    heapify(nums: number[]): void {
         this.data = [...nums];
         this.length = nums.length;
         let currIdx = Math.floor((this.length - 2) / 2);
@@ -75,7 +65,12 @@ class MinHeap {
             currIdx -= 1;
         }
     }
-    peek():number | null {
+    top(): number | null {
         return this.length > 0 ? this.data[0] : null;
+    }
+    swap(idx1: number, idx2: number): void {
+        const temp = this.data[idx1];
+        this.data[idx1] = this.data[idx2];
+        this.data[idx2] = temp;
     }
 }
