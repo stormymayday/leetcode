@@ -1,22 +1,24 @@
 function lastStoneWeight(stones: number[]): number {
+
+    if(stones.length === 1) {
+        return stones[0];
+    }
+
     const maxHeap = new MaxHeap();
     maxHeap.heapify(stones);
-    while(maxHeap.length > 0) {
-        if(maxHeap.length > 1) {
-            const stone1 = maxHeap.pop();
-            const stone2 = maxHeap.pop();
-            const stone3 = stone1 - stone2;
-            if(stone3 > 0) {
-                maxHeap.push(stone3);
-                if(maxHeap.length === 1) {
-                    return maxHeap.peek();
-                }
-            }
-        } else {
-            return maxHeap.peek();
+    while(maxHeap.length >= 2) {
+        const stone1 = maxHeap.pop();
+        const stone2 = maxHeap.pop();
+        const stone3 = Math.abs(stone1 - stone2);
+        if(stone3 > 0) {
+            maxHeap.push(stone3);
         }
     }
-    return 0;
+    if(maxHeap.length === 0) {
+        return 0;
+    } else {
+        return maxHeap.top();
+    }
 };
 
 class MaxHeap {
@@ -82,7 +84,7 @@ class MaxHeap {
             currIdx -= 1;
         }
     }
-    peek():number | null {
+    top():number | null {
         return this.length > 0 ? this.data[0] : null;
     }
 }
