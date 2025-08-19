@@ -1,50 +1,49 @@
 function furthestBuilding(heights: number[], bricks: number, ladders: number): number {
-    let bricksRemaining = bricks;
-    let laddersRemaining = ladders;
     const minHeap = new MinHeap();
+
     for(let i = 0; i < heights.length - 1; i += 1) {
 
-        const curr = heights[i];
-        const next = heights[i + 1];
+        const currHeight = heights[i];
+        const nextHeight = heights[i + 1];
 
-        // Jump
-        if(next - curr <= 0) {
+        // It's a jump
+        if(currHeight >= nextHeight) {
             continue;
-        }
-        // Climb
+        } 
+        // it's a climb
         else {
-            const climbDistance = next - curr;
-            // Try Ladders first
-            if(laddersRemaining > 0) {
-                laddersRemaining -= 1;
+
+            const climbDistance = nextHeight - currHeight;
+
+            // Try ladders first
+            if(ladders > 0) {
+                ladders -= 1;
                 minHeap.push(climbDistance);
             } 
-            // Try bricks / reclaiming the ladder
+            // no ladders left 
             else {
-                
-                // try ladder reclamation if it's beneficial AND affordable
-                if(minHeap.peek() !== null && climbDistance > minHeap.peek() && bricksRemaining >= minHeap.peek()) {
-                    // retroactively replace ladder with bricks
-                    bricksRemaining -= minHeap.peek();
-
-                    minHeap.pop(); // take the ladder out
-                    laddersRemaining += 1;
-                
-                    // use ladder for current height
+                // try reclaim a ladder (last ladder is larger than current climb)
+                if(minHeap.top() !== null && climbDistance > minHeap.top() && bricks >= minHeap.top()) {
+                    const lastLadder = minHeap.pop();
+                    ladders += 1;
+                    // replace pervious ladder with bricks
+                    bricks -= lastLadder;
+                    // use ladder on currentClimb
                     minHeap.push(climbDistance);
-                    laddersRemaining -= 1;
+                    ladders -= 1;
                 } 
-                // try using bricks directly
-                else if(bricksRemaining >= climbDistance) {
-                    bricksRemaining -= climbDistance;
-                }  
-                // If both options fail
+                // try bricks
                 else {
-                    return i;
+                    if(bricks >= climbDistance) {
+                        bricks -= climbDistance;
+                    }
+                    // not enough bricks
+                    else {
+                        return i; // early exit
+                    }
                 }
             }
         }
-
     }
     return heights.length - 1;
 };
@@ -56,25 +55,25 @@ class MinHeap {
         this.data = [];
         this.length = 0;
     }
-    push(val: number): void {
+    push(val: number):void {
         this.data.push(val);
         this.length += 1;
-        let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1) / 2);
+        let currIdx = this.data.length - 1;
+        let parentIdx = Math.floor((currIdx - 1)/2);
         while(currIdx > 0 && this.data[currIdx] < this.data[parentIdx]) {
             const temp = this.data[currIdx];
             this.data[currIdx] = this.data[parentIdx];
             this.data[parentIdx] = temp;
             currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
+            parentIdx = Math.floor((currIdx - 1)/2);
         }
     }
-    pop(): number | null {
+    pop():number | null {
         if(this.length === 0) {
             return null;
         }
         if(this.length === 1) {
-            this.length = 0;
+            this.length -= 1;
             return this.data.pop();
         }
         const root = this.data[0];
@@ -83,7 +82,7 @@ class MinHeap {
         this.siftDown(0);
         return root;
     }
-    siftDown(idx: number): void {
+    siftDown(idx:number):void {
         let currIdx = idx;
         while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
@@ -94,7 +93,7 @@ class MinHeap {
             const smallerChildVal = leftChildVal < rightChildVal ? leftChildVal : rightChildVal;
             if(this.data[currIdx] > smallerChildVal) {
                 const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[smallerChildIdx];
+                this.data[currIdx] = smallerChildVal;
                 this.data[smallerChildIdx] = temp;
                 currIdx = smallerChildIdx;
             } else {
@@ -102,7 +101,7 @@ class MinHeap {
             }
         }
     }
-    heapify(nums: number[]): void {
+    heapify(nums: number[]):void {
         this.data = [...nums];
         this.length = nums.length;
         let currIdx = Math.floor((this.length - 2) / 2);
@@ -111,7 +110,7 @@ class MinHeap {
             currIdx -= 1;
         }
     }
-    peek(): number | null {
+    top():number | null {
         return this.length > 0 ? this.data[0] : null;
     }
 }
