@@ -1,17 +1,16 @@
 function connectSticks(sticks: number[]): number {
+
     const minHeap = new MinHeap();
     minHeap.heapify(sticks);
-
     let minCost = 0;
-    while(minHeap.length > 1) {
-        const x = minHeap.pop();
-        const y = minHeap.pop();
-        let sum = x + y;
-        minCost += sum;
-        minHeap.push(sum);
-
+    while(minHeap.length >= 2) {
+        const stick1 = minHeap.pop();
+        const stick2 = minHeap.pop();
+        minCost += stick1 + stick2;
+        minHeap.push(stick1 + stick2);
     }
     return minCost;
+    
 };
 
 class MinHeap {
@@ -24,8 +23,8 @@ class MinHeap {
     push(val: number):void {
         this.data.push(val);
         this.length += 1;
-        let currIdx = this.length - 1;
-        let parentIdx = Math.floor((this.length - 1)/2);
+        let currIdx = this.data.length - 1;
+        let parentIdx = Math.floor((currIdx - 1)/2);
         while(currIdx > 0 && this.data[currIdx] < this.data[parentIdx]) {
             const temp = this.data[currIdx];
             this.data[currIdx] = this.data[parentIdx];
@@ -40,7 +39,7 @@ class MinHeap {
         }
         if(this.length === 1) {
             this.length -= 1;
-            return this.data.pop(); 
+            return this.data.pop();
         }
         const root = this.data[0];
         this.data[0] = this.data.pop();
@@ -59,7 +58,7 @@ class MinHeap {
             const smallerChildVal = leftChildVal < rightChildVal ? leftChildVal : rightChildVal;
             if(this.data[currIdx] > smallerChildVal) {
                 const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[smallerChildIdx];
+                this.data[currIdx] = smallerChildVal;
                 this.data[smallerChildIdx] = temp;
                 currIdx = smallerChildIdx;
             } else {
@@ -67,16 +66,16 @@ class MinHeap {
             }
         }
     }
-    heapify(nums: number[]): void {
+    heapify(nums: number[]):void {
         this.data = [...nums];
         this.length = nums.length;
         let currIdx = Math.floor((this.length - 2) / 2);
         while(currIdx >= 0) {
             this.siftDown(currIdx);
-            currIdx -=1 ;
+            currIdx -= 1;
         }
     }
-    peek():number | null {
+    top():number | null {
         return this.length > 0 ? this.data[0] : null;
     }
 }
