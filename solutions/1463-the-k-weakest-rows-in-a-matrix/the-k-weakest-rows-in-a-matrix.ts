@@ -1,110 +1,116 @@
 function kWeakestRows(mat: number[][], k: number): number[] {
-    // 1. Count one's in each row
-    const onesCount = new Map<number, number>();
-    for(let row = 0; row < mat.length; row += 1) {
-        if(!onesCount.has(row)) {
-            onesCount.set(row, 0);
-        }
+    // 1. Set up a hash map
+    const rowToCount = new Map<number, number>(); // row -> 1s count
+    for(let row = 0; row < mat.length; row +=1 ) {
+        let count = 0;
         for(let col = 0; col < mat[0].length; col += 1) {
             if(mat[row][col] === 1) {
-                onesCount.set(row, onesCount.get(row) + 1);
+                count += 1;
+            } else {
+                break;
+            }
+        }
+        rowToCount.set(row, count);
+    }
+
+    // 2. Intialize min priority queue
+    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: count
+    for(const [row, count] of rowToCount.entries()) {
+        if(maxPQ.length < k) {
+            // Create composite prio for tie-breaking
+            maxPQ.push(row, count * 1000 + row);
+        } else {
+            if((count * 1000 + row) < maxPQ.top()) {
+                maxPQ.pop();
+                maxPQ.push(row, count * 1000 + row);
             }
         }
     }
 
-    // 2. PriorityQueue
-    const pq = new CustomMaxPriorityQueue<number>();
-    for(const [row, count] of onesCount.entries()) {
-
-        // Create composite priority for tie-breaking: count * maxRows + row
-        const priority = count * mat.length + row;
-
-        if(pq.length < k) {
-            pq.enqueue(row, priority);
-        }  else {
-            const topNode = pq.peek();
-            if(topNode) {  // Null safety check
-                if(priority < topNode) {
-                    pq.dequeue();
-                    pq.enqueue(row, priority);
-                }
-            }
-        }
+    // 3. Get the result
+    const res: number[] = [];
+    while(maxPQ.length > 0) {
+        const { val: row } = maxPQ.pop();
+        res.push(row);
     }
+    return res.reverse();
 
-    // 3. Result
-    const result: number[] = [];
-    while(pq.length !== 0) {
-        const queueNode: QueueNode<number> = pq.dequeue();
-        result.push(queueNode.value);
-    }
-    return result.reverse();
 };
 
-class QueueNode<T> {
-    value: T;
-    priority: number;
-    constructor(value: T, priority: number) {
-        this.value = value;
-        this.priority = priority;
+class PriorityQueueNode<T> {
+    val: T;
+    prio: number;
+    constructor(val: T, prio: number) {
+        this.val = val;
+        this.prio = prio;
     }
 }
 
 class CustomMaxPriorityQueue<T> {
-    private data: QueueNode<T>[];
+    private data: PriorityQueueNode<T>[];
     public length: number;
     constructor() {
         this.data = [];
         this.length = 0;
     }
-    enqueue(val: T, priority: number):void {
-        const newNode = new QueueNode(val, priority);
+    push(val: T, prio: number): void {
+        const newNode = new PriorityQueueNode<T>(val, prio);
         this.data.push(newNode);
         this.length += 1;
         let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1)/2);
-        while(currIdx > 0 && this.data[currIdx].priority > this.data[parentIdx].priority) {
-            const temp = this.data[currIdx];
-            this.data[currIdx] = this.data[parentIdx];
-            this.data[parentIdx] = temp;
+        let parentIdx = Math.floor((currIdx - 1) / 2);
+        while(currIdx > 0 && this.data[currIdx].prio > this.data[parentIdx].prio) {
+            this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1)/2);
+            parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    dequeue():QueueNode<T> | null {
+    pop(): PriorityQueueNode<T> | null {
         if(this.length === 0) {
             return null;
         }
         if(this.length === 1) {
-            this.length -= 1;
+            this.length = 0;
             return this.data.pop();
         }
-        const max = this.data[0];
+        const root = this.data[0];
         this.data[0] = this.data.pop();
         this.length -= 1;
         this.siftDown(0);
-        return max;
+        return root;
     }
     siftDown(idx: number): void {
         let currIdx = idx;
         while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
-            const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].priority;
-            const rightChildPrio = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx].priority;
-            const biggerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
-            const biggerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].priority < biggerChildPrio) {
-                const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[biggerChildIdx];
-                this.data[biggerChildIdx] = temp;
-                currIdx = biggerChildIdx;
+            const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].prio;
+            const rightChildPrio = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx].prio;
+            const largerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
+            const largerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
+            if(this.data[currIdx].prio < largerChildPrio) {
+                this.swap(currIdx, largerChildIdx);
+                currIdx = largerChildIdx;
             } else {
                 break;
             }
         }
     }
-    peek():number | null {
-        return this.length > 0 ? this.data[0].priority : null;
+    top(): number | null {
+        return this.length > 0 ? this.data[0].prio : null;
+    }
+    heapify(values: PriorityQueueNode<T>[]): void {
+        this.data = [...values];
+        this.length = values.length;
+        let currIdx = Math.floor((this.length - 2) / 2);
+        while(currIdx >= 0) {
+            this.siftDown(currIdx);
+            currIdx -= 1;
+        }
+    }
+    swap(idx1: number, idx2: number): void {
+        const temp = this.data[idx1];
+        this.data[idx1] = this.data[idx2];
+        this.data[idx2] = temp;
     }
 }
