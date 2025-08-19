@@ -22,15 +22,15 @@ function furthestBuilding(heights: number[], bricks: number, ladders: number): n
             } 
             // no ladders left 
             else {
-                // try reclaim a ladder (last ladder is larger than current climb)
+                // Try to reclaim a ladder if beneficial and heap is not empty
                 if(minHeap.top() !== null && climbDistance > minHeap.top() && bricks >= minHeap.top()) {
                     const lastLadder = minHeap.pop();
-                    ladders += 1;
+                    // ladders += 1; // unnecessary
                     // replace pervious ladder with bricks
                     bricks -= lastLadder;
                     // use ladder on currentClimb
                     minHeap.push(climbDistance);
-                    ladders -= 1;
+                    // ladders -= 1; // unnecessary
                 } 
                 // try bricks
                 else {
