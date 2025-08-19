@@ -6,26 +6,26 @@ function topKFrequent(nums: number[], k: number): number[] {
         freqMap.set(num, (freqMap.get(num) || 0) + 1);
     }
 
-    // 2. Initalize priority queue (using heapify)
+    // 2. Initalize priority queue
     const minPQ = new CustomMinPriorityQueue<number>();
-    const pqNodes: PriorityQueueNode<number>[] = [];
     for(const [num, count] of freqMap.entries()) {
-        const newNode = new PriorityQueueNode(num, count);
-        pqNodes.push(newNode);
+        if(minPQ.length < k) {
+            minPQ.push(num, count);
+        } else {
+            if(count > minPQ.top()) {
+                minPQ.pop();
+                minPQ.push(num, count);
+            }
+        }
     }
-    minPQ.heapify(pqNodes);
 
     // 3. Getting the result
     const res: number[] = [];
-    while(minPQ.length > k) {
-        minPQ.pop();
-    }
     while(minPQ.length > 0) {
         const {val: num, prio: count} = minPQ.pop();
         res.push(num);
     }
     return res;
-     
 };
 
 class PriorityQueueNode<T> {
