@@ -15,14 +15,15 @@ function kWeakestRows(mat: number[][], k: number): number[] {
 
     // 2. Intialize min priority queue
     const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: count
+    const n = mat.length; // for tie-breaking
     for(const [row, count] of rowToCount.entries()) {
         if(maxPQ.length < k) {
             // Create composite prio for tie-breaking
-            maxPQ.push(row, count * mat.length + row);
+            maxPQ.push(row, count * n + row);
         } else {
-            if((count * mat.length + row) < maxPQ.top()) {
+            if((count * n + row) < maxPQ.top()) {
                 maxPQ.pop();
-                maxPQ.push(row, count * mat.length + row);
+                maxPQ.push(row, count * n + row);
             }
         }
     }
