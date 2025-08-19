@@ -1,102 +1,107 @@
 function topKFrequent(nums: number[], k: number): number[] {
-    // 1. Set up a hash map
-    const frequencyCount = new Map<number, number>();
+    // 1. Create a frequency counter map
+    const freqMap = new Map<number, number>();
     for(let i = 0; i < nums.length; i += 1) {
-        if(!frequencyCount.has(nums[i])) {
-            frequencyCount.set(nums[i], 0);
-        }
-        frequencyCount.set(nums[i], frequencyCount.get(nums[i]) + 1);
-    }
-    // 2. Priority Queue
-    const pq = new CustomMinPriorityQueue<number>();
-    for(const [num, frequency] of frequencyCount.entries()) {
-        if(pq.length < k) {
-            pq.push(num, frequency);
-        } else {
-            if(frequency > pq.peek()) {
-                pq.pop();
-                pq.push(num, frequency);
-            }
-        }
+        const num = nums[i];
+        freqMap.set(num, (freqMap.get(num) || 0) + 1);
     }
 
-    // 3. Result
-    const result: number[] = [];
-    while(pq.length !== 0) {
-        const queueNode = pq.pop();
-        result.push(queueNode.val);
+    // 2. Initalize priority queue (using heapify)
+    const minPQ = new CustomMinPriorityQueue<number>();
+    const pqNodes: PriorityQueueNode<number>[] = [];
+    for(const [num, count] of freqMap.entries()) {
+        const newNode = new PriorityQueueNode(num, count);
+        pqNodes.push(newNode);
     }
-    return result;
+    minPQ.heapify(pqNodes);
+
+    // 3. Getting the result
+    const res: number[] = [];
+    while(minPQ.length > k) {
+        minPQ.pop();
+    }
+    while(minPQ.length > 0) {
+        const {val: num, prio: count} = minPQ.pop();
+        res.push(num);
+    }
+    return res;
+     
 };
 
-class QueueNode<T> {
+class PriorityQueueNode<T> {
     val: T;
-    priority: number;
-    constructor(val: T, priority: number) {
+    prio: number;
+    constructor(val: T, prio: number) {
         this.val = val;
-        this.priority = priority;
+        this.prio = prio;
     }
 }
 
 class CustomMinPriorityQueue<T> {
-    private heap: QueueNode<T>[];
+    private data: PriorityQueueNode<T>[];
     public length: number;
     constructor() {
-        this.heap = [];
+        this.data = [];
         this.length = 0;
     }
-    push(val: T, priority: number): void {
-        const newNode = new QueueNode(val, priority);
-        this.heap.push(newNode);
+    push(val: T, prio: number): void {
+        const newNode = new PriorityQueueNode<T>(val, prio);
+        this.data.push(newNode);
         this.length += 1;
-        let currIdx = this.heap.length - 1;
-        this.siftUp(currIdx);
-    }
-    siftUp(idx: number): void {
-        let currIdx = idx;
+        let currIdx = this.length - 1;
         let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.heap[currIdx].priority < this.heap[parentIdx].priority) {
-            const temp = this.heap[currIdx];
-            this.heap[currIdx] = this.heap[parentIdx];
-            this.heap[parentIdx] = temp;
+        while(currIdx > 0 && this.data[currIdx].prio < this.data[parentIdx].prio) {
+            this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
             parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    pop(): QueueNode<T> | null {
-        if(this.heap.length === 0) {
+    pop(): PriorityQueueNode<T> | null {
+        if(this.length === 0) {
             return null;
         }
-        if(this.heap.length === 1) {
-            this.length -= 1;
-            return this.heap.pop();
+        if(this.length === 1) {
+            this.length = 0;
+            return this.data.pop();
         }
-        const result = this.heap[0];
-        this.heap[0] = this.heap.pop();
+        const root = this.data[0];
+        this.data[0] = this.data.pop();
         this.length -= 1;
         this.siftDown(0);
-        return result;
+        return root;
     }
-    siftDown(idx: number):void {
+    siftDown(idx: number): void {
         let currIdx = idx;
-        while(currIdx < this.heap.length - 1) {
+        while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
-            const leftChildPriority = this.heap[leftChildIdx] === undefined ? Infinity : this.heap[leftChildIdx].priority;
-            const rightChildPriority = this.heap[rightChildIdx] === undefined ? Infinity : this.heap[rightChildIdx].priority;
-            const smallerChildPrioIdx = leftChildPriority < rightChildPriority ? leftChildIdx : rightChildIdx;
-            const smallerChildPrio = leftChildPriority < rightChildPriority ? leftChildPriority : rightChildPriority;
-            if(this.heap[currIdx].priority > smallerChildPrio) {
-                const temp = this.heap[currIdx];
-                this.heap[currIdx] = this.heap[smallerChildPrioIdx];
-                this.heap[smallerChildPrioIdx] = temp;
-                currIdx = smallerChildPrioIdx;
+            const leftChildPrio = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx].prio;
+            const rightChildPrio = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx].prio;
+            const smallerChildIdx = leftChildPrio < rightChildPrio ? leftChildIdx : rightChildIdx;
+            const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
+            if(this.data[currIdx].prio > smallerChildPrio) {
+                this.swap(currIdx, smallerChildIdx);
+                currIdx = smallerChildIdx; 
             } else {
                 break;
             }
         }
     }
-    peek():number | null {
-        return this.length > 0 ? this.heap[0].priority : null;
+    heapify(vals: PriorityQueueNode<T>[]): void {
+        this.data = [...vals];
+        this.length = vals.length;
+        let currIdx = Math.floor((this.length - 2) / 2);
+        while(currIdx >= 0) {
+            this.siftDown(currIdx);
+            currIdx -= 1;
+        }
+    }
+    top(): number | null {
+        return this.length > 0 ? this.data[0].prio : null;
+    }
+    swap(idx1: number, idx2: number): void {
+        const temp = this.data[idx1];
+        this.data[idx1] = this.data[idx2];
+        this.data[idx2] = temp;
     }
 }
