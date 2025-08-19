@@ -18,11 +18,11 @@ function kWeakestRows(mat: number[][], k: number): number[] {
     for(const [row, count] of rowToCount.entries()) {
         if(maxPQ.length < k) {
             // Create composite prio for tie-breaking
-            maxPQ.push(row, count * 1000 + row);
+            maxPQ.push(row, count * mat.length + row);
         } else {
-            if((count * 1000 + row) < maxPQ.top()) {
+            if((count * mat.length + row) < maxPQ.top()) {
                 maxPQ.pop();
-                maxPQ.push(row, count * 1000 + row);
+                maxPQ.push(row, count * mat.length + row);
             }
         }
     }
