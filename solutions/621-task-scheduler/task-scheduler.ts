@@ -1,47 +1,31 @@
 function leastInterval(tasks: string[], n: number): number {
-    // 1. Create a frequency count map
-    const freqCount = new Map<string, number>();
+    // frequency count map
+    const freqMap = new Map<string, number>(); // task -> count
     for(let i = 0; i < tasks.length; i += 1) {
-        const task = tasks[i];
-        if(!freqCount.has(task)) {
-            freqCount.set(task, 0);
-        }
-        freqCount.set(task, freqCount.get(task) + 1);
+        freqMap.set(tasks[i], (freqMap.get(tasks[i]) || 0) + 1);
     }
 
-    // 2. Initialze priority queue
+    // priority queue
     const maxPQ = new CustomMaxPriorityQueue<string>();
-    const queueNodes: PriorityQueueNode<string>[] = [];
-    for(const [char, count] of freqCount.entries()) {
-        const newNode = new PriorityQueueNode<string>(char, count);
-        queueNodes.push(newNode);
+    for(const [task, count] of freqMap.entries()) {
+        maxPQ.push(task, count);
     }
-    maxPQ.heapify(queueNodes);
 
-    // 3. Main Logic
-    const cooldownQueue = new CustomQueue<[string, number, number]>();
+    // main logic
+    const cooldownQueue = new CustomQueue<[string, number, number]>(); // [task, count, coolDown]
     let time = 0;
     while(maxPQ.length > 0 || cooldownQueue.length > 0) {
-
-        // 1. start execution
         time += 1;
-
-        // 2. pop the pq if it is not empty
         if(maxPQ.length > 0) {
-            let {val: char, prio: count} = maxPQ.pop();
-            // 2.1. decrement the count
+            let {val: task, prio: count} = maxPQ.pop();
             count -= 1;
-            // 2.2 put char into the cooldown queue (if count is greater than 0)
             if(count > 0) {
-                cooldownQueue.enqueue([char, count, time + n]);
+                cooldownQueue.enqueue([task, count, time + n]);
             }
         }
-
-        // 3. check the cooldown queue
-        if(cooldownQueue.length > 0 && cooldownQueue.peek()[2] <= time) {
-            const [char, count, availableTime] = cooldownQueue.dequeue();
-            // put item back into the priority queue
-            maxPQ.push(char, count);
+        if(cooldownQueue.length > 0 && time >= cooldownQueue.peek()[2]) {
+            const [task, count, cooldown] = cooldownQueue.dequeue();
+            maxPQ.push(task, count);
         }
     }
     return time;
@@ -109,15 +93,6 @@ class CustomMaxPriorityQueue<T> {
     top(): number | null {
         return this.length > 0 ? this.data[0].prio : null;
     }
-    heapify(values: PriorityQueueNode<T>[]): void {
-        this.data = [...values];
-        this.length = values.length;
-        let currIdx = Math.floor((this.length - 2) / 2);
-        while(currIdx >= 0) {
-            this.siftDown(currIdx);
-            currIdx -= 1;
-        }
-    }
     swap(idx1: number, idx2: number): void {
         const temp = this.data[idx1];
         this.data[idx1] = this.data[idx2];
@@ -157,16 +132,15 @@ class CustomQueue<T> {
     dequeue(): T | null {
         if(this.length === 0) {
             return null;
-        } else {
-            const temp = this.start;
-            this.start = this.start.next;
-            temp.next = null;
-            this.length -= 1;
-            if(this.length === 0) {
-                this.end = null;
-            }
-            return temp.val;
         }
+        const temp = this.start;
+        this.start = this.start.next;
+        temp.next = null;
+        this.length -= 1;
+        if(this.length === 0) {
+            this.end = null;
+        }
+        return temp.val;
     }
     peek(): T | null {
         return this.length > 0 ? this.start.val : null;
