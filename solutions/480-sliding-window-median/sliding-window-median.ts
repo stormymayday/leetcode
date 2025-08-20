@@ -67,18 +67,18 @@ function medianSlidingWindow(nums: number[], k: number): number[] {
 
         // Lazy Deletion
         while(markedForDeletion.has(smallNums.top())) {
-            markedForDeletion.set(smallNums.top(), markedForDeletion.get(smallNums.top()) - 1);
-            if(markedForDeletion.get(smallNums.top()) === 0) {
-                markedForDeletion.delete(smallNums.top());
+            const num = smallNums.pop();
+            markedForDeletion.set(num, markedForDeletion.get(num) - 1);
+            if(markedForDeletion.get(num) === 0) {
+                markedForDeletion.delete(num);
             }
-            smallNums.pop();
         }
         while(markedForDeletion.has(largeNums.top())) {
-            markedForDeletion.set(largeNums.top(), markedForDeletion.get(largeNums.top()) - 1);
-            if(markedForDeletion.get(largeNums.top()) === 0) {
-                markedForDeletion.delete(largeNums.top());
+            const num = largeNums.pop();
+            markedForDeletion.set(num, markedForDeletion.get(num) - 1);
+            if(markedForDeletion.get(num) === 0) {
+                markedForDeletion.delete(num);
             }
-            largeNums.pop();
         }
 
         // Get median
