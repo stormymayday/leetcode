@@ -17,10 +17,7 @@ class Twitter {
     }
 
     getNewsFeed(userId: number): number[] {
-        // set user as their own follower
-        // if(!this.userFollowees.get(userId).has(userId)) {
-        //     this.userFollowees.get(userId).add(userId);
-        // }
+        // Make User Follow themselves
         if(!this.userFollowees.has(userId)) {
             this.userFollowees.set(userId, new Set());
         }
