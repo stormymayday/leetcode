@@ -20,11 +20,12 @@ function getOrder(tasks: number[][]): number[] {
         // enqueue all eligible tasks (consider tie-breaker)
         while(idx < tasks.length && currTime >= tasksWithIndex[idx][0]) {
             const [enqueueTime, processingTime, index] = tasksWithIndex[idx];
-            // tie-breaker logic:
+            // tie-breaker logic: multiply by large number and add index for tie-breaking
             minPQ.push(index, processingTime * 100000 + index);
             idx += 1;
         }
 
+        // Process one task at a time
         if(minPQ.length > 0) {
             const { val: index } = minPQ.pop();
             res.push(index);
