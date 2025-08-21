@@ -1,5 +1,4 @@
 function longestDiverseString(a: number, b: number, c: number): string {
-    // 1. Initialize max priority queue
     const maxPQ = new CustomMaxPriorityQueue<string>();
     if(a > 0) {
         maxPQ.push("a", a);
@@ -11,47 +10,32 @@ function longestDiverseString(a: number, b: number, c: number): string {
         maxPQ.push("c", c);
     }
 
-    // 2. Main Logic
     const res: string[] = [];
     while(maxPQ.length > 0) {
-        // pop the topChar (with the highest count)
         let {val: topChar, prio: topCount} = maxPQ.pop();
-        // Check if result has atleast 1 char AND last two chars equal topChar
         if(res.length > 1 && res[res.length - 1] === topChar && res[res.length - 2] === topChar) {
-            // check if priority queue is empty after popping topChar
             if(maxPQ.length === 0) {
-                // string cannot be extended anymore
                 break;
-            } 
-            // Otherwise, pop the next character from priority queue
-            else {
-                // pop the char with the next highest count
+            } else {
                 let {val: nextChar, prio: nextCount} = maxPQ.pop();
-                // push it to the result
                 res.push(nextChar);
-                // decrement the count
                 nextCount -= 1;
-                // push it back to the priority queue if count is greater than 0
                 if(nextCount > 0) {
                     maxPQ.push(nextChar, nextCount);
                 }
             }
-        }
-        // Otherwise, push the topChar to the result
-        else {
+        } else {
             res.push(topChar);
-            topCount -= 1; // decrement the count
+            topCount -= 1;
         }
-        // If topChar count is greater than zero, push it back to the priority queue
         if(topCount > 0) {
             maxPQ.push(topChar, topCount);
         }
     }
     return res.join("");
-    
 };
 
-class QueueNode<T> {
+class PriorityQueueNode<T> {
     val: T;
     prio: number;
     constructor(val: T, prio: number) {
@@ -61,43 +45,37 @@ class QueueNode<T> {
 }
 
 class CustomMaxPriorityQueue<T> {
-    private data: QueueNode<T>[];
+    private data: PriorityQueueNode<T>[];
     public length: number;
     constructor() {
         this.data = [];
         this.length = 0;
     }
-    push(val: T, prio: number):void {
-        const newNode = new QueueNode(val, prio);
+    push(val: T, prio: number): void {
+        const newNode = new PriorityQueueNode<T>(val, prio);
         this.data.push(newNode);
         this.length += 1;
         let currIdx = this.length - 1;
-        this.siftUp(currIdx);
-    }
-    siftUp(idx: number): void {
-        let currIdx = idx;
-        let parentIdx = Math.floor((currIdx - 1)/2);
+        let parentIdx = Math.floor((currIdx - 1) / 2);
         while(currIdx > 0 && this.data[currIdx].prio > this.data[parentIdx].prio) {
-            const temp = this.data[currIdx];
-            this.data[currIdx] = this.data[parentIdx];
-            this.data[parentIdx] = temp;
+            this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1)/2);
+            parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    pop():QueueNode<T> | null {
+    pop(): PriorityQueueNode<T> | null {
         if(this.length === 0) {
             return null;
         }
         if(this.length === 1) {
-            this.length -= 1;
+            this.length = 0;
             return this.data.pop();
         }
-        const max = this.data[0];
+        const root = this.data[0];
         this.data[0] = this.data.pop();
         this.length -= 1;
         this.siftDown(0);
-        return max;
+        return root;
     }
     siftDown(idx: number): void {
         let currIdx = idx;
@@ -106,20 +84,27 @@ class CustomMaxPriorityQueue<T> {
             const rightChildIdx = currIdx * 2 + 2;
             const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].prio;
             const rightChildPrio = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx].prio;
-            const biggerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
-            const biggerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio < biggerChildPrio) {
-                const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[biggerChildIdx];
-                this.data[biggerChildIdx] = temp;
-                currIdx = biggerChildIdx;
+            const largerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
+            const largerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
+            if(this.data[currIdx].prio < largerChildPrio) {
+                this.swap(currIdx, largerChildIdx);
+                currIdx = largerChildIdx;
             } else {
                 break;
             }
         }
     }
-    peek():number | null {
+    top(): number | null {
         return this.length > 0 ? this.data[0].prio : null;
+    }
+    heapify(values: PriorityQueueNode<T>[]): void {
+        this.data = [...values];
+        this.length = values.length;
+        let currIdx = Math.floor((this.length - 2) / 2);
+        while(currIdx >= 0) {
+            this.siftDown(currIdx);
+            currIdx -= 1;
+        }
     }
     swap(idx1: number, idx2: number): void {
         const temp = this.data[idx1];
