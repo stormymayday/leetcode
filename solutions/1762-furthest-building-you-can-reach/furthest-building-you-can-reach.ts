@@ -1,4 +1,5 @@
 function furthestBuilding(heights: number[], bricks: number, ladders: number): number {
+
     const minHeap = new MinHeap();
 
     for(let i = 0; i < heights.length - 1; i += 1) {
@@ -6,46 +7,36 @@ function furthestBuilding(heights: number[], bricks: number, ladders: number): n
         const currHeight = heights[i];
         const nextHeight = heights[i + 1];
 
-        // It's a jump
         if(currHeight >= nextHeight) {
             continue;
-        } 
-        // it's a climb
-        else {
-
+        } else {
             const climbDistance = nextHeight - currHeight;
-
-            // Try ladders first
+            // use ladders first
             if(ladders > 0) {
-                ladders -= 1;
                 minHeap.push(climbDistance);
+                ladders -= 1;
             } 
-            // no ladders left 
+            // no ladders left
             else {
-                // Try to reclaim a ladder if beneficial and heap is not empty
-                if(minHeap.top() !== null && climbDistance > minHeap.top() && bricks >= minHeap.top()) {
-                    const lastLadder = minHeap.pop();
-                    // ladders += 1; // unnecessary
-                    // replace pervious ladder with bricks
-                    bricks -= lastLadder;
-                    // use ladder on currentClimb
-                    minHeap.push(climbDistance);
-                    // ladders -= 1; // unnecessary
+                // try reclaim ladder AND if old ladder can be replaced with bricks AND if it is feasible
+                if(minHeap.length > 0 && bricks >= minHeap.top() && climbDistance > minHeap.top()) {
+                    const lastLadder = minHeap.pop(); // take the ladder out
+                    bricks -= lastLadder; // use bricks instead
+                    minHeap.push(climbDistance); // use ladder for current climb
                 } 
-                // try bricks
+                // can't reclaim a ladder or it is not feasible
                 else {
+                    // try bricks
                     if(bricks >= climbDistance) {
                         bricks -= climbDistance;
-                    }
-                    // not enough bricks
-                    else {
-                        return i; // early exit
+                    } else {
+                        return i; // this is as far as we can go
                     }
                 }
             }
         }
     }
-    return heights.length - 1;
+    return heights.length - 1; // can go all the way
 };
 
 class MinHeap {
