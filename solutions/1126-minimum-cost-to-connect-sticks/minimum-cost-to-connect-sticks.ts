@@ -2,12 +2,14 @@ function connectSticks(sticks: number[]): number {
 
     const minHeap = new MinHeap();
     minHeap.heapify(sticks);
+
     let minCost = 0;
-    while(minHeap.length >= 2) {
+    while(minHeap.length > 1) {
         const stick1 = minHeap.pop();
         const stick2 = minHeap.pop();
-        minCost += stick1 + stick2;
-        minHeap.push(stick1 + stick2);
+        const res = stick1 + stick2;
+        minCost += res;
+        minHeap.push(res);
     }
     return minCost;
     
