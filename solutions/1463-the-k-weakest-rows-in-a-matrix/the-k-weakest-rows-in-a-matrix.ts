@@ -1,5 +1,8 @@
 function kWeakestRows(mat: number[][], k: number): number[] {
-    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: 1s count * 10000 + row (tie-breaker)
+
+    const n = mat.length;
+
+    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: 1s count * n + row (tie-breaker)
 
     for(let row = 0; row < mat.length; row += 1) {
         let count = 0;
@@ -10,7 +13,7 @@ function kWeakestRows(mat: number[][], k: number): number[] {
                 break;
             }
         }
-        const priority = count * 10000 + row;
+        const priority = count * n + row;
         // const newNode = new PriorityQueueNode<number>(row, priority);
         if(maxPQ.length < k) {
             maxPQ.push(row, priority);
