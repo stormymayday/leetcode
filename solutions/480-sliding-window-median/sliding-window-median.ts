@@ -1,68 +1,71 @@
 function medianSlidingWindow(nums: number[], k: number): number[] {
-
+    
     const smallNums = new MaxHeap();
     const largeNums = new MinHeap();
-    const markedForDeletion = new Map<number, number>(); // num -> number of occurances
+    const markedForDeletion = new Map<number, number>(); // num -> count
+    const medians: number[] = [];
 
-    // process first k elements
-    for (let i = 0; i < k; i += 1) {
+    // Assign first k elements into their heaps
+    for(let i = 0; i < k; i += 1) {
         const num = nums[i];
-        if (smallNums.length === largeNums.length) {
-            // smallNums is allowed to have 1 more val
-            largeNums.push(num); // rebalancing
+        // smallNums is allowed to have 1 more elements
+        // Therefore, if lengths are equal, push to smallNums
+        if(smallNums.length === largeNums.length) {
+            largeNums.push(num); // rebalance
             smallNums.push(largeNums.pop());
-        } else {
-            // smallNums already has 1 more
-            smallNums.push(num); // rebalacing
+        } 
+        // smallNums already has 1 more, push to largeNums
+        else {
+            smallNums.push(num); // rebalance
             largeNums.push(smallNums.pop());
         }
     }
-
-    // getting median of the first k elements
-    const res: number[] = [];
+    // Get median of the first k
     if(smallNums.length === largeNums.length) {
-        res.push((smallNums.top() + largeNums.top()) / 2);
+        // median is in both
+        medians.push((smallNums.top() + largeNums.top()) / 2);
     } else {
-        res.push(smallNums.top());
+        // median is in smallNums
+        medians.push(smallNums.top());
     }
 
-    // Sliding window
+    // Sliding Window
     for(let i = k; i < nums.length; i += 1) {
 
         const outNum = nums[i - k];
         const inNum = nums[i];
         let balance = 0; // starting with neutral balance
-        // negative balance - smallNums need more
-        // positive balance - largeNums need more
-        // neutral balance - smallNums === largeNums OR smallNums has atleast 1 more
+        // neutral balance - heaps are equal OR smallNums has atmost 1 more
+        // negative balance - smallNums needs more
+        // positive balance - largeNums needs more
 
         // Process the outNum
         markedForDeletion.set(outNum, (markedForDeletion.get(outNum) || 0) + 1);
         if(outNum <= smallNums.top()) {
-            balance -= 1; // outNum is in the smallNums
+            // outNum is in the smallNums
+            balance -= 1;
         } else {
+            // outNum is in the largeNums
             balance += 1;
         }
 
         // Process the inNum
         if(inNum <= smallNums.top()) {
             smallNums.push(inNum);
-            balance += 1; // goes into smallNums
+            balance += 1;
         } else {
             largeNums.push(inNum);
-            balance -= 1; // goes into largeNums
+            balance -= 1;
         }
 
-        // Rebalancing
+        // Rebalance
         if(balance < 0) {
-            // transfer to smallNums
+            // smallNums needs more
             smallNums.push(largeNums.pop());
-            // balance += 1;
         }
         if(balance > 0) {
-            // transfer to largeNums
+            // largeNums needs more
             largeNums.push(smallNums.pop());
-            // balance -= 1;
         }
 
         // Lazy Deletion
@@ -81,14 +84,17 @@ function medianSlidingWindow(nums: number[], k: number): number[] {
             }
         }
 
-        // Get median
+        // Get median of the current window
         if(k % 2 === 0) {
-            res.push((smallNums.top() + largeNums.top()) / 2);
+            medians.push((smallNums.top() + largeNums.top()) / 2);
         } else {
-            res.push(smallNums.top());
+            medians.push(smallNums.top());
         }
-    } 
-    return res;
+
+    }
+
+    return medians;
+
 };
 
 class MinHeap {
@@ -98,24 +104,24 @@ class MinHeap {
         this.data = [];
         this.length = 0;
     }
-    push(val: number): void {
+    push(val: number):void {
         this.data.push(val);
         this.length += 1;
         let currIdx = this.data.length - 1;
-        let parentIdx = Math.floor((currIdx - 1) / 2);
-        while (currIdx > 0 && this.data[currIdx] < this.data[parentIdx]) {
+        let parentIdx = Math.floor((currIdx - 1)/2);
+        while(currIdx > 0 && this.data[currIdx] < this.data[parentIdx]) {
             const temp = this.data[currIdx];
             this.data[currIdx] = this.data[parentIdx];
             this.data[parentIdx] = temp;
             currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
+            parentIdx = Math.floor((currIdx - 1)/2);
         }
     }
-    pop(): number | null {
-        if (this.length === 0) {
+    pop():number | null {
+        if(this.length === 0) {
             return null;
         }
-        if (this.length === 1) {
+        if(this.length === 1) {
             this.length -= 1;
             return this.data.pop();
         }
@@ -125,16 +131,16 @@ class MinHeap {
         this.siftDown(0);
         return root;
     }
-    siftDown(idx: number): void {
+    siftDown(idx:number):void {
         let currIdx = idx;
-        while (currIdx < this.length - 1) {
+        while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
             const leftChildVal = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx];
             const rightChildVal = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx];
             const smallerChildIdx = leftChildVal < rightChildVal ? leftChildIdx : rightChildIdx;
             const smallerChildVal = leftChildVal < rightChildVal ? leftChildVal : rightChildVal;
-            if (this.data[currIdx] > smallerChildVal) {
+            if(this.data[currIdx] > smallerChildVal) {
                 const temp = this.data[currIdx];
                 this.data[currIdx] = smallerChildVal;
                 this.data[smallerChildIdx] = temp;
@@ -144,16 +150,16 @@ class MinHeap {
             }
         }
     }
-    heapify(nums: number[]): void {
+    heapify(nums: number[]):void {
         this.data = [...nums];
         this.length = nums.length;
         let currIdx = Math.floor((this.length - 2) / 2);
-        while (currIdx >= 0) {
+        while(currIdx >= 0) {
             this.siftDown(currIdx);
             currIdx -= 1;
         }
     }
-    top(): number | null {
+    top():number | null {
         return this.length > 0 ? this.data[0] : null;
     }
 }
@@ -165,24 +171,24 @@ class MaxHeap {
         this.data = [];
         this.length = 0;
     }
-    push(val: number): void {
+    push(val:number):void {
         this.data.push(val);
         this.length += 1;
         let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1) / 2);
-        while (currIdx > 0 && this.data[currIdx] > this.data[parentIdx]) {
+        let parentIdx = Math.floor((currIdx - 1)/2);
+        while(currIdx > 0 && this.data[currIdx] > this.data[parentIdx]) {
             const temp = this.data[currIdx];
             this.data[currIdx] = this.data[parentIdx];
             this.data[parentIdx] = temp;
             currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
+            parentIdx = Math.floor((currIdx - 1)/2);
         }
     }
-    pop(): number | null {
-        if (this.length === 0) {
+    pop():number | null {
+        if(this.length === 0) {
             return null;
         }
-        if (this.length === 1) {
+        if(this.length === 1) {
             this.length -= 1;
             return this.data.pop();
         }
@@ -194,14 +200,14 @@ class MaxHeap {
     }
     siftDown(idx: number): void {
         let currIdx = idx;
-        while (currIdx < this.length - 1) {
+        while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
             const leftChildVal = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx];
             const rightChildVal = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx];
             const biggerChildIdx = leftChildVal > rightChildVal ? leftChildIdx : rightChildIdx;
             const biggerChildVal = leftChildVal > rightChildVal ? leftChildVal : rightChildVal;
-            if (this.data[currIdx] < biggerChildVal) {
+            if(this.data[currIdx] < biggerChildVal) {
                 const temp = this.data[currIdx];
                 this.data[currIdx] = this.data[biggerChildIdx];
                 this.data[biggerChildIdx] = temp;
@@ -211,17 +217,17 @@ class MaxHeap {
             }
         }
     }
-    heapify(nums: number[]): void {
+    heapify(nums: number[]):void {
         const n = nums.length;
         this.data = [...nums];
         this.length = n;
-        let currIdx = Math.floor((n - 2) / 2);
-        while (currIdx >= 0) {
+        let currIdx = Math.floor((n - 2)/2);
+        while(currIdx >= 0) {
             this.siftDown(currIdx);
             currIdx -= 1;
         }
     }
-    top(): number | null {
+    top():number | null {
         return this.length > 0 ? this.data[0] : null;
     }
 }
