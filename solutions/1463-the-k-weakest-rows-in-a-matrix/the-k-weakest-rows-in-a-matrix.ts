@@ -1,7 +1,7 @@
 function kWeakestRows(mat: number[][], k: number): number[] {
-    // 1. Set up a hash map
-    const rowToCount = new Map<number, number>(); // row -> 1s count
-    for(let row = 0; row < mat.length; row +=1 ) {
+    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: 1s count * 10000 + row (tie-breaker)
+
+    for(let row = 0; row < mat.length; row += 1) {
         let count = 0;
         for(let col = 0; col < mat[0].length; col += 1) {
             if(mat[row][col] === 1) {
@@ -10,28 +10,21 @@ function kWeakestRows(mat: number[][], k: number): number[] {
                 break;
             }
         }
-        rowToCount.set(row, count);
-    }
-
-    // 2. Intialize min priority queue
-    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: count
-    const n = mat.length; // for tie-breaking
-    for(const [row, count] of rowToCount.entries()) {
+        const priority = count * 10000 + row;
+        // const newNode = new PriorityQueueNode<number>(row, priority);
         if(maxPQ.length < k) {
-            // Create composite prio for tie-breaking
-            maxPQ.push(row, count * n + row);
+            maxPQ.push(row, priority);
         } else {
-            if((count * n + row) < maxPQ.top()) {
+            if(priority < maxPQ.top()) {
                 maxPQ.pop();
-                maxPQ.push(row, count * n + row);
+                maxPQ.push(row, priority);
             }
         }
     }
 
-    // 3. Get the result
-    const res: number[] = [];
+    let res: number[] = [];
     while(maxPQ.length > 0) {
-        const { val: row } = maxPQ.pop();
+        const {val: row} = maxPQ.pop();
         res.push(row);
     }
     return res.reverse();
@@ -97,17 +90,17 @@ class CustomMaxPriorityQueue<T> {
             }
         }
     }
-    top(): number | null {
-        return this.length > 0 ? this.data[0].prio : null;
-    }
-    heapify(values: PriorityQueueNode<T>[]): void {
-        this.data = [...values];
-        this.length = values.length;
+    heapify(vals: PriorityQueueNode<T>[]): void {
+        this.data = [...vals];
+        this.length = vals.length;
         let currIdx = Math.floor((this.length - 2) / 2);
         while(currIdx >= 0) {
             this.siftDown(currIdx);
             currIdx -= 1;
         }
+    }
+    top(): number | null {
+        return this.length > 0 ? this.data[0].prio : null;
     }
     swap(idx1: number, idx2: number): void {
         const temp = this.data[idx1];
