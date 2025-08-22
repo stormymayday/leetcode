@@ -1,6 +1,6 @@
 function minCostConnectPoints(points: number[][]): number {
     // create a weighted edge list
-    const edges = [];
+    const edges: [number, number, number][] = [];
     const n = points.length;
     for(let i = 0; i < points.length - 1; i += 1) {
         for(let j = i + 1; j < points.length; j += 1) {
