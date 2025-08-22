@@ -16,13 +16,10 @@ function minCostConnectPoints(points: number[][]): number {
 
     // Initialize Priority Queue
     const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [src, dst], prio: weight
-    const pqNodes: PriorityQueueNode<[number, number]>[] = [];
     for(const edge of edges) {
         const [src, dst, weight] = edge;
-        const newNode = new PriorityQueueNode([src, dst] as [number, number], weight);
-        pqNodes.push(newNode);
+        minPQ.push([src, dst], weight);
     }
-    minPQ.heapify(pqNodes);
 
     let minCost = 0;
     let edgesUsed = 0;
