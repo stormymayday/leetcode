@@ -1,32 +1,38 @@
 function leastInterval(tasks: string[], n: number): number {
-    // frequency count map
-    const freqMap = new Map<string, number>(); // task -> count
-    for(let i = 0; i < tasks.length; i += 1) {
+    // frequency Map
+    const freqMap = new Map<string, number>();
+    for(let i = 0;  i < tasks.length; i += 1) {
         freqMap.set(tasks[i], (freqMap.get(tasks[i]) || 0) + 1);
     }
 
-    // priority queue
-    const maxPQ = new CustomMaxPriorityQueue<string>();
+    const pqNodes: PriorityQueueNode<string>[] = [];
     for(const [task, count] of freqMap.entries()) {
-        maxPQ.push(task, count);
+        const newNode = new PriorityQueueNode(task, count);
+        pqNodes.push(newNode);
     }
 
-    // main logic
-    const cooldownQueue = new CustomQueue<[string, number, number]>(); // [task, count, coolDown]
+    const maxPQ = new CustomMaxPriorityQueue<string>();
+    maxPQ.heapify(pqNodes);
+
+    const cooldownQ = new CustomQueue<[string, number, number]>(); // [task, count, time + n]
+
     let time = 0;
-    while(maxPQ.length > 0 || cooldownQueue.length > 0) {
+    while(maxPQ.length > 0 || cooldownQ.length > 0) {
         time += 1;
+
         if(maxPQ.length > 0) {
-            let {val: task, prio: count} = maxPQ.pop();
+            let {val: task, prio: count } = maxPQ.pop(); 
             count -= 1;
             if(count > 0) {
-                cooldownQueue.enqueue([task, count, time + n]);
+                cooldownQ.enqueue([task, count, time + n]);
             }
         }
-        if(cooldownQueue.length > 0 && time >= cooldownQueue.peek()[2]) {
-            const [task, count, cooldown] = cooldownQueue.dequeue();
+
+        if(cooldownQ.length > 0 && time >= cooldownQ.peek()[2]) {
+            const [task, count, coolDown] = cooldownQ.dequeue();
             maxPQ.push(task, count);
         }
+
     }
     return time;
 };
@@ -90,6 +96,15 @@ class CustomMaxPriorityQueue<T> {
             }
         }
     }
+    heapify(vals: PriorityQueueNode<T>[]): void {
+        this.data = [...vals];
+        this.length = vals.length;
+        let currIdx = Math.floor((this.length - 2) / 2);
+        while(currIdx >= 0) {
+            this.siftDown(currIdx);
+            currIdx -= 1;
+        }
+    }
     top(): number | null {
         return this.length > 0 ? this.data[0].prio : null;
     }
@@ -110,9 +125,9 @@ class QueueNode<T> {
 }
 
 class CustomQueue<T> {
-    start: QueueNode<T> | null;
-    end: QueueNode<T> | null;
-    length: number;
+    private start: QueueNode<T> | null;
+    private end: QueueNode<T> | null;
+    public length: number;
     constructor() {
         this.start = null;
         this.end = null;
@@ -132,15 +147,16 @@ class CustomQueue<T> {
     dequeue(): T | null {
         if(this.length === 0) {
             return null;
+        } else {
+            const temp = this.start;
+            this.start = this.start.next;
+            temp.next = null;
+            this.length -= 1;
+            if(this.length === 0) {
+                this.end = null;
+            }
+            return temp.val;
         }
-        const temp = this.start;
-        this.start = this.start.next;
-        temp.next = null;
-        this.length -= 1;
-        if(this.length === 0) {
-            this.end = null;
-        }
-        return temp.val;
     }
     peek(): T | null {
         return this.length > 0 ? this.start.val : null;
