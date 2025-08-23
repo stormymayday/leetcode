@@ -23,7 +23,7 @@ function minCostToSupplyWater(n: number, wells: number[], pipes: number[][]): nu
         if(uf.union(src, dst) === true) {
             mstCost += weight;
             edgesUsed += 1;
-            if(edgesUsed === n) { // Need n edges to connect n+1 vertices (including virtual)
+            if(edgesUsed === n) { // Need n edges to connect (including virtual)
                 return mstCost;
             }
         }
