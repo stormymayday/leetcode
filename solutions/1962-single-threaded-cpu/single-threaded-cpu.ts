@@ -1,39 +1,42 @@
 function getOrder(tasks: number[][]): number[] {
-    // add index
-    const tasksWithIndex = tasks.map((task, index) => {
-        const [enqueueTime, processingTime] = task;
-        return [enqueueTime, processingTime, index];
-    });
-    // sort tasks by enqueue time
-    tasksWithIndex.sort((a, b) => a[0] - b[0]);
 
-    let currTime: number = 0;
-    let idx: number = 0;
-    let res: number[] = [];
-    const minPQ = new CustomMinPriorityQueue<number>(); // val: index, prio: processingTime
-    while(minPQ.length !== 0 || idx < tasks.length) {
-        // If no tasks in queue and next task hasn't arrived yet, jump time forward
-        if(minPQ.length === 0 && idx < tasks.length && currTime < tasksWithIndex[idx][0]) {
-            currTime = tasksWithIndex[idx][0];
-        }
+    const n = tasks.length;
 
-        // enqueue all eligible tasks (consider tie-breaker)
-        while(idx < tasks.length && currTime >= tasksWithIndex[idx][0]) {
-            const [enqueueTime, processingTime, index] = tasksWithIndex[idx];
-            // tie-breaker logic: multiply by large number and add index for tie-breaking
-            minPQ.push(index, processingTime * 100000 + index);
-            idx += 1;
-        }
+    const withIndex: [number, number, number][] = []; // [enqueueTime, processingTime, originalIdx]
 
-        // Process one task at a time
-        if(minPQ.length > 0) {
-            const { val: index } = minPQ.pop();
-            res.push(index);
-            // Get the original processing time from the tasks array using the original index
-            const processingTime = tasks[index][1];
-            currTime += processingTime;
-        }
+    // 1. Add the original index
+    for(let i = 0; i < tasks.length; i += 1) {
+        withIndex.push([tasks[i][0], tasks[i][1], i]);
     }
+
+    // 2. sort by enqueueTime
+    withIndex.sort((a, b) => a[0] - b[0]);
+
+    // 3. Initialize a minPQ
+    const minPQ = new CustomMinPriorityQueue<number>() ;// val: originalIndex, prio: processingTime * m + originalIndex (tie-breaker logic)
+
+    let currTime = 0;
+    let currIdx = 0;
+    const res: number[] = [];
+    while(minPQ.length > 0 || currIdx < withIndex.length) {
+
+        while(currIdx < withIndex.length && currTime >= withIndex[currIdx][0]) {
+            const [enqueueTime, processingTime, originalIdx] = withIndex[currIdx];
+            minPQ.push(originalIdx, processingTime * n + originalIdx); // tie-breaker logic
+            currIdx += 1;
+        }
+
+        if(minPQ.length === 0) {
+            currTime = withIndex[currIdx][0];
+        } else {
+            const { val: idx, prio: modifiedProcessingTime } = minPQ.pop();
+            const originalProcessingTime = tasks[idx][1]; // get the original processing time
+            currTime += originalProcessingTime;
+            res.push(idx);
+        }
+
+    }
+
     return res;
 };
 
@@ -90,7 +93,7 @@ class CustomMinPriorityQueue<T> {
             const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
             if(this.data[currIdx].prio > smallerChildPrio) {
                 this.swap(currIdx, smallerChildIdx);
-                currIdx = smallerChildIdx; 
+                currIdx = smallerChildIdx;
             } else {
                 break;
             }
