@@ -5,15 +5,15 @@ function findCriticalAndPseudoCriticalEdges(n: number, edges: number[][]): numbe
         edges[i].push(i);
     }
 
-    // 2. Sort by weight
-    edges.sort((a, b) => a[2] - b[2]); 
+    // 2. sort by weight
+    edges.sort((a, b) => a[2] - b[2]);
 
     // 3. Calculate mstCost
     const uf = new UnionFind(n);
     let mstCost = 0;
     let edgesUsed = 0;
-    for(const [a, b, weight] of edges) {
-        if(uf.union(a, b) === true) {
+    for(const [src, dst, weight] of edges) {
+        if(uf.union(src, dst) === true) {
             mstCost += weight;
             edgesUsed += 1;
             if(edgesUsed === n - 1) {
@@ -22,17 +22,17 @@ function findCriticalAndPseudoCriticalEdges(n: number, edges: number[][]): numbe
         }
     }
 
-    // 4. Brute Force
+    // 4. Find crit and pseduo edges
     const crit: number[] = [];
-    const pseu: number[] = [];
-    for(const [currA, currB, currWeight, currIdx] of edges) {
-        // 4.1. Skip current edge
+    const pseudo: number[] = [];
+    for(const [currSrc, currDst, currWeight, currIdx] of edges) {
+        // 4.1 Skip current edge (using idx)
         const ufSkip = new UnionFind(n);
         let skipCost = 0;
         let skipEdgesUsed = 0;
-        for(const [aS, bS, weightS, idxS] of edges) {
-            if(idxS !== currIdx && ufSkip.union(aS, bS) === true) {
-                skipCost += weightS;
+        for(const [srcX, dstX, weightX, idxX] of edges) {
+            if(idxX !== currIdx && ufSkip.union(srcX, dstX) === true) {
+                skipCost += weightX;
                 skipEdgesUsed += 1;
                 if(skipEdgesUsed === n - 1) {
                     break;
@@ -41,17 +41,17 @@ function findCriticalAndPseudoCriticalEdges(n: number, edges: number[][]): numbe
         }
         if(skipEdgesUsed !== n - 1 || skipCost > mstCost) {
             crit.push(currIdx);
-            continue; // skip the pseudo-critical check for edges that are already identified as critical
+            continue;
         }
 
-        // 4.2. Force current edge
+        // 4.2 Force current edge
         const ufForce = new UnionFind(n);
-        ufForce.union(currA, currB);
+        ufForce.union(currSrc, currDst);
         let forceCost = currWeight;
         let forceEdgesUsed = 1;
-        for(const [aF, bF, weightF, idxF] of edges) {
-            if(ufForce.union(aF, bF) === true) {
-                forceCost += weightF;
+        for(const [srcY, dstY, weightY] of edges) {
+            if(ufForce.union(srcY, dstY) === true) {
+                forceCost += weightY;
                 forceEdgesUsed += 1;
                 if(forceEdgesUsed === n - 1) {
                     break;
@@ -59,10 +59,12 @@ function findCriticalAndPseudoCriticalEdges(n: number, edges: number[][]): numbe
             }
         }
         if(forceCost === mstCost) {
-            pseu.push(currIdx);
+            pseudo.push(currIdx);
         }
     }
-    return [crit, pseu];
+
+    return [crit, pseudo];
+
 };
 
 class UnionFind {
@@ -88,7 +90,7 @@ class UnionFind {
     union(x: number, y: number): boolean {
         const rootX = this.find(x);
         const rootY = this.find(y);
-        if(rootX == rootY) {
+        if(rootX === rootY) {
             return false;
         } else {
             if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
@@ -96,7 +98,7 @@ class UnionFind {
                 this.sizes.set(rootX, this.sizes.get(rootX) + this.sizes.get(rootY));
             } else {
                 this.roots.set(rootX, rootY);
-                this.sizes.set(rootY, this.sizes.get(rootY) + this.sizes.get(rootX));
+                this.sizes.set(rootY, this.sizes.get(rootY) + this.sizes.get(rootY));
             }
             this.numComponents -= 1;
             return true;
