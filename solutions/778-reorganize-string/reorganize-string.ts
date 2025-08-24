@@ -1,44 +1,40 @@
 function reorganizeString(s: string): string {
-    // frequency count map
     const freqMap = new Map<string, number>();
     for(let i = 0; i < s.length; i += 1) {
         freqMap.set(s[i], (freqMap.get(s[i]) || 0) + 1);
     }
 
-    // priority queue
     const maxPQ = new CustomMaxPriorityQueue<string>();
     for(const [char, count] of freqMap.entries()) {
         maxPQ.push(char, count);
     }
 
-    let res: string[] = [];
+    const res: string[] = [];
     while(maxPQ.length >= 2) {
-        let {val: topChar, prio: topCount} = maxPQ.pop();
-        let {val: nextChar, prio: nextCount} = maxPQ.pop();
+        let { val: topChar, prio: topCount } = maxPQ.pop();
+        let { val: nextChar, prio: nextCount } = maxPQ.pop();
         res.push(topChar);
-        res.push(nextChar);
         topCount -= 1;
         if(topCount > 0) {
             maxPQ.push(topChar, topCount);
         }
+        res.push(nextChar);
         nextCount -= 1;
         if(nextCount > 0) {
             maxPQ.push(nextChar, nextCount);
         }
     }
-    
     if(maxPQ.length === 0) {
         return res.join("");
     } else {
-        const {val: char, prio: count} = maxPQ.pop();
-        if(count > 1 || char === res[res.length - 1]) {
+        if(maxPQ.top() > 1) {
             return "";
         } else {
-            res.push(char);
+            const { val: topChar } = maxPQ.pop();
+            res.push(topChar);
             return res.join("");
         }
     }
-
 };
 
 class PriorityQueueNode<T> {
