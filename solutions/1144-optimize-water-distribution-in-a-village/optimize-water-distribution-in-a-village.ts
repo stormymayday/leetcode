@@ -1,39 +1,30 @@
 function minCostToSupplyWater(n: number, wells: number[], pipes: number[][]): number {
 
-    // Create a copy of pipes to avoid mutating the original array
-    const edges = [...pipes];
-
-    // Add virtual vertex 0 and its edges (well costs)
+    // 1. add virtual index and it's edges
     for(let i = 0; i < wells.length; i += 1) {
-        const src = 0;
-        const dst = i + 1;
-        const weight = wells[i];
-        edges.push([src, dst, weight]);
+        pipes.push([0, i + 1, wells[i]]);
     }
 
-    // Create and Adjacency List
-    const adjList = new Map<number, [number, number][]>(); // src -> [dst, weight]
-    for(let i = 0; i < n + 1; i += 1) {
+    // 2. create a weighted Adjacency List
+    const adjList = new Map<number, [number, number][]>(); // src -> [[dst, weight], ...]
+    for(let i = 0; i <= n; i += 1) {
         adjList.set(i, []);
     }
-    for(const edge of edges) {
-        const [src, dst, weight] = edge;
+    for(const [src, dst, weight] of pipes) {
         adjList.get(src).push([dst, weight]);
         adjList.get(dst).push([src, weight]);
     }
 
-    // Mark first node as visited and queue it's neighbors
+    // 3. Select a node, mark it as visited, and queue-up it's neighbors
     const visited = new Set<number>();
     visited.add(0);
     const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [src, dst], prio: weight
-    for(const neighbor of adjList.get(0)) {
-        const [neighborNode, weight] = neighbor;
-        minPQ.push([0, neighborNode], weight);
+    for(const [neighbor, weight] of adjList.get(0)) {
+        minPQ.push([0, neighbor], weight);
     }
 
-    // Variables
-    let edgesUsed = 0;
     let mstCost = 0;
+    let edgesUsed = 0;
 
     while(minPQ.length > 0) {
         const { val: [src, currNode], prio: weight } = minPQ.pop();
@@ -45,20 +36,19 @@ function minCostToSupplyWater(n: number, wells: number[], pipes: number[][]): nu
         visited.add(currNode);
         mstCost += weight;
         edgesUsed += 1;
-        if(edgesUsed === n) { // including the virtual node 0
+        if(edgesUsed === n) { // plus virtual node 0
             return mstCost;
         }
 
-        for(const neighbor of adjList.get(currNode)) {
-            const [neighborNode, neighborWeight] = neighbor;
-            if(!visited.has(neighborNode)) {
-                minPQ.push([currNode, neighborNode], neighborWeight);
+        for(const [neighbor, neighborWeight] of adjList.get(currNode)) {
+            if(!visited.has(neighbor)) {
+                minPQ.push([currNode, neighbor], neighborWeight);
             }
         }
     }
 
-    return -1; // should not happend with valid input
-
+    return -1; // graph is not connected
+    
 };
 
 class PriorityQueueNode<T> {
