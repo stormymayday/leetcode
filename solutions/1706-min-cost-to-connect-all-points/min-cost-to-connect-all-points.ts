@@ -1,71 +1,64 @@
 function minCostConnectPoints(points: number[][]): number {
-    
-    // Edge Case
+
     if(points.length === 1) {
         return 0;
     }
 
     const n = points.length;
 
-    // Weighted Edge List
-    const edges:[number, number, number][] = []; // [src, dst, weight]
+    // 1. Create a weighted edge list
+    const edges: [number, number, number][] = []; // [[src, dst, weight], [src, dst, weight]];
     for(let i = 0; i < points.length - 1; i += 1) {
         for(let j = i + 1; j < points.length; j += 1) {
-            const src = i;
-            const dst = j;
             const weight = Math.abs(points[i][0] - points[j][0]) + Math.abs(points[i][1] - points[j][1]);
-            edges.push([src, dst, weight]);
+            edges.push([i, j, weight]);
         }
     }
 
-    // Weighted Adjacency List
-    const adjList = new Map<number, [number, number][]>(); // src -> [dst, weight]
+    // 2. Create a wieghted adjList
+    const adjList = new Map<number, [number, number][]>(); // src -> [[dst, weight], [dst, weight]]
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, []);
     }
-    for(const edge of edges) {
-        const [src, dst, weight] = edge;
+    for(const [src, dst, weight] of edges) {
         adjList.get(src).push([dst, weight]);
         adjList.get(dst).push([src, weight]);
     }
-
-    // Priority Queue
-    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [src, dst], prio: weight
-
-    // Mark first node (0) visited and queue up it's neighbors
+    
+    // 3. Select a node, mark it as visited, queue up it's neighbors
     const visited = new Set<number>();
     visited.add(0);
-    for(const neighbor of adjList.get(0)) {
-        const [neighborNode, weight] = neighbor;
-        minPQ.push([0, neighborNode], weight);
+    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [src, dst], prio: weight
+    for(const [neighbor, weight] of adjList.get(0)) {
+        minPQ.push([0, neighbor], weight);
     }
 
-    const mst: [number, number][] = [];
     let mstCost = 0;
+    let edgesUsed = 0;
 
     while(minPQ.length > 0) {
-        const {val: [originNode, currNode], prio: weight} = minPQ.pop();
+        const { val: [src, currNode], prio: weight } = minPQ.pop();
 
         if(visited.has(currNode)) {
             continue;
         }
 
         visited.add(currNode);
-        mst.push([originNode, currNode]);
         mstCost += weight;
-        if(mst.length === n - 1) {
+        edgesUsed += 1;
+        if(edgesUsed === n - 1) {
             return mstCost;
         }
 
-        for(const neighbor of adjList.get(currNode)) {
-            const [neighborNode, neighborWeight] = neighbor;
+        for(const [neighborNode, neighborWeight] of adjList.get(currNode)) {
             if(!visited.has(neighborNode)) {
                 minPQ.push([currNode, neighborNode], neighborWeight);
             }
         }
+
     }
-    
-    return -1; // graph is not connected (should not happen here)
+
+    return -1; // graph is not connected / cycles
 
 };
 
