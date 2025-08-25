@@ -20,23 +20,23 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
 
         const { val: [currNode, edgesUsed], prio: currCost } = minPQ.pop();
 
+        // The first time we visited target node, it's guaranteed to have lowest cost
+        if(currNode === dst) {
+            return currCost;
+        }
+
         // If node has been visited AND it took less edges last time, skip
-        if(visited.has(currNode) && visited.get(currNode) <= edgesUsed || edgesUsed > k + 1) {
+        if(visited.has(currNode) && visited.get(currNode) <= edgesUsed) {
             continue;
         }
 
         // Mark current node visited and how many edges was used
         visited.set(currNode, edgesUsed);
 
-        // The first time we visited target node, it's guaranteed to have lowest cost
-        if(currNode === dst) {
-            return currCost;
-        }
-
         // We can use no more than k + 1 edges
-        // if(edgesUsed > k + 1) {
-        //     continue;
-        // }
+        if(edgesUsed > k) {
+            continue;
+        }
 
         // Otherwise, visit neighbors
         for(const [neighbor, neighborCost] of adjList.get(currNode)) {
