@@ -25,7 +25,7 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
             return currCost;
         }
 
-        if((visited.has(currNode) && visited.get(currNode) <= currEdgesUsed) || currEdgesUsed >= k + 1) {
+        if((visited.has(currNode) && visited.get(currNode) <= currEdgesUsed) || currEdgesUsed > k) {
             continue;
         }
 
