@@ -20,22 +20,23 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
         
         const { val: [currNode, currEdgesUsed ], prio: currCost } = minPQ.pop();
 
-        // First time we visit the dst is guaranteed to be shortest
+        // First time we visit the destination is guaranteed to be shortest
         if(currNode === dst) {
             return currCost;
         }
 
-        if((visited.has(currNode) && visited.get(currNode) <= currEdgesUsed) || currEdgesUsed > k) {
+        if(visited.has(currNode) && visited.get(currNode) <= currEdgesUsed) {
             continue;
         }
 
         // Mark currNode as visited
         visited.set(currNode, currEdgesUsed);
 
-        // if(currEdgesUsed > k) {
-        //     continue;
-        // }
+        if(currEdgesUsed > k) {
+            continue;
+        }
 
+        // Explore neighbors
         for(const [neighbor, neighborCost] of adjList.get(currNode)) {
             minPQ.push([neighbor, currEdgesUsed + 1], currCost + neighborCost);
         }
