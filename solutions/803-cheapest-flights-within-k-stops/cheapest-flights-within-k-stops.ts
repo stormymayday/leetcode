@@ -11,22 +11,22 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
 
     // Initialize visited map to track minimum edges used to reach each city
     const visited = new Map<number, number>(); // node -> edgesUsed
-    
+
     // Min heap
     const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [city, edgesUsed], prio: cost
     minPQ.push([src, 0], 0); //
-    
+
     while (minPQ.length > 0) {
-        
-        const { val: [currNode, currEdgesUsed ], prio: currCost } = minPQ.pop();
+
+        const { val: [currNode, currEdgesUsed], prio: currCost } = minPQ.pop();
 
         // The first time we visit the destination is guaranteed to be the shortest
-        if(currNode === dst) {
+        if (currNode === dst) {
             return currCost;
         }
 
         // If the node has been visited AND it took less edges to get to
-        if(visited.has(currNode) && visited.get(currNode) <= currEdgesUsed) {
+        if ((visited.has(currNode) && visited.get(currNode) <= currEdgesUsed) || currEdgesUsed >= k + 1) {
             continue;
         }
 
@@ -34,16 +34,16 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
         visited.set(currNode, currEdgesUsed);
 
         // We can't use more edges (can use at most k + 1 edges)
-        if(currEdgesUsed >= k + 1) {
-            continue;
-        }
+        // if(currEdgesUsed >= k + 1) {
+        //     continue;
+        // }
 
         // Explore neighbors
-        for(const [neighbor, neighborCost] of adjList.get(currNode)) {
+        for (const [neighbor, neighborCost] of adjList.get(currNode)) {
             minPQ.push([neighbor, currEdgesUsed + 1], currCost + neighborCost);
         }
     }
-    
+
     return -1;
 };
 
@@ -69,17 +69,17 @@ class CustomMinPriorityQueue<T> {
         this.length += 1;
         let currIdx = this.length - 1;
         let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx].prio < this.data[parentIdx].prio) {
+        while (currIdx > 0 && this.data[currIdx].prio < this.data[parentIdx].prio) {
             this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
             parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
     pop(): PriorityQueueNode<T> | null {
-        if(this.length === 0) {
+        if (this.length === 0) {
             return null;
         }
-        if(this.length === 1) {
+        if (this.length === 1) {
             this.length = 0;
             return this.data.pop();
         }
@@ -91,16 +91,16 @@ class CustomMinPriorityQueue<T> {
     }
     siftDown(idx: number): void {
         let currIdx = idx;
-        while(currIdx < this.length - 1) {
+        while (currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
             const leftChildPrio = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx].prio;
             const rightChildPrio = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx].prio;
             const smallerChildIdx = leftChildPrio < rightChildPrio ? leftChildIdx : rightChildIdx;
             const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio > smallerChildPrio) {
+            if (this.data[currIdx].prio > smallerChildPrio) {
                 this.swap(currIdx, smallerChildIdx);
-                currIdx = smallerChildIdx; 
+                currIdx = smallerChildIdx;
             } else {
                 break;
             }
@@ -110,7 +110,7 @@ class CustomMinPriorityQueue<T> {
         this.data = [...vals];
         this.length = vals.length;
         let currIdx = Math.floor((this.length - 2) / 2);
-        while(currIdx >= 0) {
+        while (currIdx >= 0) {
             this.siftDown(currIdx);
             currIdx -= 1;
         }
