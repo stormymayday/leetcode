@@ -26,7 +26,7 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
         }
 
         // If node has been visited AND it took less edges last time, skip
-        if(visited.has(currNode) && visited.get(currNode) <= edgesUsed) {
+        if(visited.has(currNode) && visited.get(currNode) <= edgesUsed || edgesUsed > k) {
             continue;
         }
 
@@ -34,13 +34,15 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
         visited.set(currNode, edgesUsed);
 
         // We can use no more than k + 1 edges
-        if(edgesUsed > k) {
-            continue;
-        }
+        // if(edgesUsed > k) {
+        //     continue;
+        // }
 
         // Otherwise, visit neighbors
         for(const [neighbor, neighborCost] of adjList.get(currNode)) {
-            minPQ.push([neighbor, edgesUsed + 1], currCost + neighborCost);
+            // if(!visited.has(neighbor) && edgesUsed < k + 1) {
+                minPQ.push([neighbor, edgesUsed + 1], currCost + neighborCost);
+            //  }
         }
 
     }
