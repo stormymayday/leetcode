@@ -1,122 +1,53 @@
 function findCheapestPrice(n: number, flights: number[][], src: number, dst: number, k: number): number {
-    // 1. Build a weighted adjacency list
+    // 1. Create a weighted adjacency list
     const adjList = new Map<number, [number, number][]>(); // src -> [[dst, cost], ...]
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, []);
     }
-    for(const [src, dst, cost] of flights) {
-        adjList.get(src).push([dst, cost]);
+    for(const [a, b, cost] of flights) {
+        adjList.get(a).push([b, cost]);
     }
 
-    // 2. Initialze a priority queue with the source node
-    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [node, stops], prio: cost
-    minPQ.push([src, 0], 0);
+    // 2. Create costs array of size and and fill with Infinities
+    const costs: number[] = new Array(n).fill(Infinity);
 
-    // 3. Visited set and result
-    const visited = new Set<string>(); // key is a string `${node},${steps}`
+    // 3. Set up a queue and enqueue source node with cost of 0
+    const queue: [number, number][] = [[src, 0]];
 
-    // 4. Dijkstra's
-    while(minPQ.length > 0) {
-        const { val: [currNode, currSteps], prio: currCost } = minPQ.pop();
-        
-        // 1. Check if already visited this (node, steps) combination
-        const key = `${currNode},${currSteps}`;
-        if (visited.has(key)) {
-            continue;
-        }
-        visited.add(key);
-        
-        // 2. Check if we reached destination
-        if (currNode === dst) {
-            return currCost; // Found the answer!
-        }
-        
-        // 3. Check if we can still make more flights
-        if (currSteps >= k + 1) continue; // Used all allowed stops
-        
-        // 4. Explore neighbors
-        for (const [neighborNode, neighborCost] of adjList.get(currNode)) {
-            minPQ.push([neighborNode, currSteps + 1], currCost + neighborCost);
-        }
-    }
+    // 4. Create stops variable and set to 0
+    let stops = 0;
 
-    return -1; // No path found
-};
+    // 5. Run BFS until queue is not empty AND stops <= k
+    while(queue.length > 0 && stops <= k) {
 
-class PriorityQueueNode<T> {
-    val: T;
-    prio: number;
-    constructor(val: T, prio: number) {
-        this.val = val;
-        this.prio = prio;
-    }
-}
+        // 5.1. snapshot of the current queue size
+        const size = queue.length;
 
-class CustomMinPriorityQueue<T> {
-    private data: PriorityQueueNode<T>[];
-    public length: number;
-    constructor() {
-        this.data = [];
-        this.length = 0;
-    }
-    push(val: T, prio: number): void {
-        const newNode = new PriorityQueueNode<T>(val, prio);
-        this.data.push(newNode);
-        this.length += 1;
-        let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx].prio < this.data[parentIdx].prio) {
-            this.swap(currIdx, parentIdx);
-            currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
-        }
-    }
-    pop(): PriorityQueueNode<T> | null {
-        if(this.length === 0) {
-            return null;
-        }
-        if(this.length === 1) {
-            this.length = 0;
-            return this.data.pop();
-        }
-        const root = this.data[0];
-        this.data[0] = this.data.pop();
-        this.length -= 1;
-        this.siftDown(0);
-        return root;
-    }
-    siftDown(idx: number): void {
-        let currIdx = idx;
-        while(currIdx < this.length - 1) {
-            const leftChildIdx = currIdx * 2 + 1;
-            const rightChildIdx = currIdx * 2 + 2;
-            const leftChildPrio = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx].prio;
-            const rightChildPrio = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx].prio;
-            const smallerChildIdx = leftChildPrio < rightChildPrio ? leftChildIdx : rightChildIdx;
-            const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio > smallerChildPrio) {
-                this.swap(currIdx, smallerChildIdx);
-                currIdx = smallerChildIdx; 
-            } else {
-                break;
+        // 5.2. process all nodes on the current level
+        for(let i = 0; i < size; i += 1) {
+
+            const [currNode, currCost] = queue.shift();
+            
+            // 5.3 Iterate over all neighbors of current node
+            for(const [neighborNode, neighborCost] of adjList.get(currNode)) {
+                
+                // 5.4. Calculate new cost
+                const newCost = currCost + neighborCost;
+
+                // 5.5. If we found a cheaper path to neighbor, update and add to queue
+                if(newCost < costs[neighborNode]) {
+                    costs[neighborNode] = newCost;
+                    queue.push([neighborNode, newCost]);
+                }
+
             }
+
         }
+
+        // After processing all nodes at current level, increment stops
+        stops++;
+
     }
-    heapify(vals: PriorityQueueNode<T>[]): void {
-        this.data = [...vals];
-        this.length = vals.length;
-        let currIdx = Math.floor((this.length - 2) / 2);
-        while(currIdx >= 0) {
-            this.siftDown(currIdx);
-            currIdx -= 1;
-        }
-    }
-    top(): number | null {
-        return this.length > 0 ? this.data[0].prio : null;
-    }
-    swap(idx1: number, idx2: number): void {
-        const temp = this.data[idx1];
-        this.data[idx1] = this.data[idx2];
-        this.data[idx2] = temp;
-    }
-}
+
+    return costs[dst] === Infinity ? -1 : costs[dst];
+};
