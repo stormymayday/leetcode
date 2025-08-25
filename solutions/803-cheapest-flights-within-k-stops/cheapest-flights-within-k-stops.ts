@@ -30,11 +30,11 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
             continue;
         }
 
-        // Mark currNode as visited
+        // Mark currNode as visited with current number of edges used
         visited.set(currNode, currEdgesUsed);
 
-        // We can't use more edges
-        if(currEdgesUsed > k) {
+        // We can't use more edges (can use at most k + 1 edges)
+        if(currEdgesUsed >= k + 1) {
             continue;
         }
 
