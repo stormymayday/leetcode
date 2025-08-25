@@ -26,7 +26,7 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
         }
 
         // If node has been visited AND it took less edges last time, skip
-        if(visited.has(currNode) && visited.get(currNode) <= edgesUsed || edgesUsed > k) {
+        if(visited.has(currNode) && visited.get(currNode) <= edgesUsed || edgesUsed >= k + 1) {
             continue;
         }
 
