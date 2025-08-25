@@ -10,32 +10,34 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
     }
 
     // Initialize visited map to track minimum edges used to reach each city
-    const visited = new Map<number, number>(); // node -> edges
+    const visited = new Map<number, number>(); // node -> edgesUsed
     
     // Min heap
-    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [city, edges], prio: cost
-    minPQ.push([src, 0], 0);
+    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [city, edgesUsed], prio: cost
+    minPQ.push([src, 0], 0); //
     
     while (minPQ.length > 0) {
-        const {val: [currNode, currEdges], prio: currCost} = minPQ.pop();
         
-        if (currNode === dst) {
+        const { val: [currNode, currEdgesUsed ], prio: currCost } = minPQ.pop();
+
+        // First time we visit the dst is guaranteed to be shortest
+        if(currNode === dst) {
             return currCost;
         }
-        
-        if (visited.has(currNode) && visited.get(currNode)! <= currEdges) {
+
+        if((visited.has(currNode) && visited.get(currNode) <= currEdgesUsed) || currEdgesUsed >= k + 1) {
             continue;
         }
-        
-        visited.set(currNode, currEdges);
-        
-        if (currEdges > k) {
-            continue;
-        }
-        
-        // Explore neighbors
-        for (const [neighbor, neighborCost] of adjList.get(currNode)) {
-            minPQ.push([neighbor, currEdges + 1], currCost + neighborCost);
+
+        // Mark currNode as visited
+        visited.set(currNode, currEdgesUsed);
+
+        // if(currEdgesUsed > k) {
+        //     continue;
+        // }
+
+        for(const [neighbor, neighborCost] of adjList.get(currNode)) {
+            minPQ.push([neighbor, currEdgesUsed + 1], currCost + neighborCost);
         }
     }
     
