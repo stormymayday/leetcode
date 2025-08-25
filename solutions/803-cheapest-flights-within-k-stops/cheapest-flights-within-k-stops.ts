@@ -32,7 +32,7 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
         // Mark currNode as visited
         visited.set(currNode, currEdgesUsed);
 
-        if(currEdgesUsed > k) {
+        if(currEdgesUsed > k || adjList.get(currNode) === undefined) {
             continue;
         }
 
