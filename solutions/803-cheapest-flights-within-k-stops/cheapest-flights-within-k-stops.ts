@@ -17,24 +17,26 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
 
     // 4. Dijkstra's
     while(minPQ.length > 0) {
-        const { val: [currNode, steps], prio: cost } = minPQ.pop();
+        const { val: [currNode, currSteps], prio: currCost } = minPQ.pop();
         
         // 1. Check if already visited this (node, steps) combination
-        const key = `${currNode},${steps}`;
-        if (visited.has(key)) continue;
+        const key = `${currNode},${currSteps}`;
+        if (visited.has(key)) {
+            continue;
+        }
         visited.add(key);
         
         // 2. Check if we reached destination
         if (currNode === dst) {
-            return cost; // Found the answer!
+            return currCost; // Found the answer!
         }
         
         // 3. Check if we can still make more flights
-        if (steps >= k + 1) continue; // Used all allowed stops
+        if (currSteps >= k + 1) continue; // Used all allowed stops
         
         // 4. Explore neighbors
-        for (const [neighbor, flightCost] of adjList.get(currNode)!) {
-            minPQ.push([neighbor, steps + 1], cost + flightCost);
+        for (const [neighborNode, neighborCost] of adjList.get(currNode)) {
+            minPQ.push([neighborNode, currSteps + 1], currCost + neighborCost);
         }
     }
 
