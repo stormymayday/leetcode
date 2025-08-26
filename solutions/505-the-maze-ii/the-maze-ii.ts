@@ -45,33 +45,33 @@ function dijkstra(maze, start, distances) {
             [0, -1] // left
         ];
         for (const [rowDelta, colDelta] of deltas) {
-            let x = rowDelta + currRow;
-            let y = colDelta + currCol;
-            let count = 0;
+            let rowStart = rowDelta + currRow;
+            let colStart = colDelta + currCol;
+            let distance = 0;
             
             // Roll the ball until it hits a wall or boundary
             while (
-                // x >= 0 && y >= 0 && x < maze.length && y < maze[0].length && maze[x][y] === 0
                 // out of bounds check
-                0 <= x && x < ROWS &&
-                0 <= y && y < COLS &&
+                0 <= rowStart && rowStart < ROWS &&
+                0 <= colStart && colStart < COLS &&
                 // wall check
-                maze[x][y] !== 1
+                maze[rowStart][colStart] !== 1
                 ) {
-                x += rowDelta;
-                y += colDelta;
-                count += 1;
+                rowStart += rowDelta;
+                colStart += colDelta;
+                distance += 1;
             }
             
-            // Step back to the last valid position (before hitting wall/boundary)
-            const stopRow = x - rowDelta;
-            const stopCol = y - colDelta;
+            // When the loop exits when the next position would be invalid (wall or out of bounds)
+            // Therefore, we need to step back to the last valid position
+            const rowStop = rowStart - rowDelta;
+            const colStop = colStart - colDelta;
             
             // If we found a shorter path to this stopping position
-            const newDistance = distances[currRow][currCol] + count;
-            if (newDistance < distances[stopRow][stopCol]) {
-                distances[stopRow][stopCol] = newDistance;
-                minPQ.push([stopRow, stopCol], newDistance);
+            const newDistance = distances[currRow][currCol] + distance;
+            if (newDistance < distances[rowStop][colStop]) {
+                distances[rowStop][colStop] = newDistance;
+                minPQ.push([rowStop, colStop], newDistance);
             }
         }
     }
