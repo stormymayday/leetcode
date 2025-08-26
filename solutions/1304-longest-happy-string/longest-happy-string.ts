@@ -1,5 +1,7 @@
 function longestDiverseString(a: number, b: number, c: number): string {
-    const maxPQ = new CustomMaxPriorityQueue<string>();
+
+    // 1. Initialize a max priority queue
+    const maxPQ = new CustomMaxPriorityQueue<string>(); // val: char, prio: count
     if(a > 0) {
         maxPQ.push("a", a);
     }
@@ -11,13 +13,16 @@ function longestDiverseString(a: number, b: number, c: number): string {
     }
 
     const res: string[] = [];
+
     while(maxPQ.length > 0) {
-        let {val: topChar, prio: topCount} = maxPQ.pop();
+
+        let { val: topChar, prio: topCount} = maxPQ.pop();
+
         if(res.length > 1 && res[res.length - 1] === topChar && res[res.length - 2] === topChar) {
             if(maxPQ.length === 0) {
                 break;
             } else {
-                let {val: nextChar, prio: nextCount} = maxPQ.pop();
+                let { val: nextChar, prio: nextCount } = maxPQ.pop();
                 res.push(nextChar);
                 nextCount -= 1;
                 if(nextCount > 0) {
@@ -28,11 +33,15 @@ function longestDiverseString(a: number, b: number, c: number): string {
             res.push(topChar);
             topCount -= 1;
         }
+        
         if(topCount > 0) {
             maxPQ.push(topChar, topCount);
         }
+
     }
+
     return res.join("");
+    
 };
 
 class PriorityQueueNode<T> {
