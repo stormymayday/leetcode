@@ -3,7 +3,7 @@ function shortestDistance(maze: number[][], start: number[], destination: number
     const ROWS: number = maze.length;
     const COLS: number = maze[0].length;
 
-    // Initialize distance matrix with Infinity
+    // Initialize distance 2D Array with Infinity values
     const distances: number[][] = new Array(ROWS);
     for(let i = 0; i < ROWS; i += 1) {
         distances[i] = new Array(COLS).fill(Infinity);
@@ -30,14 +30,14 @@ function dijkstra(maze, start, distances) {
     
     while (minPQ.length > 0) {
 
-        const {val: [currRow, currCol], prio: currDist } = minPQ.pop();
+        const {val: [startingRow, startingCol], prio: currDist } = minPQ.pop();
         
         // Skip if we've already found a shorter path to this position
-        if (distances[currRow][currCol] < currDist) {
+        if (distances[startingRow][startingCol] < currDist) {
             continue;
         }
         
-        // Try all four directions
+        // Explore all four directions
         const deltas = [
             [-1, 0], // up
             [0, 1], // right
@@ -45,33 +45,33 @@ function dijkstra(maze, start, distances) {
             [0, -1] // left
         ];
         for (const [rowDelta, colDelta] of deltas) {
-            let rowStart = rowDelta + currRow;
-            let colStart = colDelta + currCol;
+            let currentRow = rowDelta + startingRow;
+            let currentCol = colDelta + startingCol;
             let distance = 0;
             
             // Roll the ball until it hits a wall or boundary
             while (
                 // out of bounds check
-                0 <= rowStart && rowStart < ROWS &&
-                0 <= colStart && colStart < COLS &&
+                0 <= currentRow && currentRow < ROWS &&
+                0 <= currentCol && currentCol < COLS &&
                 // wall check
-                maze[rowStart][colStart] !== 1
+                maze[currentRow][currentCol] !== 1
                 ) {
-                rowStart += rowDelta;
-                colStart += colDelta;
+                currentRow += rowDelta;
+                currentCol += colDelta;
                 distance += 1;
             }
             
             // When the loop exits when the next position would be invalid (wall or out of bounds)
             // Therefore, we need to step back to the last valid position
-            const rowStop = rowStart - rowDelta;
-            const colStop = colStart - colDelta;
+            const endingRow = currentRow - rowDelta;
+            const endingCol = currentCol - colDelta;
             
             // If we found a shorter path to this stopping position
-            const newDistance = distances[currRow][currCol] + distance;
-            if (newDistance < distances[rowStop][colStop]) {
-                distances[rowStop][colStop] = newDistance;
-                minPQ.push([rowStop, colStop], newDistance);
+            const newDistance = distances[startingRow][startingCol] + distance;
+            if (newDistance < distances[endingRow][endingCol]) {
+                distances[endingRow][endingCol] = newDistance;
+                minPQ.push([endingRow, endingCol], newDistance);
             }
         }
     }
