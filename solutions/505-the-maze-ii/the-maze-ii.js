@@ -6,10 +6,18 @@
  * @return {number} - shortest distance, or -1 if impossible
  */
 function shortestDistance(maze, start, dest) {
-    // Initialize distance matrix with infinity (JavaScript equivalent of Integer.MAX_VALUE)
-    const distance = Array(maze.length).fill(null).map(() => 
-        Array(maze[0].length).fill(Infinity)
-    );
+
+    const ROWS = maze.length;
+    const COLS = maze[0].length;
+
+    // 1. Initialize distance matrix with infinity
+    // const distance = Array(maze.length).fill(null).map(() => 
+    //     Array(maze[0].length).fill(Infinity)
+    // );
+    const distance = new Array(ROWS);
+    for(let i = 0; i < ROWS; i += 1) {
+        distance[i] = new Array(COLS).fill(Infinity);
+    }
     
     // Set starting position distance to 0
     distance[start[0]][start[1]] = 0;
