@@ -1,80 +1,74 @@
 function shortestDistance(maze: number[][], start: number[], destination: number[]): number {
 
-    const ROWS: number = maze.length;
-    const COLS: number = maze[0].length;
+    const ROWS = maze.length;
+    const COLS = maze[0].length;
 
-    // Initialize distance 2D Array with Infinity values
+    // Creating a 2D array distances filled with Infinity values
+    // Acts as a visited set as well
     const distances: number[][] = new Array(ROWS);
     for(let i = 0; i < ROWS; i += 1) {
         distances[i] = new Array(COLS).fill(Infinity);
     }
-    
-    // Set starting position distance to 0
+
+    // Setting starting position's distance to zero
     distances[start[0]][start[1]] = 0;
-    
-    // Run Dijkstra's algorithm
-    dijkstra(maze, start, distances);
-    
-    // Return result: -1 if unreachable, otherwise the shortest distance
-    return distances[destination[0]][destination[1]] === Infinity ? -1 : distances[destination[0]][destination[1]];
-}
 
-function dijkstra(maze, start, distances) {
-
-    const ROWS: number = maze.length;
-    const COLS: number = maze[0].length;
-    
-    // Initialize a min Priority queue with starting position and distnace of zero
-    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col] , prio: distance
+    // Dijkstra's
+    // Initalizing a min priority queue
+    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col], prio: distance
+    // queueing up the starting position with distance of zero
     minPQ.push([start[0], start[1]], 0);
-    
-    while (minPQ.length > 0) {
+    // while priority is not empty
+    while(minPQ.length > 0) {
 
-        const {val: [startingRow, startingCol], prio: currDist } = minPQ.pop();
-        
-        // Skip if we've already found a shorter path to this position
-        if (distances[startingRow][startingCol] < currDist) {
+        // popping top element from the priority queue
+        const { val: [startingRow, startingCol], prio: currDist } = minPQ.pop();
+
+        // if existing value for this position is smaller than current, skip
+        if(distances[startingRow][startingCol] < currDist) {
             continue;
         }
-        
-        // Explore all four directions
-        const deltas = [
+
+        // Explore four directions
+        const deltas: [number, number][] = [
             [-1, 0], // up
             [0, 1], // right
             [1, 0], // down
-            [0, -1] // left
+            [0, -1], // left
         ];
-        for (const [rowDelta, colDelta] of deltas) {
+        for(const [rowDelta, colDelta] of deltas) {
             let currentRow = rowDelta + startingRow;
             let currentCol = colDelta + startingCol;
             let distance = 0;
-            
-            // Roll the ball until it hits a wall or boundary
-            while (
+            // keep rolling the ball while it hits a wall / obsticle
+            while(
                 // out of bounds check
                 0 <= currentRow && currentRow < ROWS &&
                 0 <= currentCol && currentCol < COLS &&
                 // wall check
                 maze[currentRow][currentCol] !== 1
-                ) {
+            ) {
                 currentRow += rowDelta;
                 currentCol += colDelta;
                 distance += 1;
             }
-            
-            // When the loop exits when the next position would be invalid (wall or out of bounds)
-            // Therefore, we need to step back to the last valid position
-            const endingRow = currentRow - rowDelta;
-            const endingCol = currentCol - colDelta;
-            
-            // If we found a shorter path to this stopping position
-            const newDistance = distances[startingRow][startingCol] + distance;
-            if (newDistance < distances[endingRow][endingCol]) {
-                distances[endingRow][endingCol] = newDistance;
-                minPQ.push([endingRow, endingCol], newDistance);
+
+            // Rollback row and col
+            currentRow -= rowDelta;
+            currentCol -= colDelta;
+            // distance does not need to be rolled back
+
+            // RELAXATION STEP
+            const totalDistance = currDist + distance;
+            if(distances[currentRow][currentCol] > totalDistance) {
+                distances[currentRow][currentCol] = totalDistance;
+                minPQ.push([currentRow, currentCol], totalDistance);
             }
         }
     }
+
+    return distances[destination[0]][destination[1]] === Infinity ? -1 : distances[destination[0]][destination[1]];
+
 }
 
 class PriorityQueueNode<T> {
