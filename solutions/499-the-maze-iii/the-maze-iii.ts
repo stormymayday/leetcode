@@ -1,4 +1,5 @@
 function findShortestWay(maze: number[][], ball: number[], hole: number[]): string {
+
     const ROWS = maze.length;
     const COLS = maze[0].length;
 
@@ -7,20 +8,10 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
 
     // Priority queue state: [row, col, path, lastDirection]
     type StateData = [number, number, string, number];
-    
-    // Use array with proper sorting instead of priority encoding
-    const queue: {state: StateData, distance: number}[] = [];
+    const queue: { state: StateData, distance: number }[] = [];
 
     // Initialize: starting position with empty path and no last direction
-    queue.push({state: [ball[0], ball[1], "", -1], distance: 0});
-
-    // Directions ordered lexicographically with direction IDs
-    const deltas: [number, number, string, number][] = [
-        [1, 0, 'd', 0],   // down
-        [0, -1, 'l', 1],  // left
-        [0, 1, 'r', 2],   // right
-        [-1, 0, 'u', 3]   // up
-    ];
+    queue.push({ state: [ball[0], ball[1], "", -1], distance: 0 });
 
     while (queue.length > 0) {
         // Proper lexicographic sorting
@@ -33,10 +24,9 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
 
         const { state: [startingRow, startingCol, currentPath, lastDir], distance: currDist } = queue.shift()!;
 
-        // Use position key instead of 2D array indexing
         const posKey = `${startingRow},${startingCol}`;
 
-        // Enhanced skip logic for lexicographic ordering
+        // Skip logic for lexicographic ordering
         if (bestStates.has(posKey)) {
             const existing = bestStates.get(posKey)!;
             if (existing.distance < currDist ||
@@ -54,6 +44,13 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
         }
 
         // Explore all directions
+        // Directions ordered lexicographically with direction IDs
+        const deltas: [number, number, string, number][] = [
+            [1, 0, 'd', 0],   // down
+            [0, -1, 'l', 1],  // left
+            [0, 1, 'r', 2],   // right
+            [-1, 0, 'u', 3]   // up
+        ];
         for (const [rowDelta, colDelta, dirChar, dirId] of deltas) {
             // Skip if same as last direction (can't repeat consecutive directions)
             if (dirId === lastDir) continue;
@@ -74,8 +71,8 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
                 if (currentRow === hole[0] && currentCol === hole[1]) {
                     const totalDistance = currDist + distance;
                     const newPath = currentPath + dirChar;
-                    
-                    queue.push({state: [currentRow, currentCol, newPath, dirId], distance: totalDistance});
+
+                    queue.push({ state: [currentRow, currentCol, newPath, dirId], distance: totalDistance });
                     break; // Stop rolling when we hit the hole
                 }
 
@@ -93,8 +90,8 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
 
                     const totalDistance = currDist + distance;
                     const newPath = currentPath + dirChar;
-                    
-                    queue.push({state: [currentRow, currentCol, newPath, dirId], distance: totalDistance});
+
+                    queue.push({ state: [currentRow, currentCol, newPath, dirId], distance: totalDistance });
                 }
             }
         }
