@@ -31,11 +31,7 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
 
         // If position has been visited
         if (visited.has(currentPosition)) {
-            // const existing = visited.get(currentPosition);
-            // if (existing.distance < currDist ||
-            //     (existing.distance === currDist && existing.path <= currentPath)) {
-                continue;
-            // }
+            continue;
         }
 
         // Mark current position as visited
