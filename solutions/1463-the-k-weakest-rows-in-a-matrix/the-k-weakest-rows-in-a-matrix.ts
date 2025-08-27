@@ -1,32 +1,27 @@
 function kWeakestRows(mat: number[][], k: number): number[] {
 
-    // Edge Case: 
-    const onesCount: [number, number][] = []; 
-    for(let row = 0; row < mat.length; row +=1 ) {
+    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: count
+    for (let row = 0; row < mat.length; row += 1) {
         let count = 0;
-        for(let col = 0; col < mat[0].length; col += 1) {
-            if(mat[row][col] === 1) {
+        for (let col = 0; col < mat[0].length; col += 1) {
+            if (mat[row][col] === 1) {
                 count += 1;
             } else {
                 break;
             }
         }
-        onesCount.push([row, count]);
-    }
-    
-    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: count
-    const res: number[] = [];
-    for(const [row, count] of onesCount) {
-        if(maxPQ.length < k) {
+        if (maxPQ.length < k) {
             maxPQ.push(row, count * mat.length + row);
         } else {
-            if(count * mat.length + row < maxPQ.top()) {
+            if (count * mat.length + row < maxPQ.top()) {
                 maxPQ.pop();
                 maxPQ.push(row, count * mat.length + row);
             }
         }
     }
-    while(maxPQ.length > 0) {
+
+    const res: number[] = [];
+    while (maxPQ.length > 0) {
         const { val: row } = maxPQ.pop();
         res.push(row);
     }
@@ -55,17 +50,17 @@ class CustomMaxPriorityQueue<T> {
         this.length += 1;
         let currIdx = this.length - 1;
         let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx].prio > this.data[parentIdx].prio) {
+        while (currIdx > 0 && this.data[currIdx].prio > this.data[parentIdx].prio) {
             this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
             parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
     pop(): PriorityQueueNode<T> | null {
-        if(this.length === 0) {
+        if (this.length === 0) {
             return null;
         }
-        if(this.length === 1) {
+        if (this.length === 1) {
             this.length = 0;
             return this.data.pop();
         }
@@ -77,14 +72,14 @@ class CustomMaxPriorityQueue<T> {
     }
     siftDown(idx: number): void {
         let currIdx = idx;
-        while(currIdx < this.length - 1) {
+        while (currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
             const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].prio;
             const rightChildPrio = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx].prio;
             const largerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
             const largerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio < largerChildPrio) {
+            if (this.data[currIdx].prio < largerChildPrio) {
                 this.swap(currIdx, largerChildIdx);
                 currIdx = largerChildIdx;
             } else {
@@ -96,7 +91,7 @@ class CustomMaxPriorityQueue<T> {
         this.data = [...vals];
         this.length = vals.length;
         let currIdx = Math.floor((this.length - 2) / 2);
-        while(currIdx >= 0) {
+        while (currIdx >= 0) {
             this.siftDown(currIdx);
             currIdx -= 1;
         }
