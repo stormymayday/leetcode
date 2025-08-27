@@ -1,10 +1,8 @@
 function kWeakestRows(mat: number[][], k: number): number[] {
 
-    const n = mat.length;
-
-    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: 1s count * n + row (tie-breaker)
-
-    for(let row = 0; row < mat.length; row += 1) {
+    // Edge Case: 
+    const onesCount: [number, number][] = []; 
+    for(let row = 0; row < mat.length; row +=1 ) {
         let count = 0;
         for(let col = 0; col < mat[0].length; col += 1) {
             if(mat[row][col] === 1) {
@@ -13,25 +11,26 @@ function kWeakestRows(mat: number[][], k: number): number[] {
                 break;
             }
         }
-        const priority = count * n + row;
-        // const newNode = new PriorityQueueNode<number>(row, priority);
+        onesCount.push([row, count]);
+    }
+    
+    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: row, prio: count
+    const res: number[] = [];
+    for(const [row, count] of onesCount) {
         if(maxPQ.length < k) {
-            maxPQ.push(row, priority);
+            maxPQ.push(row, count * mat.length + row);
         } else {
-            if(priority < maxPQ.top()) {
+            if(count * mat.length + row < maxPQ.top()) {
                 maxPQ.pop();
-                maxPQ.push(row, priority);
+                maxPQ.push(row, count * mat.length + row);
             }
         }
     }
-
-    let res: number[] = [];
     while(maxPQ.length > 0) {
-        const {val: row} = maxPQ.pop();
+        const { val: row } = maxPQ.pop();
         res.push(row);
     }
     return res.reverse();
-
 };
 
 class PriorityQueueNode<T> {
