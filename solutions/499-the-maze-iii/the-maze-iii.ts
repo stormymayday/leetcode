@@ -17,22 +17,25 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
         // Sorting with tie-breaking
         minPQ.sort((a, b) => {
             if (a.distance !== b.distance) {
-                return a.distance - b.distance; // Distance first
+                // Sort by distance
+                return a.distance - b.distance;
+            } else {
+                // Sort by path lexicographically
+                return a.state[2].localeCompare(b.state[2]); 
             }
-            return a.state[2].localeCompare(b.state[2]); // Then lexicographic path
         });
 
         const { state: [startingRow, startingCol, currentPath, lastDirChar], distance: currDist } = minPQ.shift()!;
 
         const currentPosition = `${startingRow},${startingCol}`;
 
-        // Skip logic for lexicographic ordering
+        // If position has been visited
         if (visited.has(currentPosition)) {
-            const existing = visited.get(currentPosition);
-            if (existing.distance < currDist ||
-                (existing.distance === currDist && existing.path <= currentPath)) {
+            // const existing = visited.get(currentPosition);
+            // if (existing.distance < currDist ||
+            //     (existing.distance === currDist && existing.path <= currentPath)) {
                 continue;
-            }
+            // }
         }
 
         // Mark current position as visited
