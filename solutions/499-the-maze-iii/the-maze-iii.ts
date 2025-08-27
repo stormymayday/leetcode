@@ -13,7 +13,14 @@ function findShortestWay(
 
     while (heap.length > 0) {
         // Sort heap by distance, then lexicographically by path
-        heap.sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : a[1].localeCompare(b[1]));
+        heap.sort((a, b) => {
+            if (a[0] !== b[0]) {
+                return a[0] - b[0];
+            } else {
+                return a[1].localeCompare(b[1]);
+            }
+        });
+        
         const [currDist, path, row, col] = heap.shift()!;
 
         if (row === hole[0] && col === hole[1]) return path;
@@ -53,12 +60,8 @@ function findShortestWay(
                 }
             }
 
-            // const currentPosition = `${currRow},${currCol}`;
-            // if(!visited.has(currentPosition)) {
-            //     visited.add(currentPosition);
-                heap.push([currDist + distance, path + direction, currRow, currCol]);
-            // }
-            
+            heap.push([currDist + distance, path + direction, currRow, currCol]);
+
         }
     }
 
