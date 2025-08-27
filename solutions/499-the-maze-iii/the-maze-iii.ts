@@ -1,79 +1,67 @@
-function findShortestWay(maze: number[][], ball: number[], hole: number[]): string {
-
+function findShortestWay(
+    maze: number[][],
+    ball: number[],
+    hole: number[]
+): string {
     const ROWS = maze.length;
     const COLS = maze[0].length;
 
-    // [distance, directions, row, col]
+    // Helper: check if a cell is valid
+    function valid(row: number, col: number) {
+        return row >= 0 && row < ROWS && col >= 0 && col < COLS && maze[row][col] === 0;
+    }
+
+    // Helper: get neighbors from current position
+    function getNeighbors(row: number, col: number) {
+        const directions: [number, number, string][] = [
+            [0, -1, 'l'],
+            [-1, 0, 'u'],
+            [0, 1, 'r'],
+            [1, 0, 'd'],
+        ];
+        const neighbors: [number, number, number, string][] = [];
+
+        for (const [dy, dx, dir] of directions) {
+            let currRow = row;
+            let currCol = col;
+            let dist = 0;
+
+            while (valid(currRow + dy, currCol + dx)) {
+                currRow += dy;
+                currCol += dx;
+                dist++;
+                // Stop if we reached the hole
+                if (currRow === hole[0] && currCol === hole[1]) break;
+            }
+
+            neighbors.push([currRow, currCol, dist, dir]);
+        }
+
+        return neighbors;
+    }
+
+    // Min-heap: [distance, path, row, col]
     const heap: [number, string, number, number][] = [[0, "", ball[0], ball[1]]];
 
-    const visited = new Map<string, [number, string]>(); // key: `${row},${col}` -> [distance, directions]
-    visited.set(`${ball[0]},${ball[1]}`, [0, ""]);
+    // Track visited positions
+    const seen = new Set<string>();
 
-    while(heap.length > 0) {
+    while (heap.length > 0) {
+        // Sort heap by distance, then lexicographically by path
+        heap.sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : a[1].localeCompare(b[1]));
+        const [currDist, path, row, col] = heap.shift()!;
 
-        heap.sort((a, b) => {
-            if(a[0] !== b[0]) {
-                return a[0] - b[0];
-            } else {
-                return a[1].localeCompare(b[1]);
-            }
-        });
+        const key = `${row},${col}`;
+        if (seen.has(key)) continue;
 
-        const [startingDist, startingDir, startingRow, startingCol] = heap.shift() as [number, string, number, number];
+        if (row === hole[0] && col === hole[1]) return path;
 
-        if(startingRow === hole[0] && startingCol === hole[1]) {
-            return startingDir;
+        seen.add(key);
+
+        for (const [nextRow, nextCol, dist, dir] of getNeighbors(row, col)) {
+            heap.push([currDist + dist, path + dir, nextRow, nextCol]);
         }
-
-        const deltas: [number, number, string][] = [
-            [-1, 0, "u"], // up
-            [0, 1, "r"], // right
-            [1, 0, "d"], // down
-            [0, -1, "l"], // left
-        ];
-        for(const [rowDelta, colDelta, dir] of deltas) {
-
-            let currentRow: number = startingRow;
-            let currentCol: number = startingCol;
-            let currentDistance: number = startingDist;
-
-            while(
-                // out of bounds check
-                0 <= (currentRow + rowDelta) && (currentRow + rowDelta) < ROWS &&
-                0 <= (currentCol + colDelta) && (currentCol + colDelta) < COLS &&
-                // wall check
-                maze[currentRow + rowDelta][currentCol + colDelta] !== 1
-            ) {
-                // Advance
-                currentRow += rowDelta;
-                currentCol += colDelta;
-                currentDistance += 1;
-                // Hole check
-                if(currentRow === hole[0] && currentCol === hole[1]) {
-                    break;
-                }
-            }
-
-            const currentPosition = `${currentRow},${currentCol}`;
-            const newPath = startingDir + dir;
-
-            if(
-                // Position has not been visited
-                !visited.has(currentPosition) || 
-                // Visited but currentDistance is smaller than the previously recorded one
-                visited.get(currentPosition)[0] > currentDistance || 
-                // Visited and distances are equal but current direction is lexicographically smaller than the previously recorded one
-                (visited.get(currentPosition)[0] === currentDistance && visited.get(currentPosition)[1] > newPath)
-            ) {
-                visited.set(currentPosition, [currentDistance, newPath]);
-                heap.push([currentDistance, newPath, currentRow, currentCol]);
-            }
-
-        }
-        
-
     }
 
     return "impossible";
-
-};
+}
