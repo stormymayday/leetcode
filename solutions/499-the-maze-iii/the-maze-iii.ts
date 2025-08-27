@@ -68,16 +68,20 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
             ) {
                 distance += 1;
 
-                // Check for hole DURING rolling
+                // Check for the hole during rolling
                 if (currentRow === hole[0] && currentCol === hole[1]) {
+                    // calculate the exact distance to reach the hole
                     const totalDistance = currDist + distance;
                     const newPath = currentPath + dirChar;
 
+                    // Add that as a new state to explore and break.
                     minPQ.push({ state: [currentRow, currentCol, newPath, dirChar], distance: totalDistance });
-                    break; // Stop rolling when we hit the hole
+                    break;
+                    // Eventually when that state is processed, we return the successful path.
+                    
                 }
 
-                // Continue rolling
+                // Otherwise, continue rolling
                 currentRow += rowDelta;
                 currentCol += colDelta;
             }
