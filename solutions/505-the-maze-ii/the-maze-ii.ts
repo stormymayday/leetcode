@@ -28,8 +28,8 @@ function shortestDistance(maze: number[][], start: number[], destination: number
         ];
         for (const [rowDelta, colDelta] of deltas) {
 
-            let currentRow = startingRow;
-            let currentCol = startingCol;
+            let currentRow = startingRow + rowDelta;
+            let currentCol = startingCol + colDelta;
             let currentDistance = startingDistance;
 
             while (
@@ -47,7 +47,7 @@ function shortestDistance(maze: number[][], start: number[], destination: number
             // Rollback
             currentRow -= rowDelta;
             currentCol -= colDelta;
-            currentDistance -= 1;
+            // currentDistance -= 1;
             const currentPosition = `${currentRow},${currentCol}`;
 
             if(!visited.has(currentPosition) || visited.get(currentPosition) > currentDistance) {
