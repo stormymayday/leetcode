@@ -23,28 +23,28 @@ function findShortestWay(
         
         // Get neighbors from current position
         const directions: [number, number, string][] = [
-            [-1, 0, 'u'],
-            [0, 1, 'r'],
-            [1, 0, 'd'],
-            [0, -1, 'l'],
+            [-1, 0, 'u'], // up
+            [0, 1, 'r'], // right
+            [1, 0, 'd'], // down
+            [0, -1, 'l'], // left
         ];
-        for (const [dy, dx, dir] of directions) {
+        for (const [rowDelta, colDelta, direction] of directions) {
             let currRow = row;
             let currCol = col;
-            let dist = 0;
+            let distance = 0;
             
             // Roll the ball until it hits a wall or the hole
-            while (currRow + dy >= 0 && currRow + dy < ROWS && 
-                   currCol + dx >= 0 && currCol + dx < COLS && 
-                   maze[currRow + dy][currCol + dx] === 0) {
-                currRow += dy;
-                currCol += dx;
-                dist++;
+            while (currRow + rowDelta >= 0 && currRow + rowDelta < ROWS && 
+                   currCol + colDelta >= 0 && currCol + colDelta < COLS && 
+                   maze[currRow + rowDelta][currCol + colDelta] === 0) {
+                currRow += rowDelta;
+                currCol += colDelta;
+                distance++;
                 // Stop if we reached the hole
                 if (currRow === hole[0] && currCol === hole[1]) break;
             }
             
-            heap.push([currDist + dist, path + dir, currRow, currCol]);
+            heap.push([currDist + distance, path + direction, currRow, currCol]);
         }
     }
     
