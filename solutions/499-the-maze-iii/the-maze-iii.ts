@@ -3,105 +3,77 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
     const ROWS = maze.length;
     const COLS = maze[0].length;
 
-    // 1. Initialize hash map for tracking distance and path of each visited position
-    const visited = new Map<string, { distance: number, path: string }>(); // key -> `${row},${col}`
+    // [distance, directions, row, col]
+    const heap: [number, string, number, number][] = [[0, "", ball[0], ball[1]]];
 
-    // 2. Set up a priority queue where state is [row, col, path, last direction (as a character)]
-    const minPQ: { state: [number, number, string, string | null], distance: number }[] = [];
-    // Initialize starting position with empty path and no last direction
-    minPQ.push({ state: [ball[0], ball[1], "", null], distance: 0 });
+    const visited = new Map<string, [number, string]>(); // key: `${row},${col}` -> [distance, directions]
+    visited.set(`${ball[0]},${ball[1]}`, [0, ""]);
 
-    while (minPQ.length > 0) {
+    while(heap.length > 0) {
 
-        // Sort (priority queue logic)
-        minPQ.sort((a, b) => {
-            if (a.distance !== b.distance) {
-                // Sort by distance
-                return a.distance - b.distance;
+        heap.sort((a, b) => {
+            if(a[0] !== b[0]) {
+                return a[0] - b[0];
             } else {
-                // Sort by path lexicographically
-                return a.state[2].localeCompare(b.state[2]); 
+                return a[1].localeCompare(b[1]);
             }
         });
 
-        const { state: [startingRow, startingCol, currentPath, lastDirChar], distance: currDist } = minPQ.shift()!;
+        const [startingDist, startingDir, startingRow, startingCol] = heap.shift() as [number, string, number, number];
 
-        const currentPosition = `${startingRow},${startingCol}`;
-
-        // If position has been visited
-        if (visited.has(currentPosition)) {
-            continue;
+        if(startingRow === hole[0] && startingCol === hole[1]) {
+            return startingDir;
         }
 
-        // Mark current position as visited
-        visited.set(currentPosition, { distance: currDist, path: currentPath });
-
-        // Early return when hole is reached
-        if (startingRow === hole[0] && startingCol === hole[1]) {
-            return currentPath;
-        }
-
-        // Explore all directions
         const deltas: [number, number, string][] = [
-            [-1, 0, 'u'],   // up
-            [0, 1, 'r'],   // right
-            [1, 0, 'd'],   // down
-            [0, -1, 'l'],  // left
+            [-1, 0, "u"], // up
+            [0, 1, "r"], // right
+            [1, 0, "d"], // down
+            [0, -1, "l"], // left
         ];
-        for (const [rowDelta, colDelta, dirChar] of deltas) {
+        for(const [rowDelta, colDelta, dir] of deltas) {
 
-            // Skip if same as last direction (can't repeat consecutive directions)
-            if (dirChar === lastDirChar) {
-                continue;
-            }
+            let currentRow: number = startingRow;
+            let currentCol: number = startingCol;
+            let currentDistance: number = startingDist;
 
-            let currentRow = rowDelta + startingRow;
-            let currentCol = colDelta + startingCol;
-            let distance = 0;
-
-            // Rolling with hole detection
-            while (
-                // Out of bounds check
-                0 <= currentRow && currentRow < ROWS &&
-                0 <= currentCol && currentCol < COLS &&
+            while(
+                // out of bounds check
+                0 <= (currentRow + rowDelta) && (currentRow + rowDelta) < ROWS &&
+                0 <= (currentCol + colDelta) && (currentCol + colDelta) < COLS &&
                 // wall check
-                maze[currentRow][currentCol] !== 1
+                maze[currentRow + rowDelta][currentCol + colDelta] !== 1
             ) {
-                distance += 1;
-
-                // Check for the hole during rolling
-                if (currentRow === hole[0] && currentCol === hole[1]) {
-                    // calculate the exact distance to reach the hole
-                    const totalDistance = currDist + distance;
-                    const newPath = currentPath + dirChar;
-
-                    // Add that as a new state to explore and break.
-                    minPQ.push({ state: [currentRow, currentCol, newPath, dirChar], distance: totalDistance });
-                    break;
-                    // Eventually when that state is processed, we return the successful path.
-                    
-                }
-
-                // Otherwise, continue rolling
+                // Advance
                 currentRow += rowDelta;
                 currentCol += colDelta;
-            }
-
-            // Handle normal stopping (when didn't hit hole)
-            if (!(currentRow === hole[0] && currentCol === hole[1])) {
-                if (distance > 0) { // Only if we actually moved
-                    // Step back to last valid position
-                    currentRow -= rowDelta;
-                    currentCol -= colDelta;
-
-                    const totalDistance = currDist + distance;
-                    const newPath = currentPath + dirChar;
-
-                    minPQ.push({ state: [currentRow, currentCol, newPath, dirChar], distance: totalDistance });
+                currentDistance += 1;
+                // Hole check
+                if(currentRow === hole[0] && currentCol === hole[1]) {
+                    break;
                 }
             }
+
+            const currentPosition = `${currentRow},${currentCol}`;
+            const newPath = startingDir + dir;
+
+            if(
+                // Position has not been visited
+                !visited.has(currentPosition) || 
+                // Visited but currentDistance is smaller than the previously recorded one
+                visited.get(currentPosition)[0] > currentDistance || 
+                // Visited and distances are equal but current direction is lexicographically smaller than the previously recorded one
+                (visited.get(currentPosition)[0] === currentDistance && visited.get(currentPosition)[1] > newPath)
+            ) {
+                visited.set(currentPosition, [currentDistance, newPath]);
+                heap.push([currentDistance, newPath, currentRow, currentCol]);
+            }
+
         }
+        
+
     }
 
     return "impossible";
-}
+
+};
