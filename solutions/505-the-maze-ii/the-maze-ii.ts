@@ -34,21 +34,16 @@ function shortestDistance(maze: number[][], start: number[], destination: number
 
             while(
                 // Out of bounds check
-                0 <= currRow && currRow < ROWS &&
-                0 <= currCol && currCol < COLS &&
+                0 <= currRow + rowDelta && currRow + rowDelta < ROWS &&
+                0 <= currCol + colDelta && currCol + colDelta < COLS &&
                 // walls check
-                maze[currRow][currCol] !== 1
+                maze[currRow + rowDelta][currCol + colDelta] !== 1
             ) {
 
                 currRow += rowDelta;
                 currCol += colDelta;
                 currDist += 1;
             }
-
-            // Rollback
-            currRow -= rowDelta;
-            currCol -= colDelta;
-            currDist -= 1;
 
             const currPosition = `${currRow},${currCol}`;
 
