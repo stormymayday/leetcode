@@ -6,7 +6,6 @@ function shortestDistance(maze: number[][], start: number[], destination: number
     // [distance, row, col]
     const heap: [number, number, number][] = [[0, start[0], start[1]]];
 
-    // const visited = new Map<string, number>(); // key `${row},${col}` -> distance
     // Track visited positions
     const visited = new Set<string>();
 
