@@ -9,26 +9,25 @@ function findShortestWay(
     // Min-heap: [distance, path, row, col]
     const heap: [number, string, number, number][] = [[0, "", ball[0], ball[1]]];
     // Track visited positions
-    const seen = new Set<string>();
+    const visited = new Set<string>();
     
     while (heap.length > 0) {
         // Sort heap by distance, then lexicographically by path
         heap.sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : a[1].localeCompare(b[1]));
         const [currDist, path, row, col] = heap.shift()!;
+
         const key = `${row},${col}`;
-        
-        if (seen.has(key)) continue;
+        if (visited.has(key)) continue;
         if (row === hole[0] && col === hole[1]) return path;
-        seen.add(key);
+        visited.add(key);
         
-        // Get neighbors from current position (inlined)
+        // Get neighbors from current position
         const directions: [number, number, string][] = [
-            [0, -1, 'l'],
             [-1, 0, 'u'],
             [0, 1, 'r'],
             [1, 0, 'd'],
+            [0, -1, 'l'],
         ];
-        
         for (const [dy, dx, dir] of directions) {
             let currRow = row;
             let currCol = col;
