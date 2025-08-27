@@ -1,40 +1,34 @@
 function kWeakestRows(mat: number[][], k: number): number[] {
-
-    const ROWS = mat.length;
-    const COLS = mat[0].length;
-    
-    const rows: { row: number, count: number }[] = [];
-
-    for(let row = 0; row < ROWS; row += 1) {
-        let count = 0;
-        for(let col = 0; col < COLS; col += 1) {
+    // 1. Count one's in each row
+    const onesCount = new Map<number, number>();
+    for(let row = 0; row < mat.length; row += 1) {
+        if(!onesCount.has(row)) {
+            onesCount.set(row, 0);
+        }
+        for(let col = 0; col < mat[0].length; col += 1) {
             if(mat[row][col] === 1) {
-                count += 1;
-            } else {
-                break;
+                onesCount.set(row, onesCount.get(row) + 1);
             }
         }
-        rows.push({ row, count });
     }
 
-    // Sort by count, then by row index for ties
-    rows.sort((a, b) => {
-        // Try by count first
-        if(a.count !== b.count) {
-            return a.count - b.count;
-        } else {
-            // Then by row if count are equal
-            return a.row - b.row;
-        }
-    });
+    const rowCount: number[][] = [];
+    for(const [row, count] of onesCount.entries()) {
+        rowCount.push([row, count]);
+    }
+
+    // sort by count (ascending)
+    rowCount.sort((a, b) => a[1] - b[1]);
 
     const res: number[] = [];
-    let i = 0;
-    while(i < k) {
-        const { row } = rows[i];
-        res.push(row);
-        i += 1;
+    for(let i = 0; i < rowCount.length; i += 1) {
+        res.push(rowCount[i][0])
     }
+
+    while(res.length > k) {
+        res.pop();
+    }
+
     return res;
 
 };
