@@ -7,11 +7,11 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
     const visited = new Map<string, { distance: number, path: string }>();
 
     // Priority minPQ state: [row, col, path, lastDirection]
-    type StateData = [number, number, string, number];
+    type StateData = [number, number, string, string | null];
     const minPQ: { state: StateData, distance: number }[] = [];
 
     // Initialize: starting position with empty path and no last direction
-    minPQ.push({ state: [ball[0], ball[1], "", -1], distance: 0 });
+    minPQ.push({ state: [ball[0], ball[1], "", null], distance: 0 });
 
     while (minPQ.length > 0) {
 
@@ -46,16 +46,22 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
 
         // Explore all directions
         // Directions ordered lexicographically with direction IDs
-        const deltas: [number, number, string, number][] = [
-            [-1, 0, 'u', 3],   // up
-            [0, 1, 'r', 2],   // right
-            [1, 0, 'd', 0],   // down
-            [0, -1, 'l', 1],  // left
+        // const deltas: [number, number, string, number][] = [
+        //     [-1, 0, 'u', 3],   // up
+        //     [0, 1, 'r', 2],   // right
+        //     [1, 0, 'd', 0],   // down
+        //     [0, -1, 'l', 1],  // left
+        // ];
+        const deltas: [number, number, string][] = [
+            [-1, 0, 'u'],   // up
+            [0, 1, 'r'],   // right
+            [1, 0, 'd'],   // down
+            [0, -1, 'l'],  // left
         ];
-        for (const [rowDelta, colDelta, dirChar, dirId] of deltas) {
+        for (const [rowDelta, colDelta, dirChar] of deltas) {
 
             // Skip if same as last direction (can't repeat consecutive directions)
-            if (dirId === lastDir) {
+            if (dirChar === lastDir) {
                 continue;
             }
 
@@ -76,7 +82,7 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
                     const totalDistance = currDist + distance;
                     const newPath = currentPath + dirChar;
 
-                    minPQ.push({ state: [currentRow, currentCol, newPath, dirId], distance: totalDistance });
+                    minPQ.push({ state: [currentRow, currentCol, newPath, dirChar], distance: totalDistance });
                     break; // Stop rolling when we hit the hole
                 }
 
@@ -95,7 +101,7 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
                     const totalDistance = currDist + distance;
                     const newPath = currentPath + dirChar;
 
-                    minPQ.push({ state: [currentRow, currentCol, newPath, dirId], distance: totalDistance });
+                    minPQ.push({ state: [currentRow, currentCol, newPath, dirChar], distance: totalDistance });
                 }
             }
         }
