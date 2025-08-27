@@ -3,45 +3,36 @@ function shortestDistance(maze: number[][], start: number[], destination: number
     const ROWS = maze.length;
     const COLS = maze[0].length;
 
-    // Creating a 2D array distances filled with Infinity values
-    // Acts as a visited set as well
-    const distances: number[][] = new Array(ROWS);
-    for(let i = 0; i < ROWS; i += 1) {
-        distances[i] = new Array(COLS).fill(Infinity);
-    }
+    // [distance, row, col]
+    const heap: [number, number, number][] = [[0, start[0], start[1]]];
 
-    // Setting starting position's distance to zero
-    distances[start[0]][start[1]] = 0;
+    const visited = new Map<string, number>(); // key `${row},${col}` -> distance
 
-    // Dijkstra's
-    // Initalizing a min priority queue
-    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col], prio: distance
-    // queueing up the starting position with distance of zero
-    minPQ.push([start[0], start[1]], 0);
-    // while priority is not empty
-    while(minPQ.length > 0) {
+    while (heap.length > 0) {
 
-        // popping top element from the priority queue
-        const { val: [startingRow, startingCol], prio: currDist } = minPQ.pop();
+        heap.sort((a, b) => {
+            return a[0] - b[0];
+        });
 
-        // if existing value for this position is smaller than current, skip
-        if(distances[startingRow][startingCol] < currDist) {
-            continue;
+        const [startingDistance, startingRow, startingCol] = heap.shift();
+
+        if (startingRow === destination[0] && startingCol === destination[1]) {
+            return startingDistance;
         }
 
-        // Explore four directions
-        const deltas: [number, number][] = [
+        const deltas = [
             [-1, 0], // up
             [0, 1], // right
             [1, 0], // down
             [0, -1], // left
         ];
-        for(const [rowDelta, colDelta] of deltas) {
-            let currentRow = rowDelta + startingRow;
-            let currentCol = colDelta + startingCol;
-            let distance = 0;
-            // keep rolling the ball while it hits a wall / obsticle
-            while(
+        for (const [rowDelta, colDelta] of deltas) {
+
+            let currentRow = startingRow;
+            let currentCol = startingCol;
+            let currentDistance = startingDistance;
+
+            while (
                 // out of bounds check
                 0 <= currentRow && currentRow < ROWS &&
                 0 <= currentCol && currentCol < COLS &&
@@ -50,101 +41,24 @@ function shortestDistance(maze: number[][], start: number[], destination: number
             ) {
                 currentRow += rowDelta;
                 currentCol += colDelta;
-                distance += 1;
+                currentDistance += 1;
             }
 
-            // Rollback row and col
+            // Rollback
             currentRow -= rowDelta;
             currentCol -= colDelta;
-            // distance does not need to be rolled back
+            currentDistance -= 1;
+            const currentPosition = `${currentRow},${currentCol}`;
 
-            // RELAXATION STEP
-            const totalDistance = currDist + distance;
-            if(distances[currentRow][currentCol] > totalDistance) {
-                distances[currentRow][currentCol] = totalDistance;
-                minPQ.push([currentRow, currentCol], totalDistance);
+            if(!visited.has(currentPosition) || visited.get(currentPosition) > currentDistance) {
+                visited.set(currentPosition, currentDistance);
+                heap.push([currentDistance, currentRow, currentCol]);
             }
+
         }
+
     }
 
-    return distances[destination[0]][destination[1]] === Infinity ? -1 : distances[destination[0]][destination[1]];
+    return -1;
 
-}
-
-class PriorityQueueNode<T> {
-    val: T;
-    prio: number;
-    constructor(val: T, prio: number) {
-        this.val = val;
-        this.prio = prio;
-    }
-}
-
-class CustomMinPriorityQueue<T> {
-    private data: PriorityQueueNode<T>[];
-    public length: number;
-    constructor() {
-        this.data = [];
-        this.length = 0;
-    }
-    push(val: T, prio: number): void {
-        const newNode = new PriorityQueueNode<T>(val, prio);
-        this.data.push(newNode);
-        this.length += 1;
-        let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx].prio < this.data[parentIdx].prio) {
-            this.swap(currIdx, parentIdx);
-            currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
-        }
-    }
-    pop(): PriorityQueueNode<T> | null {
-        if(this.length === 0) {
-            return null;
-        }
-        if(this.length === 1) {
-            this.length = 0;
-            return this.data.pop();
-        }
-        const root = this.data[0];
-        this.data[0] = this.data.pop();
-        this.length -= 1;
-        this.siftDown(0);
-        return root;
-    }
-    siftDown(idx: number): void {
-        let currIdx = idx;
-        while(currIdx < this.length - 1) {
-            const leftChildIdx = currIdx * 2 + 1;
-            const rightChildIdx = currIdx * 2 + 2;
-            const leftChildPrio = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx].prio;
-            const rightChildPrio = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx].prio;
-            const smallerChildIdx = leftChildPrio < rightChildPrio ? leftChildIdx : rightChildIdx;
-            const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio > smallerChildPrio) {
-                this.swap(currIdx, smallerChildIdx);
-                currIdx = smallerChildIdx; 
-            } else {
-                break;
-            }
-        }
-    }
-    heapify(vals: PriorityQueueNode<T>[]): void {
-        this.data = [...vals];
-        this.length = vals.length;
-        let currIdx = Math.floor((this.length - 2) / 2);
-        while(currIdx >= 0) {
-            this.siftDown(currIdx);
-            currIdx -= 1;
-        }
-    }
-    top(): number | null {
-        return this.length > 0 ? this.data[0].prio : null;
-    }
-    swap(idx1: number, idx2: number): void {
-        const temp = this.data[idx1];
-        this.data[idx1] = this.data[idx2];
-        this.data[idx2] = temp;
-    }
-}
+};
