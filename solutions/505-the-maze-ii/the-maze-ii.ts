@@ -36,30 +36,22 @@ function shortestDistance(maze: number[][], start: number[], destination: number
         ];
         for (const [rowDelta, colDelta] of deltas) {
 
-            let currentRow = startingRow;
-            let currentCol = startingCol;
-            let currentDistance = startingDistance;
+            let currRow = startingRow;
+            let currCol = startingCol;
+            let distance = 0;
 
             while (
                 // out of bounds check
-                0 <= currentRow + rowDelta && currentRow + rowDelta < ROWS &&
-                0 <= currentCol + colDelta && currentCol + colDelta < COLS &&
+                0 <= currRow + rowDelta && currRow + rowDelta < ROWS &&
+                0 <= currCol + colDelta && currCol + colDelta < COLS &&
                 // wall check
-                maze[currentRow + rowDelta][currentCol + colDelta] !== 1
+                maze[currRow + rowDelta][currCol + colDelta] !== 1
             ) {
-                currentRow += rowDelta;
-                currentCol += colDelta;
-                currentDistance += 1;
+                currRow += rowDelta;
+                currCol += colDelta;
+                distance += 1;
             }
-
-            // const currentPosition = `${currentRow},${currentCol}`;
-
-            // if(!visited.has(currentPosition) || visited.get(currentPosition) > currentDistance) {
-            //     visited.set(currentPosition, currentDistance);
-                heap.push([currentDistance, currentRow, currentCol]);
-            // }
-
-
+            heap.push([startingDistance + distance, currRow, currCol]);
         }
 
     }
