@@ -16,14 +16,13 @@ function findShortestWay(
         heap.sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : a[1].localeCompare(b[1]));
         const [currDist, path, row, col] = heap.shift()!;
 
+        if (row === hole[0] && col === hole[1]) return path;
+
         const currentPosition = `${row},${col}`;
         if (visited.has(currentPosition)) {
             continue;
         }
         visited.add(currentPosition);
-        
-        if (row === hole[0] && col === hole[1]) return path;
-        
 
         // Get neighbors from current position
         const directions: [number, number, string][] = [
