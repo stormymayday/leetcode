@@ -6,9 +6,8 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
     // For tracking distance and path of each visited position
     const visited = new Map<string, { distance: number, path: string }>();
 
-    // Priority minPQ state: [row, col, path, lastDirection]
-    type StateData = [number, number, string, string | null];
-    const minPQ: { state: StateData, distance: number }[] = [];
+    // Priority minPQ state: [row, col, path, last direction character]
+    const minPQ: { state: [number, number, string, string | null], distance: number }[] = [];
 
     // Initialize: starting position with empty path and no last direction
     minPQ.push({ state: [ball[0], ball[1], "", null], distance: 0 });
@@ -23,7 +22,7 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
             return a.state[2].localeCompare(b.state[2]); // Then lexicographic path
         });
 
-        const { state: [startingRow, startingCol, currentPath, lastDir], distance: currDist } = minPQ.shift()!;
+        const { state: [startingRow, startingCol, currentPath, lastDirChar], distance: currDist } = minPQ.shift()!;
 
         const currentPosition = `${startingRow},${startingCol}`;
 
@@ -45,13 +44,6 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
         }
 
         // Explore all directions
-        // Directions ordered lexicographically with direction IDs
-        // const deltas: [number, number, string, number][] = [
-        //     [-1, 0, 'u', 3],   // up
-        //     [0, 1, 'r', 2],   // right
-        //     [1, 0, 'd', 0],   // down
-        //     [0, -1, 'l', 1],  // left
-        // ];
         const deltas: [number, number, string][] = [
             [-1, 0, 'u'],   // up
             [0, 1, 'r'],   // right
@@ -61,7 +53,7 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
         for (const [rowDelta, colDelta, dirChar] of deltas) {
 
             // Skip if same as last direction (can't repeat consecutive directions)
-            if (dirChar === lastDir) {
+            if (dirChar === lastDirChar) {
                 continue;
             }
 
