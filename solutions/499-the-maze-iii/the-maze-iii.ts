@@ -3,18 +3,17 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
     const ROWS = maze.length;
     const COLS = maze[0].length;
 
-    // For tracking distance and path of each visited position
-    const visited = new Map<string, { distance: number, path: string }>();
+    // 1. Initialize hash map for tracking distance and path of each visited position
+    const visited = new Map<string, { distance: number, path: string }>(); // key -> `${row},${col}`
 
-    // Priority minPQ state: [row, col, path, last direction character]
+    // 2. Set up a priority queue where state is [row, col, path, last direction (as a character)]
     const minPQ: { state: [number, number, string, string | null], distance: number }[] = [];
-
-    // Initialize: starting position with empty path and no last direction
+    // Initialize starting position with empty path and no last direction
     minPQ.push({ state: [ball[0], ball[1], "", null], distance: 0 });
 
     while (minPQ.length > 0) {
 
-        // Sorting with tie-breaking
+        // Sort (priority queue logic)
         minPQ.sort((a, b) => {
             if (a.distance !== b.distance) {
                 // Sort by distance
@@ -62,8 +61,10 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
 
             // Rolling with hole detection
             while (
+                // Out of bounds check
                 0 <= currentRow && currentRow < ROWS &&
                 0 <= currentCol && currentCol < COLS &&
+                // wall check
                 maze[currentRow][currentCol] !== 1
             ) {
                 distance += 1;
