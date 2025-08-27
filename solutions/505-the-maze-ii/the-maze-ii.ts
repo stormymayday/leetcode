@@ -6,7 +6,9 @@ function shortestDistance(maze: number[][], start: number[], destination: number
     // [distance, row, col]
     const heap: [number, number, number][] = [[0, start[0], start[1]]];
 
-    const visited = new Map<string, number>(); // key `${row},${col}` -> distance
+    // const visited = new Map<string, number>(); // key `${row},${col}` -> distance
+    // Track visited positions
+    const visited = new Set<string>();
 
     while (heap.length > 0) {
 
@@ -19,6 +21,12 @@ function shortestDistance(maze: number[][], start: number[], destination: number
         if (startingRow === destination[0] && startingCol === destination[1]) {
             return startingDistance;
         }
+
+        const currentPosition = `${startingRow},${startingCol}`;
+        if (visited.has(currentPosition)) {
+            continue;
+        }
+        visited.add(currentPosition);
 
         const deltas = [
             [-1, 0], // up
@@ -44,16 +52,12 @@ function shortestDistance(maze: number[][], start: number[], destination: number
                 currentDistance += 1;
             }
 
-            // Rollback
-            // currentRow -= rowDelta;
-            // currentCol -= colDelta;
-            // currentDistance -= 1;
-            const currentPosition = `${currentRow},${currentCol}`;
+            // const currentPosition = `${currentRow},${currentCol}`;
 
-            if(!visited.has(currentPosition) || visited.get(currentPosition) > currentDistance) {
-                visited.set(currentPosition, currentDistance);
+            // if(!visited.has(currentPosition) || visited.get(currentPosition) > currentDistance) {
+            //     visited.set(currentPosition, currentDistance);
                 heap.push([currentDistance, currentRow, currentCol]);
-            }
+            // }
 
 
         }
