@@ -16,10 +16,14 @@ function findShortestWay(
         heap.sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : a[1].localeCompare(b[1]));
         const [currDist, path, row, col] = heap.shift()!;
 
-        const key = `${row},${col}`;
-        if (visited.has(key)) continue;
+        const currentPosition = `${row},${col}`;
+        if (visited.has(currentPosition)) {
+            continue;
+        }
+        visited.add(currentPosition);
+        
         if (row === hole[0] && col === hole[1]) return path;
-        visited.add(key);
+        
 
         // Get neighbors from current position
         const directions: [number, number, string][] = [
@@ -39,7 +43,8 @@ function findShortestWay(
                 0 <= currRow + rowDelta && currRow + rowDelta < ROWS &&
                 0 <= currCol + colDelta && currCol + colDelta < COLS &&
                 // Wall check
-                maze[currRow + rowDelta][currCol + colDelta] === 0) {
+                maze[currRow + rowDelta][currCol + colDelta] !== 1) {
+                // Advance
                 currRow += rowDelta;
                 currCol += colDelta;
                 distance++;
@@ -49,7 +54,12 @@ function findShortestWay(
                 }
             }
 
-            heap.push([currDist + distance, path + direction, currRow, currCol]);
+            // const currentPosition = `${currRow},${currCol}`;
+            // if(!visited.has(currentPosition)) {
+            //     visited.add(currentPosition);
+                heap.push([currDist + distance, path + direction, currRow, currCol]);
+            // }
+            
         }
     }
 
