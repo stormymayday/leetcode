@@ -5,139 +5,76 @@ function minCostConnectPoints(points: number[][]): number {
     }
 
     const n = points.length;
-    
-    // 1. Create a weighted edge list
-    const edges: [number, number, number][] = [];
-    for(let i = 0; i < points.length - 1; i += 1) {
-        for(let j = i + 1; j < points.length; j += 1) {
 
-            const src = i;
-            const dst = j;
+    // 1. Create weighted edge List
+    const edges: [number, number, number][] = []; // [[src, dst, weight], [src, dst, weight], ...]
+    for(let i = 0; i < n - 1; i += 1) {
+        for(let j = i + 1; j < n; j += 1) {
             const weight = Math.abs(points[i][0] - points[j][0]) + Math.abs(points[i][1] - points[j][1]);
-            edges.push([src, dst, weight]);
-
+            edges.push([i, j, weight]);
         }
     }
 
-    // 2. Create a weighted adjacency list
-    const adjList = new Map<number, [number, number][]>(); // key: src -> val: [[dst, cost], ...]
-    for(let i = 0; i < n; i += 1) {
-        adjList.set(i, []);
-    }
-    for(const [src, dst, cost] of edges) {
-        adjList.get(src).push([dst, cost]);
-        adjList.get(dst).push([src, cost]);
-    }
+    // 2. sort edges by weight
+    edges.sort((a, b) => a[2] - b[2]);
 
-    // 3. Pick a starting node, mark it as visited, queue up it's neighbors
-    const visited = new Set<number>();
-    visited.add(0);
-    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [src, dst], prio: cost
-    for(const [neighbor, cost] of adjList.get(0)) {
-        minPQ.push([0, neighbor], cost);
-    }
-
-    // 4. Perform Prim's
+    const uf = new UnionFind(n);
     let mstCost = 0;
     let edgesUsed = 0;
-    while(minPQ.length > 0) {
-
-        const { val: [src, currNode], prio: cost } = minPQ.pop();
-
-        if(visited.has(currNode)) {
-            continue;
-        }
-        visited.add(currNode);
-        mstCost += cost;
-        edgesUsed += 1;
-        if(edgesUsed === n - 1) {
-            return mstCost;
-        }
-
-        for(const [neighbor, neighborCost] of adjList.get(currNode)) {
-            if(!visited.has(neighbor)) {
-                minPQ.push([currNode, neighbor], neighborCost);
+    for(const [src, dst, weight] of edges) {
+        if(uf.union(src, dst) === true) {
+            mstCost += weight;
+            edgesUsed += 1;
+            if(edgesUsed === n - 1) {
+                return mstCost;
             }
         }
     }
-    return -1;
-
+    return -1; // graph is not connected or has cycles
 };
 
-class PriorityQueueNode<T> {
-    val: T;
-    prio: number;
-    constructor(val: T, prio: number) {
-        this.val = val;
-        this.prio = prio;
-    }
-}
 
-class CustomMinPriorityQueue<T> {
-    private data: PriorityQueueNode<T>[];
-    public length: number;
-    constructor() {
-        this.data = [];
-        this.length = 0;
-    }
-    push(val: T, prio: number): void {
-        const newNode = new PriorityQueueNode<T>(val, prio);
-        this.data.push(newNode);
-        this.length += 1;
-        let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx].prio < this.data[parentIdx].prio) {
-            this.swap(currIdx, parentIdx);
-            currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
+class UnionFind {
+    roots: Map<number, number>;
+    sizes: Map<number, number>;
+    numComponents: number;
+    constructor(n: number) {
+        this.roots = new Map();
+        this.sizes = new Map();
+        this.numComponents = n;
+        for(let i = 0; i < n; i += 1) {
+            this.roots.set(i, i);
+            this.sizes.set(i, 1);
         }
     }
-    pop(): PriorityQueueNode<T> | null {
-        if(this.length === 0) {
-            return null;
+    find(x: number): number {
+        const root = this.roots.get(x);
+        if(root !== x) {
+            this.roots.set(x, this.find(root));
         }
-        if(this.length === 1) {
-            this.length = 0;
-            return this.data.pop();
-        }
-        const root = this.data[0];
-        this.data[0] = this.data.pop();
-        this.length -= 1;
-        this.siftDown(0);
-        return root;
+        return this.roots.get(x);
     }
-    siftDown(idx: number): void {
-        let currIdx = idx;
-        while(currIdx < this.length - 1) {
-            const leftChildIdx = currIdx * 2 + 1;
-            const rightChildIdx = currIdx * 2 + 2;
-            const leftChildPrio = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx].prio;
-            const rightChildPrio = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx].prio;
-            const smallerChildIdx = leftChildPrio < rightChildPrio ? leftChildIdx : rightChildIdx;
-            const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio > smallerChildPrio) {
-                this.swap(currIdx, smallerChildIdx);
-                currIdx = smallerChildIdx; 
+    union(x: number, y: number): boolean {
+        const rootX = this.find(x);
+        const rootY = this.find(y);
+        if(rootX == rootY) {
+            return false;
+        } else {
+            if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
+                this.roots.set(rootY, rootX);
+                this.sizes.set(rootX, this.sizes.get(rootX) + this.sizes.get(rootY));
             } else {
-                break;
+                this.roots.set(rootX, rootY);
+                this.sizes.set(rootY, this.sizes.get(rootY) + this.sizes.get(rootX));
             }
+            this.numComponents -= 1;
+            return true;
         }
     }
-    heapify(vals: PriorityQueueNode<T>[]): void {
-        this.data = [...vals];
-        this.length = vals.length;
-        let currIdx = Math.floor((this.length - 2) / 2);
-        while(currIdx >= 0) {
-            this.siftDown(currIdx);
-            currIdx -= 1;
-        }
+    isSameComponent(x: number, y: number): boolean {
+        return this.find(x) === this.find(y);
     }
-    top(): number | null {
-        return this.length > 0 ? this.data[0].prio : null;
-    }
-    swap(idx1: number, idx2: number): void {
-        const temp = this.data[idx1];
-        this.data[idx1] = this.data[idx2];
-        this.data[idx2] = temp;
+    getNumComponents(): number {
+        return this.numComponents;
     }
 }
