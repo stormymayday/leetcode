@@ -1,26 +1,32 @@
 function minCostToSupplyWater(n: number, wells: number[], pipes: number[][]): number {
-    // Add virtual node
+    
+    // 1. Add virtual node 0
     for(let i = 0; i < wells.length; i += 1) {
         pipes.push([0, i + 1, wells[i]]);
     }
-    
-    // Sort by weight
-    pipes.sort((a, b) => a[2] - b[2]);
 
-    const uf = new UnionFind(n + 1); // plus virtual node
+    // 2. Sort pipes by cost
+    pipes.sort((a, b) => {
+        return a[2] - b[2];
+    });
+
+    // 3. Initialize Union Find
+    const uf = new UnionFind(n + 1); // extra virtual node
+
+    // 4. Perform Kruska's
     let mstCost = 0;
     let edgesUsed = 0;
-    for(const [src, dst, weight] of pipes) {
+    for(const [src, dst, cost] of pipes) {
         if(uf.union(src, dst) === true) {
-            mstCost += weight;
+            mstCost += cost;
             edgesUsed += 1;
-            if(edgesUsed === n) { // plus virtual node
+            if(edgesUsed === n) { // extra virtual node
                 return mstCost;
             }
         }
     }
-
     return -1;
+
 };
 
 class UnionFind {
