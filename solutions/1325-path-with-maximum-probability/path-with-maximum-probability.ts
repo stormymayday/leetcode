@@ -1,28 +1,25 @@
 function maxProbability(n: number, edges: number[][], succProb: number[], start_node: number, end_node: number): number {
 
-    // 1. Add weight into the edge list
-    for(let i = 0; i < edges.length; i += 1) {
-        edges[i].push(succProb[i]);
-    }
-
-    // 2. Create a weighted adjacency list
-    const adjList = new Map<number, [number, number][]>(); // key: src -> val: [[dst, cost], ...]
+    // 1. Create a weighted adjacency list
+    const adjList = new Map<number, [number, number][]>(); // src -> [[dst, prob], ...]
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, []);
     }
-    for(const [src, dst, cost] of edges) {
-        adjList.get(src).push([dst, cost]);
-        adjList.get(dst).push([src, cost]);
+    for(let i = 0; i < edges.length; i += 1) {
+        const [src, dst] = edges[i];
+        adjList.get(src).push([dst, succProb[i]]);
+        adjList.get(dst).push([src, succProb[i]]);
     }
 
-    // 3. Queue up the source node with cost of 1!
+    // 2. Set up a visited set
+    const visited = new Set<number>();
+
+    // 3. Initialize a max priority queue with souce node and probability of 1!
     const maxPQ = new CustomMaxPriorityQueue<number>(); // val: node, prio: probability
     maxPQ.push(start_node, 1);
 
     // 4. Perform Dijkstra's
-    const visited = new Set<number>();
     while(maxPQ.length > 0) {
-
         const { val: currNode, prio: currProb } = maxPQ.pop();
 
         if(currNode === end_node) {
@@ -32,6 +29,7 @@ function maxProbability(n: number, edges: number[][], succProb: number[], start_
         if(visited.has(currNode)) {
             continue;
         }
+
         visited.add(currNode);
 
         for(const [neighbor, neighborProb] of adjList.get(currNode)) {
@@ -39,11 +37,10 @@ function maxProbability(n: number, edges: number[][], succProb: number[], start_
                 maxPQ.push(neighbor, currProb * neighborProb);
             }
         }
-
     }
+    
     // there is no path from start to end
     return 0;
-    
 };
 
 class PriorityQueueNode<T> {
