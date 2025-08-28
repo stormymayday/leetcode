@@ -5,39 +5,45 @@ function minCostConnectPoints(points: number[][]): number {
     }
 
     const n = points.length;
+    
+    // 1. Create a weighted edge list
+    const edges: [number, number, number][] = [];
+    for(let i = 0; i < points.length - 1; i += 1) {
+        for(let j = i + 1; j < points.length; j += 1) {
 
-    // 1. Create weighted edge List
-    const edges: [number, number, number][] = []; // [[src, dst, weight], [src, dst, weight], ...]
-    for(let i = 0; i < n - 1; i += 1) {
-        for(let j = i + 1; j < n; j += 1) {
+            const src = i;
+            const dst = j;
             const weight = Math.abs(points[i][0] - points[j][0]) + Math.abs(points[i][1] - points[j][1]);
-            edges.push([i, j, weight]);
+            edges.push([src, dst, weight]);
+
         }
     }
 
-    // 2. sort edges by weight
+    // 2. Sort edges by cost
     edges.sort((a, b) => a[2] - b[2]);
 
+    // 3. Intialize Union Find
     const uf = new UnionFind(n);
+
+    // 4. Perform Kruskal's
     let mstCost = 0;
     let edgesUsed = 0;
-    for(const [src, dst, weight] of edges) {
+    for(const [src, dst, cost] of edges) {
         if(uf.union(src, dst) === true) {
-            mstCost += weight;
+            mstCost += cost;
             edgesUsed += 1;
             if(edgesUsed === n - 1) {
                 return mstCost;
             }
         }
     }
-    return -1; // graph is not connected or has cycles
+    return -1;
 };
 
-
 class UnionFind {
-    roots: Map<number, number>;
-    sizes: Map<number, number>;
-    numComponents: number;
+    private roots: Map<number, number>;
+    private sizes: Map<number, number>;
+    private numComponents: number;
     constructor(n: number) {
         this.roots = new Map();
         this.sizes = new Map();
@@ -57,7 +63,7 @@ class UnionFind {
     union(x: number, y: number): boolean {
         const rootX = this.find(x);
         const rootY = this.find(y);
-        if(rootX == rootY) {
+        if(rootX === rootY) {
             return false;
         } else {
             if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
