@@ -1,6 +1,7 @@
 function networkDelayTime(times: number[][], n: number, k: number): number {
+
     // 1. Create a weighted adjacency list
-    const adjList = new Map<number, [number, number][]>(); // src -> [[dst, cost], ...]
+    const adjList = new Map<number, [number, number][]>(); // key: src -> val: [[dst, cost], ...]
     for(let i = 1; i <= n; i += 1) {
         adjList.set(i, []);
     }
@@ -8,34 +9,30 @@ function networkDelayTime(times: number[][], n: number, k: number): number {
         adjList.get(src).push([dst, cost]);
     }
 
-    // 2. Initialize a priority queue with the source node k
+    // 2. Queue-up source node with cost of 0
     const minPQ = new CustomMinPriorityQueue<number>(); // val: node, prio: cost
     minPQ.push(k, 0);
 
-    // 3. Set up a visted set and result variable
-    const visited = new Set<number>();
-    let res: number = 0;
-    
-    // 4. Dijkstra's / BFS
+    // 3. Perform Dijkstra's
+    const distances = new Map<number, number>(); // key: node -> val: distance / cost
+    let maxDistance = 0;
     while(minPQ.length > 0) {
+
         const { val: currNode, prio: currCost } = minPQ.pop();
 
-        if(visited.has(currNode)) {
+        if(distances.has(currNode)) {
             continue;
         }
+        distances.set(currNode, currCost);
+        maxDistance = currCost;
 
-        visited.add(currNode);
-        res = currCost;
-
-        for(const [neighborNode, neighborCost] of adjList.get(currNode)) {
-            if(!visited.has(neighborNode)) {
-                minPQ.push(neighborNode, currCost + neighborCost);
-            }
+        for(const [neighbor, neighborCost] of adjList.get(currNode)) {
+            // if(!distances.has(neighbor)) {
+                minPQ.push(neighbor, currCost + neighborCost);
+            // }
         }
     }
-
-    // 5. Check if all nodes were reached
-    return visited.size === n ? res : -1;
+    return n === distances.size ? maxDistance : -1;
 
 };
 
@@ -92,7 +89,7 @@ class CustomMinPriorityQueue<T> {
             const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
             if(this.data[currIdx].prio > smallerChildPrio) {
                 this.swap(currIdx, smallerChildIdx);
-                currIdx = smallerChildIdx; 
+                currIdx = smallerChildIdx;
             } else {
                 break;
             }
