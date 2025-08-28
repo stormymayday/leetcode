@@ -27,9 +27,9 @@ function networkDelayTime(times: number[][], n: number, k: number): number {
         maxDistance = currCost;
 
         for(const [neighbor, neighborCost] of adjList.get(currNode)) {
-            // if(!distances.has(neighbor)) {
+            if(!distances.has(neighbor)) {
                 minPQ.push(neighbor, currCost + neighborCost);
-            // }
+            }
         }
     }
     return n === distances.size ? maxDistance : -1;
