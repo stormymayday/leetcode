@@ -3,16 +3,17 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
     const ROWS = maze.length;
     const COLS = maze[0].length;
 
-    // [distance, path, row, col]
-    const heap: [number, string, number, number][] = [[0, "", ball[0], ball[1]]];
+    // 1. Initialize a priotiy queue
+    const minPQ: [number, string, number, number][] = []; // [distance, path, row, col]
+    minPQ.push([0, "", ball[0], ball[1]]);
 
-    const visited = new Map<string, [number, string]>(); // key: `${row},${col}` -> val: [distance, path]
-    // IMPORTANT! mark ball as visited
-    visited.set(`${ball[0]},${ball[1]}`, [0, ""]);
+    // 2. Inialize visited set
+    const visited = new Set<string>();
 
-    while (heap.length > 0) {
+    // 3. Run Dijkstra's on matrix
+    while (minPQ.length > 0) {
 
-        heap.sort((a, b) => {
+        minPQ.sort((a, b) => {
             if (a[0] !== b[0]) {
                 return a[0] - b[0];
             } else {
@@ -20,11 +21,17 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
             }
         });
 
-        const [distance, path, row, col] = heap.shift();
+        const [distance, path, row, col] = minPQ.shift();
 
         if (row === hole[0] && col === hole[1]) {
             return path;
         }
+
+        const position = `${row},${col}`;
+        if (visited.has(position)) {
+            continue;
+        }
+        visited.add(position);
 
         const directions: [number, number, string][] = [
             [-1, 0, "u"], // up
@@ -46,32 +53,26 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
                 maze[currRow + rowDelta][currCol + colDelta] !== 1
             ) {
 
+                // Advance
                 currRow += rowDelta;
                 currCol += colDelta;
                 currDist += 1;
 
+                // Hole check
                 if (currRow === hole[0] && currCol === hole[1]) {
                     break;
                 }
-
             }
 
-            const currPosition = `${currRow},${currCol}`;
-            const newDist = currDist + distance;
+            const newDistance = distance + currDist;
             const newPath = path + direction;
 
-            if (
-                !visited.has(currPosition) ||
-                visited.get(currPosition)[0] > newDist ||
-                (visited.get(currPosition)[0] === newDist && visited.get(currPosition)[1] > newPath)
-            ) {
-                visited.set(currPosition, [newDist, newPath]);
-                heap.push([newDist, newPath, currRow, currCol]);
-            }
+            minPQ.push([newDistance, newPath, currRow, currCol]);
 
         }
 
     }
 
     return "impossible";
+
 };
