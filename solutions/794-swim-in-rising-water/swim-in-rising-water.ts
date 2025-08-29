@@ -2,26 +2,30 @@ function swimInWater(grid: number[][]): number {
 
     const n = grid.length;
 
-    const minPQ: [number, number, number][] = [] // [currMaxElevation, row, col]
+    // 1. Initialze a priority queue (Naive Priority Queue)
+    const minPQ: [number, number, number][] = []; // [maxElevation, row, col]
     minPQ.push([grid[0][0], 0, 0]);
+
+    // 2. Visited set
     const visited = new Set<string>();
-    // let minTime = 0;
+
+    // 3. Run Dijkstra's on matrix
     while(minPQ.length > 0) {
-        
-        // Priority Queue Immitation
+
+        // Immitating a priority queue
         minPQ.sort((a, b) => a[0] - b[0]);
 
-        const [currElevation, row, col] = minPQ.shift();
+        const [maxElevation, row, col] = minPQ.shift();
 
         if(row === n - 1 && col === n - 1) {
-            return currElevation;
+            return maxElevation;
         }
-
-        const currPosition = `${row},${col}`;
-        if(visited.has(currPosition)) {
+        
+        const position = `${row},${col}`;
+        if(visited.has(position)) {
             continue;
         }
-        visited.add(currPosition);
+        visited.add(position);
 
         const directions: [number, number][] = [
             [-1, 0], // up
@@ -30,23 +34,25 @@ function swimInWater(grid: number[][]): number {
             [0, -1], // left
         ];
         for(const [rowDelta, colDelta] of directions) {
-            const neighborRow = rowDelta + row;
-            const neighborCol = colDelta + col;
+
+            const neighborRow = row + rowDelta;
+            const neighborCol = col + colDelta;
             const neighborPosition = `${neighborRow},${neighborCol}`;
+
             if(
-                // Out of bounds check
+                // out of bounds check
                 0 <= neighborRow && neighborRow < n &&
                 0 <= neighborCol && neighborCol < n &&
                 // visited check
                 !visited.has(neighborPosition)
             ) {
 
-                const newMaxElevation = Math.max(currElevation, grid[neighborRow][neighborCol]);
+                const newMaxElevation = Math.max(maxElevation, grid[neighborRow][neighborCol]);
                 minPQ.push([newMaxElevation, neighborRow, neighborCol]);
 
             }
+
         }
     }
-    // return minTime;
-    return - 1; // just to have number return value
+    
 };
