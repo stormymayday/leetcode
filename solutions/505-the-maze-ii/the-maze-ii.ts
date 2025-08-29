@@ -52,10 +52,11 @@ function shortestDistance(maze: number[][], start: number[], destination: number
             }
 
             // At the wall now
-            minPQ.push([distance + currDist, currRow, currCol]);
-
+            const currPosition = `${currRow},${currCol}`;
+            if(!visited.has(currPosition)) {
+                minPQ.push([distance + currDist, currRow, currCol]);
+            }
         }
-
     }
 
     // ball cannot stop at destination
