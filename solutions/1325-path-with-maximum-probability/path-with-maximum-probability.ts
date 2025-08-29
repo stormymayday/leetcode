@@ -1,25 +1,26 @@
 function maxProbability(n: number, edges: number[][], succProb: number[], start_node: number, end_node: number): number {
-
-    // 1. Create a weighted adjacency list
-    const adjList = new Map<number, [number, number][]>(); // src -> [[dst, prob], ...]
+    // 1. Create a a weighted adjacency list
+    const adjList = new Map<number, [number, number][]>(); // key: src -> val: [[dst, cost], ...]
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, []);
     }
     for(let i = 0; i < edges.length; i += 1) {
         const [src, dst] = edges[i];
-        adjList.get(src).push([dst, succProb[i]]);
-        adjList.get(dst).push([src, succProb[i]]);
+        const prob = succProb[i];
+        adjList.get(src).push([dst, prob]);
+        adjList.get(dst).push([src, prob]);
     }
 
-    // 2. Set up a visited set
+    // 2. Initalize a priority queue
+    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: node, prio: prob
+    maxPQ.push(start_node, 1); // starting prob is 1
+
+    // 3. Visited set
     const visited = new Set<number>();
 
-    // 3. Initialize a max priority queue with souce node and probability of 1!
-    const maxPQ = new CustomMaxPriorityQueue<number>(); // val: node, prio: probability
-    maxPQ.push(start_node, 1);
-
-    // 4. Perform Dijkstra's
+    // 4. Run Dijkstra's
     while(maxPQ.length > 0) {
+
         const { val: currNode, prio: currProb } = maxPQ.pop();
 
         if(currNode === end_node) {
@@ -29,7 +30,6 @@ function maxProbability(n: number, edges: number[][], succProb: number[], start_
         if(visited.has(currNode)) {
             continue;
         }
-
         visited.add(currNode);
 
         for(const [neighbor, neighborProb] of adjList.get(currNode)) {
@@ -37,8 +37,9 @@ function maxProbability(n: number, edges: number[][], succProb: number[], start_
                 maxPQ.push(neighbor, currProb * neighborProb);
             }
         }
+
     }
-    
+
     // there is no path from start to end
     return 0;
 };
