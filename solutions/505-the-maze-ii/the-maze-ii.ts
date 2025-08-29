@@ -1,24 +1,28 @@
 function shortestDistance(maze: number[][], start: number[], destination: number[]): number {
-    
+
     const ROWS = maze.length;
     const COLS = maze[0].length;
 
-    // [distance, row, col]
-    const heap: [number, number, number][] = [[0, start[0], start[1]]];
+    const minPQ: [number, number, number][] = []; // [distance, row, col]
+    minPQ.push([0, start[0], start[1]]);
 
-    const visited = new Map<string, number>(); // key: `${row},${col}` -> val: distance
+    const visited = new Set<string>();
 
-    while(heap.length > 0) {
+    while(minPQ.length > 0) {
 
-        heap.sort((a, b) => {
-            return a[0] - b[0];
-        });
+        minPQ.sort((a, b) => a[0] - b[0]);
 
-        const [distance, row, col] = heap.shift();
+        const [distance, row, col] = minPQ.shift();
 
         if(row === destination[0] && col === destination[1]) {
             return distance;
         }
+
+        const position = `${row},${col}`;
+        if(visited.has(position)) {
+            continue;
+        }
+        visited.add(position);
 
         const directions: [number, number][] = [
             [-1, 0], // up
@@ -36,25 +40,24 @@ function shortestDistance(maze: number[][], start: number[], destination: number
                 // Out of bounds check
                 0 <= currRow + rowDelta && currRow + rowDelta < ROWS &&
                 0 <= currCol + colDelta && currCol + colDelta < COLS &&
-                // walls check
+                // Wall check
                 maze[currRow + rowDelta][currCol + colDelta] !== 1
             ) {
-
+                
+                // Advance
                 currRow += rowDelta;
                 currCol += colDelta;
                 currDist += 1;
+
             }
 
-            const currPosition = `${currRow},${currCol}`;
-
-            if(!visited.has(currPosition) || visited.get(currPosition) > currDist + distance) {
-                visited.set(currPosition, currDist + distance);
-                heap.push([currDist + distance, currRow, currCol]);
-            }
+            // At the wall now
+            minPQ.push([distance + currDist, currRow, currCol]);
 
         }
 
     }
 
+    // ball cannot stop at destination
     return -1;
 };
