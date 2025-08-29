@@ -10,18 +10,16 @@ function networkDelayTime(times: number[][], n: number, k: number): number {
     }
 
     // 2. Initalize a priority queue
-    const minPQ: [number, number][] = []; // [cost, node]
-    minPQ.push([0, k]);
+    const minPQ = new CustomMinPriorityQueue<number>(); // val: node, prio: cost
+    minPQ.push(k, 0);
 
     const visited = new Set<number>();
 
     // 3. Perform Dijkstra's
     let minTime = 0;
     while(minPQ.length > 0) {
-        // Immitatiing a priority queue
-        minPQ.sort((a, b) => a[0] - b[0]);
 
-        const [currCost, currNode] = minPQ.shift();
+        const { val: currNode, prio: currCost } = minPQ.pop();
 
         if(visited.has(currNode)) {
             continue;
@@ -31,7 +29,7 @@ function networkDelayTime(times: number[][], n: number, k: number): number {
 
         for(const [neighbor, neighborCost] of adjList.get(currNode)) {
             if(!visited.has(neighbor)) {
-                minPQ.push([currCost + neighborCost, neighbor]);
+                minPQ.push(neighbor, currCost + neighborCost);
             }
         }
     }
