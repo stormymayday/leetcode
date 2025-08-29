@@ -1,56 +1,50 @@
 function swimInWater(grid: number[][]): number {
 
-    const ROWS = grid.length;
-    const COLS = grid[0].length;
-    
-    // 1. Initaliza a priortiy queue with starting node (row = 0, col = 0) and it's elevation value
-    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col], prio: currMaxElevation
+    const n = grid.length;
+
+    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col], prio: elevation
     minPQ.push([0, 0], grid[0][0]);
-
-    // 2. Set up a visited set
-    const visited = new Set<string>(); // key -> `${row},${col}`
-
-    // 3. Perform Dijkstra's on a matrix
+    const visited = new Set<string>();
+    // let minTime = 0;
     while(minPQ.length > 0) {
+        const { val: [row, col], prio: currElevation} = minPQ.pop();
 
-        const { val: [row, col], prio: currMaxElevation } = minPQ.pop();
-
-        if(row === ROWS - 1 && col == COLS - 1) {
-            return currMaxElevation;
+        if(row === n - 1 && col === n - 1) {
+            return currElevation;
         }
 
-        if(visited.has(`${row},${col}`)) {
+        const currPosition = `${row},${col}`;
+        if(visited.has(currPosition)) {
             continue;
         }
+        visited.add(currPosition);
 
-        visited.add(`${row},${col}`);
-
-        const deltas: [number, number][] = [
+        const directions: [number, number][] = [
             [-1, 0], // up
             [0, 1], // right
             [1, 0], // down
-            [0, -1] // left
+            [0, -1], // left
         ];
-        for(const [rowDelta, colDelta] of deltas) {
+        for(const [rowDelta, colDelta] of directions) {
             const neighborRow = rowDelta + row;
             const neighborCol = colDelta + col;
             const neighborPosition = `${neighborRow},${neighborCol}`;
             if(
                 // Out of bounds check
-                0 <= neighborRow && neighborRow < ROWS &&
-                0 <= neighborCol && neighborCol < COLS &&
+                0 <= neighborRow && neighborRow < n &&
+                0 <= neighborCol && neighborCol < n &&
                 // visited check
                 !visited.has(neighborPosition)
             ) {
-                const neighborElevation = grid[neighborRow][neighborCol];
-                const newMaxElevation = Math.max(currMaxElevation, neighborElevation);
-                minPQ.push([neighborRow, neighborCol], newMaxElevation);
+
+                const newElevation = Math.max(currElevation, grid[neighborRow][neighborCol]);
+                minPQ.push([neighborRow, neighborCol], newElevation);
+
             }
         }
-
     }
-
-    return - 1; // should not trigger
+    // return minTime;
+    return - 1; // just to have number return value
 };
 
 class PriorityQueueNode<T> {
