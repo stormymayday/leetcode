@@ -1,52 +1,69 @@
 function minimumCost(n: number, connections: number[][]): number {
 
-    // 1. Create a weighted adjacency list
-    const adjList = new Map<number, [number, number][]>(); // key: src -> val: [[dst, cost], ...]
-    for(let i = 1; i <= n; i += 1) {
-        adjList.set(i, []);
-    }
-    for(const [src, dst, cost] of connections) {
-        adjList.get(src).push([dst, cost]);
-        adjList.get(dst).push([src, cost]);
-    }
+    // 1. Initialze a Union Find
+    const uf = new UnionFind(n);
 
-    // 2. Choose a node, mark it as visited, queue up it's neighbors
-    const visited = new Set<number>();
-    visited.add(1);
-    const minPQ: [number, number, number][] = []; // [cost, src, dst]
-    for(const [neighbor, cost] of adjList.get(1)) {
-        minPQ.push([cost, 1, neighbor]);
-    }
+    // 2. Sort edges by weight
+    connections.sort((a, b) => a[2] - b[2]);
 
-    // 3. Perform Prim's
+    // 3. Perform Kruskal's
     let mstCost = 0;
     let edgesUsed = 0;
-    while(minPQ.length > 0) {
-
-        minPQ.sort((a, b) => {
-            return a[0] - b[0];
-        });
-
-        const [cost, src, currNode] = minPQ.shift();
-        
-        if(visited.has(currNode)) {
-            continue;
-        }
-        
-        visited.add(currNode);
-        mstCost += cost;
-        edgesUsed += 1;
-        if(edgesUsed === n - 1) {
-            return mstCost;
-        }
-
-        for(const [neighbor, cost] of adjList.get(currNode)) {
-            if(!visited.has(neighbor)) {
-                minPQ.push([cost, currNode, neighbor]);
+    for(const [src, dst, cost] of connections) {
+        if(uf.union(src, dst) === true) {
+            mstCost += cost;
+            edgesUsed += 1;
+            if(edgesUsed === n - 1) {
+                return mstCost;
             }
         }
-     
     }
-    // Edge Case: mpossible to connect all the cities
+    //  it is impossible to connect all the cities
     return -1;
+    
 };
+
+class UnionFind {
+    private roots: Map<number, number>;
+    private sizes: Map<number, number>;
+    private numComponents: number;
+    constructor(n: number) {
+        this.roots = new Map();
+        this.sizes = new Map();
+        this.numComponents = n;
+        for(let i = 1; i <= n; i += 1) {
+            this.roots.set(i, i);
+            this.sizes.set(i, 1);
+        }
+    }
+    find(x: number): number {
+        const root = this.roots.get(x);
+        if(root !== x) {
+            this.roots.set(x, this.find(root));
+        }
+        return this.roots.get(x);
+    }
+    union(x: number, y: number): boolean {
+        const rootX = this.find(x);
+        const rootY = this.find(y);
+        if(rootX === rootY) {
+            return false;
+        } else {
+            if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
+                this.roots.set(rootY, rootX);
+                this.sizes.set(rootX, this.sizes.get(rootX) + this.sizes.get(rootY));
+            } else {
+                this.roots.set(rootX, rootY);
+                this.sizes.set(rootY, this.sizes.get(rootY) + this.sizes.get(rootX));
+            }
+            this.numComponents -= 1;
+            return true;
+        }
+    }
+    isSameComponent(x: number, y: number): boolean {
+        return this.find(x) === this.find(y);
+    }
+    getNumComponents(): number {
+        return this.numComponents;
+    }
+}
