@@ -62,8 +62,10 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
                 }
             }
 
-            minPQ.push([currDist + distance, path + direction, currRow, currCol]);
-
+            const currPositon = `${currRow},${currCol}`;
+            if(!visited.has(currPositon)) {
+                minPQ.push([currDist + distance, path + direction, currRow, currCol]);
+            }
         }
 
     }
