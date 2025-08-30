@@ -1,32 +1,40 @@
 function minCostToSupplyWater(n: number, wells: number[], pipes: number[][]): number {
-    // Add virtual node
+    // 1. Add virtual vertex
     for(let i = 0; i < wells.length; i += 1) {
-        pipes.push([0, i + 1, wells[i]]);
+
+        const src = 0;
+        const dst = i + 1;
+        const cost = wells[i];
+
+        pipes.push([src, dst, cost]);
+
     }
-    
-    // Sort by weight
+
+    // 2. Sort edges by weight
     pipes.sort((a, b) => a[2] - b[2]);
 
-    const uf = new UnionFind(n + 1); // plus virtual node
+    // 3. Initialize a Union Find
+    const uf = new UnionFind(n + 1);
+
+    // 4. Run Kruskal's
     let mstCost = 0;
     let edgesUsed = 0;
-    for(const [src, dst, weight] of pipes) {
+    for(const [src, dst, cost] of pipes) {
         if(uf.union(src, dst) === true) {
-            mstCost += weight;
+            mstCost += cost;
             edgesUsed += 1;
-            if(edgesUsed === n) { // plus virtual node
+            if(edgesUsed === n) {
                 return mstCost;
-            }
+            } 
         }
     }
-
     return -1;
 };
 
 class UnionFind {
-    roots: Map<number, number>;
-    sizes: Map<number, number>;
-    numComponents: number;
+    private roots: Map<number, number>;
+    private sizes: Map<number, number>;
+    private numComponents: number;
     constructor(n: number) {
         this.roots = new Map();
         this.sizes = new Map();
@@ -46,7 +54,7 @@ class UnionFind {
     union(x: number, y: number): boolean {
         const rootX = this.find(x);
         const rootY = this.find(y);
-        if(rootX === rootY) {
+        if(rootX == rootY) {
             return false;
         } else {
             if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
