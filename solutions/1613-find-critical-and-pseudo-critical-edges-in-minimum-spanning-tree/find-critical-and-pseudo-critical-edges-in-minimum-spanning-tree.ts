@@ -1,14 +1,14 @@
 function findCriticalAndPseudoCriticalEdges(n: number, edges: number[][]): number[][] {
 
-    // 1. Add original index
+    // 1. Add original indecies
     for(let i = 0; i < edges.length; i += 1) {
         edges[i].push(i);
-    }
+    } 
 
-    // 2. Sort by weight
+    // 2. Sort edges by weight
     edges.sort((a, b) => a[2] - b[2]);
 
-    // 3. Calculate mstCost using Kruskal's
+    // 3. Find mstCost
     const uf = new UnionFind(n);
     let mstCost = 0;
     let edgesUsed = 0;
@@ -22,24 +22,24 @@ function findCriticalAndPseudoCriticalEdges(n: number, edges: number[][]): numbe
         }
     }
 
-    // 4. Find Critical and Pseudo-Critical Edges
+    // 4. Find critical and pseudo paths
     const critical: number[] = [];
     const pseudo: number[] = [];
-    for(const [src, dst, cost, currIdx] of edges) {
+    for(const [src, dst, currCost, currIdx] of edges) {
         // Skip Current Edge
         const ufSkip = new UnionFind(n);
-        let mstSkipCost = 0;
+        let skipCost = 0;
         let skipEdgesUsed = 0;
         for(const [srcX, dstX, costX, idxX] of edges) {
-            if(idxX !== currIdx && ufSkip.union(srcX, dstX) == true) {
-                mstSkipCost += costX;
+            if(idxX !== currIdx && ufSkip.union(srcX, dstX) === true) {
+                skipCost += costX;
                 skipEdgesUsed += 1;
                 if(skipEdgesUsed === n - 1) {
                     break;
                 }
             }
         }
-        if(skipEdgesUsed !== n - 1 || mstSkipCost > mstCost) {
+        if(skipEdgesUsed !== n - 1 || skipCost > mstCost) {
             critical.push(currIdx);
             continue;
         }
@@ -47,23 +47,23 @@ function findCriticalAndPseudoCriticalEdges(n: number, edges: number[][]): numbe
         // Force Current Edge
         const ufForce = new UnionFind(n);
         ufForce.union(src, dst);
-        let mstForceCost = cost;
+        let forceCost = currCost;
         let forceEdgesUsed = 1;
-        for(const [srcF, dstF, costF, idxF] of edges) {
-            if(ufForce.union(srcF, dstF) == true) {
-                mstForceCost += costF;
+        for(const [srcY, dstY, costY] of edges) {
+            if(ufForce.union(srcY, dstY) === true) {
+                forceCost += costY;
                 forceEdgesUsed += 1;
                 if(forceEdgesUsed === n - 1) {
                     break;
                 }
             }
         }
-        if(mstForceCost === mstCost) {
+        if(forceCost === mstCost) {
             pseudo.push(currIdx);
         }
     }
     return [critical, pseudo];
-    
+
 };
 
 class UnionFind {
@@ -89,7 +89,7 @@ class UnionFind {
     union(x: number, y: number): boolean {
         const rootX = this.find(x);
         const rootY = this.find(y);
-        if(rootX === rootY) {
+        if(rootX == rootY) {
             return false;
         } else {
             if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
