@@ -1,17 +1,30 @@
 function carPooling(trips: number[][], capacity: number): boolean {
     
+    // 1. sort by start
     trips.sort((a, b) => a[1] - b[1]);
 
+    // 2. Naive Priority Queue
+    const minPQ: [number, number, number][] = []; // [passengers, from , to]
+
+    let currCap = 0;
     for(let i = 0; i < trips.length; i += 1) {
-        let currPassengers = trips[i][0];
-        for(let j = 0; j < i; j += 1) {
-            if(trips[j][2] > trips[i][1]) {
-                currPassengers += trips[j][0];
-            }
+
+        const [currPass, currFrom, currTo] = trips[i];
+
+        currCap += currPass;
+
+        minPQ.push([currPass, currFrom, currTo]);
+        minPQ.sort((a, b) => a[2] - b[2]); // sort by 'to'
+
+        while(minPQ.length > 0 && currFrom >= minPQ[0][2]) {
+            const [prevCap, prevFrom, prevTo] = minPQ.shift();
+            currCap -= prevCap;
         }
-        if(currPassengers > capacity) {
+
+        if(currCap > capacity) {
             return false;
         }
+
     }
 
     return true;
