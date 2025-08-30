@@ -8,7 +8,7 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
     minPQ.push([0, "", ball[0], ball[1]]);
 
     // 2. Simple visited set
-    const visited = new Set<string>();
+    const visited = new Map<string, [number, string]>(); // key: `${row},${col}` -> [distance, path]
 
     // 3. Run Dijkstra's
     while(minPQ.length > 0) {
@@ -31,7 +31,7 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
         if(visited.has(position)) {
             continue;
         }
-        visited.add(position);
+        visited.set(position, [distance, path]);
 
         const directions: [number, number, string][] = [
             [-1, 0, "u"], // up
@@ -62,8 +62,16 @@ function findShortestWay(maze: number[][], ball: number[], hole: number[]): stri
                 }
             }
 
-            const currPositon = `${currRow},${currCol}`;
-            if(!visited.has(currPositon)) {
+            const currPosition = `${currRow},${currCol}`;
+            if(
+                // position has not been visited
+                !visited.has(currPosition) ||
+                // position has been visited BUT with greater distance
+                visited.get(currPosition)[0] > currDist + distance ||
+                // position has been visited with same distane BUT via a lexographically greater path
+                (visited.get(currPosition)[0] === currDist + distance && visited.get(currPosition)[1] > path + direction)
+
+            ) {
                 minPQ.push([currDist + distance, path + direction, currRow, currCol]);
             }
         }
