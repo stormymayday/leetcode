@@ -1,7 +1,7 @@
 function findTheCity(n: number, edges: number[][], distanceThreshold: number): number {
     
     // 1. Create a weighted adjacency list
-    const adjList = new Map<number, [number, number][]>(); // src -> [[dst, cost], ...]
+    const adjList = new Map<number, [number, number][]>(); // key: src -> val: [[dst, cost], ...]
     for(let i = 0; i < n; i += 1) {
         adjList.set(i, []);
     }
@@ -10,37 +10,48 @@ function findTheCity(n: number, edges: number[][], distanceThreshold: number): n
         adjList.get(dst).push([src, cost]);
     }
 
-    // 2. Dijkstra's
-    function dijkstra(src: number): number {
-        const minPQ = new CustomMinPriorityQueue<number>(); // val: node, prio: cost / weight
-        minPQ.push(src, 0);
+    // 2. Run Dijkstra on every node and fill the hash map
+    const citiesReached = new Map<number, number>(); // key: city Index -> val: number of cities reached
+    for(let i = 0; i < n; i += 1) {
+
+        // 2.1. Set up a priority queue
+        const minPQ = new CustomMinPriorityQueue<number>(); // val: node, prio: cost
+        minPQ.push(i, 0);
+        // 2.2 Visited set
         const visited = new Set<number>();
         while(minPQ.length > 0) {
-            const { val: currNode, prio: currWeight } = minPQ.pop();
+
+            const { val: currNode, prio: currCost } = minPQ.pop();
+
             if(visited.has(currNode)) {
                 continue;
             }
+            
             visited.add(currNode);
-            for(const [neighbor, neighborWeight] of adjList.get(currNode)) {
-                if(!visited.has(neighbor) && currWeight + neighborWeight <= distanceThreshold) {
-                    minPQ.push(neighbor, currWeight + neighborWeight);
+
+            for(const [neighbor, neighborCost] of adjList.get(currNode)) {
+
+                if(!visited.has(neighbor) && currCost + neighborCost <= distanceThreshold) {
+                    minPQ.push(neighbor, currCost + neighborCost);
                 }
             }
         }
-        return visited.size - 1;
+
+        citiesReached.set(i, visited.size - 1); // not counting the source
+
     }
 
-    // 3. Run Dijkstra's on each node
-    let resultNode: number = -1;
-    let minNodesReached: number = Infinity;
-    for(let i = 0; i < n; i += 1) {
-        const nodesReached = dijkstra(i);
-        if(nodesReached <= minNodesReached) {
-            resultNode = i;
-            minNodesReached = nodesReached;
+    // 3. Get the city with smaller number of neighbors
+    let cityIndex = Infinity;
+    let neighborCount = Infinity;
+    for(const [idx, count] of citiesReached.entries()) {
+        if(count <= neighborCount) {
+            neighborCount = count;
+            cityIndex = idx;
         }
     }
-    return resultNode;
+    return cityIndex;
+
 };
 
 class PriorityQueueNode<T> {
