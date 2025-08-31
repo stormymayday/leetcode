@@ -2,22 +2,23 @@ function kthSmallest(matrix: number[][], k: number): number {
 
     const maxHeap = new MaxHeap();
 
-    for(let row = 0; row < matrix.length; row += 1) {
-        for(let col = 0; col < matrix[0].length; col += 1) {
-            const val = matrix[row][col];
-            if(maxHeap.length < k) {
-                maxHeap.push(val);
+    for (let i = 0; i < matrix.length; i += 1) {
+        for (let j = 0; j < matrix.length; j += 1) {
+
+            if (maxHeap.length < k) {
+                maxHeap.push(matrix[i][j]);
             } else {
-                if(val < maxHeap.top()) {
+                if (matrix[i][j] < maxHeap.peek()) {
                     maxHeap.pop();
-                    maxHeap.push(val);
+                    maxHeap.push(matrix[i][j]);
                 }
             }
+
         }
     }
-
-    return maxHeap.top();
     
+    return maxHeap.peek();
+
 };
 
 class MaxHeap {
@@ -83,7 +84,7 @@ class MaxHeap {
             currIdx -= 1;
         }
     }
-    top():number | null {
+    peek():number | null {
         return this.length > 0 ? this.data[0] : null;
     }
 }
