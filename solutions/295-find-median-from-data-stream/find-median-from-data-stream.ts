@@ -1,30 +1,36 @@
 class MedianFinder {
     private smallNums: MaxHeap;
-    private largeNums: MinHeap
+    private largeNums: MinHeap;
     constructor() {
         this.smallNums = new MaxHeap();
         this.largeNums = new MinHeap();
     }
 
     addNum(num: number): void {
-        // smallNums can have 1 more element than largeNums
-        // Therefore, if lengths are equal -> push to the smallNums (through largeNums)
+        // If lengths are equal push to the smallNums
         if(this.smallNums.length === this.largeNums.length) {
+            // Rebalance
             this.largeNums.push(num);
+            // Push to the smallNums as it is allowed to have 1 element more than largeNums
             this.smallNums.push(this.largeNums.pop());
-        } else {
-            // Otherwise, push to largeNums (through smallNums)
+        } 
+        // Otherwise, smallNums must already have 1 more element than largeNums
+        else {
+            // Rebalance
             this.smallNums.push(num);
+            // Push to largeNums
             this.largeNums.push(this.smallNums.pop());
         }
     }
 
     findMedian(): number {
-        // If lengths are equal median is in both
+        // If lengths are equal
         if(this.smallNums.length === this.largeNums.length) {
+            // median is in both heaps
             return (this.smallNums.top() + this.largeNums.top()) / 2;
-        } else {
-            // Otherwise, median is in the smallNums
+        } 
+        // Otherwise, it is in the smallNums
+        else {
             return this.smallNums.top();
         }
     }
