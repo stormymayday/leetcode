@@ -1,52 +1,43 @@
 function reorganizeString(s: string): string {
-    // Count character frequency
-    const frequencyCount = new Map<string, number>();
+    const freqMap = new Map<string, number>();
     for(let i = 0; i < s.length; i += 1) {
-        const char = s[i];
-        if(!frequencyCount.has(char)) {
-            frequencyCount.set(char, 0);
-        }
-        frequencyCount.set(char, frequencyCount.get(char) + 1);
+        freqMap.set(s[i], (freqMap.get(s[i]) || 0) + 1);
     }
-    
-    // Initalize priority queue
+
     const maxPQ = new CustomMaxPriorityQueue<string>();
-    for(const [char, count] of frequencyCount.entries()) {
+    for(const [char, count] of freqMap.entries()) {
         maxPQ.push(char, count);
     }
-    
-    // Main Logic
-    const result: string[] = [];
+
+    const res: string[] = [];
     while(maxPQ.length > 1) {
-        // Process top 2 chars
-        const {val: topChar, prio: topCount} = maxPQ.pop();
-        const {val: nextChar, prio: nextCount} = maxPQ.pop();
-        result.push(topChar);
-        result.push(nextChar);
-        // Put chars back with updated count
-        if(topCount - 1 > 0) {
-            maxPQ.push(topChar, topCount - 1);
+        let { val: topChar, prio: topCount } = maxPQ.pop();
+        let { val: nextChar, prio: nextCount } = maxPQ.pop();
+        res.push(topChar);
+        topCount -= 1;
+        if(topCount > 0) {
+            maxPQ.push(topChar, topCount);
         }
-        if(nextCount - 1 > 0) {
-            maxPQ.push(nextChar, nextCount - 1);
+        res.push(nextChar);
+        nextCount -= 1;
+        if(nextCount > 0) {
+            maxPQ.push(nextChar, nextCount);
         }
     }
-
-    if(maxPQ.length === 1) {
-        const {val: topChar, prio: topCount} = maxPQ.pop();
-        if(topCount !== 1 || topChar === result[result.length - 1]) {
+    if(maxPQ.length === 0) {
+        return res.join("");
+    } else {
+        if(maxPQ.top() > 1) {
             return "";
         } else {
-            result.push(topChar);
-            return result.join("");
+            const { val: topChar } = maxPQ.pop();
+            res.push(topChar);
+            return res.join("");
         }
-    } else {
-        return result.join("");
     }
-
 };
 
-class QueueNode<T> {
+class PriorityQueueNode<T> {
     val: T;
     prio: number;
     constructor(val: T, prio: number) {
@@ -56,43 +47,37 @@ class QueueNode<T> {
 }
 
 class CustomMaxPriorityQueue<T> {
-    private data: QueueNode<T>[];
+    private data: PriorityQueueNode<T>[];
     public length: number;
     constructor() {
         this.data = [];
         this.length = 0;
     }
-    push(val: T, prio: number):void {
-        const newNode = new QueueNode(val, prio);
+    push(val: T, prio: number): void {
+        const newNode = new PriorityQueueNode<T>(val, prio);
         this.data.push(newNode);
         this.length += 1;
         let currIdx = this.length - 1;
-        this.siftUp(currIdx);
-    }
-    siftUp(idx: number): void {
-        let currIdx = idx;
-        let parentIdx = Math.floor((currIdx - 1)/2);
+        let parentIdx = Math.floor((currIdx - 1) / 2);
         while(currIdx > 0 && this.data[currIdx].prio > this.data[parentIdx].prio) {
-            const temp = this.data[currIdx];
-            this.data[currIdx] = this.data[parentIdx];
-            this.data[parentIdx] = temp;
+            this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1)/2);
+            parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    pop():QueueNode<T> | null {
+    pop(): PriorityQueueNode<T> | null {
         if(this.length === 0) {
             return null;
         }
         if(this.length === 1) {
-            this.length -= 1;
+            this.length = 0;
             return this.data.pop();
         }
-        const max = this.data[0];
+        const root = this.data[0];
         this.data[0] = this.data.pop();
         this.length -= 1;
         this.siftDown(0);
-        return max;
+        return root;
     }
     siftDown(idx: number): void {
         let currIdx = idx;
@@ -101,20 +86,27 @@ class CustomMaxPriorityQueue<T> {
             const rightChildIdx = currIdx * 2 + 2;
             const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].prio;
             const rightChildPrio = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx].prio;
-            const biggerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
-            const biggerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio < biggerChildPrio) {
-                const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[biggerChildIdx];
-                this.data[biggerChildIdx] = temp;
-                currIdx = biggerChildIdx;
+            const largerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
+            const largerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
+            if(this.data[currIdx].prio < largerChildPrio) {
+                this.swap(currIdx, largerChildIdx);
+                currIdx = largerChildIdx;
             } else {
                 break;
             }
         }
     }
-    peek():number | null {
+    top(): number | null {
         return this.length > 0 ? this.data[0].prio : null;
+    }
+    heapify(values: PriorityQueueNode<T>[]): void {
+        this.data = [...values];
+        this.length = values.length;
+        let currIdx = Math.floor((this.length - 2) / 2);
+        while(currIdx >= 0) {
+            this.siftDown(currIdx);
+            currIdx -= 1;
+        }
     }
     swap(idx1: number, idx2: number): void {
         const temp = this.data[idx1];
