@@ -1,28 +1,27 @@
 function kClosest(points: number[][], k: number): number[][] {
 
-    // 1. Intialzie a max priority queue
-    const maxPQ = new CustomMaxPriorityQueue<[number, number]>();
-    for(let i = 0; i < points.length; i += 1) {
-        const [x, y] = points[i];
-        const euclideanDistance = Math.sqrt(x * x + y * y);
-        if(maxPQ.length < k) {
+    // 1. Initialize a (max) Priority Queue
+    const maxPQ = new CustomMaxPriorityQueue<[number, number]>(); // val: [x, y], prio: Euclidean distance to zero
+    for (const [x, y] of points) {
+        const euclideanDistance = Math.sqrt(Math.pow((x - 0), 2) + Math.pow((y - 0), 2));
+        if (maxPQ.length < k) {
             maxPQ.push([x, y], euclideanDistance);
         } else {
-            if(euclideanDistance < maxPQ.top()) {
+            if (euclideanDistance < maxPQ.top()) {
                 maxPQ.pop();
                 maxPQ.push([x, y], euclideanDistance);
             }
+
         }
     }
 
-    // 2. Get the K Closest Points
-    const res: number[][] = [];
+    const res: [number, number][] = [];
     while(maxPQ.length > 0) {
-        const { val } = maxPQ.pop();
-        res.push(val);
+        const { val: [x, y] } = maxPQ.pop();
+        res.push([x, y]);
     }
     return res;
-    
+
 };
 
 class PriorityQueueNode<T> {
