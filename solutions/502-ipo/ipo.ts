@@ -1,36 +1,35 @@
 function findMaximizedCapital(k: number, w: number, profits: number[], capital: number[]): number {
     
-    // Combine profits and capital
-    const combined: [number, number][] = [];
+    // Initialze a priority queue by min capital
+    const projects: [number, number][] = [];
+    const minCap = new CustomMinPriorityQueue<number>(); // val: profit, prio: capital
     for(let i = 0; i < profits.length; i += 1) {
-        const prof = profits[i];
-        const cap = capital[i];
-        combined.push([prof, cap]);
+        minCap.push(profits[i], capital[i]);
     }
 
-    const maxProf = new MaxHeap(); // prio: profit
-    const minCap = new CustomMinPriorityQueue<number>(); // val: profit prio: capital
+    // Max heap for available profits
+    const maxProfit = new MaxHeap();
 
-    // Heapify (minPQ) by capital
-    const pqNodes: PriorityQueueNode<number>[] = [];
-    for(const [prof, cap] of combined) {
-        const newNode = new PriorityQueueNode<number>(prof, cap);
-        pqNodes.push(newNode);
-    }
-    minCap.heapify(pqNodes);
-
-    for(let i = 0; i < k; i += 1) {
-        while(minCap.length > 0 && w >= minCap.top()) {
-            const {val: prof, prio: cap} = minCap.pop();
-            maxProf.push(prof);
+    let totalCap = w;
+    let projectsDone = 0;
+    while(projectsDone < k) {
+        // Identify projects that can be initiated
+        while(minCap.length > 0 && totalCap >= minCap.top()) {
+            const { val: profit, prio: capital } = minCap.pop();
+            maxProfit.push(profit);
         }
-        if(maxProf.length > 0) {
-            const prof = maxProf.pop();
-            w += prof;
+
+        // Pick eligible project with max profit
+        if(maxProfit.length > 0) {
+            const profit = maxProfit.pop();
+            totalCap += profit;
+            projectsDone += 1;
+        } else {
+            // No eligible projects
+            break;
         }
     }
-
-    return w;
+    return totalCap;
 
 };
 
