@@ -3,14 +3,12 @@ function getOrder(tasks: number[][]): number[] {
     const n = tasks.length;
 
     // 1. add original indecies
-    const withIndex: [number, number, number][] = [];
     for (let i = 0; i < tasks.length; i += 1) {
-        const [enqueueTime, processingTime] = tasks[i] 
-        withIndex.push([enqueueTime, processingTime, i]);
+        tasks[i].push(i);
     }
 
     // 2. sort tasks by enqueueTime
-    withIndex.sort((a, b) => a[0] - b[0]);
+    tasks.sort((a, b) => a[0] - b[0]);
 
     let currTime = 0;
     let currIdx = 0;
@@ -19,8 +17,8 @@ function getOrder(tasks: number[][]): number[] {
 
     while (currIdx < n || minPQ.length > 0) {
 
-        while (currIdx < n && currTime >= withIndex[currIdx][0]) {
-            const [enqueueTime, processingTime, originalIdx] = withIndex[currIdx];
+        while (currIdx < n && currTime >= tasks[currIdx][0]) {
+            const [enqueueTime, processingTime, originalIdx] = tasks[currIdx];
             minPQ.push([originalIdx, processingTime], processingTime * n + originalIdx);
             currIdx += 1;
         }
@@ -32,7 +30,7 @@ function getOrder(tasks: number[][]): number[] {
             currTime += processingTime;
 
         } else {
-            currTime = withIndex[currIdx][0];
+            currTime = tasks[currIdx][0];
         }
 
     }
