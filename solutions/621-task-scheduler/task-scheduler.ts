@@ -28,7 +28,7 @@ function leastInterval(tasks: string[], n: number): number {
             }
         }
         
-        if(cooldownQueue.length > 0 && cooldownQueue[0][2] <= time) {
+        while(cooldownQueue.length > 0 && cooldownQueue[0][2] <= time) {
             const [task, count, cooldown] = cooldownQueue.shift();
             maxPQ.push([count, task]);
         }
