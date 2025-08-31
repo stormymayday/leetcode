@@ -1,164 +1,38 @@
 function leastInterval(tasks: string[], n: number): number {
-    // frequency Map
-    const freqMap = new Map<string, number>();
-    for(let i = 0;  i < tasks.length; i += 1) {
+    // 1. Create a character frequency count hash map
+    const freqMap = new Map<string, number>(); // key: task (character) -> val: count
+    for(let i = 0; i < tasks.length; i += 1) {
         freqMap.set(tasks[i], (freqMap.get(tasks[i]) || 0) + 1);
     }
 
-    const pqNodes: PriorityQueueNode<string>[] = [];
+    // 2. Initialize a (naive) Priority Queue
+    const maxPQ: [number, string][] = []; // [count, task]
     for(const [task, count] of freqMap.entries()) {
-        const newNode = new PriorityQueueNode(task, count);
-        pqNodes.push(newNode);
+        maxPQ.push([count, task]);
     }
 
-    const maxPQ = new CustomMaxPriorityQueue<string>();
-    maxPQ.heapify(pqNodes);
+    // 3. Initialze a cooldown queue
+    const cooldownQueue: [string, number, number][] = []; // [task, count, cooldown (time + n)]
 
-    const cooldownQ = new CustomQueue<[string, number, number]>(); // [task, count, time + n]
+    let time: number = 0;
+    while(maxPQ.length > 0 || cooldownQueue.length > 0) {
 
-    let time = 0;
-    while(maxPQ.length > 0 || cooldownQ.length > 0) {
         time += 1;
 
         if(maxPQ.length > 0) {
-            let {val: task, prio: count } = maxPQ.pop(); 
+            maxPQ.sort((a, b) => b[0] - a[0]);
+            let [count, task] = maxPQ.shift();
             count -= 1;
             if(count > 0) {
-                cooldownQ.enqueue([task, count, time + n]);
+                cooldownQueue.push([task, count, time + n]);
             }
         }
-
-        if(cooldownQ.length > 0 && time >= cooldownQ.peek()[2]) {
-            const [task, count, coolDown] = cooldownQ.dequeue();
-            maxPQ.push(task, count);
+        
+        while(cooldownQueue.length > 0 && cooldownQueue[0][2] <= time) {
+            const [task, count, cooldown] = cooldownQueue.shift();
+            maxPQ.push([count, task]);
         }
 
     }
     return time;
 };
-
-class PriorityQueueNode<T> {
-    val: T;
-    prio: number;
-    constructor(val: T, prio: number) {
-        this.val = val;
-        this.prio = prio;
-    }
-}
-
-class CustomMaxPriorityQueue<T> {
-    private data: PriorityQueueNode<T>[];
-    public length: number;
-    constructor() {
-        this.data = [];
-        this.length = 0;
-    }
-    push(val: T, prio: number): void {
-        const newNode = new PriorityQueueNode<T>(val, prio);
-        this.data.push(newNode);
-        this.length += 1;
-        let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx].prio > this.data[parentIdx].prio) {
-            this.swap(currIdx, parentIdx);
-            currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
-        }
-    }
-    pop(): PriorityQueueNode<T> | null {
-        if(this.length === 0) {
-            return null;
-        }
-        if(this.length === 1) {
-            this.length = 0;
-            return this.data.pop();
-        }
-        const root = this.data[0];
-        this.data[0] = this.data.pop();
-        this.length -= 1;
-        this.siftDown(0);
-        return root;
-    }
-    siftDown(idx: number): void {
-        let currIdx = idx;
-        while(currIdx < this.length - 1) {
-            const leftChildIdx = currIdx * 2 + 1;
-            const rightChildIdx = currIdx * 2 + 2;
-            const leftChildPrio = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx].prio;
-            const rightChildPrio = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx].prio;
-            const largerChildIdx = leftChildPrio > rightChildPrio ? leftChildIdx : rightChildIdx;
-            const largerChildPrio = leftChildPrio > rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio < largerChildPrio) {
-                this.swap(currIdx, largerChildIdx);
-                currIdx = largerChildIdx;
-            } else {
-                break;
-            }
-        }
-    }
-    heapify(vals: PriorityQueueNode<T>[]): void {
-        this.data = [...vals];
-        this.length = vals.length;
-        let currIdx = Math.floor((this.length - 2) / 2);
-        while(currIdx >= 0) {
-            this.siftDown(currIdx);
-            currIdx -= 1;
-        }
-    }
-    top(): number | null {
-        return this.length > 0 ? this.data[0].prio : null;
-    }
-    swap(idx1: number, idx2: number): void {
-        const temp = this.data[idx1];
-        this.data[idx1] = this.data[idx2];
-        this.data[idx2] = temp;
-    }
-}
-
-class QueueNode<T> {
-    val: T;
-    next: QueueNode<T> | null;
-    constructor(val: T) {
-        this.val = val;
-        this.next = null;
-    }
-}
-
-class CustomQueue<T> {
-    private start: QueueNode<T> | null;
-    private end: QueueNode<T> | null;
-    public length: number;
-    constructor() {
-        this.start = null;
-        this.end = null;
-        this.length = 0;
-    }
-    enqueue(val: T): void {
-        const newNode = new QueueNode<T>(val);
-        if(this.length === 0) {
-            this.start = newNode;
-            this.end = newNode;
-        } else {
-            this.end.next = newNode;
-            this.end = newNode;
-        }
-        this.length += 1;
-    }
-    dequeue(): T | null {
-        if(this.length === 0) {
-            return null;
-        } else {
-            const temp = this.start;
-            this.start = this.start.next;
-            temp.next = null;
-            this.length -= 1;
-            if(this.length === 0) {
-                this.end = null;
-            }
-            return temp.val;
-        }
-    }
-    peek(): T | null {
-        return this.length > 0 ? this.start.val : null;
-    }
-}
