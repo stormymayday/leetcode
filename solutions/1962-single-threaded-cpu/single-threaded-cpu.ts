@@ -2,42 +2,43 @@ function getOrder(tasks: number[][]): number[] {
 
     const n = tasks.length;
 
-    const withIndex: [number, number, number][] = []; // [enqueueTime, processingTime, originalIdx]
-
-    // 1. Add the original index
-    for(let i = 0; i < tasks.length; i += 1) {
-        withIndex.push([tasks[i][0], tasks[i][1], i]);
+    // 1. add original indecies
+    const withIndex: [number, number, number][] = [];
+    for (let i = 0; i < tasks.length; i += 1) {
+        const [enqueueTime, processingTime] = tasks[i] 
+        withIndex.push([enqueueTime, processingTime, i]);
     }
 
-    // 2. sort by enqueueTime
+    // 2. sort tasks by enqueueTime
     withIndex.sort((a, b) => a[0] - b[0]);
-
-    // 3. Initialize a minPQ
-    const minPQ = new CustomMinPriorityQueue<number>() ;// val: originalIndex, prio: processingTime * m + originalIndex (tie-breaker logic)
 
     let currTime = 0;
     let currIdx = 0;
-    const res: number[] = [];
-    while(minPQ.length > 0 || currIdx < withIndex.length) {
+    const result: number[] = [];
+    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [originalIndex, processingTime]  prio: processingTime * n + originalIndex
 
-        while(currIdx < withIndex.length && currTime >= withIndex[currIdx][0]) {
+    while (currIdx < n || minPQ.length > 0) {
+
+        while (currIdx < n && currTime >= withIndex[currIdx][0]) {
             const [enqueueTime, processingTime, originalIdx] = withIndex[currIdx];
-            minPQ.push(originalIdx, processingTime * n + originalIdx); // tie-breaker logic
+            minPQ.push([originalIdx, processingTime], processingTime * n + originalIdx);
             currIdx += 1;
         }
 
-        if(minPQ.length === 0) {
-            currTime = withIndex[currIdx][0];
+        if (minPQ.length > 0) {
+            
+            const { val: [originalIdx, processingTime] } = minPQ.pop();
+            result.push(originalIdx);
+            currTime += processingTime;
+
         } else {
-            const { val: idx, prio: modifiedProcessingTime } = minPQ.pop();
-            const originalProcessingTime = tasks[idx][1]; // get the original processing time
-            currTime += originalProcessingTime;
-            res.push(idx);
+            currTime = withIndex[currIdx][0];
         }
 
     }
 
-    return res;
+    return result;
+
 };
 
 class PriorityQueueNode<T> {
