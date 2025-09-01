@@ -32,6 +32,7 @@ function postOrderDFS(node, adjList, visiting, visited): boolean {
     }
     visiting.delete(node);
     visited.add(node);
+    return true;
 }
 
 function buildAdjList(n, edges): Map<number, Set<number>> {
