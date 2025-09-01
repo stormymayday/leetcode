@@ -14,7 +14,7 @@ function kahns(n: number, adjList: Map<number, Set<number>>): number[] {
     }
     for (let i = 0; i < n; i += 1) {
         for (const neighbor of adjList.get(i)) {
-            inDegree.set(neighbor, (inDegree.get(neighbor) || 0) + 1);
+            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
         }
     }
 
