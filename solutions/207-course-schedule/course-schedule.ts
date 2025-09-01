@@ -1,43 +1,46 @@
 function canFinish(numCourses: number, prerequisites: number[][]): boolean {
     
-    // 1. Create an adjacency list and inDegreeMap
-    const  adjList = new Map<number, Set<number>>();
-    const inDegreeMap = new Map<number, number>();
-    for(let i = 0; i < numCourses; i += 1) {
-        adjList.set(i, new Set());
-        inDegreeMap.set(i, 0);
-    }
-    for(const [dst, src] of prerequisites) {
-        adjList.get(src).add(dst);
-    }
-    for(let i = 0; i < numCourses; i += 1) {
-        for(const neighbor of adjList.get(i)) {
-            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) + 1);
-        }
-    }
+    // 1. Create an adjacency list
+    const  adjList = buildAdjList(numCourses, prerequisites);
 
-    // 2. Initialzie 'ready' stack
-    const stack: number[] = [];
-    for(const [node, inDegreeCount] of inDegreeMap.entries()) {
-        if(inDegreeCount === 0) {
-            stack.push(node);
-        }
-    }
-
-    // 3. Kahn's
-    let nodesVisited: number = 0;
-    while(stack.length > 0) {
-        const currNode = stack.pop();
-        nodesVisited += 1;
-        for(const neighbor of adjList.get(currNode)) {
-            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) - 1);
-            if(inDegreeMap.get(neighbor) === 0) {
-                stack.push(neighbor);
+    // 2. Run DFS on every node
+    const visiting = new Set();
+    const visited = new Set();
+    for(let i = 0; i < numCourses; i += 1) {
+        if(!visited.has(i)) {
+            if(postOrderDFS(i, adjList, visiting, visited) === false) {
+                return false;
             }
         }
     }
-
-    // 4. Cycle check
-    return nodesVisited === numCourses;
+    return true;
 
 };
+
+function postOrderDFS(node, adjList, visiting, visited): boolean {
+    if(visited.has(node)) {
+        return true; // no cycle
+    }
+    if(visiting.has(node)) {
+        return false; // cycle
+    }
+    visiting.add(node);
+    for(const neighbor of adjList.get(node)) {
+        if(postOrderDFS(neighbor, adjList, visiting, visited) === false) {
+            return false; // cycle
+        }
+    }
+    visiting.delete(node);
+    visited.add(node);
+}
+
+function buildAdjList(n, edges): Map<number, Set<number>> {
+    const  adjList = new Map<number, Set<number>>();
+    for(let i = 0; i < n; i += 1) {
+        adjList.set(i, new Set());
+    }
+    for(const [dst, src] of edges) {
+        adjList.get(src).add(dst);
+    }
+    return adjList;
+}
