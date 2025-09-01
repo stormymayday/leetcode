@@ -1,50 +1,36 @@
 function findOrder(numCourses: number, prerequisites: number[][]): number[] {
     const adjList = buildAdjList(numCourses, prerequisites);
-    return kahns(numCourses, adjList);
-};
-
-function kahns(n: number, adjList: Map<number, Set<number>>): number[] {
-    // 1. Build and inDegree hash map
-    const inDegree = new Map<number, number>();
-    for (let i = 0; i < n; i += 1) {
-        inDegree.set(i, 0);
-        // for(const neighbor of adjList.get(i)) {
-        //     inDegree.set(neighbor, (inDegree.get(neighbor) || 0) + 1);
-        // }
-    }
-    for (let i = 0; i < n; i += 1) {
-        for (const neighbor of adjList.get(i)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
-        }
-    }
-
-    // 2. Initialze 'ready' queue
-    const queue: number[] = [];
-    for (const [node, inDegreeCount] of inDegree.entries()) {
-        if (inDegreeCount === 0) {
-            queue.push(node);
-        }
-    }
-
-    // 3. BFS
+    
+    const visiting = new Set<number>();
+    const visited = new Set<number>();
     const topOrder: number[] = [];
-    while (queue.length > 0) {
-        const currNode = queue.shift();
-        topOrder.push(currNode);
-        for (const neighbor of adjList.get(currNode)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) - 1);
-            if (inDegree.get(neighbor) === 0) {
-                queue.push(neighbor);
+    for(let i = 0; i < numCourses; i += 1) {
+        if(!visited.has(i)) {
+            if(postOrderDFS(i, adjList, visiting, visited, topOrder) == false) {
+                return [];
             }
         }
     }
+    return topOrder.reverse();
+};
 
-    // 4. Cycle check
-    if (topOrder.length === n) {
-        return topOrder;
-    } else {
-        return [];
+function postOrderDFS(node: number, adjList: Map<number, Set<number>>, visiting: Set<number>, visited :Set<number>, topOrder: number[]): boolean {
+    if(visited.has(node)) {
+        return true;
     }
+    if(visiting.has(node)) {
+        return false;
+    }
+    visiting.add(node);
+    for(const neighbor of adjList.get(node)) {
+        if(postOrderDFS(neighbor, adjList, visiting, visited, topOrder) == false) {
+            return false;
+        }
+    }
+    visiting.delete(node);
+    visited.add(node);
+    topOrder.push(node);
+    return true;
 }
 
 function buildAdjList(n, edges): Map<number, Set<number>> {
