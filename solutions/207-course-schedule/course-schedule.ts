@@ -16,23 +16,23 @@ function canFinish(numCourses: number, prerequisites: number[][]): boolean {
         }
     }
 
-    // 2. Initialzie 'ready' queue / stack
-    const queue: number[] = [];
+    // 2. Initialzie 'ready' stack
+    const stack: number[] = [];
     for(const [node, inDegreeCount] of inDegreeMap.entries()) {
         if(inDegreeCount === 0) {
-            queue.push(node);
+            stack.push(node);
         }
     }
 
-    // 3. Kahn's (BFS)
+    // 3. Kahn's
     let nodesVisited: number = 0;
-    while(queue.length > 0) {
-        const currNode = queue.shift();
+    while(stack.length > 0) {
+        const currNode = stack.pop();
         nodesVisited += 1;
         for(const neighbor of adjList.get(currNode)) {
             inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) - 1);
             if(inDegreeMap.get(neighbor) === 0) {
-                queue.push(neighbor);
+                stack.push(neighbor);
             }
         }
     }
