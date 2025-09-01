@@ -1,41 +1,43 @@
 function canFinish(numCourses: number, prerequisites: number[][]): boolean {
-    const adjList = buildAdjList(numCourses, prerequisites);
-    const visiting = new Set<number>();
-    const visited = new Set<number>();
-    for(const node of adjList.keys()) {
-        if(postOrderDFS_WhiteGrayBlack(adjList, node, visiting, visited) === true) {
-            return false; /// cycle -> can't finish
-        }
-    }
-    return true; // no cycle -> can finish
-};
-
-function postOrderDFS_WhiteGrayBlack(adjList: Map<number, Set<number>>, src: number, visiting: Set<number>, visited: Set<number>):boolean {
-    if(visited.has(src)) {
-        return false; // no cycle
-    }
-    if(visiting.has(src)) {
-        return true; // cycle
-    }
-    visiting.add(src);
-    for(const neighbor of adjList.get(src)) {
-        if(postOrderDFS_WhiteGrayBlack(adjList, neighbor, visiting, visited) === true) {
-            return true; // cycle
-        }
-    }
-    visiting.delete(src);
-    visited.add(src);
-    return false; // no cycle
-}
-
-function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
-    const adjList = new Map();
-    for(let i = 0; i < n; i += 1) {
+    
+    // 1. Create an adjacency list and inDegreeMap
+    const  adjList = new Map<number, Set<number>>();
+    const inDegreeMap = new Map<number, number>();
+    for(let i = 0; i < numCourses; i += 1) {
         adjList.set(i, new Set());
+        inDegreeMap.set(i, 0);
     }
-    for(const edge of edges) {
-        const [course, prereq] = edge;
-        adjList.get(prereq).add(course);
+    for(const [dst, src] of prerequisites) {
+        adjList.get(src).add(dst);
     }
-    return adjList;
-}
+    for(let i = 0; i < numCourses; i += 1) {
+        for(const neighbor of adjList.get(i)) {
+            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) + 1);
+        }
+    }
+
+    // 2. Initialzie 'ready' queue / stack
+    const queue: number[] = [];
+    for(const [node, inDegreeCount] of inDegreeMap.entries()) {
+        if(inDegreeCount === 0) {
+            queue.push(node);
+        }
+    }
+
+    // 3. Kahn's (BFS)
+    let nodesVisited: number = 0;
+    while(queue.length > 0) {
+        const currNode = queue.shift();
+        nodesVisited += 1;
+        for(const neighbor of adjList.get(currNode)) {
+            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) - 1);
+            if(inDegreeMap.get(neighbor) === 0) {
+                queue.push(neighbor);
+            }
+        }
+    }
+
+    // 4. Cycle check
+    return nodesVisited === numCourses;
+
+};
