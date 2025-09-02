@@ -25,17 +25,17 @@ function kahns(adjList: Map<number, Set<number>>): Map<number, Set<number>> {
         }
     }
 
-    // 2. Initialize 'ready' queue
-    const queue: number[] = [];
+    // 2. Initialize 'ready' stack
+    const stack: number[] = [];
     for(const [node, inDegreeCount] of inDegree.entries()) {
         if(inDegreeCount === 0) {
-            queue.push(node);
+            stack.push(node);
         }
     }
 
     // 3. BFS
-    while(queue.length > 0) {
-        const currNode = queue.shift();
+    while(stack.length > 0) {
+        const currNode = stack.pop();
         for(const neighbor of adjList.get(currNode)) {
             
             // *********** Prereq Logic ***********
@@ -50,7 +50,7 @@ function kahns(adjList: Map<number, Set<number>>): Map<number, Set<number>> {
 
             inDegree.set(neighbor, inDegree.get(neighbor) - 1);
             if(inDegree.get(neighbor) === 0) {
-                queue.push(neighbor);
+                stack.push(neighbor);
             }
 
         }
