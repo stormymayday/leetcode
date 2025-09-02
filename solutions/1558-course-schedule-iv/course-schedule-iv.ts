@@ -6,13 +6,14 @@ function checkIfPrerequisite(numCourses: number, prerequisites: number[][], quer
 
     const res: boolean[] = [];
     // Cycle Detection (should not be necessary)
-    // if(nodePrereqs !== undefined) {
-    for (const [prereq, node] of queries) {
-        res.push(nodePrereqs.get(node).has(prereq));
+    if (nodePrereqs !== undefined) {
+        for (const [prereq, node] of queries) {
+            res.push(nodePrereqs.get(node).has(prereq));
+        }
+        return res;
+    } else {
+        return res;
     }
-    // } else {
-    return res;
-    // }
 
 };
 
@@ -66,8 +67,8 @@ function kahns(adjList: Map<number, Set<number>>): Map<number, Set<number>> | un
     }
 
     // 4. Cycle check (should not be necessary)
-    if(topOrder.length === adjList.size) {
-    return nodePrereqs;
+    if (topOrder.length === adjList.size) {
+        return nodePrereqs;
     } else {
         return undefined;
     }
