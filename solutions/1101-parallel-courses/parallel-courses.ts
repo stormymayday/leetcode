@@ -8,51 +8,48 @@ function minimumSemesters(n: number, relations: number[][]): number {
 
 function kahns(adjList: Map<number, Set<number>>): number {
 
-    // 1. Initialzie the inDegree hash map
+    // 1. Build inDegree hash map
     const inDegree = new Map<number, number>();
-    for (const node of adjList.keys()) {
+    for(const node of adjList.keys()) {
         inDegree.set(node, 0);
     }
-    for (const node of adjList.keys()) {
-        for (const neighbor of adjList.get(node)) {
+    for(const node of adjList.keys()) {
+        for(const neighbor of adjList.get(node)) {
             inDegree.set(neighbor, inDegree.get(neighbor) + 1);
         }
     }
 
-    // 2. Initialze the 'ready' queue
+    // 2. Initialze a 'ready' queue
     let queue: number[] = [];
-    for (const [node, inDegreeCount] of inDegree.entries()) {
-        if (inDegreeCount === 0) {
+    for(const [node, inDegreeCount] of inDegree.entries()) {
+        if(inDegreeCount === 0) {
             queue.push(node);
         }
     }
 
-    // 3. BFS
+    // 3. Kahn's (BFS)
     const topOrder: number[] = [];
-    let levels = 1; // counting enqueued nodes
-    while (queue.length > 0) {
+    let levels = 1; // count one already queued up
+    while(queue.length > 0) {
 
         const queueLength = queue.length;
-        const nextLevelNodes: number[] = [];
+        const nextLayerQueue: number[] = [];
 
-        for (let i = 0; i < queueLength; i += 1) {
+        for(let i = 0; i < queueLength; i += 1) {
 
             const currNode = queue.shift();
             topOrder.push(currNode);
-
             for(const neighbor of adjList.get(currNode)) {
-
                 inDegree.set(neighbor, inDegree.get(neighbor) - 1);
                 if(inDegree.get(neighbor) === 0) {
-                    nextLevelNodes.push(neighbor);
+                    nextLayerQueue.push(neighbor);
                 }
-
             }
 
         }
 
-        if (nextLevelNodes.length > 0) {
-            queue = nextLevelNodes;
+        if(nextLayerQueue.length > 0) {
+            queue = nextLayerQueue;
             levels += 1;
         } else {
             break;
@@ -60,20 +57,20 @@ function kahns(adjList: Map<number, Set<number>>): number {
 
     }
 
-    if (topOrder.length === adjList.size) {
+    // 4. Cycle Check
+    if(topOrder.length === adjList.size) {
         return levels;
     } else {
         return -1;
     }
-
 }
 
 function buildAdjList(n, edges): Map<number, Set<number>> {
-    const adjList = new Map();
-    for (let i = 1; i <= n; i += 1) {
+    const adjList = new Map<number, Set<number>>();
+    for(let i = 1; i <= n; i += 1) {
         adjList.set(i, new Set());
     }
-    for (const [src, dst] of edges) {
+    for(const [src, dst] of edges) {
         adjList.get(src).add(dst);
     }
     return adjList;
