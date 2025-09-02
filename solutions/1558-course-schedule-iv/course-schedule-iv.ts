@@ -66,11 +66,11 @@ function kahns(adjList: Map<number, Set<number>>): Map<number, Set<number>> | un
     }
 
     // 4. Cycle check (should not be necessary)
-    // if(topOrder.length === adjList.size) {
+    if(topOrder.length === adjList.size) {
     return nodePrereqs;
-    // } else {
-    //     return undefined;
-    // }
+    } else {
+        return undefined;
+    }
 
 }
 
