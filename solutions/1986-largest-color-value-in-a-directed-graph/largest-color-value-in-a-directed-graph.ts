@@ -1,4 +1,5 @@
 function largestPathValue(colors: string, edges: number[][]): number {
+    // colors.length is the number of nodes
     const adjList = buildAdjList(colors.length, edges);
     return kahns(adjList, colors);
 };
@@ -27,14 +28,16 @@ function kahns(adjList: Map<number, Set<number>>, colors: string): number {
         colorCount.set(color, new Array<number>(26).fill(0));
     }
     let maxColor = 0;
-    let visitedNodes = 0;
 
+    // Kahn's BFS
+    const topOrder: number[] = [];
     while(stack.length > 0) {
 
         const current = stack.pop();
-        visitedNodes += 1;
+        topOrder.push(current);
 
         const currentColorIndex = colors.charCodeAt(current) - 'a'.charCodeAt(0);
+        // increment current color count
         colorCount.get(current)[currentColorIndex] += 1;
         maxColor = Math.max(maxColor, colorCount.get(current)[currentColorIndex]);
 
@@ -51,7 +54,7 @@ function kahns(adjList: Map<number, Set<number>>, colors: string): number {
 
         }
     }
-    if(visitedNodes === colors.length) {
+    if(topOrder.length === colors.length) {
         return maxColor;
     } else {
         return -1; // cycle
