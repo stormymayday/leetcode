@@ -87,23 +87,23 @@ function kahns(adjList: Map<number, Set<number>>): number[] {
         }
     }
 
-    // 2. Set up the 'ready' queue for nodes with in-degree of zero
-    const queue: number[] = [];
+    // 2. Set up the 'ready' stack for nodes with in-degree of zero
+    const stack: number[] = [];
     for(const [node, inDegreeCount] of inDegree) {
         if(inDegreeCount === 0) {
-            queue.push(node);
+            stack.push(node);
         }
     }
 
     // 3. Perform Kahn's BFS
     const topOrder: number[] = [];
-    while(queue.length > 0) {
-        const currNode = queue.shift();
+    while(stack.length > 0) {
+        const currNode = stack.pop();
         topOrder.push(currNode);
         for(const neighbor of adjList.get(currNode)) {
             inDegree.set(neighbor, inDegree.get(neighbor) - 1);
             if(inDegree.get(neighbor) === 0) {
-                queue.push(neighbor);
+                stack.push(neighbor);
             }
         }
     }
