@@ -5,23 +5,29 @@ function isAlienSorted(words: string[], order: string): boolean {
         charIndex.set(order[i], i);
     }
     
-    for (let i = 1; i < words.length; i++) {
-        if (!compare(words[i - 1], words[i], charIndex)) {
+    for (let i = 0; i < words.length - 1; i++) {
+        const word1 = words[i];
+        const word2 = words[i + 1]
+        if (compare(word1, word2, charIndex) === false) {
             return false;
         }
     }
+
     return true;
 }
 
 function compare(word1: string, word2: string, charIndex: Map<string, number>): boolean {
+
     const minLength = Math.min(word1.length, word2.length);
     
     for (let i = 0; i < minLength; i++) {
+
         const char1 = word1[i];
         const char2 = word2[i];
         
         if (char1 !== char2) {
-            return charIndex.get(char1)! <= charIndex.get(char2)!;
+            // char2 should have larger index -> true. false otherwie
+            return charIndex.get(char1) < charIndex.get(char2);
         }
     }
     
