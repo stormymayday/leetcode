@@ -1,33 +1,30 @@
 function isAlienSorted(words: string[], order: string): boolean {
-
-    // 1. Create a hash map for faster lookup
+    // Create index map once for O(1) character lookups
     const charIndex = new Map<string, number>();
-    for(let i = 0; i < order.length; i += 1) {
-        const char = order[i];
-        charIndex.set(char, i);
+    for (let i = 0; i < order.length; i++) {
+        charIndex.set(order[i], i);
     }
-
-    // 2. Compare two adjacent words char by char
-    for(let i = 0; i < words.length - 1; i += 1) {
-        const word1 = words[i];
-        const word2 = words[i + 1];
-        let differenceFound = false;
-        for(let j = 0; j < Math.min(word1.length, word2.length); j += 1) {
-            const char1 = word1[j];
-            const char2 = word2[j];
-            if(char1 !== char2) {
-                if(charIndex.get(char1) > charIndex.get(char2)) {
-                    return false;
-                }
-                differenceFound = true;
-                break;
-            }
-        }
-        if(differenceFound === false && word1.length > word2.length) {
+    
+    for (let i = 1; i < words.length; i++) {
+        if (!compare(words[i - 1], words[i], charIndex)) {
             return false;
         }
     }
-
     return true;
+}
+
+function compare(word1: string, word2: string, charIndex: Map<string, number>): boolean {
+    const minLength = Math.min(word1.length, word2.length);
     
-};
+    for (let i = 0; i < minLength; i++) {
+        const char1 = word1[i];
+        const char2 = word2[i];
+        
+        if (char1 !== char2) {
+            return charIndex.get(char1)! <= charIndex.get(char2)!;
+        }
+    }
+    
+    // If all compared characters are equal, shorter word should come first
+    return word1.length <= word2.length;
+}
