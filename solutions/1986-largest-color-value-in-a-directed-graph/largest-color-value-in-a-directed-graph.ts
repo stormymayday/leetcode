@@ -15,10 +15,10 @@ function kahns(adjList: Map<number, Set<number>>, colors: string): number {
         }
     }
 
-    const queue: number[] = [];
+    const stack: number[] = [];
     for(const [node, count] of inDegree.entries()) {
         if(count === 0) {
-            queue.push(node);
+            stack.push(node);
         }
     }
 
@@ -29,9 +29,9 @@ function kahns(adjList: Map<number, Set<number>>, colors: string): number {
     let maxColor = 0;
     let visitedNodes = 0;
 
-    while(queue.length > 0) {
+    while(stack.length > 0) {
 
-        const current = queue.shift();
+        const current = stack.pop();
         visitedNodes += 1;
 
         const currentColorIndex = colors.charCodeAt(current) - 'a'.charCodeAt(0);
@@ -46,7 +46,7 @@ function kahns(adjList: Map<number, Set<number>>, colors: string): number {
 
             inDegree.set(neighbor, inDegree.get(neighbor) - 1);
             if(inDegree.get(neighbor) === 0) {
-                queue.push(neighbor);
+                stack.push(neighbor);
             }
 
         }
