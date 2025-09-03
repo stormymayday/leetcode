@@ -1,28 +1,33 @@
 function isAlienSorted(words: string[], order: string): boolean {
-    for(let i = 1; i < words.length; i += 1) {
-        if(compare(words[i - 1], words[i], order) === false) {
+
+    // 1. Create a hash map for faster lookup
+    const charIndex = new Map<string, number>();
+    for(let i = 0; i < order.length; i += 1) {
+        const char = order[i];
+        charIndex.set(char, i);
+    }
+
+    // 2. Compare two adjacent words char by char
+    for(let i = 0; i < words.length - 1; i += 1) {
+        const word1 = words[i];
+        const word2 = words[i + 1];
+        let differenceFound = false;
+        for(let j = 0; j < Math.min(word1.length, word2.length); j += 1) {
+            const char1 = word1[j];
+            const char2 = word2[j];
+            if(char1 !== char2) {
+                if(charIndex.get(char1) > charIndex.get(char2)) {
+                    return false;
+                }
+                differenceFound = true;
+                break;
+            }
+        }
+        if(differenceFound === false && word1.length > word2.length) {
             return false;
         }
     }
-    return true;
-};
 
-function compare(word1, word2, order) {
-    const n = Math.min(word1.length, word2.length);
-    for(let i = 0; i < n; i += 1) {
-        const char1 = word1[i];
-        const char2 = word2[i];
-        if(char1 !== char2) {
-            if(order.indexOf(char1) > order.indexOf(char2)) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-    }
-    if(n === word1.length) {
-        return true;
-    } else {
-        return false;
-    }
-}
+    return true;
+    
+};
