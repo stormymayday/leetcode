@@ -4,6 +4,7 @@ function largestPathValue(colors: string, edges: number[][]): number {
 };
 
 function kahns(adjList: Map<number, Set<number>>, colors: string): number {
+
     const inDegree = new Map<number, number>();
     for(const node of adjList.keys()) {
         inDegree.set(node, 0);
@@ -13,24 +14,30 @@ function kahns(adjList: Map<number, Set<number>>, colors: string): number {
             inDegree.set(neighbor, inDegree.get(neighbor) + 1);
         }
     }
+
     const queue: number[] = [];
     for(const [node, count] of inDegree.entries()) {
         if(count === 0) {
             queue.push(node);
         }
     }
+
     const colorCount = new Map<number, number[]>();
-    for(let i = 0; i < colors.length; i += 1) {
-        colorCount.set(i, new Array<number>(26).fill(0));
+    for(const color of adjList.keys()) {
+        colorCount.set(color, new Array<number>(26).fill(0));
     }
     let maxColor = 0;
     let visitedNodes = 0;
+
     while(queue.length > 0) {
+
         const current = queue.shift();
         visitedNodes += 1;
+
         const currentColorIndex = colors.charCodeAt(current) - 'a'.charCodeAt(0);
         colorCount.get(current)[currentColorIndex] += 1;
-        maxColor = Math.max(maxColor, colorCount.get(current)[currentColorIndex])
+        maxColor = Math.max(maxColor, colorCount.get(current)[currentColorIndex]);
+
         for(const neighbor of adjList.get(current)) {
 
             for(let c = 0; c < 26; c += 1) {
