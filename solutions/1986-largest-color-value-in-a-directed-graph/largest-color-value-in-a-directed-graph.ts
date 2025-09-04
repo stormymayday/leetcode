@@ -1,86 +1,70 @@
 function largestPathValue(colors: string, edges: number[][]): number {
-    // colors.length is the number of nodes in the graph
-    const adjList = buildAdjList(colors.length, edges);
-
-    // Key: number (represents a node ID)
-    // Value: number[] (an array of 26 numbers)
-    const colorCount = new Map<number, number[]>();
-    for (const nodeId of adjList.keys()) {
-        colorCount.set(nodeId, new Array<number>(26).fill(0));
+    const n = colors.length;
+    
+    // 1. Initialize data structures
+    const indegree: number[] = new Array(n).fill(0);
+    const colorCounts: number[][] = Array.from({ length: n }, () => new Array(26).fill(0));
+    const graph: Map<number, number[]> = new Map();
+    
+    // Initialize graph with empty adjacency lists
+    for (let i = 0; i < n; i++) {
+        graph.set(i, []);
     }
-
-
-    return kahns(adjList, colorCount, colors);
-};
-
-function kahns(adjList: Map<number, Set<number>>, colorCount: Map<number, number[]>, colors: string): number {
-
-    // 1. Build and inDegree map
-    const inDegree = new Map<number, number>();
-    for (const node of adjList.keys()) {
-        inDegree.set(node, 0);
+    
+    // 2. Build graph and calculate indegrees
+    for (const [x, y] of edges) {
+        graph.get(x)!.push(y);
+        indegree[y]++;
     }
-    for (const node of adjList.keys()) {
-        for (const neighbor of adjList.get(node)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
+    
+    // 3. Initialize queue with source nodes (indegree = 0)
+    const queue: number[] = [];
+    for (let i = 0; i < n; i++) {
+        if (indegree[i] === 0) {
+            queue.push(i);
+            // KEY: Initialize source nodes with their color count = 1
+            const colorIndex = colors.charCodeAt(i) - 'a'.charCodeAt(0);
+            colorCounts[i][colorIndex] = 1;
         }
     }
-
-    // 2. Initialzie the 'ready' queue/stack for nodes with an indegree of zero
-    const stack: number[] = [];
-    for (const [node, inDegreeCount] of inDegree.entries()) {
-        if (inDegreeCount === 0) {
-            stack.push(node);
-        }
-    }
-
-    // 3. Kahn's BFS
-    const topOrder: number[] = [];
+    
+    // 4. Kahn's algorithm with color count propagation
+    let visited = 0;
     let maxColorCount = 0;
-    while (stack.length > 0) {
-
-        const currNode = stack.pop();
-        topOrder.push(currNode);
-
-        const colorIndex = colors.charCodeAt(currNode) - 'a'.charCodeAt(0);
-        // increment count current nodes color
-        colorCount.get(currNode)[colorIndex] += 1;
-        // update max
-        maxColorCount = Math.max(maxColorCount, colorCount.get(currNode)[colorIndex]);
-
-        for (const neighbor of adjList.get(currNode)) {
-
-            // Propagate the maximum color counts to neighbors
-            for (let color = 0; color < 26; color += 1) {
-                colorCount.get(neighbor)[color] = Math.max(colorCount.get(neighbor)[color], colorCount.get(currNode)[color]);
+    
+    while (queue.length > 0) {
+        const node = queue.shift()!; // Dequeue (FIFO)
+        visited++;
+        
+        // Process all neighbors of current node
+        const neighbors = graph.get(node)!;
+        for (const neighbor of neighbors) {
+            // Propagate maximum color counts from current node to neighbor
+            for (let c = 0; c < 26; c++) {
+                colorCounts[neighbor][c] = Math.max(
+                    colorCounts[neighbor][c], 
+                    colorCounts[node][c]
+                );
             }
-
-            inDegree.set(neighbor, inDegree.get(neighbor) - 1);
-            if (inDegree.get(neighbor) === 0) {
-                stack.push(neighbor);
+            
+            // Decrease neighbor's indegree
+            indegree[neighbor]--;
+            
+            // If neighbor is now ready to be processed
+            if (indegree[neighbor] === 0) {
+                // KEY: Increment neighbor's own color count when it becomes ready
+                const neighborColorIndex = colors.charCodeAt(neighbor) - 'a'.charCodeAt(0);
+                colorCounts[neighbor][neighborColorIndex]++;
+                queue.push(neighbor);
             }
-
         }
-
+        
+        // Track maximum color count seen so far
+        for (let c = 0; c < 26; c++) {
+            maxColorCount = Math.max(maxColorCount, colorCounts[node][c]);
+        }
     }
-
-    // 4. Cycle check and return
-    if (topOrder.length === adjList.size) {
-        return maxColorCount;
-    } else {
-        return -1; // graph contains a cycle
-    }
-
-
-}
-
-function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
-    const adjList = new Map();
-    for (let i = 0; i < n; i += 1) {
-        adjList.set(i, new Set());
-    }
-    for (const [src, dst] of edges) {
-        adjList.get(src).add(dst);
-    }
-    return adjList;
+    
+    // 5. Check for cycles and return result
+    return visited === n ? maxColorCount : -1;
 }
