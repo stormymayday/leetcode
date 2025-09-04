@@ -1,74 +1,85 @@
 function largestPathValue(colors: string, edges: number[][]): number {
-    // colors.length is the number of nodes
+    // colors.length is the number of nodes in the graph
     const adjList = buildAdjList(colors.length, edges);
-    return kahns(adjList, colors);
+
+    // Key: number (represents a node ID)
+    // Value: number[] (an array of 26 numbers)
+    const colorCount = new Map<number, number[]>();
+    for (const nodeId of adjList.keys()) {
+        colorCount.set(nodeId, new Array<number>(26).fill(0));
+    }
+
+
+    return kahns(adjList, colorCount, colors);
 };
 
-function kahns(adjList: Map<number, Set<number>>, colors: string): number {
+function kahns(adjList: Map<number, Set<number>>, colorCount: Map<number, number[]>, colors: string): number {
 
+    // 1. Build and inDegree map
     const inDegree = new Map<number, number>();
-    for(const node of adjList.keys()) {
+    for (const node of adjList.keys()) {
         inDegree.set(node, 0);
     }
-    for(const node of adjList.keys()) {
-        for(const neighbor of adjList.get(node)) {
+    for (const node of adjList.keys()) {
+        for (const neighbor of adjList.get(node)) {
             inDegree.set(neighbor, inDegree.get(neighbor) + 1);
         }
     }
 
+    // 2. Initialzie the 'ready' queue/stack for nodes with an indegree of zero
     const stack: number[] = [];
-    for(const [node, count] of inDegree.entries()) {
-        if(count === 0) {
+    for (const [node, inDegreeCount] of inDegree.entries()) {
+        if (inDegreeCount === 0) {
             stack.push(node);
         }
     }
 
-    const colorCount = new Map<number, number[]>();
-    for(const color of adjList.keys()) {
-        colorCount.set(color, new Array<number>(26).fill(0));
-    }
-    let maxColor = 0;
-
-    // Kahn's BFS
+    // 3. Kahn's BFS
     const topOrder: number[] = [];
-    while(stack.length > 0) {
+    let maxColorCount = 0;
+    while (stack.length > 0) {
 
-        const current = stack.pop();
-        topOrder.push(current);
+        const currNode = stack.pop();
+        topOrder.push(currNode);
 
-        const currentColorIndex = colors.charCodeAt(current) - 'a'.charCodeAt(0);
-        // increment current color count
-        colorCount.get(current)[currentColorIndex] += 1;
-        maxColor = Math.max(maxColor, colorCount.get(current)[currentColorIndex]);
+        const colorIndex = colors.charCodeAt(currNode) - 'a'.charCodeAt(0);
+        // increment count current nodes color
+        colorCount.get(currNode)[colorIndex] += 1;
+        // update max
+        maxColorCount = Math.max(maxColorCount, colorCount.get(currNode)[colorIndex]);
 
-        for(const neighbor of adjList.get(current)) {
+        for (const neighbor of adjList.get(currNode)) {
 
-            for(let c = 0; c < 26; c += 1) {
-                colorCount.get(neighbor)[c] = Math.max(colorCount.get(neighbor)[c], colorCount.get(current)[c])
+            // Propagate the maximum color counts to neighbors
+            for (let color = 0; color < 26; color += 1) {
+                colorCount.get(neighbor)[color] = Math.max(colorCount.get(neighbor)[color], colorCount.get(currNode)[color]);
             }
 
             inDegree.set(neighbor, inDegree.get(neighbor) - 1);
-            if(inDegree.get(neighbor) === 0) {
+            if (inDegree.get(neighbor) === 0) {
                 stack.push(neighbor);
             }
 
         }
+
     }
-    if(topOrder.length === colors.length) {
-        return maxColor;
+
+    // 4. Cycle check and return
+    if (topOrder.length === adjList.size) {
+        return maxColorCount;
     } else {
-        return -1; // cycle
+        return -1; // graph contains a cycle
     }
+
 
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
     const adjList = new Map();
-    for(let i = 0; i < n; i += 1) {
+    for (let i = 0; i < n; i += 1) {
         adjList.set(i, new Set());
     }
-    for(const edge of edges) {
-        const [src, dst] = edge;
+    for (const [src, dst] of edges) {
         adjList.get(src).add(dst);
     }
     return adjList;
