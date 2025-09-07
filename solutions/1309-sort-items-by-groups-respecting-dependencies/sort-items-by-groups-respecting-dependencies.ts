@@ -43,15 +43,28 @@ function sortItems(n: number, m: number, group: number[], beforeItems: number[][
     for(let groupId = 0; groupId < newGroupId; groupId += 1) {
         groupsOfTopologicallySortedItems[groupId] = [];
     }
-    for(let item = 0; item < itemsTopOrder.length; item += 1) {
-        const groupId = group[itemsTopOrder[item]];
-        groupsOfTopologicallySortedItems[groupId].push(itemsTopOrder[item]);
+
+    // Original (confusing):
+    // for(let item = 0; item < itemsTopOrder.length; item += 1) {
+    //     const groupId = group[itemsTopOrder[item]];
+    //     groupsOfTopologicallySortedItems[groupId].push(itemsTopOrder[item]);
+    // }
+    // Simplifed:
+    for(const item of itemsTopOrder) {
+        const groupId = group[item];
+        groupsOfTopologicallySortedItems[groupId].push(item);
     }
 
     // 6. Using Group Topological Ordering and the array above, create the result
     const res: number[] = [];
-    for(let groupId = 0; groupId < groupsTopOrder.length; groupId += 1) {
-        res.push(...groupsOfTopologicallySortedItems[groupsTopOrder[groupId]]);
+
+    // Original (confusing):
+    // for(let groupId = 0; groupId < groupsTopOrder.length; groupId += 1) {
+    //     res.push(...groupsOfTopologicallySortedItems[groupsTopOrder[groupId]]);
+    // }
+    // Simplifed:
+    for(const group of groupsTopOrder) {
+        res.push(...groupsOfTopologicallySortedItems[group]);
     }
     return res;
 
