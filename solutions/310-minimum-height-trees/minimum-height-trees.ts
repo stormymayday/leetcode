@@ -1,7 +1,7 @@
 function findMinHeightTrees(n: number, edges: number[][]): number[] {
-    
-    // 1. Edge case: single node
-    if(n === 1 || edges.length === 0) {
+
+    // Edge Case: single node -> no edges
+    if (n === 1 || edges.length === 0) {
         return [0];
     }
 
@@ -12,63 +12,64 @@ function findMinHeightTrees(n: number, edges: number[][]): number[] {
 };
 
 function kahns(adjList: Map<number, Set<number>>): number[] {
-
-    // 1. Build inDegree (leaves) hash map
-    const inDegree = new Map<number, number>();
-    for(const node of adjList.keys()) {
-        inDegree.set(node, 0);
+    const inDegreeMap = new Map<number, number>();
+    for (const node of adjList.keys()) {
+        inDegreeMap.set(node, 0);
     }
-    for(const node of adjList.keys()) {
-        for(const neighbor of adjList.get(node)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
+    for (const node of adjList.keys()) {
+        for (const neighbor of adjList.get(node)) {
+            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) + 1);
         }
     }
 
-    // 2. Queue up the "leaves" inDegree of 1
-    let queue: number[] = [];
-    for(const [node, inDegreeCount] of inDegree.entries()) {
-        if(inDegreeCount === 1) {
-            queue.push(node);
+    let ready: number[] = [];
+    for (const [node, inDegreeCount] of inDegreeMap.entries()) {
+        if (inDegreeCount === 1) {
+            ready.push(node);
         }
     }
 
-    // 3. Kahn's BFS
-    let nodesLeft = adjList.size;
-    while(nodesLeft > 2) {
-        
-        const queueLength = queue.length;
-        nodesLeft -= queueLength;
-        const nextLayer: number[] = [];
+    let nodesRemaining = adjList.size;
+    while (nodesRemaining > 2) {
 
-        for(let i = 0; i < queueLength; i += 1) {
-            const currNode = queue.shift();
-            for(const neighbor of adjList.get(currNode)) {
-                inDegree.set(neighbor, inDegree.get(neighbor) - 1);
-                if(inDegree.get(neighbor) === 0) {
-                    inDegree.delete(neighbor);
-                }
-                if(inDegree.get(neighbor) === 1) {
-                    nextLayer.push(neighbor);
+        const queueLength = ready.length;
+        const nextLayerNodes: number[] = [];
+
+        for (let i = 0; i < queueLength; i += 1) {
+
+            const currNode = ready.pop();
+            nodesRemaining -= 1;
+
+            for (const neighbor of adjList.get(currNode)) {
+                inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) - 1);
+
+                // if (inDegreeMap.get(neighbor) === 0) {
+                //     inDegreeMap.delete(neighbor);
+                // }
+
+                if (inDegreeMap.get(neighbor) === 1) {
+                    nextLayerNodes.push(neighbor);
                 }
             }
+
         }
 
-        queue = nextLayer;
+        ready = nextLayerNodes;
 
     }
 
-    return queue;
+    return ready;
 
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
-    const adjList = new Map<number, Set<number>>();
-    for(let i = 0; i < n; i += 1) {
+    const adjList = new Map();
+    for (let i = 0; i < n; i += 1) {
         adjList.set(i, new Set());
     }
-    for(const [src, dst] of edges) {
-        adjList.get(src).add(dst);
-        adjList.get(dst).add(src);
+    for (const [a, b] of edges) {
+        adjList.get(a).add(b);
+        adjList.get(b).add(a);
     }
     return adjList;
 }
