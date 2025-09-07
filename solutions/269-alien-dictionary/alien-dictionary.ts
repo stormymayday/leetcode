@@ -1,96 +1,107 @@
 function alienOrder(words: string[]): string {
-
-    // Try building an adjacency list
+    
     const adjList: Map<string, Set<string>> | undefined = buildAdjList(words);
 
-    if (adjList !== undefined) {
-        // If adjList was built successfully (no edge case encountered), try running Kahn's algorithm
-        return kahns(adjList);
-    } else {
-        // Otherwise, adjList encountered an invalid ordering edge case
+    // Edge Case encountered: word1 and word2 had same prefix but word1 was longer
+    if(adjList === undefined) {
         return "";
     }
+
+    // Try performing Topological ordering (Can encounter a cycle)
+    return kahns(adjList);
 
 };
 
 function kahns(adjList: Map<string, Set<string>>): string {
 
-    // 1. Build and inDegree hash map
-    const inDegree = new Map<string, number>();
-    for (const node of adjList.keys()) {
-        inDegree.set(node, 0);
+    // 1. in-degree map
+    const inDegreeMap = new Map<string, number>();
+    for(const node of adjList.keys()) {
+        inDegreeMap.set(node, 0);
     }
-    for (const node of adjList.keys()) {
-        for (const neighbor of adjList.get(node)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
+    for(const node of adjList.keys()) {
+        for(const neighbor of adjList.get(node)) {
+            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) + 1);
         }
     }
 
-    // 2. Initialize the 'ready' queue for nodes with in-degree of zero
-    const queue: string[] = [];
-    for (const [node, inDegreeCount] of inDegree.entries()) {
-        if (inDegreeCount === 0) {
-            queue.push(node);
+    // 2. ready queue/stack for nodes with in-degree of zero
+    const ready: string[] = [];
+    for(const [node, inDegreeCount] of inDegreeMap.entries()) {
+        if(inDegreeCount === 0) {
+            ready.push(node);
         }
     }
 
     // 3. Kahn's BFS
     const topOrder: string[] = [];
-    while (queue.length > 0) {
-        const currNode = queue.shift();
+    while(ready.length > 0) {
+        const currNode = ready.pop();
         topOrder.push(currNode);
-        for (const neighbor of adjList.get(currNode)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) - 1);
-            if (inDegree.get(neighbor) === 0) {
-                queue.push(neighbor);
+        for(const neighbor of adjList.get(currNode)) {
+            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) - 1);
+            if(inDegreeMap.get(neighbor) === 0) {
+                ready.push(neighbor);
             }
         }
     }
 
-    // 4. Cycle check
-    if (topOrder.length === adjList.size) {
+    // 4. Cycle check & return
+    if(topOrder.length === adjList.size) {
         return topOrder.join("");
     } else {
-        return ""; // Cycle detected
+        return ""; // there was a cycle
     }
 
 }
 
 function buildAdjList(words: string[]): Map<string, Set<string>> | undefined {
 
-    const adjList = new Map<string, Set<string>>();
+    const adjList = new Map();
 
-    // Initialize adjacency list with all characters
-    for (const word of words) {
-        for (const char of word) {
-            if (!adjList.has(char)) {
+    // 1. Pre-fill out the map with all the characters
+    for(const word of words) {
+        for(const char of word) {
+            if(!adjList.has(char)) {
                 adjList.set(char, new Set());
             }
         }
     }
 
-    for (let i = 0; i < words.length - 1; i += 1) {
-        // Compare two adjacent words character by character
+    // 2. Compare two adjacent words (to establish precedence)
+    for(let i = 0; i < words.length - 1; i += 1) {
+
         const word1 = words[i];
         const word2 = words[i + 1];
-        let divergenceFound = false;
-        for (let j = 0; j < Math.min(word1.length, word2.length); j += 1) {
+
+        // flag for tracking if different char was found
+        // If no divergence is found and word1 is longer than word2
+        // then words are not ordered in a lexicographically increasing order
+        let differentCharFound = false;
+        // Character by character (over min length)
+        for(let j = 0; j < Math.min(word1.length, word2.length); j += 1) {
+            
             const char1 = word1[j];
-            const char2 = word2[j]
-            if (char1 !== char2) {
-                // First divergence signifies that char1 comes before char2
-                // in the alien alphabet (assuming words are sorted lexicographically)
+            const char2 = word2[j];
+
+            // Until first divergence
+            if(char1 !== char2) {
+                // This means that char1 should come before char2 (char1 is src and char2 is dst)
                 adjList.get(char1).add(char2);
-                divergenceFound = true;
+                // Set the flag and break (don't need to compare other chars)
+                differentCharFound = true;
                 break;
             }
+
         }
-        // Edge Case: If words have same prefix but word1 is longer
-        // This violates lexicographical ordering (shorter should come first)
-        if (divergenceFound === false && word1.length > word2.length) {
-            return undefined; // invalid order
+
+        // Edge Case: no divergence is found and word1 is longer than word2
+        if(differentCharFound === false && word1.length > word2.length) {
+            return undefined; // early exit
         }
+
     }
 
     return adjList;
+
 }
