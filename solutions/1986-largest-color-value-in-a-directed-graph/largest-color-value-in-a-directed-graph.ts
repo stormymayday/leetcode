@@ -1,9 +1,6 @@
 function largestPathValue(colors: string, edges: number[][]): number {
 
-    // number of nodes in the graph
-    const n = colors.length;
-
-    const adjList = buildAdjList(n, edges);
+    const adjList = buildAdjList(colors.length, edges);
 
     return kahns(adjList, colors);
 
@@ -11,74 +8,75 @@ function largestPathValue(colors: string, edges: number[][]): number {
 
 function kahns(adjList: Map<number, Set<number>>, colors: string): number {
 
-    // 1. Initialze the inDegree and maxColorCountsAtNode maps
-    const inDegree = new Map<number, number>();
-    const maxColorCountsAtNode = new Map<number, number[]>();
-    // key: nodeId
-    // value: array where index represents color and value represents max count of that color in any path ending at this node
+    // 1. in-degree and maxColorCounts map initializations
+    const inDegreeMap = new Map<number, number>();
+    const maxColorCountAtNode = new Map<number, number[]>(); // key: nodeId -> val: array length of 26 (representing characters) filled with zeroes
     for (const node of adjList.keys()) {
-        inDegree.set(node, 0);
-        maxColorCountsAtNode.set(node, new Array(26).fill(0));
+        inDegreeMap.set(node, 0);
+        maxColorCountAtNode.set(node, new Array(26).fill(0));
     }
     for (const node of adjList.keys()) {
         for (const neighbor of adjList.get(node)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
+            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) + 1);
         }
     }
 
-    // 2. Initialze the 'ready' queue/stack with nodes with inDegree count of zero
-    // 2.1 Set color values for those nodes
+    // 2. 'ready' queue / stack
     const ready: number[] = [];
-    for (const [node, inDegreeCount] of inDegree.entries()) {
+    for (const [node, inDegreeCount] of inDegreeMap.entries()) {
         if (inDegreeCount === 0) {
             ready.push(node);
 
-            // getting the color index for that node
-            const colorIdx = colors.charCodeAt(node) - "a".charCodeAt(0);
-            // initialize count for that color to 1 (source nodes start with 1 of their own color)
-            maxColorCountsAtNode.get(node)[colorIdx] = 1;
+            // Setting nodes own color count to 1
+            const colorIdx = colors.charCodeAt(node) - 'a'.charCodeAt(0);
+            maxColorCountAtNode.get(node)[colorIdx] = 1;
         }
     }
 
-    // 3. Peform Kahn's BFS
-    const topOrder: number[] = [];
-    let largestColorValue: number = 0;
-    while(ready.length > 0) {
+    // 3. Kahn's BFS
+    let maxColorCount = 0;
+    let nodesVisited = 0;
+    while (ready.length > 0) {
 
         const currNode = ready.pop();
-        topOrder.push(currNode);
+        nodesVisited += 1;
 
-        // Update Largest Color Value (max between 'largestColorValue' and currNode's 'maxColorCountsAtNode')
-        for(let colorIdx = 0; colorIdx < 26; colorIdx += 1) {
-            largestColorValue = Math.max(largestColorValue, maxColorCountsAtNode.get(currNode)[colorIdx]);
+        // Updating maxColorCount vs current Node's maxColorCounts
+        for (let colorIdx = 0; colorIdx < 26; colorIdx += 1) {
+            maxColorCount = Math.max(maxColorCount, maxColorCountAtNode.get(currNode)[colorIdx]);
         }
 
-        for(const neighbor of adjList.get(currNode)) {
+        for (const neighbor of adjList.get(currNode)) {
 
-            // Propogate currNode's color counts to it's neighbors IF it is greater (take max)
-            for(let colorIdx = 0; colorIdx < 26; colorIdx += 1) {
-                const max = Math.max(maxColorCountsAtNode.get(currNode)[colorIdx], maxColorCountsAtNode.get(neighbor)[colorIdx]);
-                maxColorCountsAtNode.get(neighbor)[colorIdx] = max;
+            // Propogating current Node's maxColorCounts to it's neighbors
+            for (let colorIdx = 0; colorIdx < 26; colorIdx += 1) {
+
+                maxColorCountAtNode.get(neighbor)[colorIdx] = Math.max(
+                    maxColorCountAtNode.get(currNode)[colorIdx],
+                    maxColorCountAtNode.get(neighbor)[colorIdx],
+                );
+
             }
 
-            inDegree.set(neighbor, inDegree.get(neighbor) - 1);
-            if(inDegree.get(neighbor) === 0) {
+            // Updating the inDegreeMap
+            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) - 1);
+            if (inDegreeMap.get(neighbor) === 0) {
                 ready.push(neighbor);
-                // Increment node's own color count by 1
+
+                // Incrementing nodes own color count by 1
                 const colorIdx = colors.charCodeAt(neighbor) - 'a'.charCodeAt(0);
-                maxColorCountsAtNode.get(neighbor)[colorIdx] += 1;
+                maxColorCountAtNode.get(neighbor)[colorIdx] += 1;
             }
 
         }
 
     }
 
-
     // 4. Cycle check and return
-    if(topOrder.length === adjList.size) {
-        return largestColorValue;
+    if (nodesVisited === colors.length) {
+        return maxColorCount;
     } else {
-        return -1; // there was a cycle
+        return -1; // cycle
     }
 
 }
