@@ -1,61 +1,59 @@
 function buildMatrix(k: number, rowConditions: number[][], colConditions: number[][]): number[][] {
     
-    // 1. Adjacency Lists
-    const rowAdjList = buildAdjList(k, rowConditions);
-    const colAdjList = buildAdjList(k, colConditions);
+    // 1. Build adjacecny lists
+    const adjListRows = buildAdjList(k, rowConditions);
+    const adjListCols = buildAdjList(k, colConditions);
 
-    // 2. Topological Ordering
-    const rowOrder = kahns(rowAdjList);
-    const colOrder = kahns(colAdjList);
+    // 2. Try Topological Ordering
+    const rowTopOrder = kahns(adjListRows);
+    const colTopOrder = kahns(adjListCols);
 
-    // 3. Cycle checks
-    if(rowOrder.length === 0 || colOrder.length === 0) {
-        return [];
+    // 3. Check for cycles
+    if(rowTopOrder.length === 0 || colTopOrder.length === 0) {
+        return []; // early exit due to cycles
     }
 
     // 4. hash maps for faster lookup
-    const valToRow = new Map<number, number>(); // value -> row index
-    const valToCol = new Map<number, number>(); // value -> col index
-    for(let rowIdx = 0; rowIdx < rowOrder.length; rowIdx += 1) {
-        const value = rowOrder[rowIdx];
-        valToRow.set(value, rowIdx);
-    }
-    for(let colIdx = 0; colIdx < colOrder.length; colIdx += 1) {
-        const value = colOrder[colIdx];
-        valToCol.set(value, colIdx);
+    const valToRow = new Map<number, number>();
+    const valToCol = new Map<number, number>();
+    for(let index = 0; index < k; index += 1) {
+        // assign values to row / col (indicies) according their topological ordering
+        const rowOrderVal = rowTopOrder[index];
+        const colOrderVal = colTopOrder[index];
+        valToRow.set(rowOrderVal, index);
+        valToCol.set(colOrderVal, index);
     }
 
-    // 5. Creating the 'result' matrix
+    // 5. Building the result matrix
     const res: number[][] = new Array(k);
-    // 5.1 Pre-filling the matrix with zeroes
     for(let i = 0; i < k; i += 1) {
-        res[i] = new Array(k).fill(0);
+        res[i] = new Array(k).fill(0); // pre-fill with zeroes
     }
-    // 5.2 Placing integers from 1 to k into their designated cells
-    for(let value = 1; value <= k; value += 1) {
-        const row = valToRow.get(value);
-        const col = valToCol.get(value);
-        res[row][col] = value;
+    for(let val = 1; val <= k; val += 1) {
+        const row = valToRow.get(val); // get the row (index)
+        const col = valToCol.get(val); // get the col (index)
+        res[row][col] = val; 
     }
     return res;
-
+    
 };
 
 function kahns(adjList: Map<number, Set<number>>): number[] {
-    // 1. build inDegree map
-    const inDegree = new Map<number, number>();
+
+    // 1. in-degree map
+    const inDegreeMap = new Map<number, number>();
     for(const node of adjList.keys()) {
-        inDegree.set(node, 0);
+        inDegreeMap.set(node, 0);
     }
     for(const node of adjList.keys()) {
         for(const neighbor of adjList.get(node)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) + 1);
+            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) + 1);
         }
     }
 
-    // 2. The 'ready' queue/stack for nodes with in-degree of zero
+    // 2. 'ready' queue / stack
     const ready: number[] = [];
-    for(const [node, inDegreeCount] of inDegree.entries()) {
+    for(const [node, inDegreeCount] of inDegreeMap.entries()) {
         if(inDegreeCount === 0) {
             ready.push(node);
         }
@@ -67,8 +65,8 @@ function kahns(adjList: Map<number, Set<number>>): number[] {
         const currNode = ready.pop();
         topOrder.push(currNode);
         for(const neighbor of adjList.get(currNode)) {
-            inDegree.set(neighbor, inDegree.get(neighbor) - 1);
-            if(inDegree.get(neighbor) === 0) {
+            inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) - 1);
+            if(inDegreeMap.get(neighbor) === 0) {
                 ready.push(neighbor);
             }
         }
@@ -78,8 +76,9 @@ function kahns(adjList: Map<number, Set<number>>): number[] {
     if(topOrder.length === adjList.size) {
         return topOrder;
     } else {
-        return []; // there was a cycle
+        return []; // cycle
     }
+
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
