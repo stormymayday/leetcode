@@ -1,37 +1,50 @@
 function smallestStringWithSwaps(s: string, pairs: number[][]): string {
-    const uf = new UnionFind(s.length);
-    
-    // 1. Union all swappable pairs
-    for(const pair of pairs) {
-        const [x, y] = pair;
-        uf.union(x, y);
+
+    // 1. Union all edges (pairs)
+    const n = s.length;
+    const uf = new UnionFind(n);
+    for(const [src ,dst] of pairs) {
+        uf.union(src, dst);
     }
-    
-    // 2. Group characters by their component root
+
+    // 2. Create a mapping (key: root (index) -> val: [characters])
     const rootToChars = new Map<number, string[]>();
-    for (let index = 0; index < s.length; index++) {
-        const root = uf.find(index);
-        const char = s[index];
-        if (!rootToChars.has(root)) {
+    for(let i = 0; i < n; i += 1) {
+        // 2.1 find root of the current index value
+        const root = uf.find(i);
+        // 2.2 Create a map entry for the root if it does not exist
+        if(!rootToChars.has(root)) {
             rootToChars.set(root, []);
         }
-        rootToChars.get(root).push(char);
+        // 2.3 push character at current index into the array
+        rootToChars.get(root).push(s[i]);
     }
-    
-    // 3. Sort characters within each component
-    for (const chars of rootToChars.values()) {
-        // sort chars in descending order
-        chars.sort((a, b) => b.localeCompare(a)); // mutates the original array in place.
+
+    // 3. Sort the string arrays (map values) for each root in an descending order
+    // Such that they can be 'popped' into the 'result' at O(1) time
+    for(const chars of rootToChars.values()) {
+        chars.sort((a, b) => b.localeCompare(a));
     }
-    
-    // 4. Create result by assigning sorted characters to positions
-    const result: string[] = [];
-    for(let i = 0; i < s.length; i += 1) {
+
+    // 4. Creating the result
+    const res: string[] = [];
+    // Loop over indicies of the input string
+    for(let i = 0; i < n; i += 1) {
+
+        // 4.1 Get root of the current index
         const root = uf.find(i);
+
+        // 4.2 Get the char from the 'rootToChars' map
+        // The array is sorted in descending order
+        // Therefore, last char is lexicographically smallest
         const char = rootToChars.get(root).pop();
-        result.push(char);
+
+        // 4.3 push char into the result
+        res.push(char);
+
     }
-    return result.join("");
+    return res.join("");
+
 };
 
 class UnionFind {
@@ -48,9 +61,9 @@ class UnionFind {
         }
     }
     find(x: number): number {
-        const parent = this.roots.get(x);
-        if(parent !== x) {
-            this.roots.set(x, this.find(parent));
+        const root = this.roots.get(x);
+        if(root !== x) {
+            this.roots.set(x, this.find(root));
         }
         return this.roots.get(x);
     }
@@ -60,7 +73,7 @@ class UnionFind {
         if(rootX === rootY) {
             return false;
         } else {
-            if(this.sizes.get(rootX) > this.sizes.get(rootY)) {
+            if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
                 this.roots.set(rootY, rootX);
                 this.sizes.set(rootX, this.sizes.get(rootX) + this.sizes.get(rootY));
             } else {
