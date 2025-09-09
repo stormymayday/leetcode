@@ -1,28 +1,40 @@
 function findCircleNum(isConnected: number[][]): number {
-    const n: number = isConnected.length;
+
+    const n = isConnected.length;
+
     const uf = new UnionFind(n);
-    for(let r = 0; r < n; r += 1) {
-        for(let c = 0; c < n; c += 1) {
-            if(isConnected[r][c] === 1) {
-                uf.union(r, c);
+
+    for(let row = 0; row < n; row += 1) {
+        for(let col = 0; col < n; col += 1) {
+            if(isConnected[row][col] === 1) {
+                uf.union(row + 1, col + 1);
             }
         }
     }
+
     return uf.getNumComponents();
+
 };
 
 class UnionFind {
-    private roots: number[];
-    private sizes: number[];
+    private roots: Map<number, number>;
+    private sizes: Map<number, number>;
     private numComponents: number;
     constructor(n: number) {
-        this.roots = [];
-        this.sizes = [];
+        this.roots = new Map();
+        this.sizes = new Map();
         this.numComponents = n;
-        for(let i = 0; i < n; i += 1) {
-            this.roots.push(i);
-            this.sizes.push(1);
+        for(let i = 1; i <= n; i += 1) {
+            this.roots.set(i, i);
+            this.sizes.set(i, 1);
         }
+    }
+    find(x: number): number {
+        const root = this.roots.get(x);
+        if(root !== x) {
+            this.roots.set(x, this.find(root));
+        }
+        return this.roots.get(x);
     }
     union(x: number, y: number): boolean {
         const rootX = this.find(x);
@@ -30,24 +42,16 @@ class UnionFind {
         if(rootX === rootY) {
             return false;
         } else {
-            if(this.sizes[rootX] > this.sizes[rootY]) {
-                this.roots[rootY] = rootX;
-                this.sizes[rootX] += this.sizes[rootY];
+            if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
+                this.roots.set(rootY, rootX);
+                this.sizes.set(rootX, this.sizes.get(rootX) + this.sizes.get(rootY)); 
             } else {
-                this.roots[rootX] = rootY;
-                this.sizes[rootY] += this.sizes[rootX];
+                this.roots.set(rootX, rootY);
+                this.sizes.set(rootY, this.sizes.get(rootY) + this.sizes.get(rootX));
             }
             this.numComponents -= 1;
             return true;
         }
-    }
-    find(x: number): number {
-        if(this.roots[x] === x) {
-            return x;
-        }
-        const root = this.find(this.roots[x]);
-        this.roots[x] = root;
-        return root;
     }
     getNumComponents(): number {
         return this.numComponents;
