@@ -2,69 +2,70 @@ function largestComponentSize(nums: number[]): number {
 
     const uf = new UnionFind(nums);
 
-    // 1. Get factors for each number and map numbers to a factor
-    const factorToNums = new Map<number, number[]>(); // key: factor -> val: numbers
+    // 1. Get factors for each number and create a mapping of factor to numbers
+    const factorToNums = new Map<number, number[]>();
     for (const num of nums) {
-
+        // 1.1. Get all factors for the current num
         const factors = getFactors(num);
-
         for (const factor of factors) {
-
+            // 1.2. Create a mapping: factor to the nums
             if (!factorToNums.has(factor)) {
                 factorToNums.set(factor, []);
             }
-
             factorToNums.get(factor).push(num);
-
         }
-
     }
 
-    // 2. Union numbers for each factor
-    for (const nums of factorToNums.values()) {
-
-        for (let i = 0; i < nums.length - 1; i += 1) {
+    // 2. Perform union on numbers for each factor
+    for(const nums of factorToNums.values()) {
+        for(let i = 0; i < nums.length -1; i += 1) {
             const num1 = nums[i];
             const num2 = nums[i + 1];
             uf.union(num1, num2);
         }
-
     }
 
-    return uf.getLargestComponentSize();
+
+    // 3. Get the largest component size
+    return uf.getLargestComponent();
 
 };
 
 function getFactors(num: number): number[] {
+
+    // Use a Set to store factors to avoid duplicates
     const factors = new Set<number>();
+
+    // Start checking from 2, because 1 is common factor for all the numbers
+    // Therefore, if 1 is included 1 as a factor, then every number would be “connected” through 1, because 1 divides all numbers.
     let factor = 2;
+
+    // Only need to check divisors up to the square root of num
+    // Any factor greater than sqrt(num) has a complementary factor less than sqrt(num)
     while (factor * factor <= num) {
+        // If factor divides num exactly
         if (num % factor === 0) {
+            // Add the small factor
             factors.add(factor);
+            // Add the complementary (larger) factor
             factors.add(num / factor);
         }
+        // Move to the next potential factor
         factor += 1;
     }
-    
-    // Add the number itself as a factor since every number is divisible by itself.
-    // This is crucial for three scenarios:
-    // 1. Prime numbers: The loop above finds no factors, so we need to add the prime itself
-    // 2. All numbers: We need the complete factor list including the number as its own factor
-    // 3. Union-Find connectivity: Numbers need to connect with their multiples/divisors
-    // Note: We check num > 1 to exclude 1, since the problem asks for factors > 1
-    if (num > 1) {
-        factors.add(num);
-    }
-    
+
+    // Edge Case: Include the number itself to ensure primes are unioned properly
+    factors.add(num);
+
+    // Convert Set to array and return all factors
     return [...factors];
 }
 
-class UnionFind {
 
+class UnionFind {
     private roots: Map<number, number>;
     private sizes: Map<number, number>;
     private numComponents: number;
-
     constructor(nums: number[]) {
         this.roots = new Map();
         this.sizes = new Map();
@@ -74,7 +75,6 @@ class UnionFind {
             this.sizes.set(nums[i], 1);
         }
     }
-
     find(x: number): number {
         const root = this.roots.get(x);
         if (root !== x) {
@@ -82,7 +82,6 @@ class UnionFind {
         }
         return this.roots.get(x);
     }
-
     union(x: number, y: number): boolean {
         const rootX = this.find(x);
         const rootY = this.find(y);
@@ -100,17 +99,7 @@ class UnionFind {
             return true;
         }
     }
-
-    getLargestComponentSize(): number {
-        let maxSize = -Infinity;
-        for (const size of this.sizes.values()) {
-            maxSize = Math.max(maxSize, size);
-        }
-        return maxSize;
+    getLargestComponent(): number {
+        return Math.max(...this.sizes.values());
     }
-
-    getNumComponents(): number {
-        return this.numComponents;
-    }
-
 }
