@@ -28,15 +28,15 @@ function dfs(src: string, dst: string, adjList: Map<string, [string, number][]>,
     if (!adjList.has(src) || !adjList.has(dst)) {
         return -1.0;
     }
-    
+
     // If src and dst are the same, return 1 (x/x = 1)
     if (src === dst) {
         return 1.0;
     }
-    
+
     // Mark current node as visited
     visited.add(src);
-    
+
     // Explore all neighbors
     const neighbors = adjList.get(src)!;
     for (const [neighbor, weight] of neighbors) {
@@ -45,12 +45,11 @@ function dfs(src: string, dst: string, adjList: Map<string, [string, number][]>,
             const result = dfs(neighbor, dst, adjList, visited);
             if (result !== -1.0) {
                 // Found a path! Return the accumulated weight
-                visited.delete(src); // Clean up for other queries
                 return weight * result;
             }
         }
     }
-    
+
     // Clean up visited set and return -1 if no path found
     visited.delete(src);
     return -1.0;
