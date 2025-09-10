@@ -14,7 +14,7 @@ function calcEquation(equations: string[][], values: number[], queries: string[]
     // 2. Build a weighted adjacency list
     const weightedAdjList: Map<string, [string, number][]> = buildWeightedAdjList(edgeList);
 
-    // 3. Run DFS on every query and rill the result
+    // 3. Run BFS on every query and rill the result
     const res: number[] = [];
     for (const [src, dst] of queries) {
         res.push(bfs(src, dst, weightedAdjList, new Set()));
@@ -44,6 +44,7 @@ function bfs(src: string, dst: string, adjList: Map<string, [string, number][]>,
             }
         }
     }
+    // There is no path from src to dst
     return -1;
 }
 
