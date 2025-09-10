@@ -1,64 +1,92 @@
 function calcEquation(equations: string[][], values: number[], queries: string[][]): number[] {
 
     const n = equations.length;
-
-    // 1. Combine equations and values into an edge list
-    // (Can skip this and build adjList right away)
-    const edgeList: [string, string, number][] = [];
-    for (let i = 0; i < n; i += 1) {
-        const [src, dst] = equations[i];
-        const weight = values[i];
-        edgeList.push([src, dst, weight]);
+    
+    // 1. Initialize UnionFind
+    const uf = new ModifiedUnionFind();
+    for(let i = 0; i < n; i += 1) {
+        const [dividend, divisor] = equations[i];
+        const quotient = values[i];
+        uf.union(dividend, divisor, quotient);
     }
 
-    // 2. Build a weighted adjacency list
-    const weightedAdjList: Map<string, [string, number][]> = buildWeightedAdjList(edgeList);
-
-    // 3. Run BFS on every query and rill the result
+    // 2. Process queries and get the result
     const res: number[] = [];
-    for (const [src, dst] of queries) {
-        res.push(bfs(src, dst, weightedAdjList, new Set()));
+    for(const [dividend, divisor] of queries) {
+        res.push(uf.getRatio(dividend, divisor));
     }
     return res;
 
 };
 
-function bfs(src: string, dst: string, adjList: Map<string, [string, number][]>, visited: Set<string>): number {
-    // If either variable doesn't exist in our graph, return -1
-    if (!adjList.has(src) || !adjList.has(dst)) {
-        return -1.0;
+class ModifiedUnionFind {
+
+    // standard node to root mapping
+    private roots: Map<string, string>;
+
+    // Ratio of node / parent (eventually root)
+    // Initially, this stores ratio to node's immediate parent
+    // However, after running 'find' method it will update ratio towards root
+    private ratioToParent: Map<string, number>;
+
+    constructor() {
+        this.roots = new Map();
+        this.ratioToParent = new Map();
     }
 
-    const queue: [string, number][] = [];
-    queue.push([src, 1]);
-
-    while (queue.length > 0) {
-        const [currNode, currWeight] = queue.shift();
-        if (currNode === dst) {
-            return currWeight;
-        }
-        for(const [neighbor, neighborWeight] of adjList.get(currNode)) {
-            if(!visited.has(neighbor)) {
-                visited.add(neighbor);
-                queue.push([neighbor, currWeight * neighborWeight]);
-            }
+    add(x: string): void {
+        if(!this.roots.has(x)) {
+            // Setting node as it's own root
+            this.roots.set(x, x);
+            // Initial ratio is 1 ( x / x = 1)
+            this.ratioToParent.set(x, 1);
         }
     }
-    // There is no path from src to dst
-    return -1;
-}
 
-function buildWeightedAdjList(edgeList: [string, string, number][]): Map<string, [string, number][]> {
-    const adjList = new Map();
-    for (const [src, dst, weight] of edgeList) {
-        if (!adjList.has(src)) {
-            adjList.set(src, []);
+    find(x: string): string {
+        const root = this.roots.get(x);
+        if(root !== x) {
+            // Path compression
+            this.roots.set(x, this.find(root));
+            // Update ratio
+            this.ratioToParent.set(x, this.ratioToParent.get(x) * this.ratioToParent.get(root));
         }
-        if (!adjList.has(dst)) {
-            adjList.set(dst, []);
-        }
-        adjList.get(src).push([dst, weight]);
-        adjList.get(dst).push([src, 1 / weight]);
+        return this.roots.get(x);
     }
-    return adjList;
+
+    union(dividend: string, divisor: string, quotioent: number): void {
+
+        // 1. Adding nodes
+        this.add(dividend);
+        this.add(divisor);
+
+        // 2. Fetching roots
+        const dividendRoot = this.find(dividend);
+        const divisorRoot = this.find(divisor);
+
+        // 3. Check if roots are not already connected
+        if(dividendRoot !== divisorRoot) {
+            // 3.1. Connecting roots
+            this.roots.set(dividendRoot, divisorRoot);
+            // 3.2. Setting the ratio (don't understand this)
+            this.ratioToParent.set(dividendRoot, (quotioent * this.ratioToParent.get(divisor) / this.ratioToParent.get(dividend)));
+        }
+
+    }
+
+    getRatio(dividend: string, divisor: string): number {
+        // Check if either doesn't exist
+        if(!this.roots.has(dividend) || !this.roots.has(divisor)) {
+            return -1;
+        }
+
+        // Check if their root is not the same AKA they are not connected
+        if(this.find(dividend) !== this.find(divisor)) {
+            return -1;
+        }
+
+        // Otherwise, get the ratio
+        return this.ratioToParent.get(dividend) / this.ratioToParent.get(divisor);
+    }
+
 }
