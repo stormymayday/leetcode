@@ -1,92 +1,72 @@
-class ModifiedUnionFind {
-    private roots: Map<string, string>;   // Stores each node's parent
-    private weights: Map<string, number>; // Stores weight from a node to its parent (i.e., x / parent[x])
+function calcEquation(equations: string[][], values: number[], queries: string[][]): number[] {
 
-    constructor() {
-        this.roots = new Map();
-        this.weights = new Map();
+    const n = equations.length;
+
+    // 1. Combine equations and values into an edge list
+    // (Can skip this and build adjList right away)
+    const edgeList: [string, string, number][] = [];
+    for (let i = 0; i < n; i += 1) {
+        const [src, dst] = equations[i];
+        const weight = values[i];
+        edgeList.push([src, dst, weight]);
     }
 
-    // Ensures the variable exists in the structure, initialized to itself with weight 1
-    add(x: string): void {
-        if (!this.roots.has(x)) {
-            this.roots.set(x, x);       // Initially, a node is its own root
-            this.weights.set(x, 1);     // Weight from x to itself is 1
+    // 2. Build a weighted adjacency list
+    const weightedAdjList: Map<string, [string, number][]> = buildWeightedAdjList(edgeList);
+
+    // 3. Run DFS on every query and rill the result
+    const res: number[] = [];
+    for (const [src, dst] of queries) {
+        res.push(dfs(src, dst, weightedAdjList, new Set()));
+    }
+    return res;
+
+};
+
+function dfs(src: string, dst: string, adjList: Map<string, [string, number][]>, visited: Set<string>): number {
+    // If either variable doesn't exist in our graph, return -1
+    if (!adjList.has(src) || !adjList.has(dst)) {
+        return -1.0;
+    }
+    
+    // If src and dst are the same, return 1 (x/x = 1)
+    if (src === dst) {
+        return 1.0;
+    }
+    
+    // Mark current node as visited
+    visited.add(src);
+    
+    // Explore all neighbors
+    const neighbors = adjList.get(src)!;
+    for (const [neighbor, weight] of neighbors) {
+        if (!visited.has(neighbor)) {
+            // Recursively search for path to destination
+            const result = dfs(neighbor, dst, adjList, visited);
+            if (result !== -1.0) {
+                // Found a path! Return the accumulated weight
+                visited.delete(src); // Clean up for other queries
+                return weight * result;
+            }
         }
     }
-
-    // Finds the root of x, applies path compression, and updates weights
-    find(x: string): string {
-        const root = this.roots.get(x);
-        if (root !== x) {
-
-            // Path compression
-            this.roots.set(x, this.find(root));
-
-            // Update the weight
-            this.weights.set(x, this.weights.get(x)! * this.weights.get(root)!);
-
-        }
-        return this.roots.get(x);
-    }
-
-    // Connects two variables with a given ratio (x / y = quotient)
-    union(dividend: string, divisor: string, quotient: number): void {
-        this.add(dividend); // Ensure both nodes exist
-        this.add(divisor);
-
-        const rootX = this.find(dividend);
-        const rootY = this.find(divisor);
-
-        if (rootX !== rootY) {
-            // Connect rootX to rootY
-            this.roots.set(rootX, rootY);
-
-            // Update the weight:
-            // weight[rootX] = (quotient * weight[divisor]) / weight[dividend]
-            //
-            // Why?
-            // quotient = dividend / divisor
-            // dividend = rootX * weight[dividend]
-            // divisor  = rootY * weight[divisor]
-            // ⇒ (rootX * weight[dividend]) / (rootY * weight[divisor]) = quotient
-            // Rearranged ⇒ rootX / rootY = (quotient * weight[divisor]) / weight[dividend]
-            this.weights.set(rootX, (quotient * this.weights.get(divisor)!) / this.weights.get(dividend)!);
-        }
-    }
-
-    // Returns the ratio of dividend / divisor if they're connected, else -1
-    getRatio(dividend: string, divisor: string): number {
-        if (!this.roots.has(dividend) || !this.roots.has(divisor)) {
-            return -1; // Either variable is unknown
-        }
-
-        if (this.find(dividend) !== this.find(divisor)) {
-            return -1; // They’re not connected
-        }
-
-        // Since they have the same root, dividend / divisor = weight[dividend] / weight[divisor]
-        return this.weights.get(dividend)! / this.weights.get(divisor)!;
-    }
+    
+    // Clean up visited set and return -1 if no path found
+    visited.delete(src);
+    return -1.0;
 }
 
-// Solves the equation system and evaluates each query
-function calcEquation(equations: string[][], values: number[], queries: string[][]): number[] {
-    const uf = new ModifiedUnionFind();
-
-    // Step 1: Build Union-Find structure using given equations
-    for (let i = 0; i < equations.length; i += 1) {
-        const [dividend, divisor] = equations[i];
-        const quotient = values[i];
-        uf.union(dividend, divisor, quotient); // Add the equation: dividend / divisor = quotient
+function buildWeightedAdjList(edgeList: [string, string, number][]): Map<string, [string, number][]> {
+    const adjList = new Map();
+    for (const [src, dst, weight] of edgeList) {
+        if (!adjList.has(src)) {
+            adjList.set(src, []);
+        }
+        if (!adjList.has(dst)) {
+            adjList.set(dst, []);
+        }
+        adjList.get(src).push([dst, weight]);
+        adjList.get(dst).push([src, 1 / weight]);
     }
-
-    // Step 2: Evaluate each query
-    const result: number[] = [];
-    for (const query of queries) {
-        const [dividend, divisor] = query;
-        result.push(uf.getRatio(dividend, divisor)); // Get the ratio or -1
-    }
-
-    return result;
+    return adjList;
 }
