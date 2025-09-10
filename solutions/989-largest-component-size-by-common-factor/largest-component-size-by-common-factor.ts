@@ -45,12 +45,17 @@ function getFactors(num: number): number[] {
         }
         factor += 1;
     }
-
-    // If num > 1, add num itself as a factor (handles primes and remaining factors)
+    
+    // Add the number itself as a factor since every number is divisible by itself.
+    // This is crucial for three scenarios:
+    // 1. Prime numbers: The loop above finds no factors, so we need to add the prime itself
+    // 2. All numbers: We need the complete factor list including the number as its own factor
+    // 3. Union-Find connectivity: Numbers need to connect with their multiples/divisors
+    // Note: We check num > 1 to exclude 1, since the problem asks for factors > 1
     if (num > 1) {
         factors.add(num);
     }
-
+    
     return [...factors];
 }
 
