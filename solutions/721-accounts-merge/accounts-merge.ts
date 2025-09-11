@@ -31,16 +31,17 @@ function dfs(
     visited: Set<string>,
     mergedEmails: string[]
 ): void {
+
     visited.add(email);
     mergedEmails.push(email);
 
-    if (adjList.has(email)) {
+    // if (adjList.has(email)) {
         for (const neighbor of adjList.get(email)!) {
             if (!visited.has(neighbor)) {
                 dfs(neighbor, adjList, visited, mergedEmails);
             }
         }
-    }
+    // }
 }
 
 function buildAdjList(accounts: string[][]): Map<string, Set<string>> {
