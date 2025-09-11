@@ -2,17 +2,17 @@ function accountsMerge(accounts: string[][]): string[][] {
 
     // 1. Create a bi-directional adjacency List using Hub/Star method
     const adjList = buildAdjList(accounts);
-    
-    // 2. Run DFS and fill in the result
+
+    // 2. Run BFS and fill in the result
     const visited = new Set<string>();
     const result: string[][] = [];
-    for(const account of accounts) {
+    for (const account of accounts) {
         const name = account[0];
         const firstEmail = account[1];
-        if(!visited.has(firstEmail)) {
+        if (!visited.has(firstEmail)) {
 
             const mergedEmails: string[] = [];
-            dfs(firstEmail, adjList, visited, mergedEmails);
+            bfs(firstEmail, adjList, visited, mergedEmails);
 
             // 2.1. Sort the emails
             mergedEmails.sort();
@@ -24,25 +24,26 @@ function accountsMerge(accounts: string[][]): string[][] {
     return result;
 };
 
-function dfs(
+function bfs(
     src: string,
     adjList: Map<string, Set<string>>,
     visited: Set<string>,
     merged: string[]
 ): void {
-
-    // Pre-Order DFS
-    // 1. Visit / Merge current node
-    // Mark as visited BEFORE processing (not inside the loop)
+    const queue: string[] = [];
+    queue.push(src);
     visited.add(src);
-    merged.push(src);
-
-    // 2. Visit neighbors
-    for(const neighbor of adjList.get(src)) {
-        if(!visited.has(neighbor)) {
-            dfs(neighbor, adjList, visited, merged);
+    while (queue.length > 0) {
+        const currNode = queue.shift();
+        merged.push(currNode);
+        for (const neighbor of adjList.get(currNode)) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push(neighbor);
+            }
         }
     }
+
 }
 
 // Hub/Star - First email connects to all others (connection is bi-directional)
