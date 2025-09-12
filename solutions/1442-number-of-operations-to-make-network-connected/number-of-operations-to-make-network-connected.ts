@@ -1,32 +1,30 @@
 function makeConnected(n: number, connections: number[][]): number {
-
     // Edge Case: number of computers (n) is greater than number of cables (connections)
-    // There should be atleast n - 1 number of cables / connections
-    if(connections.length < n -1) {
-        return -1
+    // There should be at least n - 1 number of cables / connections
+    if (connections.length < n - 1) {
+        return -1;
     }
     
     const uf = new UnionFind(n);
-
     let cablesUsed = 0;
+    
     // 1. Iterate over the connections and perform 'union'
-    for(const [src, dst] of connections) {
-        // 1.1. If union is succssful, increment number of cables used
-        if(uf.union(src, dst) === true) {
+    for (const [src, dst] of connections) {
+        // 1.1. If union is successful, increment number of cables used
+        if (uf.union(src, dst) === true) {
             cablesUsed += 1;
         }
-
     }
-
-    // 2. Check if number of remaining cables (connections.length - cablesUsed) is is greater than or equals to number of components - 1
+    
+    // 2. Check if number of remaining cables is greater than or equal to number of components - 1
     const cablesRemaining = connections.length - cablesUsed;
     const componentsLeftToConnect = uf.getNumComponents() - 1;
-    if(cablesRemaining >= componentsLeftToConnect) {
+    
+    if (cablesRemaining >= componentsLeftToConnect) {
         return componentsLeftToConnect;
     } else {
         return -1;
     }
-
 };
 
 class UnionFind {
