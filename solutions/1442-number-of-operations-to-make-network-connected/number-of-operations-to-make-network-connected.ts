@@ -1,32 +1,32 @@
 function makeConnected(n: number, connections: number[][]): number {
 
-    // Check the size of connections, if it is less than n - 1
-    if(connections.length < n - 1) {
-        // we don't have enough edges to connect the entire graph
-        return -1;
+    // Edge Case: number of computers (n) is greater than number of cables (connections)
+    // There should be atleast n - 1 number of cables / connections
+    if(connections.length < n -1) {
+        return -1
     }
-
+    
     const uf = new UnionFind(n);
 
     let cablesUsed = 0;
-
-    for(const cable of connections) {
-        const [src, dst] = cable;
+    // 1. Iterate over the connections and perform 'union'
+    for(const [src, dst] of connections) {
+        // 1.1. If union is succssful, increment number of cables used
         if(uf.union(src, dst) === true) {
             cablesUsed += 1;
         }
+
     }
 
-    const cablesLeft = connections.length - cablesUsed;
-    // Note: The -1 is because to connect k separate components into one fully connected network
-    // we need exactly k-1 edges (cables)
-    const componentsToConnect = uf.getNumComponents() - 1;
-
-    if(cablesLeft >= componentsToConnect) {
-        return componentsToConnect;
+    // 2. Check if number of remaining cables (connections.length - cablesUsed) is is greater than or equals to number of components - 1
+    const cablesRemaining = connections.length - cablesUsed;
+    const componentsLeftToConnect = uf.getNumComponents() - 1;
+    if(cablesRemaining >= componentsLeftToConnect) {
+        return componentsLeftToConnect;
     } else {
         return -1;
     }
+
 };
 
 class UnionFind {
