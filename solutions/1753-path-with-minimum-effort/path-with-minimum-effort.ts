@@ -1,59 +1,59 @@
 function minimumEffortPath(heights: number[][]): number {
-  
-  const ROWS = heights.length;
-  const COLS = heights[0].length;
 
-  // 1. Initialize a priority queue
-  const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col], prio: currAbsDiff
-  minPQ.push([0, 0], 0);
+    const ROWS = heights.length;
+    const COLS = heights[0].length;
+    
+    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col]
+    minPQ.push([0, 0], 0); // Initial effor is zero?
 
-  // 2. Visited set
-  const visited = new Set<string>();
+    const visited = new Set<string>();
 
-  // 3. Perform Dijkstra's on matrix
-  while(minPQ.length > 0) {
+    while(minPQ.length > 0) {
 
-    const { val: [row, col], prio: maxAbsDiff } = minPQ.pop();
+        const { val: [row, col], prio: maxAbsDiff } = minPQ.pop();
 
-    if(row === ROWS - 1 && col === COLS - 1) {
-        return maxAbsDiff;
-    }
+        if(row === ROWS - 1 && col === COLS - 1) {
+            return maxAbsDiff;
+        }
 
-    const position = `${row},${col}`;
-    if(visited.has(position)) {
-        continue;
-    }
-    visited.add(position);
+        const currPosition = `${row},${col}`;
+        if(visited.has(currPosition)) {
+            continue;
+        }
+        visited.add(currPosition);
 
-    const directions: [number, number][] = [
-        [-1, 0], // up
-        [0, 1], // right
-        [1, 0], // down
-        [0, -1], // left
-    ];
-    for(const [rowDelta, colDelta] of directions) {
+        const directions: [number, number][] = [
+            [-1, 0], // up
+            [0, 1], // right
+            [1, 0], // down
+            [0, -1], // left
+        ];
 
-        const neighborRow = rowDelta + row;
-        const neighborCol = colDelta + col;
-        const neighborPosition = `${neighborRow},${neighborCol}`;
+        for(const [rowDelta, colDelta] of directions) {
 
-        if(
-            // out of bounds check
-            0 <= neighborRow && neighborRow < ROWS &&
-            0 <= neighborCol && neighborCol < COLS &&
-            // visited check
-            !visited.has(neighborPosition)
-        ) {
+            const neighborRow = rowDelta + row;
+            const neighborCol = colDelta + col;
+            const neighborPosition = `${neighborRow},${neighborCol}`;
+            if(
+                // Out of bounds check
+                0 <= neighborRow && neighborRow < ROWS &&
+                0 <= neighborCol && neighborCol < COLS &&
+                // Visited check
+                !visited.has(neighborPosition)
+            ) {
 
-            const currAbsDiff = Math.abs(heights[row][col] - heights[neighborRow][neighborCol]);
-            const newAbsDiff = Math.max(currAbsDiff, maxAbsDiff);
-            minPQ.push([neighborRow, neighborCol], newAbsDiff);
+                const currHeight = heights[row][col];
+                const neighborHeight = heights[neighborRow][neighborCol];
+                const currAbsDiff = Math.abs(currHeight - neighborHeight);
+                const newMaxAbsDiff = Math.max(maxAbsDiff, currAbsDiff)
+
+                minPQ.push([neighborRow, neighborCol], newMaxAbsDiff);
+
+            }
 
         }
 
     }
-
-  }
 
 };
 
@@ -110,7 +110,7 @@ class CustomMinPriorityQueue<T> {
             const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
             if(this.data[currIdx].prio > smallerChildPrio) {
                 this.swap(currIdx, smallerChildIdx);
-                currIdx = smallerChildIdx; 
+                currIdx = smallerChildIdx;
             } else {
                 break;
             }
