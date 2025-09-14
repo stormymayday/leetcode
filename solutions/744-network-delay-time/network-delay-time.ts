@@ -16,8 +16,7 @@ function networkDelayTime(times: number[][], n: number, k: number): number {
         }
 
         distances.set(currNode, currDist);
-        // maxDistance = currDist;
-        maxDistance = Math.max(maxDistance, currDist);
+        maxDistance = currDist;
 
         for (const [neighbor, neighborDist] of adjList.get(currNode)) {
             // if (!distances.has(neighbor)) {
