@@ -1,12 +1,9 @@
 function minimumCost(n: number, connections: number[][]): number {
-
-    // 1. Initialze a Union Find
-    const uf = new UnionFind(n);
-
-    // 2. Sort edges by weight
+    
     connections.sort((a, b) => a[2] - b[2]);
 
-    // 3. Perform Kruskal's
+    const uf = new UnionFind(n);
+
     let mstCost = 0;
     let edgesUsed = 0;
     for(const [src, dst, cost] of connections) {
@@ -18,19 +15,15 @@ function minimumCost(n: number, connections: number[][]): number {
             }
         }
     }
-    //  it is impossible to connect all the cities
     return -1;
-    
 };
 
 class UnionFind {
     private roots: Map<number, number>;
     private sizes: Map<number, number>;
-    private numComponents: number;
     constructor(n: number) {
         this.roots = new Map();
         this.sizes = new Map();
-        this.numComponents = n;
         for(let i = 1; i <= n; i += 1) {
             this.roots.set(i, i);
             this.sizes.set(i, 1);
@@ -56,14 +49,7 @@ class UnionFind {
                 this.roots.set(rootX, rootY);
                 this.sizes.set(rootY, this.sizes.get(rootY) + this.sizes.get(rootX));
             }
-            this.numComponents -= 1;
             return true;
         }
-    }
-    isSameComponent(x: number, y: number): boolean {
-        return this.find(x) === this.find(y);
-    }
-    getNumComponents(): number {
-        return this.numComponents;
     }
 }
