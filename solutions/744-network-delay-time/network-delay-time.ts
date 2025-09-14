@@ -1,46 +1,50 @@
 function networkDelayTime(times: number[][], n: number, k: number): number {
 
-    // 1. Create a weighted adjacency list
-    const adjList = new Map<number, [number, number][]>(); // key: src -> val: [[dst, cost], ...]
-    for(let i = 1; i <= n; i += 1) {
-        adjList.set(i, []);
-    }
-    for(const [src, dst, cost] of times) {
-        adjList.get(src).push([dst, cost]);
-    }
+    const adjList = buildAdjList(n, times);
 
-    // 2. Initalize a priority queue
-    const minPQ = new CustomMinPriorityQueue<number>(); // val: node, prio: cost
+    const minPQ = new CustomMinPriorityQueue<number>(); // val: number
     minPQ.push(k, 0);
 
-    const visited = new Set<number>();
+    const distances = new Map<number, number>();
+    let maxDistance = 0
+    while (minPQ.length > 0) {
 
-    // 3. Perform Dijkstra's
-    let minTime = 0;
-    while(minPQ.length > 0) {
+        const { val: currNode, prio: currDist } = minPQ.pop();
 
-        const { val: currNode, prio: currCost } = minPQ.pop();
-
-        if(visited.has(currNode)) {
+        if (distances.has(currNode)) {
             continue;
         }
-        visited.add(currNode);
-        minTime = currCost;
 
-        for(const [neighbor, neighborCost] of adjList.get(currNode)) {
-            if(!visited.has(neighbor)) {
-                minPQ.push(neighbor, currCost + neighborCost);
-            }
+        distances.set(currNode, currDist);
+        // maxDistance = currDist;
+        maxDistance = Math.max(maxDistance, currDist);
+
+        for (const [neighbor, neighborDist] of adjList.get(currNode)) {
+            // if (!distances.has(neighbor)) {
+                minPQ.push(neighbor, currDist + neighborDist);
+            // }
+
         }
     }
 
-    if(n === visited.size) {
-        return minTime;
+    if (distances.size !== n) {
+        return -1; // didn't visit all the nodes
     } else {
-        return -1;
+        return maxDistance;
     }
 
 };
+
+function buildAdjList(n: number, edges: number[][]): Map<number, [number, number][]> {
+    const adjList = new Map();
+    for (let i = 1; i <= n; i += 1) {
+        adjList.set(i, []);
+    }
+    for (const [src, dst, weight] of edges) {
+        adjList.get(src).push([dst, weight]);
+    }
+    return adjList;
+}
 
 class PriorityQueueNode<T> {
     val: T;
@@ -59,22 +63,22 @@ class CustomMinPriorityQueue<T> {
         this.length = 0;
     }
     push(val: T, prio: number): void {
-        const newNode = new PriorityQueueNode<T>(val, prio);
+        const newNode = new PriorityQueueNode(val, prio);
         this.data.push(newNode);
         this.length += 1;
         let currIdx = this.length - 1;
         let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx].prio < this.data[parentIdx].prio) {
+        while (currIdx > 0 && this.data[currIdx].prio < this.data[parentIdx].prio) {
             this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
             parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    pop(): PriorityQueueNode<T> | null {
-        if(this.length === 0) {
-            return null;
+    pop(): PriorityQueueNode<T> | undefined {
+        if (this.length === 0) {
+            return undefined;
         }
-        if(this.length === 1) {
+        if (this.length === 1) {
             this.length = 0;
             return this.data.pop();
         }
@@ -86,14 +90,14 @@ class CustomMinPriorityQueue<T> {
     }
     siftDown(idx: number): void {
         let currIdx = idx;
-        while(currIdx < this.length - 1) {
+        while (currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
             const rightChildIdx = currIdx * 2 + 2;
             const leftChildPrio = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx].prio;
             const rightChildPrio = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx].prio;
             const smallerChildIdx = leftChildPrio < rightChildPrio ? leftChildIdx : rightChildIdx;
             const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
-            if(this.data[currIdx].prio > smallerChildPrio) {
+            if (this.data[currIdx].prio > smallerChildPrio) {
                 this.swap(currIdx, smallerChildIdx);
                 currIdx = smallerChildIdx;
             } else {
@@ -101,17 +105,17 @@ class CustomMinPriorityQueue<T> {
             }
         }
     }
+    top(): number | undefined {
+        return this.length > 0 ? this.data[0].prio : undefined;
+    }
     heapify(vals: PriorityQueueNode<T>[]): void {
         this.data = [...vals];
         this.length = vals.length;
         let currIdx = Math.floor((this.length - 2) / 2);
-        while(currIdx >= 0) {
+        while (currIdx >= 0) {
             this.siftDown(currIdx);
             currIdx -= 1;
         }
-    }
-    top(): number | null {
-        return this.length > 0 ? this.data[0].prio : null;
     }
     swap(idx1: number, idx2: number): void {
         const temp = this.data[idx1];
