@@ -1,5 +1,5 @@
 function countComponents(n: number, edges: number[][]): number {
-
+    
     const uf = new UnionFind(n);
 
     for(const [src, dst] of edges) {
@@ -7,7 +7,7 @@ function countComponents(n: number, edges: number[][]): number {
     }
 
     return uf.getNumComponents();
-    
+
 };
 
 class UnionFind {
