@@ -1,5 +1,5 @@
 function findCircleNum(isConnected: number[][]): number {
-    
+
     const n = isConnected.length;
 
     const uf = new UnionFind(n);
