@@ -1,31 +1,28 @@
 function swimInWater(grid: number[][]): number {
 
     const n = grid.length;
+    
+    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col], prio: number
+    minPQ.push([0, 0], grid[0][0]);
 
-    // 1. Initialze a priority queue (Naive Priority Queue)
-    const minPQ: [number, number, number][] = []; // [maxElevation, row, col]
-    minPQ.push([grid[0][0], 0, 0]);
-
-    // 2. Visited set
     const visited = new Set<string>();
 
-    // 3. Run Dijkstra's on matrix
+    let minTime = 0;
     while(minPQ.length > 0) {
 
-        // Immitating a priority queue
-        minPQ.sort((a, b) => a[0] - b[0]);
+        const { val: [row, col], prio: currMinElevation } = minPQ.pop();
 
-        const [maxElevation, row, col] = minPQ.shift();
+        minTime = Math.max(minTime, currMinElevation);
 
         if(row === n - 1 && col === n - 1) {
-            return maxElevation;
+            break;
         }
-        
-        const position = `${row},${col}`;
-        if(visited.has(position)) {
+
+        const currPosition = `${row},${col}`;
+        if(visited.has(currPosition)) {
             continue;
         }
-        visited.add(position);
+        visited.add(currPosition);
 
         const directions: [number, number][] = [
             [-1, 0], // up
@@ -34,25 +31,98 @@ function swimInWater(grid: number[][]): number {
             [0, -1], // left
         ];
         for(const [rowDelta, colDelta] of directions) {
-
             const neighborRow = row + rowDelta;
             const neighborCol = col + colDelta;
             const neighborPosition = `${neighborRow},${neighborCol}`;
-
             if(
                 // out of bounds check
                 0 <= neighborRow && neighborRow < n &&
                 0 <= neighborCol && neighborCol < n &&
                 // visited check
-                !visited.has(neighborPosition)
+                visited.has(neighborPosition) === false
             ) {
-
-                const newMaxElevation = Math.max(maxElevation, grid[neighborRow][neighborCol]);
-                minPQ.push([newMaxElevation, neighborRow, neighborCol]);
-
+                minPQ.push([neighborRow, neighborCol], grid[neighborRow][neighborCol]);
             }
-
         }
     }
-    
+    return minTime;
+
 };
+
+class PriorityQueueNode<T> {
+    public val: T;
+    public prio: number;
+    constructor(val: T, prio: number) {
+        this.val = val;
+        this.prio = prio;
+    }
+}
+
+class CustomMinPriorityQueue<T> {
+    private data: PriorityQueueNode<T>[];
+    public length: number;
+    constructor() {
+        this.data = [];
+        this.length = 0;
+    }
+    push(val: T, prio: number): void {
+        const newNode = new PriorityQueueNode(val, prio);
+        this.data.push(newNode);
+        this.length += 1;
+        let currIdx = this.length - 1;
+        let parentIdx = Math.floor((currIdx - 1) / 2);
+        while(currIdx > 0 && this.data[currIdx].prio < this.data[parentIdx].prio) {
+            this.swap(currIdx, parentIdx);
+            currIdx = parentIdx;
+            parentIdx = Math.floor((currIdx - 1) / 2);
+        }
+    }
+    pop(): PriorityQueueNode<T> | undefined {
+        if(this.length === 0) {
+            return undefined;
+        }
+        if(this.length === 1) {
+            this.length = 0;
+            return this.data.pop();
+        }
+        const root = this.data[0];
+        this.data[0] = this.data.pop();
+        this.length -= 1;
+        this.siftDown(0);
+        return root;
+    }
+    siftDown(idx: number): void {
+        let currIdx = idx;
+        while(currIdx < this.length - 1) {
+            const leftChildIdx = currIdx * 2 + 1;
+            const rightChildIdx = currIdx * 2 + 2;
+            const leftChildPrio = this.data[leftChildIdx] === undefined ? Infinity : this.data[leftChildIdx].prio;
+            const rightChildPrio = this.data[rightChildIdx] === undefined ? Infinity : this.data[rightChildIdx].prio;
+            const smallerChildIdx = leftChildPrio < rightChildPrio ? leftChildIdx : rightChildIdx;
+            const smallerChildPrio = leftChildPrio < rightChildPrio ? leftChildPrio : rightChildPrio;
+            if(this.data[currIdx].prio > smallerChildPrio) {
+                this.swap(currIdx, smallerChildIdx);
+                currIdx = smallerChildIdx;
+            } else {
+                break;
+            }
+        }
+    }
+    heapify(vals: PriorityQueueNode<T>[]): void {
+        this.data = [...vals];
+        this.length = vals.length;
+        let currIdx = Math.floor((this.length - 2) / 2);
+        while(currIdx >= 0) {
+            this.siftDown(currIdx);
+            currIdx -= 1;
+        }
+    }
+    top(): number | undefined {
+        return this.length > 0 ? this.data[0].prio : undefined;
+    }
+    swap(idx1: number, idx2: number): void {
+        const temp = this.data[idx1];
+        this.data[idx1] = this.data[idx2];
+        this.data[idx2] = temp;
+    }
+}
