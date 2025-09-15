@@ -1,5 +1,5 @@
 function findCircleNum(isConnected: number[][]): number {
-
+    
     const n = isConnected.length;
 
     const uf = new UnionFind(n);
@@ -7,7 +7,7 @@ function findCircleNum(isConnected: number[][]): number {
     for(let row = 0; row < n; row += 1) {
         for(let col = 0; col < n; col += 1) {
             if(isConnected[row][col] === 1) {
-                uf.union(row + 1, col + 1);
+                uf.union(row, col);
             }
         }
     }
@@ -24,7 +24,7 @@ class UnionFind {
         this.roots = new Map();
         this.sizes = new Map();
         this.numComponents = n;
-        for(let i = 1; i <= n; i += 1) {
+        for(let i = 0; i < n; i += 1) {
             this.roots.set(i, i);
             this.sizes.set(i, 1);
         }
