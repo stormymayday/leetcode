@@ -5,7 +5,7 @@ function findCircleNum(isConnected: number[][]): number {
     const uf = new UnionFind(n);
 
     for(let row = 0; row < n; row += 1) {
-        for(let col = 0; col < n; col += 1) {
+        for(let col = row + 1; col < n; col += 1) {
             if(isConnected[row][col] === 1) {
                 uf.union(row, col);
             }
