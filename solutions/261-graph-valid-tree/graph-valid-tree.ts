@@ -1,20 +1,21 @@
 function validTree(n: number, edges: number[][]): boolean {
-    // A tree must have exactly n-1 edges
-    if (edges.length !== n - 1) {
+
+    // There is one more node compared to number of edges in a valid tree
+    if(n !== edges.length + 1) {
         return false;
     }
     
     const uf = new UnionFind(n);
-    
-    // Check for cycles
-    for (const [src, dst] of edges) {
-        if (uf.union(src, dst) === false) {
+
+    // Should be able to run 'union' on every edge
+    // Otherwise, there is a cycle
+    for(const [src, dst] of edges) {
+        if(uf.union(src, dst) === false) {
             return false;
         }
     }
-    
-    // If we have n-1 edges and no cycles, we have a valid tree
     return true;
+
 };
 
 class UnionFind {
