@@ -1,12 +1,13 @@
 function minimumCost(n: number, connections: number[][]): number {
-    
-    connections.sort((a, b) => a[2] - b[2]);
+
+    const sortedConnections = [...connections];
+    sortedConnections.sort((a, b) => a[2] - b[2]);
 
     const uf = new UnionFind(n);
 
     let mstCost = 0;
     let edgesUsed = 0;
-    for(const [src, dst, cost] of connections) {
+    for(const [src, dst, cost] of sortedConnections) {
         if(uf.union(src, dst) === true) {
             mstCost += cost;
             edgesUsed += 1;
@@ -16,14 +17,17 @@ function minimumCost(n: number, connections: number[][]): number {
         }
     }
     return -1;
+    
 };
 
 class UnionFind {
     private roots: Map<number, number>;
     private sizes: Map<number, number>;
+    private numComponents: number;
     constructor(n: number) {
         this.roots = new Map();
         this.sizes = new Map();
+        this.numComponents = n;
         for(let i = 1; i <= n; i += 1) {
             this.roots.set(i, i);
             this.sizes.set(i, 1);
@@ -49,7 +53,11 @@ class UnionFind {
                 this.roots.set(rootX, rootY);
                 this.sizes.set(rootY, this.sizes.get(rootY) + this.sizes.get(rootX));
             }
+            this.numComponents -= 1;
             return true;
         }
+    }
+    getNumComponents(): number {
+        return this.numComponents;
     }
 }
