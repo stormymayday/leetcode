@@ -2,18 +2,20 @@ function minimumEffortPath(heights: number[][]): number {
 
     const ROWS = heights.length;
     const COLS = heights[0].length;
-    
-    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col]
-    minPQ.push([0, 0], 0); // Initial effor is zero?
+
+    const minPQ = new CustomMinPriorityQueue<[number, number]>(); // val: [row, col], prio: max absolute difference
+    minPQ.push([0, 0], 0); // starting with effort of 0
 
     const visited = new Set<string>();
 
+    let minEffort = 0;
     while(minPQ.length > 0) {
 
-        const { val: [row, col], prio: maxAbsDiff } = minPQ.pop();
+        const { val: [row, col], prio: currMaxAbsDiff } = minPQ.pop();
 
         if(row === ROWS - 1 && col === COLS - 1) {
-            return maxAbsDiff;
+            minEffort = currMaxAbsDiff;
+            break;
         }
 
         const currPosition = `${row},${col}`;
@@ -28,38 +30,34 @@ function minimumEffortPath(heights: number[][]): number {
             [1, 0], // down
             [0, -1], // left
         ];
-
         for(const [rowDelta, colDelta] of directions) {
-
-            const neighborRow = rowDelta + row;
-            const neighborCol = colDelta + col;
+            const neighborRow = row + rowDelta;
+            const neighborCol = col + colDelta;
             const neighborPosition = `${neighborRow},${neighborCol}`;
             if(
                 // Out of bounds check
                 0 <= neighborRow && neighborRow < ROWS &&
                 0 <= neighborCol && neighborCol < COLS &&
-                // Visited check
+                // visited check
                 !visited.has(neighborPosition)
             ) {
-
-                const currHeight = heights[row][col];
-                const neighborHeight = heights[neighborRow][neighborCol];
-                const currAbsDiff = Math.abs(currHeight - neighborHeight);
-                const newMaxAbsDiff = Math.max(maxAbsDiff, currAbsDiff)
+                
+                const currAbsDiff = Math.abs(heights[row][col] - heights[neighborRow][neighborCol]);
+                const newMaxAbsDiff = Math.max(currMaxAbsDiff, currAbsDiff);
 
                 minPQ.push([neighborRow, neighborCol], newMaxAbsDiff);
 
             }
-
         }
 
     }
-
+    return minEffort;
+    
 };
 
 class PriorityQueueNode<T> {
-    val: T;
-    prio: number;
+    public val: T;
+    public prio: number;
     constructor(val: T, prio: number) {
         this.val = val;
         this.prio = prio;
@@ -74,7 +72,7 @@ class CustomMinPriorityQueue<T> {
         this.length = 0;
     }
     push(val: T, prio: number): void {
-        const newNode = new PriorityQueueNode<T>(val, prio);
+        const newNode = new PriorityQueueNode(val, prio);
         this.data.push(newNode);
         this.length += 1;
         let currIdx = this.length - 1;
@@ -85,9 +83,9 @@ class CustomMinPriorityQueue<T> {
             parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    pop(): PriorityQueueNode<T> | null {
+    pop(): PriorityQueueNode<T> | undefined {
         if(this.length === 0) {
-            return null;
+            return undefined;
         }
         if(this.length === 1) {
             this.length = 0;
@@ -125,8 +123,8 @@ class CustomMinPriorityQueue<T> {
             currIdx -= 1;
         }
     }
-    top(): number | null {
-        return this.length > 0 ? this.data[0].prio : null;
+    top(): number | undefined {
+        return this.length > 0 ? this.data[0].prio : undefined;
     }
     swap(idx1: number, idx2: number): void {
         const temp = this.data[idx1];
