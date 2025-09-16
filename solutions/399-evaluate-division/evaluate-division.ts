@@ -12,9 +12,9 @@ function calcEquation(equations: string[][], values: number[], queries: string[]
     const res: number[] = [];
     for (const [src, dst] of queries) {
         if (!adjList.has(src) || !adjList.has(dst)) {
-            res.push(-1);
+            res.push(-1.0);
         } else if (src === dst) {
-            res.push(1);
+            res.push(1.0);
         } else {
             res.push(dfs(src, dst, adjList, new Set<string>()));
         }
@@ -27,14 +27,7 @@ function dfs(src: string, dst: string, adjList: Map<string, [string, number][]>,
     // Base Case: reached destination
     if (src === dst) {
         return 1;
-    }
-
-    // Cycle ? 
-    // if (visited.has(src)) {
-    //     return -1;
-    // }
-
-    
+    }   
 
     for (const [neighbor, weight] of adjList.get(src)) {
         if (!visited.has(neighbor)) {
