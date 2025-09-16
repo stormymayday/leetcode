@@ -7,10 +7,10 @@ function smallestStringWithSwaps(s: string, pairs: number[][]): string {
 
     const rootToComponent = new Map<number, string[]>();
     for(let i = 0; i < s.length; i += 1) {
-        rootToComponent.set(i, []);
-    }
-    for(let i = 0; i < s.length; i += 1) {
         const root = uf.find(i);
+        if(!rootToComponent.has(root)) {
+            rootToComponent.set(root, []);
+        }
         const char = s[i];
         rootToComponent.get(root).push(char);
     }
