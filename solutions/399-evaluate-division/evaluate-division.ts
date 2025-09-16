@@ -16,32 +16,32 @@ function calcEquation(equations: string[][], values: number[], queries: string[]
         } else if (src === dst) {
             res.push(1.0);
         } else {
-            res.push(dfs(src, dst, adjList, new Set<string>()));
+            res.push(bfs(src, dst, adjList, new Set<string>()));
         }
     }
     return res;
 };
 
-function dfs(src: string, dst: string, adjList: Map<string, [string, number][]>, visited: Set<string>): number {
+function bfs(src: string, dst: string, adjList: Map<string, [string, number][]>, visited: Set<string>): number {
 
-    // Base Case: reached destination
-    if (src === dst) {
-        return 1;
-    }   
+    const queue: [string, number][] = [];
+    queue.push([src, 1.0]);
+    visited.add(src);
 
-    for (const [neighbor, weight] of adjList.get(src)) {
-        // cycle check
-        if (!visited.has(neighbor)) {
-            visited.add(neighbor);
-            const res: number = dfs(neighbor, dst, adjList, visited);
-            if (res !== -1.0) {
-                return res * weight;
+    while(queue.length > 0) {
+        const [currNode, currWeight] = queue.shift();
+        if(currNode === dst) {
+            return currWeight;
+        }
+        for(const [neighbor, neighborWeight] of adjList.get(currNode)) {
+            if(!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push([neighbor, currWeight * neighborWeight]);
             }
         }
-
     }
-    // no path was found
-    return -1.0;
+    // Path not found
+    return -1;
 }
 
 function buildAdjList(edgeList: [string, string, number][]): Map<string, [string, number][]> {
