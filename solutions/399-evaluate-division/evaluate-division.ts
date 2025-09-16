@@ -30,9 +30,9 @@ function dfs(src: string, dst: string, adjList: Map<string, [string, number][]>,
     }
 
     // Cycle ? 
-    if (visited.has(src)) {
-        return -1;
-    }
+    // if (visited.has(src)) {
+    //     return -1;
+    // }
 
     visited.add(src);
 
