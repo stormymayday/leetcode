@@ -34,10 +34,11 @@ function dfs(src: string, dst: string, adjList: Map<string, [string, number][]>,
     //     return -1;
     // }
 
-    visited.add(src);
+    
 
     for (const [neighbor, weight] of adjList.get(src)) {
         if (!visited.has(neighbor)) {
+            visited.add(neighbor);
             const res: number = dfs(neighbor, dst, adjList, visited);
             if (res !== - 1) {
                 return res * weight;
