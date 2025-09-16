@@ -1,10 +1,11 @@
 function earliestAcq(logs: number[][], n: number): number {
     
-    logs.sort((a, b) => a[0] - b[0]);
+    const sortedLogs = [...logs];
+    sortedLogs.sort((a, b) => a[0] - b[0]);
 
     const uf = new UnionFind(n);
 
-    for(const [timestamp, src, dst] of logs) {
+    for(const [timestamp, src, dst] of sortedLogs) {
         uf.union(src, dst);
         if(uf.getNumComponents() === 1) {
             return timestamp;
