@@ -30,17 +30,18 @@ function dfs(src: string, dst: string, adjList: Map<string, [string, number][]>,
     }   
 
     for (const [neighbor, weight] of adjList.get(src)) {
+        // cycle check
         if (!visited.has(neighbor)) {
             visited.add(neighbor);
             const res: number = dfs(neighbor, dst, adjList, visited);
-            if (res !== - 1) {
+            if (res !== -1.0) {
                 return res * weight;
             }
         }
 
     }
-
-    return -1;
+    // no path was found
+    return -1.0;
 }
 
 function buildAdjList(edgeList: [string, string, number][]): Map<string, [string, number][]> {
