@@ -7,35 +7,38 @@ function pacificAtlantic(heights: number[][]): number[][] {
     const pacificVisited = new Set<string>();
     const atlanticVisited = new Set<string>();
 
-    // 1. Constructing 'pacificQueue' and marking coords as visited using 'pacificVisited'
-    const pacificQueue: number[][] = [];
-    // Top Row
+    // 1. Running DFS on Top Row (Pacific) using 'pacificVisited'
     for (let col = 0; col < COLS; col += 1) {
-        pacificQueue.push([0, col]);
-        pacificVisited.add(`${0},${col}`);
+        const position = `${0},${col}`;
+        if (!pacificVisited.has(position)) {
+            matrixDFS(0, col, heights, pacificVisited, heights[0][col]);
+        }
     }
-    // Left Col
-    for (let row = 0; row < ROWS; row += 1) {
-        pacificQueue.push([row, 0]);
-        pacificVisited.add(`${row},${0}`);
-    }
-    // 2. Run BFS on the 'pacificQueue' using 'pacificVisited'
-    matrixBFS(heights, pacificQueue, pacificVisited);
 
-    // 3. Constructing 'atlanticQueue' and marking coords as visited using 'atlanticVisited'
-    const atlanticQueue: number[][] = [];
-    // Bottom Row
-    for (let col = 0; col < COLS; col += 1) {
-        atlanticQueue.push([ROWS - 1, col]);
-        atlanticVisited.add(`${ROWS - 1},${col}`);
-    }
-    // Right Col
+    // 2. Running DFS on Left Col (Pacific) using 'pacificVisited'
     for (let row = 0; row < ROWS; row += 1) {
-        atlanticQueue.push([row, COLS - 1]);
-        atlanticVisited.add(`${row},${COLS - 1}`);
+        const position = `${row},${0}`;
+        if (!pacificVisited.has(position)) {
+            matrixDFS(row, 0, heights, pacificVisited, heights[row][0]);
+        }
     }
-    // 4. Run BFS on the 'atlanticQueue' using 'atlanticVisited'
-    matrixBFS(heights, atlanticQueue, atlanticVisited);
+
+    // 3. Running DFS on Bottom Row (Atlantic) using 'atlanticVisited'
+    for (let col = 0; col < COLS; col += 1) {
+        const position = `${ROWS - 1},${col}`;
+        if (!atlanticVisited.has(position)) {
+            matrixDFS(ROWS - 1, col, heights, atlanticVisited, heights[ROWS - 1][col]);
+        }
+    }
+
+    // 4. Running DFS on Right Col (Atlantic) using 'atlanticVisited'
+    for (let row = 0; row < ROWS; row += 1) {
+        const position = `${row},${COLS - 1}`;
+        if (!atlanticVisited.has(position)) {
+            matrixDFS(row, COLS - 1, heights, atlanticVisited, heights[row][COLS - 1]);
+        }
+        
+    }
 
     // 5. Constructing the result
     const res: number[][] = [];
@@ -48,35 +51,35 @@ function pacificAtlantic(heights: number[][]): number[][] {
     return res;
 };
 
-function matrixBFS(grid: number[][], queue: number[][], visited: Set<string>): void {
-
-    const ROWS = grid.length;
-    const COLS = grid[0].length;
-
-    while (queue.length > 0) {
-        const [row, col] = queue.shift();
-        const directions: [number, number][] = [
-            [-1, 0], // up
-            [0, 1], // right
-            [1, 0], // down
-            [0, -1], // left
-        ];
-        for (const [rowDelta, colDelta] of directions) {
-            const neighborRow = row + rowDelta;
-            const neighborCol = col + colDelta;
-            const neighborPosition = `${neighborRow},${neighborCol}`;
-            if (
-                // out of bounds check
-                0 <= neighborRow && neighborRow < ROWS &&
-                0 <= neighborCol && neighborCol < COLS &&
-                // visited check
-                !visited.has(neighborPosition) &&
-                // elevation check
-                grid[row][col] <= grid[neighborRow][neighborCol]
-            ) {
-                visited.add(neighborPosition);
-                queue.push([neighborRow, neighborCol]);
-            }
-        }
+function matrixDFS(row: number, col: number, grid: number[][], visited: Set<string>, previousHeight: number): void {
+    // Base Case 1: Out of bounds
+    if (row < 0 || row >= grid.length || col < 0 || col >= grid[0].length) {
+        return;
     }
+
+    // Base Case 2: visited check
+    const position = `${row},${col}`;
+    if (visited.has(position)) {
+        return;
+    }
+
+    // Base Case 3: elevation check
+    if (previousHeight > grid[row][col]) {
+        return;
+    }
+
+    // Recursive Step
+    visited.add(position);
+    const directions: [number, number][] = [
+        [-1, 0], // up
+        [0, 1], // right
+        [1, 0], // down
+        [0, -1], // left
+    ];
+    for (const [rowDelta, colDelta] of directions) {
+        const neighborRow = row + rowDelta;
+        const neighborCol = col + colDelta;
+        matrixDFS(neighborRow, neighborCol, grid, visited, grid[row][col]);
+    }
+    return;
 }
