@@ -7,40 +7,37 @@ function pacificAtlantic(heights: number[][]): number[][] {
     const pacificVisited = new Set<string>();
     const atlanticVisited = new Set<string>();
 
-    // 1. Running DFS on Top Row (Pacific) using 'pacificVisited'
+    // Running DFS on Top Row (Pacific) using 'pacificVisited'
+    // AND 
+    // Running DFS on Bottom Row (Pacific) using 'atlanticVisited'
     for (let col = 0; col < COLS; col += 1) {
-        const position = `${0},${col}`;
-        if (!pacificVisited.has(position)) {
+
+        if (!pacificVisited.has(`${0},${col}`)) {
             matrixDFS(0, col, heights, pacificVisited, heights[0][col]);
         }
-    }
 
-    // 2. Running DFS on Left Col (Pacific) using 'pacificVisited'
-    for (let row = 0; row < ROWS; row += 1) {
-        const position = `${row},${0}`;
-        if (!pacificVisited.has(position)) {
-            matrixDFS(row, 0, heights, pacificVisited, heights[row][0]);
-        }
-    }
-
-    // 3. Running DFS on Bottom Row (Atlantic) using 'atlanticVisited'
-    for (let col = 0; col < COLS; col += 1) {
-        const position = `${ROWS - 1},${col}`;
-        if (!atlanticVisited.has(position)) {
+        if (!atlanticVisited.has(`${ROWS - 1},${col}`)) {
             matrixDFS(ROWS - 1, col, heights, atlanticVisited, heights[ROWS - 1][col]);
         }
+
     }
 
-    // 4. Running DFS on Right Col (Atlantic) using 'atlanticVisited'
+    // Running DFS on Left Col (Pacific) using 'pacificVisited'
+    // AND
+    // Running DFS on Right Col (Atlantic) using 'atlanticVisited'
     for (let row = 0; row < ROWS; row += 1) {
-        const position = `${row},${COLS - 1}`;
-        if (!atlanticVisited.has(position)) {
+
+        if (!pacificVisited.has(`${row},${0}`)) {
+            matrixDFS(row, 0, heights, pacificVisited, heights[row][0]);
+        }
+
+        if (!atlanticVisited.has(`${row},${COLS - 1}`)) {
             matrixDFS(row, COLS - 1, heights, atlanticVisited, heights[row][COLS - 1]);
         }
-        
+
     }
 
-    // 5. Constructing the result
+    // Constructing the result
     const res: number[][] = [];
     for (const coords of pacificVisited) {
         if (atlanticVisited.has(coords)) {
