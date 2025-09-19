@@ -19,7 +19,7 @@ function amountOfTime(root: TreeNode | null, start: number): number {
     binaryTreeDFS(root, graph);
 
     // 2. Perform BFS on the Graph (Adjacency List)
-    const res: number = adjListBFS(start, graph, new Set<number>());
+    const res: number = adjListBFS(start, graph);
     return res;
 
 };
@@ -59,10 +59,11 @@ function binaryTreeDFS(root: TreeNode | null, adjList: Map<number, Set<number>>)
 
 }
 
-function adjListBFS(src: number, adjList: Map<number, Set<number>>, visited: Set<number>): number {
+function adjListBFS(src: number, adjList: Map<number, Set<number>>): number {
 
     let queue: number[] = [];
     queue.push(src);
+    const visited = new Set<number>();
     visited.add(src);
 
     let layers = 0; // not counting one in the queue
@@ -75,6 +76,7 @@ function adjListBFS(src: number, adjList: Map<number, Set<number>>, visited: Set
         // Processing all nodes at this level
         for(let i = 0; i < queueLength; i += 1) {
             const currNode = queue.shift();
+            
             for(const neighbor of adjList.get(currNode)) {
                 if(!visited.has(neighbor)) {
                     visited.add(neighbor);
