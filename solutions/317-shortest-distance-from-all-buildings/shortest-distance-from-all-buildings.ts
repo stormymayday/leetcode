@@ -39,9 +39,11 @@ function matrixBFS(row: number, col: number, grid: number[][], numHouses: number
 
     let queue: [number, number, number][] = []; // [row, col, distance]
     queue.push([row, col, 0]); // starting distance zero
-    // const visited = new Set<string>();
-    // visited.add(`${row},${col}`);
-    const visited = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+    // const visited = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+    const visited: boolean[][] = new Array(ROWS);
+    for(let i = 0; i < ROWS; i += 1) {
+        visited[i] = new Array(COLS).fill(false);
+    }
     visited[row][col] = true;
 
     let housesReached = 0;
@@ -79,12 +81,10 @@ function matrixBFS(row: number, col: number, grid: number[][], numHouses: number
                     0 <= neighborRow && neighborRow < ROWS &&
                     0 <= neighborCol && neighborCol < COLS &&
                     // visited check
-                    // !visited.has(neighborPosition) &&
                     visited[neighborRow][neighborCol] === false &&
                     // obstacle check
                     grid[neighborRow][neighborCol] !== 2
                 ) {
-                    // visited.add(neighborPosition);
                     visited[neighborRow][neighborCol] = true;
                     nextQueue.push([neighborRow, neighborCol, currDist + 1]);
                 }
@@ -106,7 +106,6 @@ function matrixBFS(row: number, col: number, grid: number[][], numHouses: number
         // Set all cells visted to 2 so we do not check them again and return MAX_VALUE.
         for (let row = 0; row < ROWS; row++) {
             for (let col = 0; col < COLS; col++) {
-                // if (grid[row][col] == 0 && visited.has(`${row},${col}`)) {
                 if (grid[row][col] == 0 && visited[row][col] === true) {
                     grid[row][col] = 2;
                 }
