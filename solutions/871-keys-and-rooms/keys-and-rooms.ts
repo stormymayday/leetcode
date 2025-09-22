@@ -9,11 +9,19 @@ function canVisitAllRooms(rooms: number[][]): boolean {
 };
 
 function dfs(src: number, graph: number[][], visited: Set<number>): void {
-    if(visited.has(src)) {
-        return; // visited
-    }
+
+    const stack: number[] = [];
+    stack.push(src);
     visited.add(src);
-    for(const neighbor of graph[src]) {
-        dfs(neighbor, graph, visited);
+    
+    while(stack.length > 0) {
+        const currNode = stack.pop();
+        for(const neighbor of graph[currNode]) {
+            if(!visited.has(neighbor)) {
+                visited.add(neighbor);
+                stack.push(neighbor);
+            }
+        }
     }
+
 }
