@@ -10,7 +10,7 @@ function canVisitAllRooms(rooms: number[][]): boolean {
 
 function dfs(src: number, graph: number[][], visited: Set<number>): void {
     if(visited.has(src)) {
-        return; // cycle
+        return; // visited
     }
     visited.add(src);
     for(const neighbor of graph[src]) {
