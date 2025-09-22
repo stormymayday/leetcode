@@ -4,10 +4,8 @@ function closedIsland(grid: number[][]): number {
     const COLS = grid[0].length;
     
     const gridCopy: number[][] = new Array(ROWS);
-    // const visited: boolean[][] = new Array(ROWS);
     for(let row = 0; row < ROWS; row += 1) {
         gridCopy[row] = [...grid[row]];
-        // visited[row] = new Array(COLS).fill(false);
     }
 
     // Phase 1: Go around the edges running DFS on '0's flipping them to '2's
