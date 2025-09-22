@@ -6,10 +6,10 @@ function canTraverseAllPairs(nums: number[]): boolean {
     }
 
     // Edge Case 2: if any number is 1, it can't connect to others via GCD > 1
-    if (nums.some(num => num === 1)) {
+    if(nums.includes(1)) {
         return false;
     }
-
+ 
     const uf = new UnionFind(nums.length);
 
     // 1. Get factors for each number and create a mapping of factor to number indices
