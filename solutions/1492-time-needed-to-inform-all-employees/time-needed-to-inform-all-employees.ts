@@ -8,7 +8,7 @@ function numOfMinutes(n: number, headID: number, manager: number[], informTime: 
 
 function bfs(src: number, adjList: Map<number, Set<number>>, informTime: number[]): number {
 
-    let queue: [number, number][] = []; // [node, informTime]
+    let queue: [number, number][] = []; // [employee, total inform time so far + manager's inform time]
     queue.push([src, 0]);
 
     let totalInformTime = 0;
@@ -16,25 +16,20 @@ function bfs(src: number, adjList: Map<number, Set<number>>, informTime: number[
     while(queue.length > 0) {
 
         const nextQueue: [number, number][] = [];
-        // let layerMax = 0;
 
         for(let i = 0; i < queue.length; i += 1) {
 
             const [currNode, currInformTime] = queue[i];
-            // layerMax = Math.max(layerMax, currInformTime);
             totalInformTime = Math.max(totalInformTime, currInformTime);
 
             for(const neighbor of adjList.get(currNode)) {
-                // nextQueue.push([neighbor, informTime[currNode]]);
                 nextQueue.push([neighbor, currInformTime + informTime[currNode]]);
             }
 
         }
 
-        // totalInformTime += layerMax;
-
         if(nextQueue.length > 0) {
-            queue = nextQueue;
+            queue = nextQueue; 
         } else {
             break;
         }
