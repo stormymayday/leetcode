@@ -1,11 +1,11 @@
 function canReach(arr: number[], start: number): boolean {
 
     // starting node: starting 'index', target: value '0' at any index
-    return dfs(start, 0, arr, new Set());
+    return dfs(start, 0, arr);
 
 };
 
-function dfs(src: number, targetVal: number, arr: number[], visited: Set<number>): boolean {
+function dfs(src: number, targetVal: number, arr: number[]): boolean {
 
     // Base Case: src (index) out of bounds
     if(src < 0 || src >= arr.length) {
@@ -17,14 +17,18 @@ function dfs(src: number, targetVal: number, arr: number[], visited: Set<number>
         return true;
     }
 
-    // Base Case: src (index) has been visited
-    if(visited.has(src)) {
+    // Base Case: negative value (visited)
+    if(arr[src] < 0) {
         return false;
     }
 
-    visited.add(src);
+    // Since value at current index is not the target
+    // We can multiply it by -1, essentially marking it as 'visited'
+    // Eliminates need for the 'visited' set
+    const originalValue = arr[src]; // MUST PRESERVE ORIGINAL VALUE FOR JUMP CALCULATION
+    arr[src] = arr[src] * (-1);
 
     // Try jumping backwards and forward
-    return dfs(src - arr[src], targetVal, arr, visited) || 
-           dfs(src + arr[src], targetVal, arr, visited);
+    return dfs(src - originalValue, targetVal, arr) || 
+           dfs(src + originalValue, targetVal, arr);
 }
