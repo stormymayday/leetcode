@@ -2,7 +2,7 @@ function canReach(arr: number[], start: number): boolean {
 
     const adjList = buildAdjList(arr);
 
-    // starting node: index '0', target: value '0' at any index
+    // starting node: starting 'index', target: value '0' at any index
     return bfs(start, 0, adjList, arr);
 
 };
