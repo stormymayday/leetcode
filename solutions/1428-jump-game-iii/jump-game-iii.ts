@@ -3,9 +3,6 @@ function canReach(arr: number[], start: number): boolean {
     const adjList = buildAdjList(arr);
 
     // starting node: starting 'index', target: value '0' at any index
-    // return bfs(start, 0, adjList, arr);
-
-    // starting node: starting 'index', target: value '0' at any index
     return dfs(start, 0, adjList, arr, new Set());
 
 };
@@ -13,18 +10,18 @@ function canReach(arr: number[], start: number): boolean {
 function dfs(src: number, targetVal: number, adjList: Map<number, Set<number>>, arr: number[], visited: Set<number>): boolean {
 
     // Base Case: src (index) out of bounds
-    if(src < 0 || src >= arr.length) {
-        return false;
+    // if(src < 0 || src >= arr.length) {
+    //     return false;
+    // }
+
+    // Base Case: targetVal found
+    if(arr[src] === targetVal) {
+        return true;
     }
 
     // Base Case: src (index) has been visited
     if(visited.has(src)) {
         return false;
-    }
-
-    // Base Case: targetVal found
-    if(arr[src] === targetVal) {
-        return true;
     }
 
     visited.add(src);
@@ -39,46 +36,6 @@ function dfs(src: number, targetVal: number, adjList: Map<number, Set<number>>, 
     return false;
 }
 
-function bfs(src: number, targetVal: number, adjList: Map<number, Set<number>>, arr: number[]): boolean {
-
-    const n = arr.length;
-
-    let queue: number[] = [];
-    queue.push(src);
-
-    const visited = new Set<number>();
-    visited.add(src);
-
-    while (queue.length > 0) {
-
-        const nextQueue: number[] = [];
-        for (let i = 0; i < queue.length; i += 1) {
-
-            const currNode = queue[i];
-
-            if (arr[currNode] === targetVal) {
-                return true;
-            }
-
-            for(const neighbor of adjList.get(currNode)) {
-                if(!visited.has(neighbor)) {
-                    visited.add(neighbor);
-                    nextQueue.push(neighbor);
-                }
-            }
-
-        }
-        if (nextQueue.length > 0) {
-            queue = nextQueue;
-        } else {
-            break;
-        }
-
-    }
-
-    return false;
-
-}
 
 function buildAdjList(arr: number[]): Map<number, Set<number>> {
     const adjList = new Map();
