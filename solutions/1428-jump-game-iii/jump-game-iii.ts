@@ -1,7 +1,5 @@
 function canReach(arr: number[], start: number): boolean {
 
-    const adjList = buildAdjList(arr);
-
     // starting node: starting 'index', target: value '0' at any index
     return dfs(start, 0, arr, new Set());
 
@@ -26,40 +24,7 @@ function dfs(src: number, targetVal: number, arr: number[], visited: Set<number>
 
     visited.add(src);
 
-    // for(const neighbor of adjList.get(src)) {
-    //     if(dfs(neighbor, targetVal, adjList, arr, visited) === true) {
-    //         return true; // exit early if target found
-    //     }
-    // }
-
-    // Try going backwards
-    const jumpBackwards = dfs(src - arr[src], targetVal, arr, visited);
-
-    // Try going forward
-    const jumpForward = dfs(src + arr[src], targetVal, arr, visited);
-
-    // target not found
-    return jumpBackwards || jumpForward;
-}
-
-
-function buildAdjList(arr: number[]): Map<number, Set<number>> {
-    const adjList = new Map();
-    for (let idx = 0; idx < arr.length; idx += 1) {
-        adjList.set(idx, new Set());
-    }
-    for (let idx = 0; idx < arr.length; idx += 1) {
-        // Trying to create an edge going backwards
-        const backIdx = idx - arr[idx];
-        if (backIdx >= 0) {
-            adjList.get(idx).add(backIdx);
-        }
-
-        // Trying to create an edge going forward
-        const forwardIdx = idx + arr[idx];
-        if (forwardIdx < arr.length) {
-            adjList.get(idx).add(forwardIdx);
-        }
-    }
-    return adjList;
+    // Try jumping backwards and forward
+    return dfs(src - arr[src], targetVal, arr, visited) || 
+           dfs(src + arr[src], targetVal, arr, visited);
 }
