@@ -45,28 +45,18 @@ function minMutation(startGene: string, endGene: string, bank: string[]): number
 };
 
 function generateNeighbors(gene: string, choices: string[]): string[] {
-
-    const n = gene.length;
-
-    const geneCopy = gene.split("");
-
     const variants: string[] = [];
-
-    for(let charIdx = 0; charIdx < n; charIdx += 1) {
-
-        for(const choice of choices) {
-            // Slight Optimization: new character is the same as the current character
-            if(geneCopy[charIdx] === choice) {
+    
+    for (let charIdx = 0; charIdx < gene.length; charIdx++) {
+        for (const choice of choices) {
+            if (gene[charIdx] === choice) {
                 continue;
             }
-            // Otherwise, generate variant
-            const variant = [...geneCopy];
-            variant[charIdx] = choice;
-            variants.push(variant.join(""));
-
+            // O(n) string concatenation - but only one operation per variant
+            const variant = gene.substring(0, charIdx) + choice + gene.substring(charIdx + 1);
+            variants.push(variant);
         }
-
     }
-
+    
     return variants;
 }
