@@ -46,15 +46,19 @@ function minMutation(startGene: string, endGene: string, bank: string[]): number
 
 function generateNeighbors(gene: string, choices: string[]): string[] {
     const variants: string[] = [];
+    const geneArray = gene.split('');
     
-    for (let charIdx = 0; charIdx < gene.length; charIdx++) {
+    for (let charIdx = 0; charIdx < geneArray.length; charIdx++) {
+        const originalChar = geneArray[charIdx];
+        
         for (const choice of choices) {
-            if (gene[charIdx] === choice) {
+            if (originalChar === choice) {
                 continue;
             }
-            // O(n) string concatenation - but only one operation per variant
-            const variant = gene.substring(0, charIdx) + choice + gene.substring(charIdx + 1);
-            variants.push(variant);
+            
+            geneArray[charIdx] = choice;
+            variants.push(geneArray.join(''));
+            geneArray[charIdx] = originalChar;
         }
     }
     
