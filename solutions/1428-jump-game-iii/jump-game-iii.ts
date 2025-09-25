@@ -3,16 +3,16 @@ function canReach(arr: number[], start: number): boolean {
     const adjList = buildAdjList(arr);
 
     // starting node: starting 'index', target: value '0' at any index
-    return dfs(start, 0, adjList, arr, new Set());
+    return dfs(start, 0, arr, new Set());
 
 };
 
-function dfs(src: number, targetVal: number, adjList: Map<number, Set<number>>, arr: number[], visited: Set<number>): boolean {
+function dfs(src: number, targetVal: number, arr: number[], visited: Set<number>): boolean {
 
     // Base Case: src (index) out of bounds
-    // if(src < 0 || src >= arr.length) {
-    //     return false;
-    // }
+    if(src < 0 || src >= arr.length) {
+        return false;
+    }
 
     // Base Case: targetVal found
     if(arr[src] === targetVal) {
@@ -26,14 +26,20 @@ function dfs(src: number, targetVal: number, adjList: Map<number, Set<number>>, 
 
     visited.add(src);
 
-    for(const neighbor of adjList.get(src)) {
-        if(dfs(neighbor, targetVal, adjList, arr, visited) === true) {
-            return true; // exit early if target found
-        }
-    }
+    // for(const neighbor of adjList.get(src)) {
+    //     if(dfs(neighbor, targetVal, adjList, arr, visited) === true) {
+    //         return true; // exit early if target found
+    //     }
+    // }
+
+    // Try going backwards
+    const jumpBackwards = dfs(src - arr[src], targetVal, arr, visited);
+
+    // Try going forward
+    const jumpForward = dfs(src + arr[src], targetVal, arr, visited);
 
     // target not found
-    return false;
+    return jumpBackwards || jumpForward;
 }
 
 
