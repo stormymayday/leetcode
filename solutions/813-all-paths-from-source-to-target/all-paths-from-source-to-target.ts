@@ -18,7 +18,7 @@ function backtrackDFS(src: number, dst: number, graph: number[][], path: number[
 
     for(const neighbor of graph[src]) {
         backtrackDFS(neighbor, dst, graph, path, res);
-        path.pop();
+        path.pop(); // Backtracking
     }
 
     return;
