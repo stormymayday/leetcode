@@ -1,7 +1,7 @@
 function allPathsSourceTarget(graph: number[][]): number[][] {
     
     const res: number[][] = [];
-    backtrackDFS(0, graph.length - 1, graph, [], res);
+    backtrackDFS(0, graph.length - 1, graph, [], res); // src, dst, graph, path, res
     return res;
 
 };
