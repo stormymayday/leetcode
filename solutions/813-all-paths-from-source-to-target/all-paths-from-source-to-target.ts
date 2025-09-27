@@ -20,4 +20,6 @@ function backtrackDFS(src: number, dst: number, graph: number[][], path: number[
         backtrackDFS(neighbor, dst, graph, path, res);
         path.pop();
     }
+
+    return;
 }
