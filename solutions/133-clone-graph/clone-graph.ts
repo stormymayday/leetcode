@@ -12,91 +12,35 @@
  * 
  */
 
-
 function cloneGraph(node: _Node | null): _Node | null {
+    return bfs(node);
+}
 
+function bfs(node: _Node | null): _Node | null {
+    // Edge Case: null input
     if (node === null) {
-        return null;
+        return node;
     }
 
     const originalToClone = new Map<_Node, _Node>();
-
-    // return dfs(node, originalToClone);
-
-    return bfs(node, originalToClone);
-
-};
-
-function bfs(node: _Node, originalToClone: Map<_Node, _Node>): _Node {
-
-    let queue: _Node[] = [];
-    queue.push(node);
-
-    const clone = new _Node(node.val);
+    const queue: _Node[] = [node];
+    const clone = new _Node(node.val, []);
     originalToClone.set(node, clone);
-
+    
     while (queue.length > 0) {
-
-        const nextQueue: _Node[] = [];
-
-        for (let i = 0; i < queue.length; i += 1) {
-
-            const currNode = queue[i];
-
-            for (const neighbor of currNode.neighbors) {
-
-                // Neighbor has not been visited
-                if (!originalToClone.has(neighbor)) {
-                    
-                    // Clone the neighbor
-                    const neighborClone = new _Node(neighbor.val);
-                    // Add entry to the hash map
-                    originalToClone.set(neighbor, neighborClone);
-                    // Queue up the neighbor
-                    nextQueue.push(neighbor);
-
-                }
-
-                // Otherwise, neighbor has been visited - create and edge from neighbor to current
-                // Get the neighbor clone
-                const neighborClone = originalToClone.get(neighbor);
-                // Push clone of the current node to the neighbor clone's 'neighbors' array
-                const currentClone = originalToClone.get(currNode);
-                neighborClone.neighbors.push(currentClone);
-
+        const current = queue.shift();
+        
+        for (const neighbor of current.neighbors) {
+            if (!originalToClone.has(neighbor)) {
+                // Create clone with neighbor's value
+                const neighborClone = new _Node(neighbor.val, []);
+                originalToClone.set(neighbor, neighborClone);
+                queue.push(neighbor);
             }
-
+            // Add the neighbor's clone to current's clone neighbors
+            originalToClone.get(current).neighbors.push(originalToClone.get(neighbor));
         }
-
-        if (nextQueue.length > 0) {
-            queue = nextQueue;
-        } else {
-            break;
-        }
-
     }
 
-    return clone;
-
-}
-
-function dfs(node: _Node, originalToClone: Map<_Node, _Node>): _Node {
-
-    if (originalToClone.has(node)) {
-        return originalToClone.get(node);
-    }
-
-
-    const clone = new _Node(node.val);
-
-    originalToClone.set(node, clone);
-
-    for (const neighbor of node.neighbors) {
-
-        clone.neighbors.push((dfs(neighbor, originalToClone)));
-
-    }
-
-    return clone;
-
+    return originalToClone.get(node)!;
 }
