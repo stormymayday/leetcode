@@ -57,10 +57,10 @@ function bfs(node: _Node, originalToClone: Map<_Node, _Node>): _Node {
 
                 }
 
-                // Create and edge from current to neigbor
-                const currentClone = originalToClone.get(currNode);
+                // Create and edge from neighbor to current
                 const neighborClone = originalToClone.get(neighbor);
-                currentClone.neighbors.push(neighborClone);
+                const currentClone = originalToClone.get(currNode);
+                neighborClone.neighbors.push(currentClone);
 
             }
 
