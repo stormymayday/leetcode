@@ -12,35 +12,36 @@
  * 
  */
 
-function cloneGraph(node: _Node | null): _Node | null {
-    return bfs(node);
-}
 
-function bfs(node: _Node | null): _Node | null {
-    // Edge Case: null input
-    if (node === null) {
-        return node;
+function cloneGraph(node: _Node | null): _Node | null {
+
+    if(node === null) {
+        return null;
     }
 
     const originalToClone = new Map<_Node, _Node>();
-    const queue: _Node[] = [node];
-    const clone = new _Node(node.val, []);
-    originalToClone.set(node, clone);
+
+    return dfs(node, originalToClone);
+	
+};
+
+function dfs(node: _Node, originalToClone: Map<_Node, _Node>): _Node {
     
-    while (queue.length > 0) {
-        const current = queue.shift();
-        
-        for (const neighbor of current.neighbors) {
-            if (!originalToClone.has(neighbor)) {
-                // Create clone with neighbor's value
-                const neighborClone = new _Node(neighbor.val, []);
-                originalToClone.set(neighbor, neighborClone);
-                queue.push(neighbor);
-            }
-            // Add the neighbor's clone to current's clone neighbors
-            originalToClone.get(current).neighbors.push(originalToClone.get(neighbor));
-        }
+    if(originalToClone.has(node)) {
+        return originalToClone.get(node);
     }
 
-    return originalToClone.get(node)!;
+
+    const clone = new _Node(node.val);
+
+    originalToClone.set(node, clone);
+
+    for(const neighbor of node.neighbors) {
+
+        clone.neighbors.push((dfs(neighbor, originalToClone)));
+
+    }
+
+    return clone;
+
 }
