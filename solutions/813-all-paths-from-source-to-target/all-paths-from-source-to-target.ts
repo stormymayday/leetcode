@@ -2,7 +2,7 @@ function allPathsSourceTarget(graph: number[][]): number[][] {
     
     const res: number[][] = [];
     
-    backtrackDFS(0, graph.length - 1, graph, [], res);
+    backtrackDFS(0, graph.length - 1, graph, [0], res);
 
     return res;
 
@@ -10,7 +10,7 @@ function allPathsSourceTarget(graph: number[][]): number[][] {
 
 function backtrackDFS(src: number, target: number, graph: number[][], path: number[], res: number[][]): void {
 
-    path.push(src);
+    // path.push(src);
 
     if(src === target) {
         res.push([...path]);
@@ -18,6 +18,7 @@ function backtrackDFS(src: number, target: number, graph: number[][], path: numb
     }
 
     for(const neighbor of graph[src]) {
+        path.push(neighbor);
         backtrackDFS(neighbor, target, graph, path, res);
         path.pop();
     }
