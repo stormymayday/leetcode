@@ -15,7 +15,7 @@
 
 function cloneGraph(node: _Node | null): _Node | null {
 
-    if(node === null) {
+    if (node === null) {
         return null;
     }
 
@@ -24,60 +24,51 @@ function cloneGraph(node: _Node | null): _Node | null {
     // return dfs(node, originalToClone);
 
     return bfs(node, originalToClone);
-	
+
 };
 
 function bfs(node: _Node, originalToClone: Map<_Node, _Node>): _Node {
 
-    // let queue: [_Node, _Node][] = [];
     let queue: _Node[] = [];
+    queue.push(node);
 
     const clone = new _Node(node.val);
     originalToClone.set(node, clone);
 
-    // queue.push([node, clone]);
-    queue.push(node);
+    while (queue.length > 0) {
 
-    while(queue.length > 0) {
-
-        // const nextQueue: [_Node, _Node][] = [];
         const nextQueue: _Node[] = [];
 
-        for(let i = 0; i < queue.length; i += 1) {
+        for (let i = 0; i < queue.length; i += 1) {
 
-            // const [currNode, currClone] = queue[i];
             const currNode = queue[i];
 
-            for(const neighbor of currNode.neighbors) {
-                
+            for (const neighbor of currNode.neighbors) {
+
                 // Neighbor has not been visited
-                if(!originalToClone.has(neighbor)) {
-
+                if (!originalToClone.has(neighbor)) {
+                    
+                    // Clone the neighbor
                     const neighborClone = new _Node(neighbor.val);
+                    // Add entry to the hash map
                     originalToClone.set(neighbor, neighborClone);
-
-                    // currClone.neighbors.push(neighborClone);
-                    // neighborClone.neighbors.push(currClone);
-
-                    // nextQueue.push([neighbor, neighborClone]);
+                    // Queue up the neighbor
                     nextQueue.push(neighbor);
 
                 }
 
-                // now 1 is the neighbor (going back)
-                // neighborClone.neighbors.push(originalToClone.get(currNode)); // neighbor to curr
-                // originalToClone.get(currNode).neighbors.push(neighborClone);
-                
                 // Otherwise, neighbor has been visited
                 // Get the neighbor clone
+                const neighborCone = originalToClone.get(neighbor);
                 // Push clone of the current node to the neighbor clone's 'neighbors' array
-                originalToClone.get(neighbor).neighbors.push(originalToClone.get(currNode));
+                const currentClone = originalToClone.get(currNode);
+                neighborCone.neighbors.push(currentClone);
 
             }
 
-        } 
+        }
 
-        if(nextQueue.length > 0) {
+        if (nextQueue.length > 0) {
             queue = nextQueue;
         } else {
             break;
@@ -90,8 +81,8 @@ function bfs(node: _Node, originalToClone: Map<_Node, _Node>): _Node {
 }
 
 function dfs(node: _Node, originalToClone: Map<_Node, _Node>): _Node {
-    
-    if(originalToClone.has(node)) {
+
+    if (originalToClone.has(node)) {
         return originalToClone.get(node);
     }
 
@@ -100,7 +91,7 @@ function dfs(node: _Node, originalToClone: Map<_Node, _Node>): _Node {
 
     originalToClone.set(node, clone);
 
-    for(const neighbor of node.neighbors) {
+    for (const neighbor of node.neighbors) {
 
         clone.neighbors.push((dfs(neighbor, originalToClone)));
 
