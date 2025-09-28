@@ -1,24 +1,27 @@
 function allPathsSourceTarget(graph: number[][]): number[][] {
     
     const res: number[][] = [];
-    backtrackDFS(0, graph.length - 1, graph, [0], res); // src, dst, graph, path, res
+    
+    backtrackDFS(0, graph.length - 1, graph, [], res);
+
     return res;
 
 };
 
-function backtrackDFS(src: number, dst: number, graph: number[][], path: number[], res: number[][]): void {
-    
-    // Base Case: reached the destination
-    if(src === dst) {
+function backtrackDFS(src: number, target: number, graph: number[][], path: number[], res: number[][]): void {
+
+    path.push(src);
+
+    if(src === target) {
         res.push([...path]);
-        return; 
+        return;
     }
 
     for(const neighbor of graph[src]) {
-        path.push(neighbor);
-        backtrackDFS(neighbor, dst, graph, path, res);
-        path.pop(); // Backtracking
+        backtrackDFS(neighbor, target, graph, path, res);
+        path.pop();
     }
 
     return;
+
 }
