@@ -57,12 +57,12 @@ function bfs(node: _Node, originalToClone: Map<_Node, _Node>): _Node {
 
                 }
 
-                // Otherwise, neighbor has been visited
+                // Otherwise, neighbor has been visited - create and edge from neighbor to current
                 // Get the neighbor clone
-                const neighborCone = originalToClone.get(neighbor);
+                const neighborClone = originalToClone.get(neighbor);
                 // Push clone of the current node to the neighbor clone's 'neighbors' array
                 const currentClone = originalToClone.get(currNode);
-                neighborCone.neighbors.push(currentClone);
+                neighborClone.neighbors.push(currentClone);
 
             }
 
