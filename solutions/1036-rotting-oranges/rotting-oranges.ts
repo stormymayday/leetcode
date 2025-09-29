@@ -6,11 +6,7 @@ function orangesRotting(grid: number[][]): number {
     // 1. Scan the grid to:
     // - count number of fresh oranges
     let freshOranges = 0;
-    // - Queue up rotten oranges' position with 0 initial time and mark it 'visited'
-    const visited: boolean[][] = new Array(ROWS);
-    for(let row = 0; row < ROWS; row += 1) {
-        visited[row] = new Array(COLS).fill(false);
-    }
+    // - Queue up rotten oranges' position with 0 initial time
     let queue: [number, number, number][] = [];
     for (let row = 0; row < ROWS; row += 1) {
         for (let col = 0; col < COLS; col += 1) {
@@ -19,7 +15,6 @@ function orangesRotting(grid: number[][]): number {
             }
             if (grid[row][col] === 2) {
                 queue.push([row, col, 0]);
-                visited[row][col] = true;
             }
         }
     }
@@ -50,12 +45,10 @@ function orangesRotting(grid: number[][]): number {
                     // out of bounds check
                     0 <= neighborRow && neighborRow < ROWS &&
                     0 <= neighborCol && neighborCol < COLS &&
-                    // visited check
-                    visited[neighborRow][neighborCol] === false &&
                     // fresh orange check
                     grid[neighborRow][neighborCol] === 1
                 ) {
-                    visited[neighborRow][neighborCol] = true;
+                    grid[neighborRow][neighborCol] = 2; // rotting the orange
                     nextQueue.push([neighborRow, neighborCol, currTime + 1]);
                     freshOranges -= 1;
                 }
