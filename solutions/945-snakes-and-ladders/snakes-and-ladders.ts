@@ -42,9 +42,8 @@ function snakesAndLadders(board: number[][]): number {
                 let neighborNodeIdx = currNodeIdx + diceRoll;
 
                 if(
-                    // Out of bounds check
-                    // 0 <= neighborNodeIdx
-                    neighborNodeIdx < flat.length &&
+                    // Out of bounds check (first part is not strictly necessary)
+                    0 <= neighborNodeIdx && neighborNodeIdx < flat.length &&
                     // visited check
                     visited[neighborNodeIdx] === false
                 ) {
