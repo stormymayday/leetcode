@@ -13,27 +13,37 @@
 
 
 function levelOrder(root: _Node | null): number[][] {
-    // Edge Case: null root
-	if(root === null) {
+	// Edge Case: null root
+    if(root === null) {
         return [];
     }
-    const result: number[][] = [[root.val]];
-    let queue: _Node[] = [root];
+
+    let queue: _Node[] = [];
+    queue.push(root);
+
+    const res: number[][] = [];
     while(queue.length > 0) {
-        const nextLayer: _Node[] = [];
-        const n = queue.length;
-        const temp: number[] = [];
-        for(let i = 0; i < n; i += 1) {
-            const current = queue.shift();
-            for(const child of current.children) {
-                nextLayer.push(child);
-                temp.push(child.val);
+
+        const nextQueue: _Node[] = [];
+        const currLevelRes: number[] = [];
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const currNode = queue[i];
+            currLevelRes.push(currNode.val);
+
+            for(const child of currNode.children) {
+                nextQueue.push(child);
             }
+
         }
-        queue = nextLayer;
-        if(temp.length !== 0) {
-            result.push([...temp]);
+
+        res.push(currLevelRes);
+        if(nextQueue.length > 0) {
+            queue = nextQueue;
+        } else {
+            break;
         }
+
     }
-    return result;
+    return res;
 };
