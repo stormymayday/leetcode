@@ -6,7 +6,8 @@ function snakesAndLadders(board: number[][]): number {
     let reverse = false; // staring with reverse flag set to false (i.e. we are not reversing bottom row)
     for(let row = board.length - 1; row >= 0; row -= 1) {
         if(reverse === true) {
-            flat.push(...[...board[row]].reverse()); // Copy first!
+            // flat.push(...[...board[row]].reverse()); // Copy first!
+            flat.push(...board[row].reverse());
             reverse = false;
         } else {
             flat.push(...board[row]);
@@ -47,27 +48,15 @@ function snakesAndLadders(board: number[][]): number {
                     visited[neighborNodeIdx] === false
                 ) {
 
+                    // Mark as visited FIRST
                     visited[neighborNodeIdx] = true;
 
-                     // check Ladder or Snake
+                     // Check Ladder or Snake
                     if(flat[neighborNodeIdx] !== -1) {
                         neighborNodeIdx = flat[neighborNodeIdx] - 1;
                     }
 
                     nextQueue.push([neighborNodeIdx, currMoves + 1]);
-
-                    // // check value at the index
-                    // if(flat[neighborNodeIdx] !== -1) {
-                    //     // Ladder or Snake
-                    //     neighborNodeIdx = flat[neighborNodeIdx] - 1;
-                    //     visited[neighborNodeIdx] = true;
-                    //     nextQueue.push([neighborNodeIdx, currMoves + 1]);
-                    // } else {
-                    //     // Standard move
-                    //     visited[neighborNodeIdx] = true;
-                    //     nextQueue.push([neighborNodeIdx, currMoves + 1]);
-                    // }
-
 
                 }
 
