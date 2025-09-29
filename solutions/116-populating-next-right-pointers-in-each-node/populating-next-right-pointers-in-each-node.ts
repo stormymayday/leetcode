@@ -15,28 +15,50 @@
  */
 
 function connect(root: _Node | null): _Node | null {
+
     if(root === null) {
         return null;
     }
-    let queue: _Node[] = [root];
-    while(queue.length > 0) {
-        const nextLayer: _Node[] = [];
-        const n = queue.length;
-        for(let i = 0; i < n; i += 1) {
-            const current = queue.shift();
 
-            if(i + 1 < n) {
-                current.next = queue[0];
-            }
-
-            if(current.left) {
-                nextLayer.push(current.left);
-            }
-            if(current.right) {
-                nextLayer.push(current.right);
-            }
-        }
-        queue = nextLayer;
-    }
+    bfs(root);
     return root;
+
 };
+
+function bfs(root: _Node): void {
+
+    let queue: _Node[] = [];
+    queue.push(root);
+
+    while(queue.length > 0) {
+
+        const nextQueue: _Node[] = [];
+
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const currNode = queue[i];
+            const neighborNode = queue[i + 1];
+
+            if(neighborNode !== undefined) {
+                currNode.next = neighborNode;
+            }
+            
+            if(currNode.left !== null) {
+                nextQueue.push(currNode.left);
+            }
+
+            if(currNode.right !== null) {
+                nextQueue.push(currNode.right);
+            }
+
+        }
+
+        if(nextQueue.length > 0) {
+            queue = nextQueue;
+        } else {
+            break;
+        }
+
+    }
+
+}
