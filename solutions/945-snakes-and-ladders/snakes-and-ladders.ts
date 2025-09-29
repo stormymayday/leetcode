@@ -6,8 +6,8 @@ function snakesAndLadders(board: number[][]): number {
     let reverse = false; // staring with reverse flag set to false (i.e. we are not reversing bottom row)
     for(let row = board.length - 1; row >= 0; row -= 1) {
         if(reverse === true) {
-            // flat.push(...[...board[row]].reverse()); // Copy first!
-            flat.push(...board[row].reverse());
+            // flat.push(...board[row].reverse()); // does work, but mutates the original matrix
+            flat.push(...[...board[row]].reverse()); // Copy first to avoid mutation
             reverse = false;
         } else {
             flat.push(...board[row]);
@@ -42,9 +42,10 @@ function snakesAndLadders(board: number[][]): number {
                 let neighborNodeIdx = currNodeIdx + diceRoll;
 
                 if(
-                    // Do we need an out of bounds check?
-                    0 <= neighborNodeIdx && neighborNodeIdx < flat.length &&
-                    // visited check?
+                    // Out of bounds check
+                    // 0 <= neighborNodeIdx
+                    neighborNodeIdx < flat.length &&
+                    // visited check
                     visited[neighborNodeIdx] === false
                 ) {
 
