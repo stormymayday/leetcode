@@ -1,16 +1,13 @@
 function validPath(n: number, edges: number[][], source: number, destination: number): boolean {
     const adjList = buildAdjList(n, edges);
-    return dfs(source, destination, adjList, new Set<number>());
+    return dfs(source, destination, adjList, new Set());
 };
 
 function dfs(src: number, dst: number, adjList: Map<number, Set<number>>, visited: Set<number>): boolean {
-
-    // Base Case 1: destination reached
     if(src === dst) {
         return true;
     }
 
-    // Base Case 2: visited
     if(visited.has(src)) {
         return false;
     }
@@ -24,7 +21,6 @@ function dfs(src: number, dst: number, adjList: Map<number, Set<number>>, visite
     }
 
     return false;
-
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
