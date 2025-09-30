@@ -1,122 +1,55 @@
 function numIslands(grid: string[][]): number {
-    const visited = new Set();
-    let count = 0;
-    for(let r = 0; r < grid.length; r += 1) {
-        for(let c = 0; c < grid[0].length; c += 1) {
-            if(grid[r][c] === '1' && !visited.has(`${r},${c}`)) {
-                if(matrixBFS(grid, r, c, visited) === true) {
-                    count += 1;
-                }
+    
+    const ROWS = grid.length;
+    const COLS = grid[0].length;
+
+    const visited: boolean[][] = new Array(ROWS);
+    for(let row = 0; row < ROWS; row += 1) {
+        visited[row] = new Array(COLS).fill(false);
+    }
+
+    let numIslands = 0;
+    for(let row = 0; row < ROWS; row += 1) {
+        for(let col = 0; col < COLS; col += 1) {
+            if(grid[row][col] === '1' && visited[row][col] === false) {
+                numIslands += 1;
+                matrixDFS(row, col, grid, visited);
             }
         }
     }
-    return count;
+    return numIslands;
+
 };
 
-function matrixBFS(grid, r, c, visited) {
+function matrixDFS(row: number, col: number, grid: string[][], visited: boolean[][]): void {
 
-    if(visited.has(`${r},${c}`)) {
-        return false;
+    // Base Case: Out of bounds check
+    if(row < 0 || row >= grid.length || col < 0 || col >= grid[0].length) {
+        return;
     }
 
-    visited.add(`${r},${c}`);
-    const queue = [[r, c]];
-
-    while(queue.length > 0) {
-        const [row, col] = queue.shift();
-        const deltas = [
-            [-1, 0],
-            [1, 0],
-            [0, -1],
-            [0, 1]
-        ];
-        for(const delta of deltas) {
-            const [rowDelta, colDelta] = delta;
-            const neighborRow = row + rowDelta;
-            const neighborCol = col + colDelta;
-            const neighborPosition = `${neighborRow},${neighborCol}`;
-            if(
-                isInBounds(grid, neighborRow, neighborCol) === true
-                && !visited.has(neighborPosition)
-                && grid[neighborRow][neighborCol] === '1'
-            ) {
-                visited.add(neighborPosition);
-                queue.push([neighborRow, neighborCol]);
-            }
-        }
-    }
-    return true;
-}
-
-function matrixDFS(grid, r, c, visited) {
-
-    if(visited.has(`${r},${c}`)) {
-        return false;
+    // Base Case: visited
+    if(visited[row][col] === true) {
+        return;
     }
 
-    visited.add(`${r},${c}`);
-
-    const stack = [[r,c]];
-    while(stack.length > 0) {
-
-        const [row, col] = stack.pop();
-
-        const deltas = [
-            [-1, 0],
-            [1, 0],
-            [0, -1],
-            [0, 1]
-        ];
-
-        for(const delta of deltas) {
-            const [rowDelta, colDelta] = delta;
-            const neighborRow = row + rowDelta;
-            const neighborCol = col + colDelta;
-            const neighborPosition = `${neighborRow},${neighborCol}`;
-            if(
-                isInBounds(grid, neighborRow, neighborCol) === true
-                && !visited.has(neighborPosition)
-                && grid[neighborRow][neighborCol] === '1'
-            ) {
-                visited.add(neighborPosition);
-                stack.push([neighborRow, neighborCol]);
-            }
-        }
-        
-    }
-    return true;
-}
-
-function matrixRDFS(grid, r, c, visited) {
-    // Base Case: out of bounds check
-    if(isInBounds(grid, r, c) === false) {
-        return false;
+    // Base Case: water
+    if(grid[row][col] === '0') {
+        return;
     }
 
-    // Base Case: water check
-    if(grid[r][c] === '0') {
-        return false;
+    visited[row][col] = true;
+
+    const directions: [number, number][] = [
+        [-1, 0], // up
+        [0, 1], // right
+        [1, 0], // down
+        [0, -1], // left
+    ];
+    for(const [rowDelta, colDelta] of directions) {
+        matrixDFS(row + rowDelta, col + colDelta, grid, visited);
     }
 
-    // Base Case: visited check
-    const position = `${r},${c}`;
-    if(visited.has(position)) {
-        return false;
-    }
+    return;
 
-    visited.add(position);
-
-    matrixRDFS(grid, r - 1, c, visited);
-    matrixRDFS(grid, r + 1, c, visited);
-    matrixRDFS(grid, r, c - 1, visited);
-    matrixRDFS(grid, r, c + 1, visited);
-
-    return true;
-
-}
-
-function isInBounds(grid, r, c) {
-    const rowInBounds = 0 <= r && r < grid.length;
-    const colInBounds = 0 <= c && c < grid[0].length;
-    return rowInBounds && colInBounds;
 }
