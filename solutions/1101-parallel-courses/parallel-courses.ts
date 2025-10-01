@@ -2,11 +2,12 @@ function minimumSemesters(n: number, relations: number[][]): number {
     
     const adjList = buildAdjList(n, relations);
 
-    return kahns(adjList);
+    return kahnsBFS(adjList);
 
 };
 
-function kahns(adjList: Map<number, Set<number>>): number {
+function kahnsBFS(adjList: Map<number, number[]>): number {
+
     const inDegreeMap = new Map<number, number>();
     for(const node of adjList.keys()) {
         inDegreeMap.set(node, 0);
@@ -24,48 +25,44 @@ function kahns(adjList: Map<number, Set<number>>): number {
         }
     }
 
-    let nodesVisited = 0;
-    let levels = 1;
+    const topOrder: number[] = [];
+    let layers = 1;
     while(ready.length > 0) {
 
-        const queueLength = ready.length;
-        const nextLevelNodes: number[] = [];
-
-        for(let i = 0; i < queueLength; i += 1) {
-            const currNode = ready.pop();
-            nodesVisited += 1;
-            for(const neighbor of adjList.get(currNode)) {
+        const nextQueue: number[] = [];
+        for(let i = 0; i < ready.length; i += 1) {
+            const curr = ready[i];
+            topOrder.push(curr);
+            for(const neighbor of adjList.get(curr)) {
                 inDegreeMap.set(neighbor, inDegreeMap.get(neighbor) - 1);
                 if(inDegreeMap.get(neighbor) === 0) {
-                    nextLevelNodes.push(neighbor);
+                    nextQueue.push(neighbor);
                 }
             }
-
         }
-
-        if(nextLevelNodes.length > 0) {
-            ready = nextLevelNodes;
-            levels += 1;
+        if(nextQueue.length > 0) {
+            ready = nextQueue;
+            layers += 1;
         } else {
             break;
         }
-
     }
 
-    if(nodesVisited === adjList.size) {
-        return levels;
+    if(topOrder.length === adjList.size) {
+        return layers;
     } else {
         return -1;
     }
+
 }
 
-function buildAdjList(n: number, edges: number[][]): Map<number, Set<number>> {
+function buildAdjList(n: number, edges: number[][]): Map<number, number[]> {
     const adjList = new Map();
     for(let i = 1; i <= n; i += 1) {
-        adjList.set(i, new Set());
+        adjList.set(i, []);
     }
     for(const [src, dst] of edges) {
-        adjList.get(src).add(dst);
+        adjList.get(src).push(dst);
     }
     return adjList;
 }
