@@ -1,61 +1,49 @@
 function validTree(n: number, edges: number[][]): boolean {
 
-    // There is one more node compared to number of edges in a valid tree
-    if(n !== edges.length + 1) {
-        return false;
-    }
-    
-    const uf = new UnionFind(n);
+    const adjList = buildAdjList(n, edges);
 
-    // Should be able to run 'union' on every edge
-    // Otherwise, there is a cycle
-    for(const [src, dst] of edges) {
-        if(uf.union(src, dst) === false) {
-            return false;
-        }
-    }
-    return true;
+    const visited = new Set<number>();
+
+    // kicking off 'dfs' from node '0' (using null as the initial 'source')
+    const cycleDetected = dfs(0, adjList, visited, null);
+    // goal is to visit all the nodes AND find cycles
+
+    // if there are no cycles AND all nodes have been visited, it is a valid tree
+    return cycleDetected && visited.size === n;
 
 };
 
-class UnionFind {
-    private roots: Map<number, number>;
-    private sizes: Map<number, number>;
-    private numComponents: number;
-    constructor(n: number) {
-        this.roots = new Map();
-        this.sizes = new Map();
-        this.numComponents = n;
-        for(let i = 0; i < n; i += 1) {
-            this.roots.set(i, i);
-            this.sizes.set(i, 1);
-        }
+function dfs(node: number, adjList: Map<number, number[]>, visited: Set<number>, source: null | number): boolean {
+    // Base Case: visited
+    if (visited.has(node)) {
+        return false; // cycle
     }
-    find(x: number): number {
-        const root = this.roots.get(x);
-        if(root !== x) {
-            this.roots.set(x, this.find(root));
-        }
-        return this.roots.get(x);
-    }
-    union(x: number, y: number): boolean {
-        const rootX = this.find(x);
-        const rootY = this.find(y);
-        if(rootX === rootY) {
-            return false;
-        } else {
-            if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
-                this.roots.set(rootY, rootX);
-                this.sizes.set(rootX, this.sizes.get(rootX) + this.sizes.get(rootY)); 
-            } else {
-                this.roots.set(rootX, rootY);
-                this.sizes.set(rootY, this.sizes.get(rootY) + this.sizes.get(rootX));
+
+    // mark as visited
+    visited.add(node);
+
+    for (const neighbor of adjList.get(node)) {
+        // Since graph is un-directed, we should not travel back to 'source'
+        if (neighbor !== source) {
+            // If cycle is found, exit early
+            if (dfs(neighbor, adjList, visited, node) === false) {
+                return false;
             }
-            this.numComponents -= 1;
-            return true;
         }
     }
-    getNumComponents(): number {
-        return this.numComponents;
+
+    // no cycles found
+    return true;
+}
+
+function buildAdjList(n: number, edges: number[][]): Map<number, number[]> {
+    const adjList = new Map();
+    for (let i = 0; i < n; i += 1) {
+        adjList.set(i, []);
     }
+    for (const [src, dst] of edges) {
+        adjList.get(src).push(dst);
+        adjList.get(dst).push(src);
+    }
+    return adjList;
 }
