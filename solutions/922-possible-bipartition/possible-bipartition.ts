@@ -7,7 +7,7 @@ function possibleBipartition(n: number, dislikes: number[][]): boolean {
     for (const node of adjList.keys()) {
         // Skip already colored nodes
         if (!colorMap.has(node)) { // this check is important to avoid false negatives
-            if (bfs(node, adjList, colorMap, true) === false) {
+            if (dfs(node, adjList, colorMap, true) === false) {
                 // if any of the calls return false, exit early
                 return false;
             }
@@ -19,48 +19,22 @@ function possibleBipartition(n: number, dislikes: number[][]): boolean {
 
 };
 
-function bfs(src: number, adjList: Map<number, number[]>, colorMap: Map<number, boolean>, nodeColor: boolean): boolean {
+function dfs(src: number, adjList: Map<number, number[]>, colorMap: Map<number, boolean>, nodeColor: boolean): boolean {
 
-    // Extra check. However, bfs should not be called if a 'node' is in 'colorMap'
-    if (colorMap.has(src) && colorMap.get(src) !== nodeColor) {
-        return false;
+    // Base Case: src is already 'colored' / 'visited'
+    if(colorMap.has(src)) {
+        // Must be the same color
+        return colorMap.get(src) === nodeColor;
     }
 
     colorMap.set(src, nodeColor);
 
-    let queue: [number, boolean][] = [];
-    queue.push([src, nodeColor]);
-
-    while (queue.length > 0) {
-
-        const nextQueue: [number, boolean][] = [];
-        for (let i = 0; i < queue.length; i += 1) {
-
-            const [currNode, currColor] = queue[i];
-
-            for (const neighbor of adjList.get(currNode)) {
-                
-                // try 'coloring' the neighbor
-                if (!colorMap.has(neighbor)) {
-                    colorMap.set(neighbor, !currColor);
-                    nextQueue.push([neighbor, !currColor]);
-                } else {
-                    // Neighbor has been visited, check the color
-                    if(colorMap.get(neighbor) === currColor) {
-                        // exit early if parent has the same color
-                        return false;
-                    }
-                }
-
-            }
-
-        }
-        if (nextQueue.length > 0) {
-            queue = nextQueue;
-        } else {
-            break;
+    for(const neighbor of adjList.get(src)) {
+        if(dfs(neighbor, adjList, colorMap, !nodeColor) === false) {
+            return false;
         }
     }
+
     return true;
 }
 
