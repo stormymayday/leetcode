@@ -2,13 +2,18 @@ function isBipartite(graph: number[][]): boolean {
 
     const colorMap = new Map<number, boolean>();
 
+    // Check each node (graph may have disconnected components)
     for(let i = 0; i < graph.length; i += 1) {
+        // Skip already colored nodes
         if(!colorMap.has(i)) { // this check is important to avoid false negatives
             if(dfs(i, graph, colorMap, true) === false) {
+                // if any of the calls return false, exit early
                 return false;
             }
         }
     }
+
+    // Otherwise, graph must be bipartite
     return true;   
 };
 
@@ -22,7 +27,7 @@ function dfs(src: number, graph: number[][], colorMap: Map<number, boolean>, cur
     // Otherwise, 'color' current node
     colorMap.set(src, currColor);
 
-    // Recurse on the neighbors flipping 'currentColor'
+    // Try to color all neighbors with opposite color
     for(const neighbor of graph[src]) {
         // If any of the calls return 'false', exit early
         if(dfs(neighbor, graph, colorMap, !currColor) === false) {
