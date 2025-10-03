@@ -12,7 +12,9 @@ function exist(board: string[][], word: string): boolean {
                     visited[row] = new Array(COLS).fill(false);
                 }
 
-                if (backtrackDFS(row, col, board, word, 0, visited) === true) {
+                const path: string[] = [];
+
+                if (backtrackDFS(row, col, board, word, path, visited) === true) {
                     return true;
                 }
 
@@ -29,7 +31,7 @@ function backtrackDFS(
     col: number,
     grid: string[][],
     word: string,
-    idx: number,
+    path: string[],
     visited: boolean[][]
 ): boolean {
 
@@ -44,17 +46,18 @@ function backtrackDFS(
     }
 
     // Base Case 3: Wrong character
-    if (grid[row][col] !== word[idx]) {
+    if (grid[row][col] !== word[path.length]) {
         return false;
-    }
-
-    // Base Case 4: Word found (search complete)
-    if (idx === word.length - 1) {
-        return true;
     }
 
     // mark as 'visited'
     visited[row][col] = true;
+    path.push(grid[row][col]);
+
+    // Base Case 4: Word found (search complete) (check AFTER adding to path)
+    if (path.length === word.length) {
+        return true;
+    }
 
     const directions: [number, number][] = [
         [-1, 0], // up
@@ -63,12 +66,13 @@ function backtrackDFS(
         [0, -1], // left
     ];
     for (const [rowDelta, colDelta] of directions) {
-        if (backtrackDFS(row + rowDelta, col + colDelta, grid, word, idx + 1, visited) === true) {
+        if (backtrackDFS(row + rowDelta, col + colDelta, grid, word, path, visited) === true) {
             return true;
         }
     }
 
     // None of the directions were successfull, backtrack
+    path.pop();
     visited[row][col] = false;
 
     return false;
