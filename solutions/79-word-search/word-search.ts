@@ -53,8 +53,8 @@ function backtrackDFS(
         return true;
     }
 
-    // Otherwise, this is a new positon
-    visited[row][col] = true; // mark as 'visited'
+    // mark as 'visited'
+    visited[row][col] = true;
 
     const directions: [number, number][] = [
         [-1, 0], // up
