@@ -1,40 +1,16 @@
 function exist(board: string[][], word: string): boolean {
-    function helper(row: number, col: number, index: number, visited: Set<string>):boolean {
-        if(index === word.length) {
-            return true;
-        }
 
-        const rowInBounds = 0 <= row && row < board.length;
-        const colInBounds = 0 <= col && col < board[0].length;
-        if(!rowInBounds || !colInBounds) {
-            return false;
-        }
+    const ROWS = board.length;
+    const COLS = board[0].length;
 
-        if(board[row][col] !== word[index]) {
-            return false;
-        }
-
-        const position = `${row},${col}`;
-        if(visited.has(position)) {
-            return false;
-        }
-
-        visited.add(position);
-
-        const result = helper(row - 1, col, index + 1, visited) ||
-            helper(row, col + 1, index + 1, visited) ||
-            helper(row + 1, col, index + 1, visited) ||
-            helper(row, col - 1, index + 1, visited);
-
-        visited.delete(position);
-
-        return result;
-    }
-
-    for(let row = 0; row < board.length; row += 1) {
-        for(let col = 0; col < board[0].length; col += 1) {
-            if(board[row][col] === word[0]) {
-                if(helper(row, col, 0, new Set()) === true) {
+    for (let row = 0; row < ROWS; row += 1) {
+        for (let col = 0; col < COLS; col += 1) {
+            if (board[row][col] === word[0]) {
+                const visited: boolean[][] = new Array(ROWS);
+                for (let row = 0; row < ROWS; row += 1) {
+                    visited[row] = new Array(COLS).fill(false);
+                }
+                if (backtrackDFS(row, col, board, visited, [], word) === true) {
                     return true;
                 }
             }
@@ -42,4 +18,62 @@ function exist(board: string[][], word: string): boolean {
     }
 
     return false;
+
 };
+
+function backtrackDFS(
+    row: number,
+    col: number,
+    grid: string[][],
+    visited: boolean[][],
+    path: string[],
+    word: string,
+): boolean {
+
+    // Base Case 1: Out of bounds
+    if (row < 0 || row >= grid.length || col < 0 || col >= grid[0].length) {
+        return false;
+    }
+
+    // Base Case 2: visited
+    if (visited[row][col] === true) {
+        return false;
+    }
+
+    // Base Case 3: Wrong letter
+    if (grid[row][col] !== word[path.length]) {
+        return false;
+    }
+
+    // Add current cell to path AFTER validation
+    path.push(grid[row][col]);
+
+    // Base Case 4: word is found
+    if (path.length === word.length) {
+        return true;
+    }
+
+    // Marking position as 'visited'
+    visited[row][col] = true;
+
+    const directions: [number, number][] = [
+        [-1, 0], // up
+        [0, 1], // right
+        [1, 0], // down
+        [0, -1], // left
+    ];
+    for (const [rowDelta, colDelta] of directions) {
+
+        if (backtrackDFS(row + rowDelta, col + colDelta, grid, visited, path, word) === true) {
+            return true; // Early return when word is found
+        }
+
+    }
+
+    // Backtrack after trying all directions
+    path.pop();
+    visited[row][col] = false;
+
+    return false;
+
+}
