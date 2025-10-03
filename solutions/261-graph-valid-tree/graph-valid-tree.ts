@@ -20,7 +20,7 @@ function bfs(node: number, adjList: Map<number, number[]>, visited: Set<number>,
 
             for(const neighbor of adjList.get(currNode)) {
 
-                // Skipping the 'source' node to avoid 'trivial' cycles
+                // Skipping the 'source' / 'prevNode' node to avoid 'trivial' cycles
                 if(neighbor !== prevNode) {
                     if(!visited.has(neighbor)) {
                         visited.add(neighbor);
