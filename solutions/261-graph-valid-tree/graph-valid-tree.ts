@@ -1,47 +1,55 @@
 function validTree(n: number, edges: number[][]): boolean {
-
     const adjList = buildAdjList(n, edges);
-
     const visited = new Set<number>();
-
-    // kicking off 'dfs' from node '0' (using null as the initial 'source')
-    const cycleDetected = dfs(0, adjList, visited, null);
-    // goal is to visit all the nodes AND find cycles
-
-    // if there are no cycles AND all nodes have been visited, it is a valid tree
+    const cycleDetected = bfs(0, adjList, visited, null);
     return cycleDetected && visited.size === n;
-
 };
 
-function dfs(node: number, adjList: Map<number, number[]>, visited: Set<number>, source: null | number): boolean {
-    // Base Case: visited
-    if (visited.has(node)) {
-        return false; // cycle
-    }
+function bfs(node: number, adjList: Map<number, number[]>, visited: Set<number>, source: number | null): boolean {
 
-    // mark as visited
+    let queue: [number, number | null][] = [];
+    queue.push([node, source]);
     visited.add(node);
 
-    for (const neighbor of adjList.get(node)) {
-        // Since graph is un-directed, we should not travel back to 'source'
-        if (neighbor !== source) {
-            // If cycle is found, exit early
-            if (dfs(neighbor, adjList, visited, node) === false) {
-                return false;
+    while(queue.length > 0) {
+
+        const nextQueue: [number, number | null][] = [];
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const [currNode, prevNode] = queue[i];
+
+            for(const neighbor of adjList.get(currNode)) {
+
+                // Skipping the 'source' node to avoid 'trivial' cycles
+                if(neighbor !== prevNode) {
+                    if(!visited.has(neighbor)) {
+                        visited.add(neighbor);
+                        nextQueue.push([neighbor, currNode]);
+                    } else {
+                        // there is a cycle
+                        return false
+                    }
+                }
             }
         }
+        if(nextQueue.length > 0) {
+            queue = nextQueue;
+        } else {
+            break;
+        }
+
     }
 
-    // no cycles found
-    return true;
+    return true; // no cycles
+
 }
 
 function buildAdjList(n: number, edges: number[][]): Map<number, number[]> {
     const adjList = new Map();
-    for (let i = 0; i < n; i += 1) {
+    for(let i = 0; i < n; i += 1) {
         adjList.set(i, []);
     }
-    for (const [src, dst] of edges) {
+    for(const [src, dst] of edges) {
         adjList.get(src).push(dst);
         adjList.get(dst).push(src);
     }
