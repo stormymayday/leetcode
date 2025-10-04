@@ -13,18 +13,23 @@
  */
 
 function postorderTraversal(root: TreeNode | null): number[] {
-    const result = [];
-    if(root === null) {
-        return result;
-    }
-    function dfs(root: TreeNode | null): void {
-        if(root === null) {
-            return;
-        }
-        dfs(root.left);
-        dfs(root.right);
-        result.push(root.val);
-    }
-    dfs(root);
-    return result;
+    const path: number[] = [];
+    postorderRDFS(root, path);
+    return path;
 };
+
+function postorderRDFS(root: TreeNode | null, path: number[]): void {
+    // Base Case
+    if(root === null) {
+        return;
+    }
+
+    // Recurse Left
+    postorderRDFS(root.left, path);
+    
+    // Recurse Right
+    postorderRDFS(root.right, path);
+
+    // Visit
+    path.push(root.val);
+}
