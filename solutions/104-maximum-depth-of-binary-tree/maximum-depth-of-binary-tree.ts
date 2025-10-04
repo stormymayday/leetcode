@@ -13,9 +13,19 @@
  */
 
 function maxDepth(root: TreeNode | null): number {
+    return dfs(root);
+};
+
+function dfs(root: TreeNode | null): number {
+    // Base Case: null node
     if(root === null) {
         return 0;
     }
 
-    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
-};
+    // Base Case 2: leaf node
+    if(root.left === null && root.right === null) {
+        return 1;
+    }
+
+    return 1 + Math.max(dfs(root.left), dfs(root.right));
+}
