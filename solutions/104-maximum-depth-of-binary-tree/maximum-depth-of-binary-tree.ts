@@ -13,21 +13,27 @@
  */
 
 function maxDepth(root: TreeNode | null): number {
-    return bottomUpDFS(root);
-};
+    let maxDepth = 0;
 
-function bottomUpDFS(root: TreeNode | null): number {
-    // Base Case: null node
-    if(root === null) {
-        return 0;
+    function topDownDFS(root: TreeNode | null, depth: number): void {
+        // Base Case: null node
+        if (root === null) {
+            return;
+        }
+
+        // Visit: check if leaf node
+        if(root.left === null && root.right === null) {
+            maxDepth = Math.max(maxDepth, depth);
+        }
+
+        // Recurse Left
+        topDownDFS(root.left, depth + 1);
+
+        // Recurse Right
+        topDownDFS(root.right, depth + 1);
     }
-    
-    // Recurse Left
-    const left = bottomUpDFS(root.left);
 
-    // Recurse Right
-    const right = bottomUpDFS(root.right);
+    topDownDFS(root, 1);
 
-    // Visit
-    return 1 + Math.max(left, right)
-}
+    return maxDepth;
+};
