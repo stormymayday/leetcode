@@ -23,9 +23,9 @@ function dfs(root: TreeNode | null): number {
     }
 
     // Base Case 2: leaf node
-    if(root.left === null && root.right === null) {
-        return 1;
-    }
+    // if(root.left === null && root.right === null) {
+    //     return 1;
+    // }
 
     return 1 + Math.max(dfs(root.left), dfs(root.right));
 }
