@@ -1,18 +1,22 @@
 function makeConnected(n: number, connections: number[][]): number {
-    if (connections.length < n - 1) return -1;
-    
-    const uf = new UnionFind(n);
-    let numberOfConnectedComponents = n;
-    
-    for (const [src, dst] of connections) {
-        if (uf.find(src) !== uf.find(dst)) {
-            numberOfConnectedComponents--;
-            uf.union(src, dst);
-        }
+
+    // Edge Case: not enough cables to begin with
+    // Note: should be at least n-1 cables
+    if(connections.length < n -1) {
+        return -1;
     }
-    
-    return numberOfConnectedComponents - 1;
-}
+
+    const uf = new UnionFind(n);
+
+    // Process all connections
+    for(const [src, dst] of connections) {
+        uf.union(src, dst);
+    }
+
+    // Check number of components, we need n - 1 cables to connect all components
+    return uf.getNumComponents() - 1;
+
+};
 
 class UnionFind {
     private roots: Map<number, number>;
@@ -51,7 +55,7 @@ class UnionFind {
             return true;
         }
     }
-    getNumComponents(): number {
+    getNumComponents() {
         return this.numComponents;
     }
 }
