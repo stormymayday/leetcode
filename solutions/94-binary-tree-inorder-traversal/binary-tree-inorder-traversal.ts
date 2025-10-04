@@ -13,30 +13,25 @@
  */
 
 function inorderTraversal(root: TreeNode | null): number[] {
-
-    if(!root) {
-        return [];
-    }
-
-    const result = [];
-
-    function traverse(node) {
-        // 1. Left
-        if(node.left) {
-            traverse(node.left);
-        }
-
-        // 2. Visist current
-        result.push(node.val);
-
-        // 3. Right
-        if(node.right) {
-            traverse(node.right);
-        }
-    }
-
-    traverse(root);
-    
-    return result;
-    
+    const path: number[] = [];
+    inorderRDFS(root, path);
+    return path;
 };
+
+function inorderRDFS(root: TreeNode | null, path: number[]): void {
+
+    // Base Case
+    if(root === null) {
+        return;
+    }
+
+    // Recurse Left
+    inorderRDFS(root.left, path);
+
+    // Visit
+    path.push(root.val);
+
+    // Recurse Right
+    inorderRDFS(root.right, path);
+
+}
