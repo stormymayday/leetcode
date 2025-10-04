@@ -13,18 +13,25 @@
  */
 
 function preorderTraversal(root: TreeNode | null): number[] {
-    const result = [];
-    if(root === null) {
-        return result;
-    }
-    function helper(root: TreeNode | null): void {
-        if(root === null) {
-            return;
-        }
-        result.push(root.val);
-        helper(root.left);
-        helper(root.right);
-    }
-    helper(root);
-    return result;
+    const path: number[] = [];
+    preorderDFS(root, path);
+    return path;
 };
+
+function preorderDFS(root: TreeNode | null, path: number[]): void {
+
+    // Base Case: 
+    if(root === null) {
+        return;
+    }
+    
+    // Visit
+    path.push(root.val);
+
+    // Recurse Left
+    preorderDFS(root.left, path);
+
+    // Recurse Right
+    preorderDFS(root.right, path);
+
+}
