@@ -13,43 +13,43 @@
  */
 
 function countUnivalSubtrees(root: TreeNode | null): number {
-    let res = 0;
-    function dfs(root: TreeNode | null): boolean {
-        // Base Case: null node
-        if (root === null) {
-            return true;
+    return dfs(root)[1];
+}
+
+function dfs(root: TreeNode | null): [boolean, number] {
+    // Base Case 1: null node
+    if(root === null) {
+        return [true, 0];
+    }
+
+    // Base Case 2: leaf node
+    if(root.left === null && root.right === null) {
+        return [true, 1];
+    }
+
+    const left = dfs(root.left);
+    const right = dfs(root.right);
+
+    // Start with the counts from left and right subtrees
+    let count = left[1] + right[1];
+    
+    // Check if current subtree is uni-value
+    let isUniValue = left[0] && right[0];
+    
+    if(isUniValue) {
+        // Also need to check if children values match parent
+        if(root.left !== null && root.left.val !== root.val) {
+            isUniValue = false;
+        }
+        if(root.right !== null && root.right.val !== root.val) {
+            isUniValue = false;
         }
         
-        // Base Case 2: Leaf Node
-        if(root.left === null && root.right === null) {
-            res += 1;
-            return true;
+        // If still uni-value, increment count
+        if(isUniValue) {
+            count += 1;
         }
-
-        const left = dfs(root.left);
-        const right = dfs(root.right);
-
-        if(left === true && right === true) {
-
-            if(root.left !== null && root.val !== root.left.val) {
-                return false;
-            }
-
-            if(root.right !== null && root.val !== root.right.val) {
-                return false;
-            }
-
-            res += 1;
-            return true;
-
-        } else {
-            return false;
-        }
-
-        
     }
     
-    dfs(root);
-
-    return res;
-};
+    return [isUniValue, count];
+}
