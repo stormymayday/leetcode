@@ -13,27 +13,35 @@
  */
 
 function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
-    const inOrderIndex = {};
-    for(let i = 0; i < inorder.length; i += 1) {
-        const value = inorder[i];
-        inOrderIndex[value] = i;
-    }
-
-    function helper(inOrderStart, inOrderEnd, postOrderStart, postOrderEnd) {
-
-        if(inOrderStart > inOrderEnd) {
-            return null;
-        }
-
-        const rootVal = postorder[postOrderEnd];
-        const root = new TreeNode(rootVal);
-        const mid = inOrderIndex[rootVal];
-
-        root.left = helper(inOrderStart, mid - 1, postOrderStart, (postOrderStart + (mid - inOrderStart) - 1));
-        root.right = helper(mid + 1, inOrderEnd, (postOrderStart + (mid - inOrderStart)), postOrderEnd - 1);
-
-        return root;
-
-    }
-    return helper(0, inorder.length - 1, 0, postorder.length - 1);
+    return dfs(inorder, postorder);
 };
+
+
+function dfs(inorder: number[], postorder: number[]): TreeNode | null {
+
+    // Base Case: no more elements in the 'inorder'
+    // - Specifically checking 'inorder' length because it will be sliced into two halves
+    if(inorder.length === 0) {
+        return null;
+    }
+
+    // Create root using last element in the 'postorder'
+    const rootVal = postorder.pop();
+    const root = new TreeNode(rootVal);
+    // Find index of the 'rootVal' in the 'inorder'
+    const rootIdx = inorder.indexOf(rootVal); // O(n)
+
+    // Recurse Right:
+    // - Creating a right subtree
+    // - Everything to the right of 'rootIdx' is the right subtree
+    root.right = dfs(inorder.slice(rootIdx + 1), postorder);
+
+    // Recurse Left:
+    // - Creating a left subtree
+    // - Everything to the left of 'rootIdx' is the left subtree
+    root.left = dfs(inorder.slice(0, rootIdx), postorder);
+
+    // Return root
+    return root;
+
+}
