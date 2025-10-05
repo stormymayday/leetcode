@@ -1,33 +1,25 @@
 function lengthOfLongestSubstring(s: string): number {
 
-    // Tracks the maximum length found
-    let result = 0;
+    let longest = 0;
 
-    // Stores last seen index of each character
-    const charSeenAtIndex = new Map();
-
-    // Left boundary of the sliding window
+    const currSubstring = new Set<string>();
     let left = 0;
+    for(let right = 0; right < s.length; right += 1) {
 
-    for (let right = 0; right < s.length; right++) {
+        const currChar = s[right];
 
-        const currentChar = s[right];
+        while(currSubstring.has(currChar)) {
 
-        // If currentChar was seen and is inside the current window
-        if (
-            charSeenAtIndex.has(currentChar) &&
-            charSeenAtIndex.get(currentChar) >= left
-        ) {
-            // Move left pointer past the last occurrence
-            left = charSeenAtIndex.get(currentChar) + 1;
+            currSubstring.delete(s[left]);
+            left += 1;
+
         }
 
-        // Update last seen index of currentChar
-        charSeenAtIndex.set(currentChar, right);
+        currSubstring.add(currChar);
 
-        // Calculate window size and update result
-        result = Math.max(result, right - left + 1);
+        longest = Math.max(longest, currSubstring.size);
+
     }
 
-    return result;
-}
+    return longest;
+};
