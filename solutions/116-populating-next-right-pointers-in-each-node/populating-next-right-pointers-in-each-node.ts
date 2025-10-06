@@ -15,14 +15,11 @@
  */
 
 function connect(root: _Node | null): _Node | null {
-
     if(root === null) {
         return null;
     }
-
     bfs(root);
     return root;
-
 };
 
 function bfs(root: _Node): void {
@@ -33,16 +30,15 @@ function bfs(root: _Node): void {
     while(queue.length > 0) {
 
         const nextQueue: _Node[] = [];
-
         for(let i = 0; i < queue.length; i += 1) {
 
             const currNode = queue[i];
-            const neighborNode = queue[i + 1];
 
-            if(neighborNode !== undefined) {
+            if(queue[i + 1] !== undefined) {
+                const neighborNode = queue[i + 1];
                 currNode.next = neighborNode;
             }
-            
+
             if(currNode.left !== null) {
                 nextQueue.push(currNode.left);
             }
@@ -52,13 +48,11 @@ function bfs(root: _Node): void {
             }
 
         }
-
         if(nextQueue.length > 0) {
             queue = nextQueue;
         } else {
             break;
         }
-
     }
-
 }
+
