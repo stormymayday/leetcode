@@ -13,25 +13,41 @@
  */
 
 function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
-    const inOrderIndex = {};
-    for(let i = 0; i < inorder.length; i += 1) {
-        const value = inorder[i];
-        inOrderIndex[value] = i;
-    }
-
-    function helper(inOrderStart, inOrderEnd, preOrderStart, preOrderEnd) {
-        if(inOrderStart > inOrderEnd) {
-            return null;
-        }
-
-        const rootVal = preorder[preOrderStart];
-        const root = new TreeNode(rootVal);
-        const mid = inOrderIndex[rootVal];
-
-        root.left = helper(inOrderStart, mid - 1, preOrderStart + 1, (preOrderStart + (mid - inOrderStart)));
-        root.right = helper(mid + 1, inOrderEnd, (preOrderStart + (mid - inOrderStart) + 1), preOrderEnd);
-        
-        return root;
-    }
-    return helper(0, inorder.length - 1, 0, preorder.length - 1);
+    return dfs(inorder, preorder);
 };
+
+function dfs(inorder: number[], preorder: number[]): TreeNode | null {
+
+    // Base Case
+    if(inorder.length === 0) {
+        return null;
+    }
+
+    // Create root using first element of the 'preorder'
+    const rootVal = preorder[0];
+    const root = new TreeNode(rootVal);
+    // Get index of the 'rootVal' in 'inorder'
+    const rootIdx = inorder.indexOf(rootVal);
+    // Calculate size of the left subtree
+    // const leftSubtreeSize = rootIdx; 
+
+    // Construct Left Subtree
+    root.left = dfs(
+        // everything to the left of 'rootIdx'
+        inorder.slice(0, rootIdx),
+        // skipping index 1 (root) + size of the left subtree
+        preorder.slice(1, rootIdx + 1)
+    );
+
+    // Construct Right Subtree
+    root.right = dfs(
+        // everything to the right of 'rootIdx'
+        inorder.slice(rootIdx + 1),
+        //
+        preorder.slice(rootIdx + 1)
+
+    );
+
+    return root;
+
+}
