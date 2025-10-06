@@ -47,14 +47,14 @@ function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
             inorderLeftIdx, // 'inorderLeftIdx' stays the same (start of the array)
             rootIdx - 1, // 'inorderRightIdx' goes 1 spot behind 'rootIdx'
             preorderLeftIdx + 1, // 'preorderLeftIdx' shifts 1 spot forward (skipping 'root')
-            preorderLeftIdx + leftSubtreeSize // 'preorderRightIdx' goes to the 'rootIdx'
+            preorderLeftIdx + leftSubtreeSize // 
         );
 
         // Construct Right Subtree
         root.right = dfs(
             rootIdx + 1, // 'inorderLeftIdx' goes 1 spot after 'rootIdx'
             inorderRightIdx, // 'inorderRightIdx' stays the same (end of the array)
-            preorderLeftIdx + leftSubtreeSize + 1, // 'preorderLeftIdx' goes 1 spot after 'rootIdx'
+            preorderLeftIdx + leftSubtreeSize + 1, // 
             preorderRightIdx // 'preorderRightIdx' stays the same (end if the array)
         );
 
