@@ -13,52 +13,19 @@
  */
 
 function preorderTraversal(root: TreeNode | null): number[] {
-    const path: number[] = [];
-    preorderDFS(root, path);
-    return path;
+    const res: number[] = [];
+    dfs(root, res);
+    return res;
 };
 
-function preorderRDFS(root: TreeNode | null, path: number[]): void {
 
-    // Base Case: 
-    if(root === null) {
-        return;
-    }
-    
-    // Visit
-    path.push(root.val);
-
-    // Recurse Left
-    preorderDFS(root.left, path);
-
-    // Recurse Right
-    preorderDFS(root.right, path);
-
-}
-
-function preorderDFS(root: TreeNode | null, path: number[]): void {
-
+function dfs(root: TreeNode | null, res: number[]): void {
     if(root === null) {
         return;
     }
 
-    const stack: TreeNode[] = [];
-    stack.push(root);
+    res.push(root.val);
 
-    while(stack.length > 0) {
-
-        const currNode = stack.pop();
-        path.push(currNode.val);
-
-        if(currNode.right !== null) {
-            stack.push(currNode.right);
-        }
-
-        if(currNode.left !== null) {
-            stack.push(currNode.left);
-        }
-
-    }
-
-    return;
+    dfs(root.left, res);
+    dfs(root.right, res);
 }
