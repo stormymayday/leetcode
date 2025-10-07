@@ -20,44 +20,39 @@ function levelOrder(root: TreeNode | null): number[][] {
 
 function bfs(root: TreeNode | null, res: number[][]): void {
 
-    if(root === null) {
+    if (root === null) {
         return;
     }
 
     let queue: TreeNode[] = [];
     queue.push(root);
 
-    while(queue.length > 0) {
+    while (queue.length > 0) {
 
         const nextQueue: TreeNode[] = [];
         const currLevelNodes: number[] = [];
 
-        for(let i = 0; i < queue.length; i += 1) {
+        for (let i = 0; i < queue.length; i += 1) {
 
             const currNode = queue[i];
 
             currLevelNodes.push(currNode.val);
 
-            if(currNode.left !== null) {
+            if (currNode.left !== null) {
                 nextQueue.push(currNode.left);
             }
 
-            if(currNode.right !== null) {
+            if (currNode.right !== null) {
                 nextQueue.push(currNode.right);
             }
 
         }
 
         res.push(currLevelNodes);
-
-        if(nextQueue.length > 0) {
-            queue = nextQueue;
-        } else {
-            break;
-        }
+        queue = nextQueue;
 
     }
 
     return;
- 
+
 }
