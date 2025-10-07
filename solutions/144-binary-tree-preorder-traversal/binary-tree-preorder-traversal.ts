@@ -13,9 +13,7 @@
  */
 
 function preorderTraversal(root: TreeNode | null): number[] {
-    // const res: number[] = [];
     return dfs(root, []);
-    // return res;
 };
 
 
