@@ -15,27 +15,26 @@
 function postorderTraversal(root: TreeNode | null): number[] {
     
     const res: number[] = [];
+
+    if(root === null) {
+        return res;
+    }
+
     const stack: TreeNode[] = [];
-    let curr: TreeNode | null = root;
+    stack.push(root);
 
-    while(curr !== null || stack.length > 0) {
+    while(stack.length > 0) {
 
-        if(curr !== null) {
+        const curr = stack.pop();
 
-            // Process current node
-            res.push(curr.val);
+        res.push(curr.val);
 
-            // Push 'curr' to the stack
-            stack.push(curr);
+        if(curr.left !== null) {
+            stack.push(curr.left);
+        }
 
-            // Move right
-            curr = curr.right
-
-        } else {
-
-            curr = stack.pop();
-            curr = curr.left;
-
+        if(curr.right !== null) {
+            stack.push(curr.right);
         }
 
     }
