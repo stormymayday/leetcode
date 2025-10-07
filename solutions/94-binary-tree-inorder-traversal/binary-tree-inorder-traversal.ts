@@ -13,15 +13,30 @@
  */
 
 function inorderTraversal(root: TreeNode | null): number[] {
-    return dfs(root, []);
-};
+    
+    const res: number[] = [];
 
-function dfs(root: TreeNode | null, res: number[]): number[] {
     if(root === null) {
         return res;
     }
-    dfs(root.left, res);
-    res.push(root.val);
-    dfs(root.right, res);
+
+    
+    let curr: TreeNode | null = root;
+    const stack: TreeNode[] = [];
+    
+    while(curr !== null || stack.length > 0) {
+
+        while(curr !== null) {
+            stack.push(curr);
+            curr = curr.left;
+        }
+
+        curr = stack.pop();
+        res.push(curr.val);
+        curr = curr.right;
+
+    }
+
     return res;
-}
+
+};
