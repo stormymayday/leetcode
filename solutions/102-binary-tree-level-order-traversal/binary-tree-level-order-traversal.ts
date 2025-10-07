@@ -13,46 +13,22 @@
  */
 
 function levelOrder(root: TreeNode | null): number[][] {
-    const res: number[][] = [];
-    bfs(root, res);
-    return res;
-};
+    const levels: number[][] = [];
+    function dfs(root: TreeNode | null, level: number): void {
 
-function bfs(root: TreeNode | null, res: number[][]): void {
-
-    if (root === null) {
-        return;
-    }
-
-    let queue: TreeNode[] = [];
-    queue.push(root);
-
-    while (queue.length > 0) {
-
-        const nextQueue: TreeNode[] = [];
-        const currLevelNodes: number[] = [];
-
-        for (let i = 0; i < queue.length; i += 1) {
-
-            const currNode = queue[i];
-
-            currLevelNodes.push(currNode.val);
-
-            if (currNode.left !== null) {
-                nextQueue.push(currNode.left);
-            }
-
-            if (currNode.right !== null) {
-                nextQueue.push(currNode.right);
-            }
-
+        if(root === null) {
+            return;
         }
 
-        res.push(currLevelNodes);
-        queue = nextQueue;
+        if(levels[level] === undefined) {
+            levels[level] = [];
+        }
+        levels[level].push(root.val);
+
+        dfs(root.left, level + 1);
+        dfs(root.right, level + 1);
 
     }
-
-    return;
-
-}
+    dfs(root, 0);
+    return levels;
+};
