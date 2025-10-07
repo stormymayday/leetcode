@@ -14,48 +14,17 @@
 
 function maxDepth(root: TreeNode | null): number {
     
-    return bfs(root);
+    return dfs(root);
 
 };
 
-function bfs(root: TreeNode | null): number {
-
-    let levels = 0;
-
-    if (root === null) {
-        return levels;
+function dfs(root: TreeNode | null) {
+    if(root === null) {
+        return 0;
     }
 
-    let queue: TreeNode[] = [];
-    queue.push(root);
-    levels += 1;
+    const left = dfs(root.left);
+    const right = dfs(root.right);
 
-    while (queue.length > 0) {
-
-        const nextQueue: TreeNode[] = [];
-
-        for (let i = 0; i < queue.length; i += 1) {
-
-            const currNode = queue[i];
-
-            if (currNode.left !== null) {
-                nextQueue.push(currNode.left);
-            }
-
-            if (currNode.right !== null) {
-                nextQueue.push(currNode.right);
-            }
-
-        }
-
-        queue = nextQueue;
-
-        if(queue.length > 0) {
-            levels += 1;
-        }
-
-    }
-
-    return levels;
-
+    return 1 + Math.max(left, right);
 }
