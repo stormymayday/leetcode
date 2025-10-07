@@ -13,36 +13,35 @@
  */
 
 function isSymmetric(root: TreeNode | null): boolean {
-
-    // Edge Case: null node
-    if (root === null) {
+    
+    if(root === null) {
         return true;
+    }
+
+    function dfs(left: TreeNode | null, right: TreeNode | null): boolean {
+        // Both are null
+        if(left === null && right === null) {
+            return true;
+        }
+
+        // Only one is null
+        if((left !== null && right === null) || (left === null && right !== null)) {
+            return false;
+        }
+        
+        // Means both are not null, check values
+        if(left.val !== right.val) {
+            return false;
+        }
+
+
+        const outer = dfs(left.left, right.right);
+        const inner = dfs(left.right, right.left);
+
+        return outer && inner;
+
     }
 
     return dfs(root.left, root.right);
 
 };
-
-function dfs(left: TreeNode | null, right: TreeNode | null): boolean {
-    // Base Case 1: Both are null
-    if (left === null && right === null) {
-        return true; // considered symmetric
-    }
-
-    // Base Case 2: Only one is null
-    if (left === null || right === null) {
-        return false;
-    }
-
-    // Visit: Both are not null
-    const current = left.val === right.val;
-
-    // Recurse Outer
-    const outer = dfs(left.left, right.right);
-
-    // Recurse Inner
-    const inner = dfs(left.right, right.left);
-
-    return current && outer && inner;
-
-}
