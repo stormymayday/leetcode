@@ -14,42 +14,37 @@
 
 function countUnivalSubtrees(root: TreeNode | null): number {
 
-    let count = 0;
-
-    function dfs(root: TreeNode | null): boolean {
+    function dfs(root: TreeNode | null): [boolean, number] {
 
         if(root === null) {
-            return true;
+            return [true, 0];
         }
 
         if(root.left === null && root.right === null) {
-            count += 1;
-            return true;
+            return [true, 1];
         }
 
         const left = dfs(root.left);
         const right = dfs(root.right);
+        const count = left[1] + right[1];
 
-        if(left === true && right === true) {
+        if(left[0] === true && right[0] === true) {
 
             if(root.left !== null && root.val !== root.left.val) {
-                return false;
+                return [false, count];
             }
 
             if(root.right !== null && root.val !== root.right.val) {
-                return false;
+                return [false, count];
             }
 
-            count += 1;
-            return true;
+            return [true, count + 1];
 
         } else {
-            return false;
+            return [false, count];
         }
     }
 
-    dfs(root);
-
-    return count;
+    return dfs(root)[1];
 
 };
