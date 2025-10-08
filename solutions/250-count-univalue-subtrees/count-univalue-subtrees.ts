@@ -67,7 +67,8 @@ function countUnivalSubtrees(root: TreeNode | null): number {
                 }
             }
 
-            return true;
+            // both are null
+            // return true;
 
         } else {
             return false;
