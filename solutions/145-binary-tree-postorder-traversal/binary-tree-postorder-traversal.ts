@@ -20,8 +20,7 @@ function postorderTraversal(root: TreeNode | null): number[] {
         return res;
     }
 
-    const stack: TreeNode[] = [];
-    stack.push(root);
+    const stack: TreeNode[] = [root];
 
     while(stack.length > 0) {
 
