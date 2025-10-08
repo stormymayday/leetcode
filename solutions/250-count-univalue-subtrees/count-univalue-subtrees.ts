@@ -13,66 +13,69 @@
  */
 
 function countUnivalSubtrees(root: TreeNode | null): number {
-    const [isUnivalue, subtreeCount] = dfs(root);
-    return subtreeCount;
-}
 
-// The dfs function returns an array with 2 elements: [boolean, number]
-// - Index 0: A boolean indicating if the subtree is uni-value
-// - Index 1: The count of uni-value subtrees in that subtree
-// Note: Each recursive call should create and return its own result array
-function dfs(root: TreeNode | null): [boolean, number] {
+    let count = 0;
 
-    // Base Case 1: Null Node
-    if (root === null) {
-        return [true, 0];
-        // Why true?
-        // - A null node doesn't contradict the uni-value property
-        // - It allows parent nodes to continue checking if they're uni-value
-        // - Think of it as "vacuously true" - an empty subtree has all nodes with the same value (because there are no nodes)
-        
-        // Why 0?
-        // - Null nodes aren't actual subtrees, so they don't count
-        // We only count subtrees that have at least one node
-    }
+    function dfs(root: TreeNode | null): boolean {
 
-    // Base Case 2: Leaf Node
-    if (root.left === null && root.right === null) {
-        // every leaf not is considerend uni-value subtree
-        return [true, 1];
-        // Why true?
-        // - A single node by itself always has the same value (trivially uni-value)
-        // - It's the building block for larger uni-value subtrees
-
-        // Why 1?
-        // Each leaf node counts as exactly one uni-value subtree
-        // This is where we start accumulating our count
-    }
-
-    // Recurse Left and Right
-    const left = dfs(root.left);
-    const right = dfs(root.right);
-
-    // Start with the counts from left and right subtrees
-    let count = left[1] + right[1];
-
-    // Check if current subtree is uni-value
-    let isUniValue = left[0] && right[0];
-
-    if (isUniValue) {
-        // Also need to check if children values match parent
-        if (root.left !== null && root.left.val !== root.val) {
-            isUniValue = false;
-        }
-        if (root.right !== null && root.right.val !== root.val) {
-            isUniValue = false;
+        // Base Case: null root
+        if (root === null) {
+            return true;
         }
 
-        // If still uni-value, increment count
-        if (isUniValue) {
+        // Base Case: leaf node
+        if (root.left === null && root.right === null) {
+            // every leaf is a uni-value subtree
             count += 1;
+            return true;
+        }
+
+        const left: boolean = dfs(root.left);
+        const right: boolean = dfs(root.right);
+
+        // both subtrees return true
+        if (left === true && right === true) {
+
+            // both children are not null
+            if (root.left !== null && root.right !== null) {
+                if (root.val === root.left.val && root.val === root.right.val) {
+                    count += 1;
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            // left is not null
+            if (root.left !== null && root.right === null) {
+                if (root.val === root.left.val) {
+                    count += 1;
+                    return true;
+                } else {
+                    return false;
+                }
+
+            }
+
+            // right is not null
+            if (root.left === null && root.right !== null) {
+                if (root.val === root.right.val) {
+                    count += 1;
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            return true;
+
+        } else {
+            return false;
         }
     }
 
-    return [isUniValue, count];
-}
+    dfs(root);
+
+    return count;
+
+};
