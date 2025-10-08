@@ -13,43 +13,29 @@
  */
 
 function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
-    return dfs(inorder, postorder);
-};
-
-
-function dfs(inorder: number[], postorder: number[]): TreeNode | null {
-
-    // Base Case: no more elements in the 'inorder'
-    // - Specifically checking 'inorder' length because it will be sliced into two halves
-    if (inorder.length === 0) {
+    
+    if(inorder.length === 0 || postorder.length === 0) {
         return null;
     }
 
-    // Create root using last element in the 'postorder'
     const rootVal = postorder[postorder.length - 1];
     const root = new TreeNode(rootVal);
-    // Find index of the 'rootVal' in the 'inorder'
-    const rootIdx = inorder.indexOf(rootVal); // O(n)
+    const rootIdx = inorder.indexOf(rootVal);
 
-    // Recurse Left:
-    // - Creating a left subtree
-    root.left = dfs(
-        // Everything to the left of rootIndex in inorder is the left subtree
-        inorder.slice(0, rootIdx),
-        // In postorder, left subtree has same length as in inorder
-        postorder.slice(0, rootIdx)
+    const inorderLeft = inorder.slice(0, rootIdx); // from index 0 and up until (not including) 'rootIdx'
+    const inorderRight = inorder.slice(rootIdx + 1); // from rootIdx + 1 until the end
+    const postorderLeft = postorder.slice(0, 
+    inorderLeft.length); // from index 0 + length of 'inorderLeft' (exclusive)
+    const postorderRight = postorder.slice(inorderLeft.length, -1); // from length of 'inorderLeft' up until -1 from the end
+
+    root.left = buildTree(
+        inorderLeft,
+        postorderLeft
+    );
+    root.right = buildTree(
+        inorderRight,
+        postorderRight
     );
 
-    // Recurse Right:
-    // - Creating a right subtree
-    root.right = dfs(
-        // Everything to the right of rootIndex in inorder is the right subtree
-        inorder.slice(rootIdx + 1),
-        // Starting from 'rootIdx' up until but not including the last element
-        postorder.slice(rootIdx, -1)
-    );
-
-    // Return root
     return root;
-
-}
+};
