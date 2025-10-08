@@ -13,26 +13,17 @@
  */
 
 function hasPathSum(root: TreeNode | null, targetSum: number): boolean {
-    return dfs(root, 0, targetSum);
-};
-
-function dfs(root: TreeNode | null, sum: number, targetSum: number): boolean {
-
-    // Base Case: null node
+    
     if(root === null) {
         return false;
     }
 
-    // Base Case: leaf node
+    targetSum -= root.val;
+
     if(root.left === null && root.right === null) {
-        return root.val + sum === targetSum;
+        return targetSum === 0;
     }
 
-    // Recurse Left
-    const left = dfs(root.left, root.val + sum, targetSum);
+    return hasPathSum(root.left, targetSum) || hasPathSum(root.right, targetSum);
 
-    // Recurse Right
-    const right = dfs(root.right, root.val + sum, targetSum);
-
-    return left || right;
-}
+};
