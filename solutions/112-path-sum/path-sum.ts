@@ -13,40 +13,17 @@
  */
 
 function hasPathSum(root: TreeNode | null, targetSum: number): boolean {
-    
+
     if(root === null) {
         return false;
     }
 
-    let queue: [TreeNode, number][] = [[root, root.val]];
+    targetSum -= root.val;
 
-    while(queue.length > 0) {
-
-        const nextQueue: [TreeNode, number][] = [];
-        for(let i = 0; i < queue.length; i += 1) {
-
-            const [currNode, currSum] = queue[i];
-
-            // If current node is a leaf node
-            if(currNode.left === null && currNode.right === null) {
-                if(currSum === targetSum) {
-                    return true;
-                }
-            }
-
-            if(currNode.left !== null) {
-                nextQueue.push([currNode.left, currSum + currNode.left.val]);
-            }
-
-            if(currNode.right !== null) {
-                nextQueue.push([currNode.right, currSum + currNode.right.val]);
-            }
-
-        }
-        queue = nextQueue;
-
+    if(root.left === null && root.right === null) {
+        return targetSum === 0;
     }
 
-    return false;
-
+    return hasPathSum(root.left, targetSum) || hasPathSum(root.right, targetSum);
+    
 };
