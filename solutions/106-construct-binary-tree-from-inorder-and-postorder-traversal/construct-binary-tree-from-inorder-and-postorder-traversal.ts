@@ -22,19 +22,13 @@ function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
     const root = new TreeNode(rootVal);
     const rootIdx = inorder.indexOf(rootVal);
 
-    const inorderLeft = inorder.slice(0, rootIdx); // from index 0 and up until (not including) 'rootIdx'
-    const inorderRight = inorder.slice(rootIdx + 1); // from rootIdx + 1 until the end
-    const postorderLeft = postorder.slice(0, 
-    inorderLeft.length); // from index 0 + length of 'inorderLeft' (exclusive)
-    const postorderRight = postorder.slice(inorderLeft.length, -1); // from length of 'inorderLeft' up until -1 from the end
-
     root.left = buildTree(
-        inorderLeft,
-        postorderLeft
+        inorder.slice(0, rootIdx),
+        postorder.slice(0, rootIdx)
     );
     root.right = buildTree(
-        inorderRight,
-        postorderRight
+        inorder.slice(rootIdx + 1),
+        postorder.slice(rootIdx, -1)
     );
 
     return root;
