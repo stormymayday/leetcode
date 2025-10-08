@@ -57,11 +57,7 @@ function isSymmetric(root: TreeNode | null): boolean {
             }
         }
 
-        if (nextQueue.length > 0) {
-            queue = nextQueue;
-        } else {
-            break;
-        }
+        queue = nextQueue;
 
     }
 
