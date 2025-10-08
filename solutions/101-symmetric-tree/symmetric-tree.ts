@@ -18,30 +18,48 @@ function isSymmetric(root: TreeNode | null): boolean {
         return true;
     }
 
-    function dfs(left: TreeNode | null, right: TreeNode | null): boolean {
+    let queue: (TreeNode | null)[] = [root.left, root.right];
 
-        if (left === null && right === null) {
-            return true;
+    while (queue.length > 0) {
+
+        // Two-Pointer linear scan current layer
+        let left = 0;
+        let right = queue.length - 1;
+        while (left < right) {
+            // Both not null and values differ
+            if (
+                (queue[left] !== null && queue[right] !== null) &&
+                (queue[left].val !== queue[right].val)
+            ) {
+                return false;
+            }
+
+            // One is null, other is not
+            if (
+                (queue[left] === null && queue[right] !== null) ||
+                (queue[left] !== null && queue[right] === null)
+            ) {
+                return false;
+            }
+
+            // Otherwise, advance
+            left += 1;
+            right -= 1;
         }
 
-        if (
-            (left === null && right !== null) ||
-            (left !== null && right === null)
-        ) {
-            return false;
+        // Prep Next layer
+        const nextQueue: (TreeNode | null)[] = [];
+        for (let i = 0; i < queue.length; i += 1) {
+            const curr = queue[i];
+            if(curr !== null) {
+                nextQueue.push(curr.left);
+                nextQueue.push(curr.right);
+            }
         }
-
-        if(left.val !== right.val) {
-            return false;
-        }
-
-        const outer = dfs(left.left, right.right);
-        const inner = dfs(left.right, right.left);
-
-        return outer && inner;
+        queue = nextQueue;
 
     }
 
-    return dfs(root.left, root.right);
+    return true;
 
 };
