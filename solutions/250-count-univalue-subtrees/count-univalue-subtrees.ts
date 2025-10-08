@@ -14,49 +14,45 @@
 
 function countUnivalSubtrees(root: TreeNode | null): number {
 
-    let count = 0;
-
-    function dfs(root: TreeNode | null): boolean {
+    function dfs(root: TreeNode | null): [boolean, number] {
 
         // Base Case: null root
         if (root === null) {
-            return true;
+            return [true, 0];
         }
 
         // Base Case: leaf node
         if (root.left === null && root.right === null) {
             // every leaf is a uni-value subtree
-            count += 1;
-            return true;
+            return [true, 1];
         }
 
-        const left: boolean = dfs(root.left);
-        const right: boolean = dfs(root.right);
+        const left: [boolean, number] = dfs(root.left);
+        const right: [boolean, number] = dfs(root.right);
+        let count = left[1] + right[1];
 
         // both subtrees return true
-        if (left === true && right === true) {
+        if (left[0] === true && right[0] === true) {
             
             // left child is not null but value is different from the root
             if(root.left !== null && root.val !== root.left.val) {
-                return false;
+                return [false, count];
             }
 
             // right child is not null but value is different from the root
             if(root.right !== null && root.val !== root.right.val) {
-                return false;
+                return [false, count];
             }
 
             // Otherwise, either both children are not null or only one BUT values must be the same
-            count += 1;
-            return true;
+            return [true, count + 1];
 
         } else {
-            return false;
+            return [false, count];
         }
     }
 
-    dfs(root);
+    return dfs(root)[1];
 
-    return count;
 
 };
