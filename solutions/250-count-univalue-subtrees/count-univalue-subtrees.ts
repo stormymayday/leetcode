@@ -35,40 +35,20 @@ function countUnivalSubtrees(root: TreeNode | null): number {
 
         // both subtrees return true
         if (left === true && right === true) {
-
-            // both children are not null
-            if (root.left !== null && root.right !== null) {
-                if (root.val === root.left.val && root.val === root.right.val) {
-                    count += 1;
-                    return true;
-                } else {
-                    return false;
-                }
+            
+            // left child is not null but value is different from the root
+            if(root.left !== null && root.val !== root.left.val) {
+                return false;
             }
 
-            // left is not null
-            if (root.left !== null && root.right === null) {
-                if (root.val === root.left.val) {
-                    count += 1;
-                    return true;
-                } else {
-                    return false;
-                }
-
+            // right child is not null but value is different from the root
+            if(root.right !== null && root.val !== root.right.val) {
+                return false;
             }
 
-            // right is not null
-            if (root.left === null && root.right !== null) {
-                if (root.val === root.right.val) {
-                    count += 1;
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            // both are null
-            // return true;
+            // Otherwise, either both children are not null or only one BUT values must be the same
+            count += 1;
+            return true;
 
         } else {
             return false;
