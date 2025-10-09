@@ -15,33 +15,37 @@
  */
 
 function connect(root: _Node | null): _Node | null {
-
     if(root === null) {
-        return root;
+        return null;
     }
 
-    let curr: _Node | null = root;
+    let head: _Node | null = root;
 
-    while(curr.left !== null) {
+    while(head !== null) {
 
-        // 1. Connecting children linked list style
-        let head: _Node | null = curr;
-        while(head != null) { // strict inequality '!==' causes an error
-            // 1.1. left and right
-            head.left.next = head.right;
-            // 1.2. 'bridge'
-            if(head.next != null) { // strict inequality '!==' causes an error
-                head.right.next = head.next.left;
+        const dummyNode = new _Node();
+        let temp: _Node | null = dummyNode;
+
+        while(head != null) {
+
+            if(head.left !== null) {
+                temp.next = head.left;
+                temp = temp.next;
             }
-            // 1.3. shift to a neighbor
+
+            if(head.right !== null) {
+                temp.next = head.right;
+                temp = temp.next;
+            }
+
+            // neighbor hop
             head = head.next;
         }
 
-        // 2. Move down a level
-        curr = curr.left
+        // move down a level
+        head = dummyNode.next;
 
     }
 
     return root;
-
 };
