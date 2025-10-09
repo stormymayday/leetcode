@@ -13,26 +13,35 @@
  */
 
 function inorderSuccessor(root: TreeNode | null, p: TreeNode | null): TreeNode | null {
+
+    // Edge Case: null root
+    if(root === null) {
+        return null;
+    }
+
+    let potentialSuccessor: TreeNode | null = null;
+
+    while(root !== null) {
+
+        // Important! greater than OR equals to
+        if(p.val >= root.val) {
+            // dicard the left subtree, move to the right subtree
+            root = root.right;
+        } else {
+            // curr.val > p.val - potential successor found
+            if(potentialSuccessor === null) {
+                potentialSuccessor = root;
+            } else {
+                if(root.val < potentialSuccessor.val) {
+                    potentialSuccessor = root;
+                }
+            }
+            // Move to the left subtree
+            root = root.left;
+        }
+
+    }
     
-    // 1. Perform inorder traversal
-    const inorderTraversal: TreeNode[] = [];
-    function inorderDFS(root: TreeNode | null): void {
-        if(root === null) {
-            return;
-        }
-        inorderDFS(root.left);
-        inorderTraversal.push(root);
-        inorderDFS(root.right);
-    }
-    inorderDFS(root);
-
-    // Linear Scan to find the successor
-    for(let i = 0; i < inorderTraversal.length; i += 1) {
-        if(p === inorderTraversal[i] && i + 1 < inorderTraversal.length) {
-            return inorderTraversal[i + 1];
-        }
-    }
-
-    return null;
-
+    return potentialSuccessor;
+	
 };
