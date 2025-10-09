@@ -15,33 +15,27 @@
 function inorderSuccessor(root: TreeNode | null, p: TreeNode | null): TreeNode | null {
 
     // Edge Case: null root
-    if(root === null) {
+    if (root === null) {
         return null;
     }
 
     let potentialSuccessor: TreeNode | null = null;
 
-    while(root !== null) {
+    while (root !== null) {
 
         // Important! greater than OR equals to
-        if(p.val >= root.val) {
+        if (p.val >= root.val) {
             // dicard the left subtree, move to the right subtree
             root = root.right;
         } else {
             // curr.val > p.val - potential successor found
-            if(potentialSuccessor === null) {
-                potentialSuccessor = root;
-            } else {
-                if(root.val < potentialSuccessor.val) {
-                    potentialSuccessor = root;
-                }
-            }
+            potentialSuccessor = root;
             // Move to the left subtree
             root = root.left;
         }
 
     }
-    
+
     return potentialSuccessor;
-	
+
 };
