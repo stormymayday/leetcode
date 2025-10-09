@@ -14,58 +14,23 @@
 
 function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
 
-    const inorderValToIdx = new Map<number, number>();
-    for (let idx = 0; idx < inorder.length; idx += 1) {
-        const val = inorder[idx];
-        inorderValToIdx.set(val, idx);
+    if (inorder.length === 0 || preorder.length === 0) {
+        return null;
     }
 
-    function dfs(
-        inorderLeftIdx: number,
-        inorderRightIdx: number,
-        preorderLeftIdx: number,
-        preorderRightIdx: number
-    ): TreeNode | null {
+    const rootVal = preorder[0];
+    const root = new TreeNode(rootVal);
+    const rootIdx = inorder.indexOf(rootVal);
 
-        // Base Case: left and right 'inorder' pointers cross
-        if (inorderLeftIdx > inorderRightIdx) {
-            return null;
-        }
-
-        // Create a root
-        const rootVal = preorder[preorderLeftIdx];
-        const root = new TreeNode(rootVal);
-
-        // Get the 'rootVal' index
-        const rootIdx = inorderValToIdx.get(rootVal);
-
-        // Calculate left subtree size
-        const leftSubtreeSize = rootIdx - inorderLeftIdx;
-
-        // Construct Left Subtree
-        root.left = dfs(
-            inorderLeftIdx, // 'inorderLeftIdx' stays the same (start of the array)
-            rootIdx - 1, // 'inorderRightIdx' goes 1 spot behind 'rootIdx'
-            preorderLeftIdx + 1, // 'preorderLeftIdx' shifts 1 spot forward (skipping 'root')
-            preorderLeftIdx + leftSubtreeSize // 
-        );
-
-        // Construct Right Subtree
-        root.right = dfs(
-            rootIdx + 1, // 'inorderLeftIdx' goes 1 spot after 'rootIdx'
-            inorderRightIdx, // 'inorderRightIdx' stays the same (end of the array)
-            preorderLeftIdx + leftSubtreeSize + 1, // 
-            preorderRightIdx // 'preorderRightIdx' stays the same (end if the array)
-        );
-
-        return root;
-    }
-
-    return dfs(
-        0,
-        inorder.length - 1,
-        0,
-        preorder.length - 1
+    root.left = buildTree(
+        preorder.slice(1, rootIdx + 1),
+        inorder.slice(0, rootIdx)
     );
+    root.right = buildTree(
+        preorder.slice(rootIdx + 1),
+        inorder.slice(rootIdx + 1)
+    );
+
+    return root;
 
 };
