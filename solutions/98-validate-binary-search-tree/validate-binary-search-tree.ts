@@ -13,16 +13,25 @@
  */
 
 function isValidBST(root: TreeNode | null): boolean {
-    function dfs(root: TreeNode | null, left: number, right:number):boolean {
+    
+    
+    function dfs(root: TreeNode | null, leftBound: number, rightBound: number): boolean {
+
         if(root === null) {
             return true;
         }
 
-        if(left >= root.val || root.val >= right) {
+        if(root.val <= leftBound || root.val >= rightBound) {
             return false;
         }
 
-        return dfs(root.left, left, root.val) && dfs(root.right, root.val, right);
+        const leftSubtree = dfs(root.left, leftBound, root.val);
+        const rightSubtree = dfs(root.right, root.val, rightBound);
+
+        return leftSubtree && rightSubtree;
+
     }
+
     return dfs(root, -Infinity, Infinity);
+
 };
