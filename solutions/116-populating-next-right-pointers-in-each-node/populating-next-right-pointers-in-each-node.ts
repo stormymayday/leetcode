@@ -15,44 +15,33 @@
  */
 
 function connect(root: _Node | null): _Node | null {
+
     if(root === null) {
-        return null;
+        return root;
     }
-    bfs(root);
+
+    let curr: _Node | null = root;
+
+    while(curr.left !== null) {
+
+        // 1. Connecting children linked list style
+        let head: _Node | null = curr;
+        while(head != null) { // strict inequality '!==' causes an error
+            // 1.1. left and right
+            head.left.next = head.right;
+            // 1.2. 'bridge'
+            if(head.next != null) { // strict inequality '!==' causes an error
+                head.right.next = head.next.left;
+            }
+            // 1.3. shift to a neighbor
+            head = head.next;
+        }
+
+        // 2. Move down a level
+        curr = curr.left
+
+    }
+
     return root;
+
 };
-
-function bfs(root: _Node): void {
-
-    let queue: _Node[] = [];
-    queue.push(root);
-
-    while(queue.length > 0) {
-
-        const nextQueue: _Node[] = [];
-        for(let i = 0; i < queue.length; i += 1) {
-
-            const currNode = queue[i];
-
-            if(queue[i + 1] !== undefined) {
-                const neighborNode = queue[i + 1];
-                currNode.next = neighborNode;
-            }
-
-            if(currNode.left !== null) {
-                nextQueue.push(currNode.left);
-            }
-
-            if(currNode.right !== null) {
-                nextQueue.push(currNode.right);
-            }
-
-        }
-        if(nextQueue.length > 0) {
-            queue = nextQueue;
-        } else {
-            break;
-        }
-    }
-}
-
