@@ -13,25 +13,31 @@
  */
 
 function isValidBST(root: TreeNode | null): boolean {
-    
-    
-    function dfs(root: TreeNode | null, leftBound: number, rightBound: number): boolean {
+
+    let prev: number | null = null;
+
+    function inorderDFS(root: TreeNode | null): boolean {
 
         if(root === null) {
             return true;
         }
 
-        if(root.val <= leftBound || root.val >= rightBound) {
+        // Recurse Left
+        if(inorderDFS(root.left) === false) {
             return false;
         }
 
-        const leftSubtree = dfs(root.left, leftBound, root.val);
-        const rightSubtree = dfs(root.right, root.val, rightBound);
+        // Visit Current
+        if(prev !== null && root.val <= prev) {
+            return false;
+        }
+        prev = root.val;
 
-        return leftSubtree && rightSubtree;
+        // Recurse Right
+        return inorderDFS(root.right);
 
     }
 
-    return dfs(root, -Infinity, Infinity);
-
+    return inorderDFS(root);
+    
 };
