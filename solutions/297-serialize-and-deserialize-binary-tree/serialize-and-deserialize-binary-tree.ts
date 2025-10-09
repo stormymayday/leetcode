@@ -19,23 +19,20 @@ function serialize(root: TreeNode | null): string {
 
     const res: string[] = [];
 
-    function dfs(root) {
-
-        // Base Case: null node
+    function preorderDFS(root: TreeNode | null): void {
         if(root === null) {
             res.push('null');
             return;
         }
 
-        res.push(root.val);
+        res.push(String(root.val));
 
-        dfs(root.left);
-
-        dfs(root.right);
+        preorderDFS(root.left);
+        preorderDFS(root.right);
 
     }
 
-    dfs(root);
+    preorderDFS(root);
 
     return res.join(",");
 
@@ -47,27 +44,27 @@ function serialize(root: TreeNode | null): string {
 function deserialize(data: string): TreeNode | null {
 
     const arr: string[] = data.split(",");
-
     let idx = 0;
 
-    function dfs() {
-        // Base Case: null
+    function preorderDFS(): TreeNode | null {
+
         if(arr[idx] === 'null') {
             idx += 1;
             return null;
         }
 
-        const root = new TreeNode();
-        root.val = Number(arr[idx]);
+        const root = new TreeNode(Number(arr[idx]));
         idx += 1;
 
-        root.left = dfs();
-        root.right = dfs();
+        root.left = preorderDFS();
+        root.right = preorderDFS();
 
         return root;
+
     }
 
-    return dfs();
+    return preorderDFS();
+
 };
 
 
