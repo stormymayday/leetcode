@@ -15,29 +15,29 @@
 function isValidBST(root: TreeNode | null): boolean {
 
     let prev: number | null = null;
+    // const stack: (TreeNode | null)[] = [];
+    const stack: TreeNode[] = [];
 
-    function inorderDFS(root: TreeNode | null): boolean {
+    while(stack.length > 0 || root !== null) {
 
-        if(root === null) {
-            return true;
+        // Go left as deep as possible
+        while(root !== null) {
+            stack.push(root);
+            root = root.left;
         }
 
-        // Recurse Left
-        if(inorderDFS(root.left) === false) {
-            return false;
-        }
-
-        // Visit Current
+        // now root should be 'null'
+        // pop from the stack and re-assign root
+        root = stack.pop();
+        // check root val
         if(prev !== null && root.val <= prev) {
             return false;
         }
         prev = root.val;
 
-        // Recurse Right
-        return inorderDFS(root.right);
-
+        // switch to the right subree
+        root = root.right;
     }
 
-    return inorderDFS(root);
-    
+    return true;
 };
