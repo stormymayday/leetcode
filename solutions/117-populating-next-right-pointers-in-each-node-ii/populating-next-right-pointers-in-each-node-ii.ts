@@ -5,6 +5,7 @@
  *     left: _Node | null
  *     right: _Node | null
  *     next: _Node | null
+ * 
  *     constructor(val?: number, left?: _Node, right?: _Node, next?: _Node) {
  *         this.val = (val===undefined ? 0 : val)
  *         this.left = (left===undefined ? null : left)
@@ -14,44 +15,41 @@
  * }
  */
 
+
 function connect(root: _Node | null): _Node | null {
+    
     if(root === null) {
         return null;
     }
-    bfs(root);
-    return root;
-};
 
-function bfs(root: _Node): void {
+    let head: _Node | null = root;
 
-    let queue: _Node[] = [];
-    queue.push(root);
+    while(head !== null) {
 
-    while(queue.length > 0) {
+        const dummyNode = new _Node();
+        let temp: _Node | null = dummyNode;
 
-        const nextQueue: _Node[] = [];
-        for(let i = 0; i < queue.length; i += 1) {
+        while(head != null) {
 
-            const currNode = queue[i];
-
-            if(queue[i + 1] !== undefined) {
-                const neighborNode = queue[i + 1];
-                currNode.next = neighborNode;
+            if(head.left !== null) {
+                temp.next = head.left;
+                temp = temp.next;
             }
 
-            if(currNode.left !== null) {
-                nextQueue.push(currNode.left);
+            if(head.right !== null) {
+                temp.next = head.right;
+                temp = temp.next;
             }
 
-            if(currNode.right !== null) {
-                nextQueue.push(currNode.right);
-            }
-
+            // neighbor hop
+            head = head.next;
         }
-        if(nextQueue.length > 0) {
-            queue = nextQueue;
-        } else {
-            break;
-        }
+
+        // move down a level
+        head = dummyNode.next;
+
     }
-}
+
+    return root;
+
+};
