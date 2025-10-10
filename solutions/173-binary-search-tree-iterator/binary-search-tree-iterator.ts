@@ -25,7 +25,6 @@ class BSTIterator {
                 this.stack.push(curr);
                 curr = curr.left;
             }
-            // this.curr = stack.pop();
         }
     }
 
