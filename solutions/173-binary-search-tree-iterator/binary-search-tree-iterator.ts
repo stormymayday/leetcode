@@ -12,58 +12,43 @@
  * }
  */
 
-class SLLNode<T> {
-    val: T;
-    next: SLLNode<T> | null;
-    constructor(val: T) {
-        this.val = val;
-        this.next = null;
-    }
-}
-
 class BSTIterator {
 
-    // current pointer for iteration
-    private curr: SLLNode<number> | null;
+    // curr: TreeNode | null;
+    stack: TreeNode[];
 
     constructor(root: TreeNode | null) {
-
-        const head = new SLLNode(-Infinity); // 'dummy' head (will need it's 'next' pointer later)
-        let temp: SLLNode<number> | null = head; // temp pointer for traversal
-        
-        // 1. Build linked list in-order
-        function inorderDFS(root: TreeNode | null): void {
-
-            if(root === null) {
-                return;
+        if(root !== null) {
+            let curr: TreeNode | null = root;
+            this.stack = [];
+            // go left as far as possible
+            while(curr !== null) {
+                this.stack.push(curr);
+                curr = curr.left;
             }
-
-            inorderDFS(root.left);
-
-            const newNode = new SLLNode<number>(root.val);
-            temp.next = newNode;
-            temp = temp.next;
-
-            inorderDFS(root.right);
-
+            // this.curr = stack.pop();
         }
-
-        inorderDFS(root);
-
-        // Initialize 'curr'
-        this.curr = head.next;
-
     }
 
     next(): number {
-        const temp: SLLNode<number> | null = this.curr;
-        this.curr = this.curr.next;
-        temp.next = null; // (clean up) not really necessary
-        return temp.val; 
+        const leftmost = this.stack.pop();
+
+        // check if 'leftmost' has 'right'
+        if(leftmost.right !== null) {
+            // switch to the right subtree
+            let curr: TreeNode | null = leftmost.right;
+            // go left as far as possible
+            while(curr !== null) {
+                this.stack.push(curr);
+                curr = curr.left;
+            }
+        }
+
+        return leftmost.val;
     }
 
     hasNext(): boolean {
-        return this.curr !== null;
+        return this.stack.length > 0;
     }
 }
 
