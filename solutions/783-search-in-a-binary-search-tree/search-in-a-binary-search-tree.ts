@@ -15,19 +15,25 @@
 function searchBST(root: TreeNode | null, val: number): TreeNode | null {
     
     if(root === null) {
-        return null;
-    }
-
-    if(root.val === val) {
         return root;
     }
 
-    if(val < root.val) {
-        return searchBST(root.left, val);
+    while(root !== null) {
+
+        if(root.val === val) {
+            return root;
+        }
+
+        // Smaller? Go Left
+        if(val < root.val) {
+            root = root.left;
+        } 
+        // Larger? Go Right
+        else if(val > root.val) {
+            root = root.right;
+        }
     }
 
-    if(val > root.val) {
-        return searchBST(root.right, val);
-    }
+    return root;
 
 };
