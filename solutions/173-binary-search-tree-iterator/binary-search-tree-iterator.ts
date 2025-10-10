@@ -14,8 +14,7 @@
 
 class BSTIterator {
 
-    // curr: TreeNode | null;
-    stack: TreeNode[];
+    private stack: TreeNode[];
 
     constructor(root: TreeNode | null) {
         if(root !== null) {
