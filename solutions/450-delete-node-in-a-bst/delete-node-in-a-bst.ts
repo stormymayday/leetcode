@@ -11,40 +11,36 @@
  *     }
  * }
  */
+function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
 
-function helper(val, currentNode) {
-
-    if(currentNode === null) {
+    if (root === null) {
         return null;
     }
 
-    if(val < currentNode.val) {
-        currentNode.left = helper(val, currentNode.left);
-    } else if(val > currentNode.val) {
-        currentNode.right = helper(val, currentNode.right);
+    if (key < root.val) {
+        root.left = deleteNode(root.left, key);
+    } else if (key > root.val) {
+        root.right = deleteNode( root.right, key);
     } else {
-        if(currentNode.left === null && currentNode.right === null) {
+        if (root.left === null && root.right === null) {
             return null;
-        } else if(currentNode.left === null) {
-            currentNode = currentNode.right;
-        } else if(currentNode.right === null) {
-            currentNode = currentNode.left;
+        } else if (root.left === null) {
+            root = root.right;
+        } else if (root.right === null) {
+            root = root.left;
         } else {
-            const subTreeMin = minval(currentNode.right);
-            currentNode.val = subTreeMin;
-            currentNode.right = helper(subTreeMin, currentNode.right);
+            const subTreeMin = minval(root.right);
+            root.val = subTreeMin;
+            root.right = deleteNode(root.right, subTreeMin);
         }
     }
 
-    return currentNode;
-}
+    return root;
+};
+
 function minval(currentNode) {
-    while(currentNode.left !== null) {
+    while (currentNode.left !== null) {
         currentNode = currentNode.left;
     }
     return currentNode.val;
 }
-function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
-    root = helper(key, root);
-    return root;
-};
