@@ -17,9 +17,12 @@ class BSTIterator {
     private stack: TreeNode[];
 
     constructor(root: TreeNode | null) {
+        
+        // Always initialzing the stack
+        this.stack = [];
+
         if(root !== null) {
             let curr: TreeNode | null = root;
-            this.stack = [];
             // go left as far as possible
             while(curr !== null) {
                 this.stack.push(curr);
