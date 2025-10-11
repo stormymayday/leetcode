@@ -13,24 +13,22 @@
  */
 
 function isBalanced(root: TreeNode | null): boolean {
-    if(root === null) {
-        return true;
+
+    function helper(root: TreeNode | null): [boolean, number] {
+        if(root === null) {
+            return [true, -1];
+        }
+
+        const leftSubtree = helper(root.left);
+        const rightSubtree = helper(root.right);
+
+        if(leftSubtree[0] === true && rightSubtree[0] === true && Math.abs(leftSubtree[1] - rightSubtree[1]) <= 1) {
+            return [true, Math.max(leftSubtree[1], rightSubtree[1]) + 1];
+        } else {
+            return [false, Math.max(leftSubtree[1], rightSubtree[1]) + 1];
+        }
     }
 
-    const leftSubtreeHeight = height(root.left);
-    const rightSubtreeHeight = height(root.right);
-
-    if(Math.abs(leftSubtreeHeight - rightSubtreeHeight) > 1) {
-        return false;
-    }
-
-    return isBalanced(root.left) && isBalanced(root.right);
+    return helper(root)[0];
+    
 };
-
-function height(root: TreeNode | null): number {
-    if(root === null) {
-        return 0;
-    }
-
-    return 1 + Math.max(height(root.left), height(root.right));
-}
