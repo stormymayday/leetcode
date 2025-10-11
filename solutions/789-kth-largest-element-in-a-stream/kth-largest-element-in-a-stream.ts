@@ -1,70 +1,77 @@
 class KthLargest {
-    private minHeap: MinHeap;
-    private k: number;
+    k: number;
+    minHeap: CustomMinHeap;
     constructor(k: number, nums: number[]) {
-        this.k = k;
-        this.minHeap = new MinHeap();
-        for(let i = 0; i < nums.length; i += 1) {
-            if(this.minHeap.length < this.k) {
-                this.minHeap.push(nums[i]);
-            } else {
-                if(nums[i] > this.minHeap.peek()) {
-                    this.minHeap.pop();
-                    this.minHeap.push(nums[i]);
-                }
-            }
-        }
 
+        this.k = k;
+        this.minHeap = new CustomMinHeap();
+
+        this.minHeap.heapify(nums);
+
+        while(this.minHeap.length > k) {
+            this.minHeap.pop();
+        }
+        
     }
 
     add(val: number): number {
-         if(this.minHeap.length < this.k) {
+
+        if(this.minHeap.length < this.k) {
+            this.minHeap.push(val);
+        } else {
+            if(val > this.minHeap.top()) {
+                this.minHeap.pop();
                 this.minHeap.push(val);
-            } else {
-                if(val > this.minHeap.peek()) {
-                    this.minHeap.pop();
-                    this.minHeap.push(val);
-                }
             }
-        return this.minHeap.peek();
+        }
+
+        return this.minHeap.top();
+        
     }
 }
 
-class MinHeap {
+class CustomMinHeap {
+
     private data: number[];
     public length: number;
+
     constructor() {
         this.data = [];
-        this.length  = 0;
+        this.length = 0;
     }
-    push(val: number):void {
+
+    push(val: number): void {
         this.data.push(val);
         this.length += 1;
         let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1)/2);
+        let parentIdx = Math.floor((currIdx - 1) / 2);
         while(currIdx > 0 && this.data[currIdx] < this.data[parentIdx]) {
-            const temp = this.data[currIdx];
-            this.data[currIdx] = this.data[parentIdx];
-            this.data[parentIdx] = temp;
+            this.swap(currIdx, parentIdx);
             currIdx = parentIdx;
             parentIdx = Math.floor((currIdx - 1) / 2);
         }
     }
-    pop(): number | null {
+
+    pop(): number | undefined {
+
         if(this.length === 0) {
-            return null;
+            return undefined;
         }
+
         if(this.length === 1) {
-            this.length -= 1;
+            this.length = 0;
             return this.data.pop();
         }
-        const min = this.data[0];
+
+        const root = this.data[0];
         this.data[0] = this.data.pop();
         this.length -= 1;
         this.siftDown(0);
-        return min;
+        return root;
+
     }
-    siftDown(idx: number):void {
+
+    siftDown(idx: number): void {
         let currIdx = idx;
         while(currIdx < this.length - 1) {
             const leftChildIdx = currIdx * 2 + 1;
@@ -74,26 +81,32 @@ class MinHeap {
             const smallerChildIdx = leftChildVal < rightChildVal ? leftChildIdx : rightChildIdx;
             const smallerChildVal = leftChildVal < rightChildVal ? leftChildVal : rightChildVal;
             if(this.data[currIdx] > smallerChildVal) {
-                const temp = this.data[currIdx];
-                this.data[currIdx] = this.data[smallerChildIdx];
-                this.data[smallerChildIdx] = temp;
+                this.swap(currIdx, smallerChildIdx);
                 currIdx = smallerChildIdx;
             } else {
                 break;
             }
         }
     }
-    heapify(nums: number[]):void {
-        this.data = [...nums];
-        this.length = nums.length;
-        let currIdx = Math.floor((this.length - 2) / 2); // skipping leaves
+
+    heapify(vals: number[]): void {
+        this.data = [...vals];
+        this.length = vals.length;
+        let currIdx = Math.floor((this.length - 2) / 2);
         while(currIdx >= 0) {
             this.siftDown(currIdx);
             currIdx -= 1;
         }
     }
-    peek():number | null {
-        return this.length > 0 ? this.data[0] : null;
+
+    top(): number | undefined {
+        return this.length > 0 ? this.data[0] : undefined;
+    }
+
+    swap(idx1: number, idx2: number): void {
+        const temp = this.data[idx1];
+        this.data[idx1] = this.data[idx2];
+        this.data[idx2] = temp;
     }
 }
 
