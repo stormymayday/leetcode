@@ -19,17 +19,21 @@ function preorder(root: _Node | null): number[] {
         return res;
     }
 
-    const stack: _Node[] = [root];
-    while(stack.length > 0) {
+    function dfs(root: _Node | null): void {
+        if(root === null) {
+            return;
+        }
 
-        const currNode = stack.pop();
-        res.push(currNode.val);
+        res.push(root.val);
 
-        for(let i = currNode.children.length - 1; i >= 0; i -= 1) {
-            stack.push(currNode.children[i]);
+        for(const child of root.children) {
+            dfs(child);
         }
 
     }
+
+    dfs(root);
+
     return res;
 
 };
