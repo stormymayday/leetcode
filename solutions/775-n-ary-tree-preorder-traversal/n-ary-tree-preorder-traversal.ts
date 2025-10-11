@@ -25,8 +25,8 @@ function preorder(root: _Node | null): number[] {
         const currNode = stack.pop();
         res.push(currNode.val);
 
-        for(const child of currNode.children.reverse()) {
-            stack.push(child);
+        for(let i = currNode.children.length - 1; i >= 0; i -= 1) {
+            stack.push(currNode.children[i]);
         }
 
     }
