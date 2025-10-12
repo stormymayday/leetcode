@@ -18,19 +18,23 @@ function postorder(root: _Node | null): number[] {
         return res;
     }
 
-    function helper(root: _Node | null): void {
-        if(root === null) {
-            return;
+    const stack: [_Node, boolean][] = [[root, false]];
+
+    while(stack.length > 0) {
+
+        const [currNode, visited] = stack.pop();
+
+        if(visited === true) {
+            res.push(currNode.val);
+        } else {
+            stack.push([currNode, true]);
+            const children = currNode.children;
+            for(let i = children.length - 1; i >= 0; i -= 1) {
+                stack.push([children[i], false]);
+            }
         }
 
-        for(const child of root.children) {
-            helper(child);
-        }
-
-        res.push(root.val);
     }
-
-    helper(root);
     
     return res;
 
