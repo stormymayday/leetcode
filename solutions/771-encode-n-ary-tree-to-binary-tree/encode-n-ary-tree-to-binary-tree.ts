@@ -11,6 +11,7 @@
  * }
  */
 
+
 /**
  * Definition for a binary tree node.
  * class TreeNode {
@@ -26,85 +27,124 @@
  */
 
 class Codec {
-    constructor() {
+  	constructor() {
+        
     }
-
-    // Encodes an N-ary tree to a binary tree using BFS
-    // Strategy: left child = first child, right child = next sibling
+    
+    // Encodes a tree to a binary tree.
+    // Strategy: 
     serialize(root: _Node | null): TreeNode | null {
-        if (root === null) {
+
+        if(root === null) {
             return null;
         }
 
-        const bRoot = new TreeNode(root.val);
-        let queue: [_Node, TreeNode][] = [[root, bRoot]];
+        // Create a new Binary Tree root using N-ary root's value
+        const binaryTreeRoot = new TreeNode(root.val);
 
-        while (queue.length > 0) {
-            
+        // Queue-up both roots
+        let queue: [_Node, TreeNode][] = [[root, binaryTreeRoot]];
+
+        // BFS
+        while(queue.length > 0) {
+
             const nextQueue: [_Node, TreeNode][] = [];
 
-            for (let i = 0; i < queue.length; i++) {
+            for(let i = 0; i < queue.length; i += 1) {
+                
+                const [currNaryNode, currBinaryNode] = queue[i];
 
-                const [currNode, currTreeNode] = queue[i];
-                
-                // Process children of current node
-                const children = currNode.children;
-                
-                if (children.length > 0) {
-                    // First child goes to left pointer
-                    const firstChildTreeNode = new TreeNode(children[0].val);
-                    currTreeNode.left = firstChildTreeNode;
-                    nextQueue.push([children[0], firstChildTreeNode]);
-                    
-                    // Remaining children are linked as siblings via right pointers
-                    let prev = firstChildTreeNode;
-                    for (let j = 1; j < children.length; j++) {
-                        const siblingTreeNode = new TreeNode(children[j].val);
-                        prev.right = siblingTreeNode;
-                        nextQueue.push([children[j], siblingTreeNode]);
-                        prev = siblingTreeNode;
+                // Process children of the N-ary Node
+                const naryNodeChildren = currNaryNode.children;
+                if(naryNodeChildren.length > 0) {
+
+                    // Algorithm: 
+                    // - First N-ary Child is assigned as the left child for the 'currBinaryNode'
+                    // - Remaining Children are linked up via their 'right' pointer like a Linked List
+
+                    // - First Child
+                    // Create a new Binary Tree Node using the value
+                    const firstBinaryChild = new TreeNode(naryNodeChildren[0].val);
+                    // Assign this node as a left child  for 'currBinaryNode'
+                    currBinaryNode.left = firstBinaryChild;
+                    // Queue-up both nodes
+                    nextQueue.push([naryNodeChildren[0], firstBinaryChild]);
+
+                    // - Remaining Children
+                    // set up a 'prev' pointer initially pointing at the 'firstBinaryChild'
+                    let prev: TreeNode = firstBinaryChild;
+                    // Iterate over the remaining children
+                    for(let j = 1; j < naryNodeChildren.length; j += 1) {
+                        
+                        // Create a Binary Tree Node
+                        const newBinaryNode = new TreeNode(naryNodeChildren[j].val);
+                        // Link nodes using the 'right' pointer
+                        prev.right = newBinaryNode;
+                        // Queue-up the nodes
+                        nextQueue.push([naryNodeChildren[j],newBinaryNode ]);
+                        // Move the pointer
+                        prev = prev.right;
+
                     }
+
                 }
+
             }
 
             queue = nextQueue;
+
         }
 
-        return bRoot;
-    }
+        return binaryTreeRoot;
 
-    // Decodes a binary tree back to an N-ary tree using BFS
+    };
+	
+    // Decodes your encoded data to tree.
     deserialize(root: TreeNode | null): _Node | null {
-        if (root === null) {
+
+        if(root === null) {
             return null;
         }
 
+        // Create N-ary Tree root using the value
         const naryRoot = new _Node(root.val);
+
+        // Queue-up both roots
         let queue: [TreeNode, _Node][] = [[root, naryRoot]];
 
-        while (queue.length > 0) {
+        // Run BFS
+        while(queue.length > 0) {
+
             const nextQueue: [TreeNode, _Node][] = [];
 
-            for (let i = 0; i < queue.length; i++) {
-                const [currTreeNode, currNaryNode] = queue[i];
-                
-                // Left pointer points to first child
-                let current = currTreeNode.left;
-                
+            for(let i = 0; i < queue.length; i += 1) {
+
+                const [currBinaryNode, currNaryNode] = queue[i];
+
+                // Start from the left child of the Binary Node
+                let curr = currBinaryNode.left;
+
                 // Traverse all siblings via right pointers
-                while (current !== null) {
-                    const child = new _Node(current.val);
-                    currNaryNode.children.push(child);
-                    nextQueue.push([current, child]);
-                    current = current.right;
+                while(curr !== null) {
+                    // Create a new N-ary Node
+                    const naryChild = new _Node(curr.val);
+                    // Add it as a child
+                    currNaryNode.children.push(naryChild);
+                    // Queue-up the nodes
+                    nextQueue.push([curr, naryChild]);
+                    // Move pointer to the right
+                    curr = curr.right;
                 }
+
             }
 
             queue = nextQueue;
+
         }
 
         return naryRoot;
-    }
+        
+    };
 }
 
 // Your Codec object will be instantiated and called as such:
