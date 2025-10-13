@@ -13,26 +13,25 @@
  */
 
 function inorderTraversal(root: TreeNode | null): number[] {
-    
-    const stack: TreeNode[] = []
-    let curr: TreeNode | null = root;
+
     const res: number[] = [];
 
-    while(curr !== null || stack.length > 0) {
-
-        // Try going left as far as possible (until 'curr' points to null)
-        while(curr !== null) {
-            stack.push(curr); // push node 'curr' points at to the stack
-            curr = curr.left; // go left
-        }
-
-        // When 'curr' points to null
-        curr = stack.pop(); // 'pop' node from the stack and point 'curr' at it
-        res.push(curr.val); // process 'value' at 'curr'
-        curr = curr.right; // try switching to the right subtree
-        
+    if(root === null) {
+        return res;
     }
-    
+
+    function helperDFS(root: TreeNode | null): void {
+        if(root === null) {
+            return;
+        }
+        helperDFS(root.left);
+        res.push(root.val);
+        helperDFS(root.right);
+    }
+
+    helperDFS(root);
+
     return res;
-    
+
+
 };
