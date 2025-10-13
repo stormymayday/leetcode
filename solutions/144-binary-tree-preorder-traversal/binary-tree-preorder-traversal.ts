@@ -16,28 +16,22 @@ function preorderTraversal(root: TreeNode | null): number[] {
 
     const res: number[] = [];
 
-    if (root === null) {
+    if(root === null) {
         return res;
-    }
+    }     
 
-    const stack: TreeNode[] = [root];
-
-    while (stack.length > 0) {
-
-        const curr = stack.pop();
-
-        res.push(curr.val);
-
-        if (curr.right !== null) {
-            stack.push(curr.right);
+    function helperDFS(root: TreeNode | null): void {
+        if(root === null) {
+            return;
         }
 
-        if (curr.left !== null) {
-            stack.push(curr.left);
-        }
+        res.push(root.val);
 
-
+        helperDFS(root.left);
+        helperDFS(root.right);
     }
+
+    helperDFS(root);
 
     return res;
 };
