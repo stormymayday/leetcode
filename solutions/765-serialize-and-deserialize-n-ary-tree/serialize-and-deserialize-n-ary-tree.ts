@@ -54,7 +54,8 @@ class Codec {
         const queue: string[] = data.split(",").reverse();
 
         function preorderDFS(queue: string[]): _Node | null {
-
+            
+            // Base Case: not strictly necessary
             // if(queue.length === 0) {
             //     return null;
             // }
