@@ -27,99 +27,57 @@
  */
 
 class Codec {
-  	constructor() {
-        
+    constructor() {
+
     }
-    
+
     // Encodes a tree to a binary tree.
     serialize(root: _Node | null): TreeNode | null {
-        
-        if(root === null) {
+
+        // Base Case
+        if (root === null) {
             return null;
         }
 
-        const binaryRoot = new TreeNode(root.val);
-        let queue: [_Node, TreeNode][] = [[root, binaryRoot]];
+        // Create new node
+        const binaryNode = new TreeNode(root.val);
 
-        while(queue.length > 0) {
-
-            const nextQueue: [_Node, TreeNode][] = [];
-
-            for(let i = 0; i < queue.length; i += 1) {
-
-                const [currNaryNode, currBinaryNode] = queue[i];
-
-                const naryChildren = currNaryNode.children;
-
-                if(naryChildren.length > 0) {
-                    
-                    // currBinaryNode.left -> firstChild
-                    const firstChild = new TreeNode(naryChildren[0].val);
-                    currBinaryNode.left = firstChild;
-                    nextQueue.push([naryChildren[0], firstChild]);
-
-                    // firstChild.right -> sibling.right -> sibling.right ...
-                    let prev = firstChild;
-                    for(let j = 1; j < naryChildren.length; j += 1) {
-
-                        const newBinaryNode = new TreeNode(naryChildren[j].val);
-                        nextQueue.push([naryChildren[j], newBinaryNode]);
-                        prev.right = newBinaryNode;
-                        prev = prev.right;
-
-                    }
-
-                }
-
-            }
-
-            queue = nextQueue;
-
+        // binaryNode.left -> firstChild
+        if (root.children.length > 0) {
+            const firstChild = root.children[0];
+            binaryNode.left = this.serialize(firstChild);
         }
 
-        return binaryRoot;
+        // firstChild.right -> sibling.right -> sibling.right ...
+        let curr = binaryNode.left;
+        for (let i = 1; i < root.children.length; i += 1) {
+            curr.right = this.serialize(root.children[i]);
+            curr = curr.right;
+        }
+
+        return binaryNode;
 
     };
-	
+
     // Decodes your encoded data to tree.
     deserialize(root: TreeNode | null): _Node | null {
 
-        if(root === null) {
+        if (root === null) {
             return null;
         }
 
-        const naryRoot = new _Node(root.val);
-        let queue: [TreeNode, _Node][] = [[root, naryRoot]];
+        // create N-ary node
+        const naryNode = new _Node(root.val);
 
-        while(queue.length > 0) {
-
-            const nextQueue: [TreeNode, _Node][] = [];
-
-            for(let i = 0; i < queue.length; i += 1) {
-                
-                const [currBinaryNode, currNaryNode] = queue[i];
-
-                // first child is on the currBinaryNode.left
-                let curr = currBinaryNode.left;
-
-                // Siblings are on the firstChild.right
-                while(curr !== null) {
-
-                    const newNaryNode = new _Node(curr.val);
-                    currNaryNode.children.push(newNaryNode);
-                    nextQueue.push([curr, newNaryNode]);
-                    curr = curr.right;
-
-                }
-
-            }
-
-            queue = nextQueue;
-
+        // switch to the left subtree
+        let curr = root.left;
+        while(curr !== null) {
+            naryNode.children.push(this.deserialize(curr));
+            curr = curr.right; // keep going right;
         }
 
-        return naryRoot;
-        
+        return naryNode;
+
     };
 }
 
