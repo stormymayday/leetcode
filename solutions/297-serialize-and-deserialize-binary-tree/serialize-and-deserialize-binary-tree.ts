@@ -44,29 +44,25 @@ function deserialize(data: string): TreeNode | null {
         return null;
     }
 
-    const arr: string[] = data.split(",");
+    const arr: string[] = data.split(",").reverse();
 
-    let idx = 0;
+    function helper(arr: string[]): TreeNode | null {
 
-    function helper(): TreeNode | null {
-
-        if(arr[idx] === 'null') {
-            idx += 1;
+        if(arr[arr.length - 1] === 'null') {
+            arr.pop();
             return null;
         }
 
-        const root = new TreeNode(Number(arr[idx]));
-        
-        idx += 1;
+        const root = new TreeNode(Number(arr.pop()));
 
-        root.left = helper();
-        root.right = helper();
+        root.left = helper(arr);
+        root.right = helper(arr);
 
         return root;
 
     }
 
-    return helper();
+    return helper(arr);
 
 };
 
