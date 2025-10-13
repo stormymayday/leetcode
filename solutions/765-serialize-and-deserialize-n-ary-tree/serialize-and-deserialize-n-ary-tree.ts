@@ -55,9 +55,9 @@ class Codec {
 
         function preorderDFS(queue: string[]): _Node | null {
 
-            if(queue.length === 0) {
-                return null;
-            }
+            // if(queue.length === 0) {
+            //     return null;
+            // }
 
             const [val, numChildren] = queue.pop().split("#").map(Number);
 
