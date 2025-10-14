@@ -18,43 +18,38 @@ function countUnivalSubtrees(root: TreeNode | null): number {
         return 0;
     }
 
-    let count = 0;
-
-    function helperDFS(root: TreeNode | null): boolean {
+    function helperDFS(root: TreeNode | null): [boolean, number] {
 
         if(root === null) {
-            return true;
+            return [true, 0];
         }
 
         if(root.left === null && root.right === null) {
-            count += 1;
-            return true;
+            return [true, 1];
         }
 
         const leftSubtree = helperDFS(root.left);
         const rightSubtree = helperDFS(root.right);
+        const count = leftSubtree[1] + rightSubtree[1];
 
-        if(leftSubtree === true && rightSubtree === true) {
+        if(leftSubtree[0] === true && rightSubtree[0] === true) {
 
             if(root.left !== null && root.left.val !== root.val) {
-                return false;
+                return [false, count];
             }
 
             if(root.right !== null && root.right.val !== root.val) {
-                return false;
+                return [false, count];
             }
 
-            count += 1;
-            return true;
+            return [true, count + 1];
 
         } else {
-            return false;
+            return [false, count];
         }
 
     }
 
-    helperDFS(root);
-
-    return count;
+    return helperDFS(root)[1];
     
 };
