@@ -15,28 +15,38 @@
 function levelOrder(root: TreeNode | null): number[][] {
 
     const res: number[][] = [];
-    
+
     if(root === null) {
         return res;
     }
 
-    function helperDFS(root: TreeNode | null, level: number): void {
+    let queue: TreeNode[] = [root];
 
-        if(root === null) {
-            return;
+    while(queue.length > 0) {
+
+        const nextQueue: TreeNode[] = [];
+        const currLevelVals: number[] = [];
+
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const currNode = queue[i]
+
+            currLevelVals.push(currNode.val);
+
+            if(currNode.left !== null) {
+                nextQueue.push(currNode.left);
+            }
+
+            if(currNode.right !== null) {
+                nextQueue.push(currNode.right);
+            }
+
         }
 
-        if(res[level] === undefined) {
-            res[level] = [];
-        }
-        res[level].push(root.val);
-
-        helperDFS(root.left, level + 1);
-        helperDFS(root.right, level + 1);
+        res.push(currLevelVals);
+        queue = nextQueue;
 
     }
-
-    helperDFS(root, 0);
 
     return res;
     
