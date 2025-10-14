@@ -18,34 +18,26 @@ function hasPathSum(root: TreeNode | null, targetSum: number): boolean {
         return false;
     }
 
-    let queue: [TreeNode, number][] = [[root, root.val]];
+    const stack: [TreeNode, number][] = [[root, root.val]];
 
-    while(queue.length > 0) {
+    while(stack.length > 0) {
 
-        const nextQueue: [TreeNode, number][] = [];
+        const [currNode, currSum] = stack.pop();
 
-        for(let i = 0; i < queue.length; i += 1) {
-
-            const [currNode, currSum] = queue[i];
-
-            if(currNode.left === null && currNode.right === null) {
-                if(currSum === targetSum) {
-                    return true;
-                }
+        if(currNode.left === null && currNode.right === null) {
+            if(currSum === targetSum) {
+                return true;
             }
-
-            if(currNode.left !== null) {
-                nextQueue.push([currNode.left, currSum + currNode.left.val]);
-            }
-
-            if(currNode.right !== null) {
-                nextQueue.push([currNode.right, currSum + currNode.right.val]);
-            }
-
         }
 
-        queue = nextQueue;
+        if(currNode.left !== null) {
+            stack.push([currNode.left, currSum + currNode.left.val]);
+        }
 
+        if(currNode.right !== null) {
+            stack.push([currNode.right, currSum + currNode.right.val]);
+        }
+        
     }
 
     return false;
