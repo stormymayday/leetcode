@@ -15,37 +15,40 @@
  */
 
 function connect(root: _Node | null): _Node | null {
+
     if(root === null) {
         return null;
     }
 
-    let head: _Node | null = root;
+    let queue: _Node[] = [root];
 
-    while(head !== null) {
+    while(queue.length > 0) {
 
-        const dummyNode = new _Node();
-        let temp: _Node | null = dummyNode;
+        const nextQueue: _Node[] = [];
 
-        while(head != null) {
+        for(let i = 0; i < queue.length; i += 1) {
 
-            if(head.left !== null) {
-                temp.next = head.left;
-                temp = temp.next;
+            const currNode = queue[i];
+
+            if(i + 1 < queue.length) {
+                const neighborNode = queue[i + 1];
+                currNode.next = neighborNode;
             }
 
-            if(head.right !== null) {
-                temp.next = head.right;
-                temp = temp.next;
+            if(currNode.left !== null) {
+                nextQueue.push(currNode.left);
             }
 
-            // neighbor hop
-            head = head.next;
+            if(currNode.left !== null) {
+                nextQueue.push(currNode.right);
+            }
+
         }
 
-        // move down a level
-        head = dummyNode.next;
+        queue = nextQueue;
 
     }
 
     return root;
+    
 };
