@@ -16,34 +16,18 @@
 
 function connect(root: _Node | null): _Node | null {
 
-    if (root === null) {
-        return null;
+    if(root === null || root.left === null || root.right === null) {
+        return root;
     }
 
-    let curr: _Node | null = root;
-    let leftmost: _Node | null = root.left;
-
-    while (leftmost != null) {
-
-        while (curr != null) {
-
-            curr.left.next = curr.right;
-
-            if (curr.next != null) {
-                curr.right.next = curr.next.left;   
-            }
-            
-            // Note: can move this inside if and add else break
-            // - However, fit's naturally for the 'while' condition
-            curr = curr.next;
-
-        }
-
-        curr = leftmost;
-        leftmost = curr.left;
-
+    root.left.next = root.right;
+    if(root.next != null) {
+        root.right.next = root.next.left;
     }
+
+    connect(root.left);
+    connect(root.right);
 
     return root;
-
+    
 };
