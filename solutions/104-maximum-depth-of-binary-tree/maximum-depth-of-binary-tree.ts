@@ -13,19 +13,14 @@
  */
 
 function maxDepth(root: TreeNode | null): number {
-
-    function dfs(root: TreeNode | null): number {
-        if(root === null) {
-            return 0;
-        }
-
-        const leftSubtreeHeight = dfs(root.left);
-        const rightSubtreeHeight = dfs(root.right);
-
-        return 1 + Math.max(leftSubtreeHeight, rightSubtreeHeight);
-
-    }
     
-    return dfs(root);
+    if(root === null) {
+        return 0;
+    }
+
+    const leftSubtreeMaxDepth = maxDepth(root.left);
+    const rightSubtreeMaxDepth = maxDepth(root.right);
+
+    return 1 + Math.max(leftSubtreeMaxDepth, rightSubtreeMaxDepth);
 
 };
