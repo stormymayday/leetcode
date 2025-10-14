@@ -16,39 +16,33 @@
 
 function connect(root: _Node | null): _Node | null {
 
-    if(root === null) {
+    if (root === null) {
         return null;
     }
 
-    let queue: _Node[] = [root];
+    let curr: _Node | null = root;
+    let leftmost: _Node | null = root.left;
 
-    while(queue.length > 0) {
+    while (leftmost != null) { // ?
 
-        const nextQueue: _Node[] = [];
+        while (curr != null) { // ?
 
-        for(let i = 0; i < queue.length; i += 1) {
+            curr.left.next = curr.right;
 
-            const currNode = queue[i];
-
-            if(i + 1 < queue.length) {
-                const neighborNode = queue[i + 1];
-                currNode.next = neighborNode;
+            if (curr.next != null) {
+                curr.right.next = curr.next.left;
+                
             }
-
-            if(currNode.left !== null) {
-                nextQueue.push(currNode.left);
-            }
-
-            if(currNode.left !== null) {
-                nextQueue.push(currNode.right);
-            }
+            
+            curr = curr.next;
 
         }
 
-        queue = nextQueue;
+        curr = leftmost;
+        leftmost = curr.left;
 
     }
 
     return root;
-    
+
 };
