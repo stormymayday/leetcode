@@ -30,11 +30,12 @@ function connect(root: _Node | null): _Node | null {
             curr.left.next = curr.right;
 
             if (curr.next != null) {
-                curr.right.next = curr.next.left;
-                curr = curr.next;
-            } else {
-                break;
+                curr.right.next = curr.next.left;   
             }
+            
+            // Note: can move this inside if and add else break
+            // - However, fit's naturally for the 'while' condition
+            curr = curr.next;
 
         }
 
