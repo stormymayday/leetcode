@@ -17,39 +17,38 @@
 
 
 function connect(root: _Node | null): _Node | null {
-    
+
     if(root === null) {
         return null;
     }
 
-    let head: _Node | null = root;
+    let curr: _Node | null = root;
 
-    while(head !== null) {
+    while(curr !== null) {
 
-        const dummyNode = new _Node();
+        const dummyNode: _Node = new _Node(-1);
         let temp: _Node | null = dummyNode;
 
-        while(head != null) {
+        while(curr != null) {
 
-            if(head.left !== null) {
-                temp.next = head.left;
+            if(curr.left != null) {
+                temp.next = curr.left;
                 temp = temp.next;
             }
 
-            if(head.right !== null) {
-                temp.next = head.right;
+            if(curr.right != null) {
+                temp.next = curr.right;
                 temp = temp.next;
             }
 
-            // neighbor hop
-            head = head.next;
+            curr = curr.next;
+
         }
 
-        // move down a level
-        head = dummyNode.next;
+        curr = dummyNode.next;
 
     }
 
     return root;
-
+    
 };
