@@ -14,7 +14,7 @@
 
 function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
 
-    if (inorder.length === 0 || preorder.length === 0) {
+    if(preorder.length === 0 || inorder.length === 0) {
         return null;
     }
 
@@ -22,15 +22,13 @@ function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
     const root = new TreeNode(rootVal);
     const rootIdx = inorder.indexOf(rootVal);
 
-    root.left = buildTree(
-        preorder.slice(1, rootIdx + 1),
-        inorder.slice(0, rootIdx)
-    );
-    root.right = buildTree(
-        preorder.slice(rootIdx + 1),
-        inorder.slice(rootIdx + 1)
-    );
+    const inorderLeft = inorder.slice(0, rootIdx);
+    const inorderRight = inorder.slice(rootIdx + 1);
+    const preorderLeft = preorder.slice(1, inorderLeft.length + 1);
+    const preorderRight = preorder.slice(inorderLeft.length + 1);
 
-    return root;
+    root.left = buildTree(preorderLeft, inorderLeft);
+    root.right = buildTree(preorderRight, inorderRight);
 
+    return root; 
 };
