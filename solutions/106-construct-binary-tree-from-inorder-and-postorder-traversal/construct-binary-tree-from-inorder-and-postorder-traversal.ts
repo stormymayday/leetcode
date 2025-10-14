@@ -18,20 +18,66 @@ function buildTree(inorder: number[], postorder: number[]): TreeNode | null {
         return null;
     }
 
-    const rootVal = postorder[postorder.length - 1];
-    const root = new TreeNode(rootVal);
-    const rootValIdx = inorder.indexOf(rootVal);
+    const inorderValToIdx = new Map<number, number>();
+    for(let i = 0; i < inorder.length; i += 1) {
+        inorderValToIdx.set(inorder[i], i);
+    }
 
-    root.left = buildTree(
-        inorder.slice(0, rootValIdx),
-        postorder.slice(0, rootValIdx)
-    );
+    function helperDFS(
+        inorderLeft: number,
+        inorderRight: number,
+        postorderLeft: number,
+        postorderRight
+    ): TreeNode | null {
 
-    root.right = buildTree(
-        inorder.slice(rootValIdx + 1),
-        postorder.slice(rootValIdx, -1)
-    );
+        if(inorderLeft > inorderRight || postorderLeft > postorderRight) {
+            return null;
+        }
 
-    return root;
+        const rootVal = postorder[postorderRight];
+        const root = new TreeNode(rootVal);
+        const rootValIdx = inorderValToIdx.get(rootVal);
+
+        const inorderLeftLength = rootValIdx - inorderLeft;
+
+        root.left = helperDFS(
+            inorderLeft,
+            rootValIdx - 1,
+            postorderLeft,
+            postorderLeft + inorderLeftLength - 1
+        );
+
+        root.right = helperDFS(
+            rootValIdx + 1,
+            inorderRight,
+            postorderLeft + inorderLeftLength,
+            postorderRight - 1
+        );
+
+        return root;
+
+    }
+
+    return helperDFS(0, inorder.length - 1, 0, postorder.length -1);
+
+    // if(inorder.length === 0 || postorder.length === 0) {
+    //     return null;
+    // }
+
+    // const rootVal = postorder[postorder.length - 1];
+    // const root = new TreeNode(rootVal);
+    // const rootValIdx = inorder.indexOf(rootVal);
+
+    // root.left = buildTree(
+    //     inorder.slice(0, rootValIdx),
+    //     postorder.slice(0, rootValIdx)
+    // );
+
+    // root.right = buildTree(
+    //     inorder.slice(rootValIdx + 1),
+    //     postorder.slice(rootValIdx, -1)
+    // );
+
+    // return root;
     
 };
