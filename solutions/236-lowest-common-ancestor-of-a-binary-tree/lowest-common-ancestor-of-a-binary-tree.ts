@@ -29,6 +29,17 @@ function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: Tree
         return root;
     }
 
-    return left !== null ? left : right;
+    if(left === null && right === null) {
+        return null;
+    }
 
+    if(left !== null) {
+        return left;
+    }
+
+
+    if(right !== null) {
+        return right;
+    }
+	
 };
