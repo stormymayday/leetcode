@@ -18,12 +18,46 @@ function buildTree(preorder: number[], inorder: number[]): TreeNode | null {
         return null;
     }
 
-    const rootVal = preorder[0];
-    const root = new TreeNode(rootVal);
-    const rootIdx = inorder.indexOf(rootVal);
+    const inorderValToIdx = new Map<number, number>();
+    for(let i = 0; i < inorder.length; i += 1) {
+        inorderValToIdx.set(inorder[i], i);
+    }
 
-    root.left = buildTree(preorder.slice(1, rootIdx + 1), inorder.slice(0, rootIdx));
-    root.right = buildTree(preorder.slice(rootIdx + 1), inorder.slice(rootIdx + 1));
+    function helperDFS(
+        inorderLeft: number,
+        inorderRight: number,
+        preorderLeft: number,
+        preorderRight: number
+    ): TreeNode | null {
 
-    return root; 
+        if(inorderLeft > inorderRight || preorderLeft > preorderRight) {
+            return null;
+        }
+
+        const rootVal = preorder[preorderLeft];
+        const root = new TreeNode(rootVal);
+        const rootIdx = inorderValToIdx.get(rootVal);
+
+        const inorderLeftLength = rootIdx - inorderLeft;
+
+        root.left = helperDFS(
+            inorderLeft,
+            rootIdx - 1,
+            preorderLeft + 1,
+            preorderLeft + 1 + inorderLeftLength - 1
+        );
+
+        root.right = helperDFS(
+            rootIdx + 1,
+            inorderRight,
+            preorderLeft + 1 + inorderLeftLength,
+            preorderRight
+        );
+
+        return root;
+
+    }
+
+    return helperDFS(0, inorder.length - 1, 0, preorder.length - 1);
+
 };
