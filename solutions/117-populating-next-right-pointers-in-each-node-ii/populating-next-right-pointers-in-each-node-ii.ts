@@ -20,7 +20,7 @@ function connect(root: _Node | null): _Node | null {
     if (root === null) {
         return root;
     }
-    
+
     // Connect children of current node
     if (root.left != null) {
         if (root.right != null) {
@@ -29,25 +29,33 @@ function connect(root: _Node | null): _Node | null {
             root.left.next = getNextRight(root.next);
         }
     }
-    
+
     if (root.right != null) {
         root.right.next = getNextRight(root.next);
     }
-    
+
     // IMPORTANT: Process right subtree first!
     // This ensures next pointers are set up for the left subtree to use
     connect(root.right);
     connect(root.left);
-    
+
     return root;
 }
 
 // Helper: Find the next right node at the same level
 function getNextRight(node: _Node | null): _Node | null {
     while (node != null) {
-        if (node.left != null) return node.left;
-        if (node.right != null) return node.right;
+
+        if (node.left != null) {
+            return node.left;
+        }
+
+        if (node.right != null) {
+            return node.right;
+        }
+
         node = node.next;
     }
+    
     return null;
 }
