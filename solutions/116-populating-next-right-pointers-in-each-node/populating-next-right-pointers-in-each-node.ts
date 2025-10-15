@@ -16,15 +16,19 @@
 
 function connect(root: _Node | null): _Node | null {
 
+    // Base Case
     if(root === null || root.left === null || root.right === null) {
         return root;
     }
 
+    // Connect the children
     root.left.next = root.right;
+
+    // Bridge
     if(root.next != null) {
         root.right.next = root.next.left;
     }
-
+   
     connect(root.left);
     connect(root.right);
 
