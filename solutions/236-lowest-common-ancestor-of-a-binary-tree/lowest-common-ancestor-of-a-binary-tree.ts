@@ -14,32 +14,63 @@
 
 function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: TreeNode | null): TreeNode | null {
 
-    if(root === null) {
+    if(root === null || p === null || q === null) {
         return null;
     }
 
-    if(root === p || root === q) {
-        return root;
-    }
+    const pathToP: TreeNode[] = [];
+    const pathToQ: TreeNode[] = [];
+    
+    getPath(root, p, pathToP);
+    getPath(root, q, pathToQ);
 
-    const left = lowestCommonAncestor(root.left, p, q);
-    const right = lowestCommonAncestor(root.right, p, q);
-
-    if(left !== null && right !== null) {
-        return root;
-    }
-
-    if(left === null && right === null) {
+    // check if either paths are empty (not found)
+    // Note: will not happen
+    if(pathToP.length === 0 || pathToQ.length === 0) {
         return null;
     }
 
-    if(left !== null) {
-        return left;
-    }
+    for(let i = 0; i < Math.max(pathToP.length, pathToQ.length); i += 1) {
 
+        if(pathToP[i + 1] !== pathToQ[i + 1]) {
+            return pathToP[i];
+        }
 
-    if(right !== null) {
-        return right;
     }
 	
 };
+
+function getPath(root: TreeNode | null, target: TreeNode | null, path: TreeNode[]): boolean {
+
+    // Base Case 1: null node
+    if(root === null) {
+        return false;
+    }
+
+    // push current node to the 'path'
+    path.push(root);
+
+    // Base Case 2: reached the target
+    if(root === target) {
+        return true;
+    }
+
+    // try going left
+    const left: boolean = getPath(root.left, target, path);
+    if(left === true) {
+        // if left returns true, exit early
+        return true;
+    }
+
+    // try going right
+    const right: boolean = getPath(root.right, target, path);
+    if(right === true) {
+        // if right returns true, exit early
+        return true;
+    }
+    
+    // Backtrack only once if both subtrees fail
+    path.pop();
+    return false;
+
+}
