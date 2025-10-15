@@ -20,16 +20,18 @@ function postorderTraversal(root: TreeNode | null): number[] {
         return res;
     }
 
-    function helperDFS(node: TreeNode | null): void {
-        if(node === null) {
-            return;
-        }
-        helperDFS(node.left);
-        helperDFS(node.right);
-        res.push(node.val);
-    }
-    
-    helperDFS(root);
+    const stack: TreeNode[] = [root];
 
-    return res;
+    while(stack.length > 0) {
+        const currNode = stack.pop();
+        res.push(currNode.val);
+        if(currNode.left) {
+            stack.push(currNode.left);
+        }
+        if(currNode.right) {
+            stack.push(currNode.right);
+        }
+    }
+
+    return res.reverse();
 };
