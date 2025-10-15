@@ -13,41 +13,23 @@
  */
 
 function postorderTraversal(root: TreeNode | null): number[] {
-    
+
     const res: number[] = [];
 
     if(root === null) {
         return res;
     }
 
-    const stack: TreeNode[] = [root];
-    const visited: boolean[] = [false];
-    while(stack.length > 0) {
-
-        const currNode = stack.pop();
-        const isVisited = visited.pop();
-
-        if(isVisited === true) {
-            res.push(currNode.val);
-        } else {
-
-            stack.push(currNode);
-            visited.push(true);
-
-            if(currNode.right !== null) {
-                stack.push(currNode.right);
-                visited.push(false);
-            }
-
-            if(currNode.left !== null) {
-                stack.push(currNode.left);
-                visited.push(false);
-            }
-
+    function helperDFS(node: TreeNode | null): void {
+        if(node === null) {
+            return;
         }
-
+        helperDFS(node.left);
+        helperDFS(node.right);
+        res.push(node.val);
     }
+    
+    helperDFS(root);
 
     return res;
-
 };
