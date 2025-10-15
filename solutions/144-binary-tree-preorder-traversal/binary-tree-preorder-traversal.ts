@@ -13,45 +13,29 @@
  */
 
 function preorderTraversal(root: TreeNode | null): number[] {
-
+    
     const res: number[] = [];
 
     if(root === null) {
         return res;
     }
 
-    let curr: TreeNode | null = root;
+    function helperDFS(root: TreeNode | null): void {
 
-    while(curr !== null) {
-
-        if(curr.left === null) {
-
-            res.push(curr.val);
-            curr = curr.right;
-
-        } else {
-
-            let predecessor = curr.left;
-            while(predecessor.right !== curr && predecessor.right !== null) {
-                predecessor = predecessor.right;
-            }
-
-            if(predecessor.right === null) {
-
-                predecessor.right = curr;
-                res.push(curr.val);
-                curr = curr.left;
-
-            } else {
-
-                predecessor.right = null;
-                curr = curr.right;
-
-            }
+        if(root === null) {
+            return;
         }
+
+        res.push(root.val);
+
+        helperDFS(root.left);
+
+        helperDFS(root.right);
 
     }
 
+    helperDFS(root);
+
     return res;
-    
+
 };
