@@ -20,16 +20,21 @@ function inorderTraversal(root: TreeNode | null): number[] {
         return res;
     }
 
-    function helperDFS(root: TreeNode | null): void {
-        if(root === null) {
-            return;
-        }
-        helperDFS(root.left);
-        res.push(root.val);
-        helperDFS(root.right);
-    }
+    let curr: TreeNode | null = root;
+    const stack: TreeNode[] = [];
 
-    helperDFS(root);
+    while(curr !== null || stack.length > 0) {
+
+        while(curr !== null) {
+            stack.push(curr);
+            curr = curr.left;
+        }
+
+        curr = stack.pop();
+        res.push(curr.val);
+        curr = curr.right;
+
+    }
     
     return res;
 };
