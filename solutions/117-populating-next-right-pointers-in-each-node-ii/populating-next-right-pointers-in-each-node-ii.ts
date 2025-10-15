@@ -17,38 +17,50 @@
 
 
 function connect(root: _Node | null): _Node | null {
-
-    if(root === null) {
+    if (root === null) {
         return null;
     }
 
-    let curr: _Node | null = root;
-
-    while(curr !== null) {
-
-        const dummyNode = new _Node(-1);
-        let temp: _Node | null = dummyNode;
-
-        while(curr != null) {
-
-            if(curr.left !== null) {
-                temp.next = curr.left;
-                temp = temp.next;
-            }
-
-            if(curr.right !== null) {
-                temp.next = curr.right;
-                temp = temp.next;
-            }
-
-            curr = curr.next;
-
+    // check if node has a left child
+    if (root.left != null) {
+        // then, check if node has a right
+        if (root.right != null) {
+            // connect the siblings
+            root.left.next = root.right;
+        } else {
+            // otherwise, try to connect left child to next available node on it's level
+            root.left.next = getNextRight(root.next);
         }
-
-        curr = dummyNode.next;
-
+    }
+    
+    // check if node has a right child
+    if (root.right != null) {
+        // try connecting right child to the next available node on it's level
+        root.right.next = getNextRight(root.next);
     }
 
+    // IMPORTANT: Process right subtree first!
+    // This ensures next pointers are set up for the left subtree to use
+    connect(root.right);
+    connect(root.left);
+
     return root;
-    
-};
+}
+
+// Helper: Find the next right node at the same level
+function getNextRight(node: _Node | null): _Node | null {
+    while (node != null) {
+
+        if (node.left != null) {
+            return node.left;
+        }
+
+        if (node.right != null) {
+            return node.right;
+        }
+
+        node = node.next;
+    }
+
+    return null;
+}
