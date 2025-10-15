@@ -31,7 +31,7 @@ function connect(root: _Node | null): _Node | null {
 
         while(curr != null) {
 
-            if(curr.left != null) {
+            if(curr.left !== null) {
                 temp.next = curr.left;
                 temp = temp.next;
             }
