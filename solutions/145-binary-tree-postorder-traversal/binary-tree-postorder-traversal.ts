@@ -20,23 +20,28 @@ function postorderTraversal(root: TreeNode | null): number[] {
         return res;
     }
 
-    const stack: [TreeNode, boolean][] = [[root, false]];
+    const stack: TreeNode[] = [root];
+    const visited: boolean[] = [false];
 
     while (stack.length > 0) {
 
-        const [currNode, visited] = stack.pop();
+        const currNode = stack.pop();
+        const wasVisited = visited.pop();
 
-        if (visited === true) {
+        if (wasVisited === true) {
             res.push(currNode.val);
         } else {
 
-            stack.push([currNode, true]);
+            stack.push(currNode);
+            visited.push(true);
 
-            if (currNode.right) {
-                stack.push([currNode.right, false]);
+            if (currNode.right !== null) {
+                stack.push(currNode.right);
+                visited.push(false);
             }
-            if (currNode.left) {
-                stack.push([currNode.left, false]);
+            if (currNode.left !== null) {
+                stack.push(currNode.left);
+                visited.push(false);
             }
         }
     }
