@@ -21,18 +21,33 @@ function inorderTraversal(root: TreeNode | null): number[] {
     }
 
     let curr: TreeNode | null = root;
-    const stack: TreeNode[] = [];
+    
+    while(curr !== null) {
 
-    while(curr !== null || stack.length > 0) {
+        if(curr.left === null) {
+            res.push(curr.val);
+            curr = curr.right;
+        } else {
 
-        while(curr !== null) {
-            stack.push(curr);
-            curr = curr.left;
+            let predecessor: TreeNode | null = curr.left;
+            while(predecessor.right !== null && predecessor.right !== curr) {
+                predecessor = predecessor.right;
+            }
+
+            if(predecessor.right === null) {
+
+                predecessor.right = curr;
+                curr = curr.left;
+
+            } else {
+
+                predecessor.right = null;
+                res.push(curr.val);
+                curr = curr.right;
+
+            }
+
         }
-
-        curr = stack.pop();
-        res.push(curr.val);
-        curr = curr.right;
 
     }
     
