@@ -20,22 +20,24 @@ function preorderTraversal(root: TreeNode | null): number[] {
         return res;
     }
 
-    function helperDFS(root: TreeNode | null): void {
+    const stack: TreeNode[] = [root];
 
-        if(root === null) {
-            return;
+    while(stack.length > 0) {
+
+        const currNode = stack.pop();
+
+        res.push(currNode.val);
+
+        if(currNode.right !== null) {
+            stack.push(currNode.right);
         }
 
-        res.push(root.val);
-
-        helperDFS(root.left);
-
-        helperDFS(root.right);
+        if(currNode.left !== null) {
+            stack.push(currNode.left);
+        }
 
     }
-
-    helperDFS(root);
-
+    
     return res;
 
 };
