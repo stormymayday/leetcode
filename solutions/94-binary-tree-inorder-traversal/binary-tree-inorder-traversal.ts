@@ -13,37 +13,23 @@
  */
 
 function inorderTraversal(root: TreeNode | null): number[] {
-    
+
     const res: number[] = [];
 
     if(root === null) {
         return res;
     }
 
-    let curr: TreeNode | null = root;
-
-    while(curr !== null) {
-
-        if(curr.left === null) {
-            res.push(curr.val);
-            curr = curr.right;
-        } else {
-            let predecessor = curr.left;
-            while(predecessor.right !== curr && predecessor.right !== null) {
-                predecessor = predecessor.right;
-            }
-            if(predecessor.right === null) {
-                predecessor.right = curr;
-                curr = curr.left;
-            } else {
-                predecessor.right = null;
-                res.push(curr.val);
-                curr = curr.right;
-            }
+    function helperDFS(root: TreeNode | null): void {
+        if(root === null) {
+            return;
         }
-
+        helperDFS(root.left);
+        res.push(root.val);
+        helperDFS(root.right);
     }
 
+    helperDFS(root);
+    
     return res;
-
 };
