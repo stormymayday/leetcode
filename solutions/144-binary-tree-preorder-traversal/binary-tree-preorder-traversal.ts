@@ -20,20 +20,43 @@ function preorderTraversal(root: TreeNode | null): number[] {
         return res;
     }
 
-    const stack: TreeNode[] = [root];
+    // Morris
+    let curr: TreeNode | null = root;
 
-    while(stack.length > 0) {
+    while(curr !== null) {
 
-        const currNode = stack.pop();
-
-        res.push(currNode.val);
-
-        if(currNode.right !== null) {
-            stack.push(currNode.right);
+        // Check if there is NO left child
+        if(curr.left === null) {
+            // visit
+            res.push(curr.val);
+            // move right
+            curr = curr.right; // Can be a loop via pseudo-link
         }
+        // There IS a left child 
+        else {
+            // Find inorder predecessor (the rightmost node) of the left subtree
+            let predecessor = curr.left;
+            while(predecessor.right !== null && predecessor.right !== curr) {
+                predecessor = predecessor.right;
+            }
 
-        if(currNode.left !== null) {
-            stack.push(currNode.left);
+            if(predecessor.right === null) {
+                // create a pseudo-link to curr
+                predecessor.right = curr;
+                // visit curr
+                res.push(curr.val);
+                // move left
+                curr = curr.left;
+            } 
+            // predecessor.right points back at curr
+            else {
+                // remove the pseudo-link
+                predecessor.right = null;
+                // move right
+                curr = curr.right;
+                
+            }
+
         }
 
     }
