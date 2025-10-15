@@ -19,17 +19,21 @@ function serialize(root: TreeNode | null): string {
 
     const res: string[] = [];
 
-    function helper(root: TreeNode | null): void {
+    if(root === null) {
+        return "null";
+    }
+
+    function helperDFS(root: TreeNode | null): void {
         if(root === null) {
             res.push('null');
             return;
         }
         res.push(String(root.val));
-        helper(root.left);
-        helper(root.right);
+        helperDFS(root.left);
+        helperDFS(root.right);
     }
 
-    helper(root);
+    helperDFS(root);
 
     return res.join(",");
 
@@ -39,30 +43,30 @@ function serialize(root: TreeNode | null): string {
  * Decodes your encoded data to tree.
  */
 function deserialize(data: string): TreeNode | null {
-
+    
     if(data.length === 0) {
         return null;
     }
 
-    const arr: string[] = data.split(",").reverse();
+    const queue: string[] = data.split(",").reverse();
 
-    function helper(arr: string[]): TreeNode | null {
+    function helperDFS(): TreeNode | null {
 
-        if(arr[arr.length - 1] === 'null') {
-            arr.pop();
+        if(queue[queue.length - 1] === 'null') {
+            queue.pop();
             return null;
         }
 
-        const root = new TreeNode(Number(arr.pop()));
+        const root = new TreeNode(Number(queue.pop()));
 
-        root.left = helper(arr);
-        root.right = helper(arr);
+        root.left = helperDFS();
+        root.right = helperDFS();
 
         return root;
 
     }
 
-    return helper(arr);
+    return helperDFS();
 
 };
 
