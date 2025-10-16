@@ -18,24 +18,22 @@ function isValidBST(root: TreeNode | null): boolean {
         return true;
     }
 
-    const stack: [TreeNode, number, number][] = [[root, -Infinity, Infinity]];
+    const stack: TreeNode[] = [];
+    let curr: TreeNode | null = root;
+    let prev: TreeNode | null = null;
+    while(curr !== null || stack.length > 0) {
 
-    while (stack.length > 0) {
+        while(curr !== null) {
+            stack.push(curr);
+            curr = curr.left;
+        }
 
-        const [currNode, leftBound, rightBound] = stack.pop();
-
-        if (currNode.val <= leftBound || currNode.val >= rightBound) {
+        curr = stack.pop();
+        if(prev !== null && prev.val >= curr.val) {
             return false;
         }
-
-        if (currNode.left !== null) {
-            stack.push([currNode.left, leftBound, currNode.val]);
-        }
-
-        if (currNode.right !== null) {
-            stack.push([currNode.right, currNode.val, rightBound]);
-        }
-
+        prev = curr;
+        curr = curr.right;
     }
 
     return true;
