@@ -13,14 +13,14 @@
  */
 
 function inorderSuccessor(root: TreeNode | null, p: TreeNode | null): TreeNode | null {
-	
-    if(root === null || p === null) {
+
+    if (root === null || p === null) {
         return null;
     }
 
     const inorder: TreeNode[] = [];
     function helperDFS(node: TreeNode | null): void {
-        if(node === null) {
+        if (node === null) {
             return;
         }
         helperDFS(node.left);
@@ -28,13 +28,16 @@ function inorderSuccessor(root: TreeNode | null, p: TreeNode | null): TreeNode |
         helperDFS(node.right);
     }
     helperDFS(root);
-    
-    for(let i = 0; i < inorder.length - 1; i += 1) {
 
-        const nextNode = inorder[i + 1];
+    for (let i = 0; i < inorder.length - 1; i += 1) {
 
-        if(nextNode.val > p.val) {
-            return nextNode;
+        // const nextNode = inorder[i + 1];
+        // if(nextNode.val > p.val) {
+        //     return nextNode;
+        // }
+
+        if (inorder[i] === p) {
+            return inorder[i + 1];
         }
 
     }
