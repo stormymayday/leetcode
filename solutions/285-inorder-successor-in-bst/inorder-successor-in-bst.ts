@@ -13,29 +13,32 @@
  */
 
 function inorderSuccessor(root: TreeNode | null, p: TreeNode | null): TreeNode | null {
-
-    // Edge Case: null root
-    if (root === null) {
+	
+    if(root === null || p === null) {
         return null;
     }
 
-    let potentialSuccessor: TreeNode | null = null;
+    const inorder: TreeNode[] = [];
+    function helperDFS(node: TreeNode | null): void {
+        if(node === null) {
+            return;
+        }
+        helperDFS(node.left);
+        inorder.push(node);
+        helperDFS(node.right);
+    }
+    helperDFS(root);
+    
+    for(let i = 0; i < inorder.length - 1; i += 1) {
 
-    while (root !== null) {
+        const nextNode = inorder[i + 1];
 
-        // Important! greater than OR equals to
-        if (p.val >= root.val) {
-            // dicard the left subtree, move to the right subtree
-            root = root.right;
-        } else {
-            // curr.val > p.val - potential successor found
-            potentialSuccessor = root;
-            // Move to the left subtree
-            root = root.left;
+        if(nextNode.val > p.val) {
+            return nextNode;
         }
 
     }
 
-    return potentialSuccessor;
+    return null;
 
 };
