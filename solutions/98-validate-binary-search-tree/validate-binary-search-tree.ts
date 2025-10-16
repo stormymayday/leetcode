@@ -14,38 +14,30 @@
 
 function isValidBST(root: TreeNode | null): boolean {
 
-    if(root === null || (root.left === null && root.right === null)) {
+    if (root === null || (root.left === null && root.right === null)) {
         return true;
     }
 
-    let queue: [TreeNode, number, number][] = [[root, -Infinity, Infinity]];
+    const stack: [TreeNode, number, number][] = [[root, -Infinity, Infinity]];
 
-    while(queue.length > 0) {
+    while (stack.length > 0) {
 
-        const nextQueue: [TreeNode, number, number][] = [];
+        const [currNode, leftBound, rightBound] = stack.pop();
 
-        for(let i = 0; i < queue.length; i += 1) {
-
-            const [currNode, leftBound, rightBound] = queue[i];
-
-            if(currNode.val <= leftBound || currNode.val >= rightBound) {
-                return false;
-            }
-
-            if(currNode.left !== null) {
-                nextQueue.push([currNode.left, leftBound, currNode.val]);
-            }
-
-            if(currNode.right !== null) {
-                nextQueue.push([currNode.right, currNode.val, rightBound]);
-            }
-
+        if (currNode.val <= leftBound || currNode.val >= rightBound) {
+            return false;
         }
 
-        queue = nextQueue;
+        if (currNode.left !== null) {
+            stack.push([currNode.left, leftBound, currNode.val]);
+        }
+
+        if (currNode.right !== null) {
+            stack.push([currNode.right, currNode.val, rightBound]);
+        }
 
     }
 
     return true;
-    
+
 };
