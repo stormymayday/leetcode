@@ -19,7 +19,7 @@ class BSTIterator {
 
     constructor(root: TreeNode | null) {
 
-        this.inorder = [];
+        this.inorder = []; // this is the space bottleneck
         this.idx = 0;
 
         if (root !== null) {
