@@ -18,25 +18,29 @@ function isValidBST(root: TreeNode | null): boolean {
         return true;
     }
 
-    const inorder: number[] = [];
+    function helperDFS(node: TreeNode | null, leftBound: number, rightBound: number): boolean {
 
-    function helperDFS(node: TreeNode | null): void {
         if(node === null) {
-            return;
+            return true;
         }
-        helperDFS(node.left);
-        inorder.push(node.val);
-        helperDFS(node.right);
-    }
 
-    helperDFS(root);
-
-    for(let i = 0; i < inorder.length - 1; i += 1) {
-        if(inorder[i] >= inorder[i + 1]) {
+        if(node.val <= leftBound || node.val >= rightBound) {
             return false;
         }
-    }
 
-    return true;
+        const leftSubtree = helperDFS(node.left, leftBound, node.val);
+        if(leftSubtree === false) {
+            return false;
+        }
+
+        const rightSubtree = helperDFS(node.right, node.val, rightBound);
+        if(rightSubtree === false) {
+            return false;
+        }
+
+        return true;
+
+    }
     
+    return helperDFS(root, -Infinity, Infinity);
 };
