@@ -21,21 +21,36 @@ function isValidBST(root: TreeNode | null): boolean {
     let prev: TreeNode | null = null;
     let curr: TreeNode | null = root;
 
-    const stack: TreeNode[] = [];
+    while(curr !== null) {
 
-    while(curr !== null || stack.length > 0) {
+        if(curr.left === null) {
 
-        while(curr !== null) {
-            stack.push(curr);
-            curr = curr.left;
+            if(prev !== null && curr.val <= prev.val) {
+                return false;
+            }
+            prev = curr;
+            curr = curr.right;
+
+        } else {
+
+            let predecessor = curr.left;
+            while(predecessor.right !== null && predecessor.right !== curr) {
+                predecessor = predecessor.right;
+            }
+
+            if(predecessor.right === null) {
+                predecessor.right = curr;
+                curr = curr.left;
+            } else {
+                predecessor.right = null;
+                if(prev !== null && curr.val <= prev.val) {
+                    return false;
+                }
+                prev = curr;
+                curr = curr.right;
+            }
+
         }
-
-        curr = stack.pop();
-        if(prev !== null && curr.val <= prev.val) {
-            return false;
-        }
-        prev = curr;
-        curr = curr.right;
 
     }
 
