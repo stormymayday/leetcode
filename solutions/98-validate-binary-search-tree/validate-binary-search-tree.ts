@@ -18,27 +18,28 @@ function isValidBST(root: TreeNode | null): boolean {
         return true;
     }
 
-    let prev: number | null = null;
+    let prev: TreeNode | null = null;
+    let curr: TreeNode | null = root;
 
-    function helperDFS(node: TreeNode | null): boolean {
+    const stack: TreeNode[] = [];
 
-        if(node === null) {
-            return true;
+    while(curr !== null || stack.length > 0) {
+
+        while(curr !== null) {
+            stack.push(curr);
+            curr = curr.left;
         }
 
-        if(helperDFS(node.left) === false) {
+        curr = stack.pop();
+        if(prev !== null && curr.val <= prev.val) {
             return false;
         }
-
-        if(prev !== null && node.val <= prev) {
-            return false;
-        }
-        prev = node.val;
-
-        return helperDFS(node.right);
+        prev = curr;
+        curr = curr.right;
 
     }
 
-    return helperDFS(root);
+    return true;
+
 
 };
