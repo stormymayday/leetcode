@@ -18,30 +18,34 @@ function isValidBST(root: TreeNode | null): boolean {
         return true;
     }
 
-    function helperDFS(node: TreeNode | null, leftBound: number, rightBound: number): boolean {
+    let queue: [TreeNode, number, number][] = [[root, -Infinity, Infinity]];
 
-        if(node === null) {
-            return true;
+    while(queue.length > 0) {
+
+        const nextQueue: [TreeNode, number, number][] = [];
+
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const [currNode, leftBound, rightBound] = queue[i];
+
+            if(currNode.val <= leftBound || currNode.val >= rightBound) {
+                return false;
+            }
+
+            if(currNode.left !== null) {
+                nextQueue.push([currNode.left, leftBound, currNode.val]);
+            }
+
+            if(currNode.right !== null) {
+                nextQueue.push([currNode.right, currNode.val, rightBound]);
+            }
+
         }
 
-        if(node.val <= leftBound || node.val >= rightBound) {
-            return false;
-        }
-
-        const leftSubtree = helperDFS(node.left, leftBound, node.val);
-        if(leftSubtree === false) {
-            return false;
-        }
-
-        const rightSubtree = helperDFS(node.right, node.val, rightBound);
-        if(rightSubtree === false) {
-            return false;
-        }
-
-        return true;
+        queue = nextQueue;
 
     }
 
-    return helperDFS(root, -Infinity, Infinity);
+    return true;
     
 };
