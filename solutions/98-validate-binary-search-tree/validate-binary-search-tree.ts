@@ -14,30 +14,34 @@
 
 function isValidBST(root: TreeNode | null): boolean {
 
-    let prev: number | null = null;
-    // const stack: (TreeNode | null)[] = [];
-    const stack: TreeNode[] = [];
-
-    while(stack.length > 0 || root !== null) {
-
-        // Go left as deep as possible
-        while(root !== null) {
-            stack.push(root);
-            root = root.left;
-        }
-
-        // now root should be 'null'
-        // pop from the stack and re-assign root
-        root = stack.pop();
-        // check root val
-        if(prev !== null && root.val <= prev) {
-            return false;
-        }
-        prev = root.val;
-
-        // switch to the right subree
-        root = root.right;
+    if(root === null || (root.left === null && root.right === null)) {
+        return true;
     }
 
-    return true;
+    function helperDFS(node: TreeNode | null, leftBound: number, rightBound: number): boolean {
+
+        if(node === null) {
+            return true;
+        }
+
+        if(node.val <= leftBound || node.val >= rightBound) {
+            return false;
+        }
+
+        const leftSubtree = helperDFS(node.left, leftBound, node.val);
+        if(leftSubtree === false) {
+            return false;
+        }
+
+        const rightSubtree = helperDFS(node.right, node.val, rightBound);
+        if(rightSubtree === false) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    return helperDFS(root, -Infinity, Infinity);
+    
 };
