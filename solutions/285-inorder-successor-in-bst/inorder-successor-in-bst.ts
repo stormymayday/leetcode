@@ -18,26 +18,38 @@ function inorderSuccessor(root: TreeNode | null, p: TreeNode | null): TreeNode |
         return null;
     }
 
-    const inorder: TreeNode[] = [];
-    function helperDFS(node: TreeNode | null): void {
-        if (node === null) {
-            return;
+    let curr: TreeNode | null = root;
+    let prev: TreeNode | null = null;
+
+    // Phase 1: find 'p'
+    while (curr !== null) {
+
+        // 'p' is on the left
+        // This is a potential 'successor'
+        if (p.val < curr.val) {
+            prev = curr;
+            curr = curr.left;
         }
-        helperDFS(node.left);
-        inorder.push(node);
-        helperDFS(node.right);
-    }
-    helperDFS(root);
+        // 'p' is on the right
+        else if (p.val > curr.val) {
+            curr = curr.right;
+        }
+        // found 'p'! (curr === p)
+        else {
+            // Phase 2: find the successor (leftmost node in the right subtree)
+            // First, check if there is a right subtree
+            if (curr.right !== null) {
+                curr = curr.right;
+                while (curr.left !== null) {
+                    curr = curr.left;
+                }
+                return curr;
+            }
+            // If there is not right subtree, prev must be the successor
+            else {
+                return prev;
+            }
 
-    for (let i = 0; i < inorder.length - 1; i += 1) {
-
-        // const nextNode = inorder[i + 1];
-        // if(nextNode.val > p.val) {
-        //     return nextNode;
-        // }
-
-        if (inorder[i] === p) {
-            return inorder[i + 1];
         }
 
     }
