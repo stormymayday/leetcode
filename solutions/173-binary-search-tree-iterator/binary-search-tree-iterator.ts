@@ -14,42 +14,51 @@
 
 class BSTIterator {
 
-    private stack: TreeNode[];
+    inorder: number[];
+    idx: number;
 
     constructor(root: TreeNode | null) {
-        
-        // Always initialzing the stack
-        this.stack = [];
 
-        if(root !== null) {
-            let curr: TreeNode | null = root;
-            // go left as far as possible
-            while(curr !== null) {
-                this.stack.push(curr);
-                curr = curr.left;
+        this.inorder = [];
+        this.idx = 0;
+
+        if (root !== null) {
+
+            const helperDFS = (node: TreeNode | null): void => {
+                if(node === null) {
+                    return;
+                }
+                helperDFS(node.left);
+                this.inorder.push(node.val);
+                helperDFS(node.right);
             }
+
+            helperDFS(root);
+
         }
+
     }
 
     next(): number {
-        const leftmost = this.stack.pop();
 
-        // check if 'leftmost' has 'right'
-        if(leftmost.right !== null) {
-            // switch to the right subtree
-            let curr: TreeNode | null = leftmost.right;
-            // go left as far as possible
-            while(curr !== null) {
-                this.stack.push(curr);
-                curr = curr.left;
-            }
+        if(this.idx < this.inorder.length) {
+            let temp: number = this.inorder[this.idx];
+            this.idx += 1;
+            return temp;
+        } else {
+            return -Infinity;
         }
 
-        return leftmost.val;
     }
 
     hasNext(): boolean {
-        return this.stack.length > 0;
+
+        if(this.idx < this.inorder.length) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }
 
