@@ -18,12 +18,26 @@ function searchBST(root: TreeNode | null, val: number): TreeNode | null {
         return null;
     }
 
-    if(val < root.val) {
-        return searchBST(root.left, val);
-    } else if(val > root.val) {
-        return searchBST(root.right, val);
-    } else {
-        return root;
+    const stack: TreeNode[] = [root];
+
+    while(stack.length > 0) {
+
+        const currNode = stack.pop();
+
+        if(val < currNode.val) {
+            if(currNode.left) {
+                stack.push(currNode.left);
+            }
+        } else if(val > currNode.val) {
+            if(currNode.right) {
+                stack.push(currNode.right);
+            }
+        } else {
+            return currNode;
+        }
+
     }
+
+    return null;
     
 };
