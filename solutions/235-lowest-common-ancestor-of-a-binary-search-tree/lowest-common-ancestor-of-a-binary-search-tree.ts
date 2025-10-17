@@ -18,12 +18,20 @@ function lowestCommonAncestor(root: TreeNode | null, p: TreeNode | null, q: Tree
         return null;
     }
 
-    if(p.val < root.val && q.val < root.val) {
-        return lowestCommonAncestor(root.left, p, q);
-    } else if(p.val > root.val && q.val > root.val) {
-        return lowestCommonAncestor(root.right, p, q);
+    let curr: TreeNode | null = root;
+
+    while(curr !== null) {
+
+        if(p.val < curr.val && q.val < curr.val) {
+            curr = curr.left;
+        } else if(p.val > curr.val && q.val > curr.val) {
+            curr = curr.right;
+        } else {
+            return curr;
+        }
+
     }
 
-    return root;
+    return curr;
 	
 };
