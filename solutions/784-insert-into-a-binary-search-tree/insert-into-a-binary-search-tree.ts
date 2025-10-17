@@ -13,10 +13,9 @@
  */
 
 function insertIntoBST(root: TreeNode | null, val: number): TreeNode | null {
-    
+
     if(root === null) {
-        const newNode = new TreeNode(val);
-        return newNode;
+        return new TreeNode(val);
     }
 
     if(val < root.val) {
