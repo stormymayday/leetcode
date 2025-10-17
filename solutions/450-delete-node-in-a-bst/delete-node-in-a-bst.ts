@@ -34,12 +34,19 @@ function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
                 node = node.left;
             } else {
 
-                let predecessor = node.left
-                while(predecessor.right !== null) {
-                    predecessor = predecessor.right;
+                // let predecessor = node.left
+                // while(predecessor.right !== null) {
+                //     predecessor = predecessor.right;
+                // }
+                // node.val = predecessor.val;
+                // node.left = helperDFS(node.left, predecessor.val);
+
+                let successor = node.right;
+                while(successor.left !== null) {
+                    successor = successor.left;
                 }
-                node.val = predecessor.val;
-                node.left = helperDFS(node.left, predecessor.val);
+                node.val = successor.val;
+                node.right = helperDFS(node.right, successor.val);
 
             }
 
