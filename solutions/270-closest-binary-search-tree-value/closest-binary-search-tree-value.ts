@@ -19,12 +19,13 @@ function closestValue(root: TreeNode | null, target: number): number {
     }
 
     let curr: TreeNode | null = root;
-    let candidate: number = root.val;
+    let candidate: number = curr.val;
+    let remainder: number = Infinity;
 
     while (curr !== null) {
 
-        if (Math.abs(target - curr.val) < Math.abs(target - candidate) ||
-            (Math.abs(target - curr.val) === Math.abs(target - candidate) && curr.val < candidate)) {
+        if (Math.abs(curr.val - target) < remainder || (Math.abs(curr.val - target) === remainder && candidate > curr.val)) {
+            remainder = Math.abs(curr.val - target);
             candidate = curr.val;
         }
 
@@ -33,7 +34,9 @@ function closestValue(root: TreeNode | null, target: number): number {
         } else if (target > curr.val) {
             curr = curr.right;
         } else {
-            return curr.val;
+            // exact match
+            candidate = curr.val;
+            break;
         }
 
     }
