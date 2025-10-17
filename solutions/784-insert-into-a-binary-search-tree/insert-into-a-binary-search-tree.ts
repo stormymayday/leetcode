@@ -14,14 +14,32 @@
 
 function insertIntoBST(root: TreeNode | null, val: number): TreeNode | null {
 
-    if(root === null) {
-        return new TreeNode(val);
-    }
+    const newNode = new TreeNode(val);
 
-    if(val < root.val) {
-        root.left = insertIntoBST(root.left, val);
-    } else if(val > root.val) {
-        root.right = insertIntoBST(root.right, val);
+    if(root === null) {
+        root = newNode;
+    } else {
+
+        let curr: TreeNode | null = root;
+
+        while(true) {
+            if(val < curr.val) {
+                if(curr.left === null) {
+                    curr.left = newNode;
+                    break;
+                }
+                curr = curr.left;
+            } else if(val > curr.val) {
+                if(curr.right === null) {
+                    curr.right = newNode;
+                    break;
+                }
+                curr = curr.right;
+            } else {
+                break;
+            }
+        }
+
     }
 
     return root;
