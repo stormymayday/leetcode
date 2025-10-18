@@ -15,25 +15,24 @@
 function preorder(root: _Node | null): number[] {
 
     const res: number[] = [];
-    
-    // if(root === null) {
-    //     return res;
-    // }
 
-    function dfs(root: _Node | null): void {
-        if(root === null) {
+    if(root === null) {
+        return res;
+    }
+
+    function helperDFS(node: _Node | null): void {
+        if(node === null) {
             return;
         }
 
-        res.push(root.val);
+        res.push(node.val);
 
-        for(const child of root.children) {
-            dfs(child);
+        for(const child of node.children) {
+            helperDFS(child);
         }
-
     }
 
-    dfs(root);
+    helperDFS(root);
 
     return res;
 
