@@ -19,21 +19,22 @@ function maxDepth(root: _Node | null): number {
         return 0;
     }
 
-    function helperDFS(node: _Node): number {
+    const stack: [_Node, number][] = [[root, 1]];
 
-        if(node.children.length === 0) {
-            return 1; // node with node children is at depth of 1
+    let maxLevel = 1;
+
+    while(stack.length > 0) {
+
+        const [currNode, currLevel] = stack.pop();
+
+        maxLevel = Math.max(maxLevel, currLevel);
+
+        for(const child of currNode.children) {
+            stack.push([child, currLevel + 1]);
         }
-
-        let maxSubtreeDepth = 0;
-        for(const child of node.children) {
-            maxSubtreeDepth = Math.max(maxSubtreeDepth, helperDFS(child));
-        }
-
-        return 1 + maxSubtreeDepth;
 
     }
 
-    return helperDFS(root);
+    return maxLevel;
 
 };
