@@ -20,31 +20,22 @@ function levelOrder(root: _Node | null): number[][] {
         return res;
     }
 
-    let queue: _Node[] = [root];
-
-    while(queue.length > 0) {
-
-        const nextQueue: _Node[] = [];
-        const currLayer: number[] = [];
-
-        for(let i = 0; i < queue.length; i += 1) {
-
-            const currNode = queue[i];
-
-            currLayer.push(currNode.val);
-
-            for(const child of currNode.children) {
-
-                nextQueue.push(child);
-                
-            }
-
+    function helperDFS(node: _Node, level: number): void {
+        if(node === null) {
+            return;
         }
-        
-        res.push(currLayer);
-        queue = nextQueue;
 
+        if(res[level] === undefined) {
+            res[level] = [];
+        }
+        res[level].push(node.val);
+
+        for(const child of node.children) {
+            helperDFS(child, level + 1);
+        }
     }
+
+    helperDFS(root, 0);
 
     return res;
 	
