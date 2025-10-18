@@ -15,23 +15,30 @@
 function maxDepth(root: _Node | null): number {
 
 
-    if(root === null) {
+    if (root === null) {
         return 0;
     }
 
-    const stack: [_Node, number][] = [[root, 1]];
+    let queue: [_Node, number][] = [[root, 1]];
 
     let maxLevel = 1;
 
-    while(stack.length > 0) {
+    while (queue.length > 0) {
 
-        const [currNode, currLevel] = stack.pop();
+        const nextQueue: [_Node, number][] = [];
 
-        maxLevel = Math.max(maxLevel, currLevel);
+        for (let i = 0; i < queue.length; i += 1) {
 
-        for(const child of currNode.children) {
-            stack.push([child, currLevel + 1]);
+            const [currNode, currLevel] = queue[i];
+
+            maxLevel = Math.max(maxLevel, currLevel);
+
+            for (const child of currNode.children) {
+                nextQueue.push([child, currLevel + 1]);
+            }
         }
+
+        queue = nextQueue;
 
     }
 
