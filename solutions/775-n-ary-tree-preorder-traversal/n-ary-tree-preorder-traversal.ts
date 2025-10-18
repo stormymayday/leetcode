@@ -20,19 +20,23 @@ function preorder(root: _Node | null): number[] {
         return res;
     }
 
-    function helperDFS(node: _Node | null): void {
-        if(node === null) {
-            return;
+    const stack: _Node[] = [root];
+
+    while(stack.length > 0) {
+
+        const currNode = stack.pop();
+
+        res.push(currNode.val);
+
+        const children = currNode.children;
+        if(children.length > 0) {
+            // going in reverse
+            for(let i = children.length - 1; i >= 0; i -= 1) {
+                stack.push(children[i]);
+            }
         }
 
-        res.push(node.val);
-
-        for(const child of node.children) {
-            helperDFS(child);
-        }
     }
-
-    helperDFS(root);
 
     return res;
 
