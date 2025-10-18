@@ -34,28 +34,50 @@ class Codec {
     // Encodes a tree to a binary tree.
     serialize(root: _Node | null): TreeNode | null {
 
-        // Base Case
         if (root === null) {
             return null;
         }
 
-        // Create new node
-        const binaryNode = new TreeNode(root.val);
+        const bRoot = new TreeNode(root.val);
 
-        // binaryNode.left -> firstChild
-        if (root.children.length > 0) {
-            const firstChild = root.children[0];
-            binaryNode.left = this.serialize(firstChild);
+        let queue: [_Node, TreeNode][] = [[root, bRoot]];
+
+        while (queue.length > 0) {
+
+            const nextQueue: [_Node, TreeNode][] = [];
+
+            for (let i = 0; i < queue.length; i += 1) {
+
+                const [currNode, currBNode] = queue[i];
+
+                const children = currNode.children;
+                if (children.length > 0) {
+
+                    const firstBinaryChild = new TreeNode(children[0].val);
+                    currBNode.left = firstBinaryChild;
+                    nextQueue.push([children[0], firstBinaryChild]);
+
+                    let temp: TreeNode | null = firstBinaryChild;
+                    for(let j = 1; j < children.length; j += 1) {
+
+                        const binaryChild = new TreeNode(children[j].val);
+                        
+                        temp.right = binaryChild;
+                        temp = temp.right;
+
+                        nextQueue.push([children[j], binaryChild]);
+
+                    }
+
+                }
+
+            }
+
+            queue = nextQueue;
+
         }
 
-        // firstChild.right -> sibling.right -> sibling.right ...
-        let curr = binaryNode.left;
-        for (let i = 1; i < root.children.length; i += 1) {
-            curr.right = this.serialize(root.children[i]);
-            curr = curr.right;
-        }
-
-        return binaryNode;
+        return bRoot;
 
     };
 
@@ -66,17 +88,40 @@ class Codec {
             return null;
         }
 
-        // create N-ary node
-        const naryNode = new _Node(root.val);
+        const nRoot = new _Node(root.val);
 
-        // switch to the left subtree
-        let curr = root.left;
-        while(curr !== null) {
-            naryNode.children.push(this.deserialize(curr));
-            curr = curr.right; // keep going right;
+        let queue: [TreeNode, _Node][] = [[root, nRoot]];
+
+        while (queue.length > 0) {
+
+            const nextQueue: [TreeNode, _Node][] = [];
+
+            for (let i = 0; i < queue.length; i += 1) {
+
+                const [bNode, nNode] = queue[i];
+
+                // left is a first child
+                let curr = bNode.left;
+
+                while (curr !== null) {
+
+                    const naryChild = new _Node(curr.val);
+
+                    nNode.children.push(naryChild);
+
+                    nextQueue.push([curr, naryChild]);
+
+                    curr = curr.right;
+
+                }
+
+            }
+
+            queue = nextQueue;
+
         }
 
-        return naryNode;
+        return nRoot;
 
     };
 }
