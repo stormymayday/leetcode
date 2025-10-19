@@ -13,19 +13,32 @@
  */
 
 function isSameTree(p: TreeNode | null, q: TreeNode | null): boolean {
-    
-    if(p === null && q === null) {
-        return true;
-    }
-    
-    if((p === null && q !== null) || (p !== null && q === null)) {
-        return false;
-    }
-    
-    if(p.val !== q.val) {
-        return false;
+
+    const stack: [TreeNode | null, TreeNode | null][] = [[p, q]];
+
+    while (stack.length > 0) {
+
+        const [pNode, qNode] = stack.pop();
+
+        // Both nodes are null
+        if (pNode === null && qNode === null) {
+            continue;
+        }
+
+        // Only one is null OR values are different
+        if (
+            (pNode === null || qNode === null) ||
+            (pNode.val !== qNode.val)
+        ) {
+            return false;
+        }
+
+        // Otherwise, push children on to the stack (even if they are null)
+        stack.push([pNode.left, qNode.left]);
+        stack.push([pNode.right, qNode.right]);
+
     }
 
-    return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    return true;
 
 };
