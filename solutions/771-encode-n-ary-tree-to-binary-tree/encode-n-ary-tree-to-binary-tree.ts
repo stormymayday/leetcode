@@ -38,49 +38,21 @@ class Codec {
             return null;
         }
 
-        const bRoot = new TreeNode(root.val);
+        const bNode = new TreeNode(root.val);
+        const naryChildren = root.children;
+        if(naryChildren.length > 0) {
 
-        let queue: [_Node, TreeNode][] = [[root, bRoot]];
-
-        while(queue.length > 0) {
-
-            const nextQueue: [_Node, TreeNode][] = [];
-
-            for(let i = 0; i < queue.length; i += 1) {
-
-                const [naryNode, binaryNode] = queue[i];
-
-                const naryChildren = naryNode.children;
-                if(naryChildren.length > 0) {
-                    
-                    // First binary child is connected to it's parent via the 'left' pointer
-                    const firstNaryChild = naryChildren[0];
-                    const firstBinaryChild = new TreeNode(firstNaryChild.val);
-                    binaryNode.left = firstBinaryChild;
-                    nextQueue.push([firstNaryChild, firstBinaryChild]);
-
-                    // Rest of the children are connect to each other via the 'right' pointer
-                    let curr: TreeNode | null = firstBinaryChild;
-                    for(let j = 1; j < naryChildren.length; j += 1) {
-
-                        const nextNaryChild = naryChildren[j];
-                        const nextBinaryChild = new TreeNode(nextNaryChild.val);
-                        curr.right = nextBinaryChild;
-                        curr = curr.right;
-                        nextQueue.push([nextNaryChild, nextBinaryChild]);
-
-                    }
-
-                }
-
+            bNode.left = this.serialize(naryChildren[0]);
+            
+            let curr: TreeNode | null = bNode.left;
+            for(let j = 1; j < naryChildren.length; j += 1) {
+                curr.right = this.serialize(naryChildren[j]);
+                curr = curr.right;
             }
-
-            queue = nextQueue;
-
+            
         }
 
-        return bRoot;
-        
+        return bNode;
     };
 	
     // Decodes your encoded data to tree.
@@ -90,37 +62,15 @@ class Codec {
             return null;
         }
 
-        const nRoot = new _Node(root.val);
+        const naryNode = new _Node(root.val);
 
-        let queue: [TreeNode, _Node][] = [[root, nRoot]];
-
-        while(queue.length > 0) {
-
-            const nextQueue: [TreeNode, _Node][] = [];
-
-            for(let i = 0; i < queue.length; i += 1) {
-
-                const [binaryNode, naryNode] = queue[i];
-                
-                // go left
-                let curr: TreeNode | null = binaryNode.left;
-                // then go right as far as possible ('N-ary' siblings)
-                while(curr !== null) {
-
-                    const naryChild = new _Node(curr.val);
-                    naryNode.children.push(naryChild);
-                    nextQueue.push([curr, naryChild]);
-                    curr = curr.right;
-
-                }
-
-            }
-
-            queue = nextQueue;
-
+        let curr: TreeNode | null = root.left;
+        while(curr !== null) {
+            naryNode.children.push(this.deserialize(curr));
+            curr = curr.right;
         }
 
-        return nRoot;
+        return naryNode;
         
     };
 }
