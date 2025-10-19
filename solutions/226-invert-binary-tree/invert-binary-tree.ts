@@ -18,22 +18,31 @@ function invertTree(root: TreeNode | null): TreeNode | null {
         return null;
     }
 
-    const stack: TreeNode[] = [root];
-    while(stack.length > 0) {
+    let queue: TreeNode[] = [root];
+    
+    while(queue.length > 0) {
 
-        const currNode = stack.pop();
+        const nextQueue: TreeNode[] = [];
 
-        const temp: TreeNode | null = currNode.left;
-        currNode.left = currNode.right;
-        currNode.right = temp;
+        for(let i = 0; i < queue.length; i += 1) {
 
-        if(currNode.left !== null) {
-            stack.push(currNode.left);
+            const currNode = queue[i];
+
+            const temp: TreeNode | null = currNode.left;
+            currNode.left = currNode.right;
+            currNode.right = temp;
+
+            if(currNode.left !== null) {
+                nextQueue.push(currNode.left);
+            }
+
+            if(currNode.right !== null) {
+                nextQueue.push(currNode.right);
+            }
+
         }
 
-        if(currNode.right !== null) {
-            stack.push(currNode.right);
-        }
+        queue = nextQueue;
 
     }
     
