@@ -20,27 +20,29 @@ class Codec {
     // Encodes a tree to a single string.
     serialize(root: _Node | null): string {
 
+        const res: string[] = [];
+
         if(root === null) {
             return "";
         }
 
-        const res: string[] = [];
-
-        function preorderDFS(root): void {
-            
-            // Encode: value#numberOfChildren
-            res.push(`${root.val}#${root.children.length}`);
-
-            for(const child of root.children) {
-                preorderDFS(child);
+        function helperDFS(node: _Node | null): void {
+            if(root === null) {
+                return;
             }
-            
+
+            res.push(`${node.val}#${node.children.length}`);
+
+            for(const child of node.children) {
+                helperDFS(child);
+            }
+
         }
 
-        preorderDFS(root);
-        
-        return res.join(",");
+        helperDFS(root);
 
+        return res.join(",");
+        
     };
 	
     // Decodes your encoded data to tree.
@@ -50,29 +52,27 @@ class Codec {
             return null;
         }
 
-        // using 'reverse()' for efficiency of pop() O(1)
-        const queue: string[] = data.split(",").reverse();
+        const arr = data.split(",");
+        let idx: number = 0;
 
-        function preorderDFS(queue: string[]): _Node | null {
-            
-            // Base Case: not strictly necessary
-            // if(queue.length === 0) {
-            //     return null;
-            // }
+        function helperDFS(): _Node | null {
 
-            const [val, numChildren] = queue.pop().split("#").map(Number);
-
-            const root = new _Node(val);
-
-            for(let i = 0; i < numChildren; i += 1) {
-                root.children.push(preorderDFS(queue));
+            if(idx === arr.length) {
+                return null;
             }
 
-            return root;
+            const [val, numChildren] = arr[idx].split('#').map(Number);
+            const node = new _Node(val);
+            for(let i = 0; i < numChildren; i += 1) {
+                idx += 1;
+                node.children.push(helperDFS());
+            }
+
+            return node;
 
         }
 
-        return preorderDFS(queue);
+        return helperDFS();
         
     };
 }
