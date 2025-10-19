@@ -38,44 +38,22 @@ class Codec {
             return null;
         }
 
-        const bRoot = new TreeNode(root.val);
+        const binaryNode = new TreeNode(root.val);
 
-        let queue: [_Node, TreeNode][] = [[root, bRoot]];
+        const naryChildren = root.children;
+        if(naryChildren.length > 0) {
 
-        while(queue.length > 0) {
+            binaryNode.left = this.serialize(naryChildren[0]);
 
-            const nextQueue: [_Node, TreeNode][] = [];
-
-            for(let i = 0; i < queue.length; i += 1) {
-
-                const [naryNode, binaryNode] = queue[i];
-
-                const naryChildren = naryNode.children;
-                if(naryChildren.length > 0) {
-
-                    const firstBinaryChild = new TreeNode(naryChildren[0].val);
-                    // connect first child to it's parent's left pointer
-                    binaryNode.left = firstBinaryChild;
-                    nextQueue.push([naryChildren[0], firstBinaryChild]);
-
-                    // connect remaining siblings via their right pointers
-                    let curr: TreeNode | null = firstBinaryChild;
-                    for(let j = 1; j < naryChildren.length; j += 1) {
-                        const binaryChild = new TreeNode(naryChildren[j].val);
-                        nextQueue.push([naryChildren[j], binaryChild]);
-                        curr.right = binaryChild;
-                        curr = curr.right;
-                    }
-
-                }
-
+            let curr: TreeNode | null = binaryNode.left;
+            for(let i = 1; i < naryChildren.length; i += 1) {
+                curr.right = this.serialize(naryChildren[i]);
+                curr = curr.right;
             }
-
-            queue = nextQueue;
 
         }
 
-        return bRoot;
+        return binaryNode;
         
     };
 	
@@ -86,34 +64,13 @@ class Codec {
             return null;
         }
 
-        const naryRoot = new _Node(root.val);
-
-        let queue: [TreeNode, _Node][] = [[root, naryRoot]];
-
-        while(queue.length > 0) {
-
-            const nextQueue: [TreeNode, _Node][] = [];
-
-            for(let i = 0; i < queue.length; i += 1) {
-
-                const [binaryNode, naryNode] = queue[i];
-
-                // switch left and then go right until 'curr' becomes null
-                let curr: TreeNode | null = binaryNode.left;
-                while(curr !== null) {
-                    const naryChild = new _Node(curr.val);
-                    naryNode.children.push(naryChild);
-                    nextQueue.push([curr, naryChild]);
-                    curr = curr.right;
-                }
-
-            }
-
-            queue = nextQueue;
-
+        const naryNode = new _Node(root.val);
+        let curr: TreeNode | null = root.left;
+        while(curr !== null) {
+            naryNode.children.push(this.deserialize(curr));
+            curr = curr.right;
         }
-
-        return naryRoot;
+        return naryNode;
         
     };
 }
