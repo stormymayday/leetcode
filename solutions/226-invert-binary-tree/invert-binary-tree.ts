@@ -18,12 +18,24 @@ function invertTree(root: TreeNode | null): TreeNode | null {
         return null;
     }
 
-    const temp: TreeNode | null = root.left;
-    root.left = root.right;
-    root.right = temp;
+    const stack: TreeNode[] = [root];
+    while(stack.length > 0) {
 
-    invertTree(root.left);
-    invertTree(root.right);
+        const currNode = stack.pop();
+
+        const temp: TreeNode | null = currNode.left;
+        currNode.left = currNode.right;
+        currNode.right = temp;
+
+        if(currNode.left !== null) {
+            stack.push(currNode.left);
+        }
+
+        if(currNode.right !== null) {
+            stack.push(currNode.right);
+        }
+
+    }
     
     return root;
 
