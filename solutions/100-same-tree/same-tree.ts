@@ -14,15 +14,7 @@
 
 function isSameTree(p: TreeNode | null, q: TreeNode | null): boolean {
 
-    if(p === null && q === null) {
-        return true;
-    }
-
-    if(p === null || q === null) {
-        return false;
-    }
-
-    let queue: [TreeNode, TreeNode][] = [[p, q]];
+    let queue: [TreeNode | null, TreeNode | null][] = [[p, q]];
 
     while(queue.length > 0) {
 
@@ -32,34 +24,19 @@ function isSameTree(p: TreeNode | null, q: TreeNode | null): boolean {
 
             const [pNode, qNode] = queue[i];
 
-            // Value Check
-            if(pNode.val !== qNode.val) {
+            if(pNode === null && qNode === null) {
+                continue;
+            }
+
+            if(
+                (pNode === null || qNode === null) ||
+                (pNode.val !== qNode.val)
+            ) {
                 return false;
             }
 
-            // Structure Check - Left Subtree
-            if(
-                (pNode.left === null && qNode.left !== null) ||
-                (pNode.left !== null && qNode.left === null)
-            ) {
-                return false;
-            } else {
-                if(pNode.left !== null && qNode.left !== null) {
-                    nextQueue.push([pNode.left, qNode.left]);
-                }
-            }
-
-            // Structure Check - Right Subtree
-            if(
-                (pNode.right === null && qNode.right !== null) ||
-                (pNode.right !== null && qNode.right === null)
-            ) {
-                return false;
-            } else {
-                if(pNode.right !== null && qNode.right !== null) {
-                    nextQueue.push([pNode.right, qNode.right]);
-                }
-            }
+            nextQueue.push([pNode.left, qNode.left]);
+            nextQueue.push([pNode.right, qNode.right]);
 
         }
 
