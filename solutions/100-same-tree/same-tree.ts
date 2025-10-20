@@ -14,31 +14,59 @@
 
 function isSameTree(p: TreeNode | null, q: TreeNode | null): boolean {
 
-    const stack: [TreeNode | null, TreeNode | null][] = [[p, q]];
+    if(p === null && q === null) {
+        return true;
+    }
 
-    while (stack.length > 0) {
+    if(p === null || q === null) {
+        return false;
+    }
 
-        const [pNode, qNode] = stack.pop();
+    let queue: [TreeNode, TreeNode][] = [[p, q]];
 
-        // Both nodes are null
-        if (pNode === null && qNode === null) {
-            continue;
+    while(queue.length > 0) {
+
+        const nextQueue: [TreeNode, TreeNode][] = [];
+
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const [pNode, qNode] = queue[i];
+
+            // Value Check
+            if(pNode.val !== qNode.val) {
+                return false;
+            }
+
+            // Structure Check - Left Subtree
+            if(
+                (pNode.left === null && qNode.left !== null) ||
+                (pNode.left !== null && qNode.left === null)
+            ) {
+                return false;
+            } else {
+                if(pNode.left !== null && qNode.left !== null) {
+                    nextQueue.push([pNode.left, qNode.left]);
+                }
+            }
+
+            // Structure Check - Right Subtree
+            if(
+                (pNode.right === null && qNode.right !== null) ||
+                (pNode.right !== null && qNode.right === null)
+            ) {
+                return false;
+            } else {
+                if(pNode.right !== null && qNode.right !== null) {
+                    nextQueue.push([pNode.right, qNode.right]);
+                }
+            }
+
         }
 
-        // Only one is null OR values are different
-        if (
-            (pNode === null || qNode === null) ||
-            (pNode.val !== qNode.val)
-        ) {
-            return false;
-        }
-
-        // Otherwise, push children on to the stack (even if they are null)
-        stack.push([pNode.left, qNode.left]);
-        stack.push([pNode.right, qNode.right]);
+        queue = nextQueue;
 
     }
 
     return true;
-
+    
 };
