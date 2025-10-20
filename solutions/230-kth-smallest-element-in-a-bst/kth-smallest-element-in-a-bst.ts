@@ -14,96 +14,44 @@
 
 function kthSmallest(root: TreeNode | null, k: number): number {
 
-    if(root === null) {
+    if (root === null) {
         return -Infinity;
     }
 
-    const maxHeap = new CustomMaxHeap();
+    // In-Order Traversal
+    // - Option 1: recursive DFS
+    // - Option 2: iterative DFS with stack and pointer
+    // - Option 3: Morris Traversal
 
-    const stack: TreeNode[] = [root];
+    let count = 0;
+    let res: TreeNode | null = null;
 
-    while(stack.length > 0) {
+    let curr: TreeNode | null = root;
+    const stack: TreeNode[] = [];
+    while(curr !== null || stack.length > 0) {
 
-        const currNode = stack.pop();
-
-        if(maxHeap.length < k) {
-            maxHeap.push(currNode.val);
-        } else {
-            if(currNode.val < maxHeap.top()) {
-                maxHeap.pop();
-                maxHeap.push(currNode.val);
-            }
+        while(curr !== null) {
+            stack.push(curr);
+            curr = curr.left;
         }
 
-        if(currNode.left !== null) {
-            stack.push(currNode.left);
+        curr = stack.pop();
+
+        count += 1;
+        if(count === k) {
+            res = curr;
+            break;
         }
 
-        if(currNode.right !== null) {
-            stack.push(currNode.right);
-        }
+        curr = curr.right;
 
     }
 
-    return maxHeap.top();
-    
+    // Optional Guard - if there are less than k nodes in the tree
+    if(res === null) {
+        return -Infinity;
+    } else {
+        return res.val;
+    }
+
 };
-
-class CustomMaxHeap {
-    private data: number[];
-    public length: number;
-    constructor() {
-        this.data = [];
-        this.length = 0;
-    }
-    push(val: number): void {
-        this.data.push(val);
-        this.length += 1;
-        let currIdx = this.length - 1;
-        let parentIdx = Math.floor((currIdx - 1) / 2);
-        while(currIdx > 0 && this.data[currIdx] > this.data[parentIdx]) {
-            this.swap(currIdx, parentIdx);
-            currIdx = parentIdx;
-            parentIdx = Math.floor((currIdx - 1) / 2);
-        }
-    }
-    pop(): number | undefined {
-        if(this.length === 0) {
-            return undefined;
-        }
-        if(this.length === 1) {
-            this.length = 0;
-            return this.data.pop();
-        }
-        const root = this.data[0];
-        this.data[0] = this.data.pop();
-        this.length -= 1;
-        this.siftDown(0);
-        return root;
-    }
-    siftDown(idx: number): void {
-        let currIdx = idx;
-        while(currIdx < this.length - 1) {
-            const leftChildIdx = currIdx * 2 + 1;
-            const rightChildIdx = currIdx * 2 + 2;
-            const leftChildVal = this.data[leftChildIdx] === undefined ? -Infinity : this.data[leftChildIdx];
-            const rightChildVal = this.data[rightChildIdx] === undefined ? -Infinity : this.data[rightChildIdx];
-            const largerChildIdx = leftChildVal > rightChildVal ? leftChildIdx : rightChildIdx;
-            const largerChildVal = leftChildVal > rightChildVal ? leftChildVal : rightChildVal;
-            if(this.data[currIdx] < largerChildVal) {
-                this.swap(currIdx, largerChildIdx);
-                currIdx = largerChildIdx;
-            } else {
-                break;
-            }
-        }
-    }
-    top(): number | undefined {
-        return this.length > 0 ? this.data[0] : undefined;
-    }
-    swap(idx1: number, idx2: number): void {
-        const temp = this.data[idx1];
-        this.data[idx1] = this.data[idx2];
-        this.data[idx2] = temp;
-    }
-}
