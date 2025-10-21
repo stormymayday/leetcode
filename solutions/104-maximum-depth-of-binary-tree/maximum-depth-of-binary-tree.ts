@@ -13,40 +13,12 @@
  */
 
 function maxDepth(root: TreeNode | null): number {
-
     if(root === null) {
         return 0;
     }
 
-    let queue: TreeNode[] = [root];
-    let maxDepth = 1;
+    const leftSubtreeHeight = maxDepth(root.left);
+    const rightSubtreeHeight = maxDepth(root.right);
 
-    while(queue.length > 0) {
-
-        const nextQueue: TreeNode[] = [];
-
-        for(let i = 0; i < queue.length; i += 1) {
-
-            const currNode = queue[i];
-
-            if(currNode.left !== null) {
-                nextQueue.push(currNode.left);
-            }
-
-            if(currNode.right !== null) {
-                nextQueue.push(currNode.right);
-            }
-
-        }
-
-        if(nextQueue.length > 0) {
-            maxDepth += 1;
-        }
-
-        queue = nextQueue;
-
-    }
-
-    return maxDepth;
-    
+    return 1 + Math.max(leftSubtreeHeight, rightSubtreeHeight);
 };
