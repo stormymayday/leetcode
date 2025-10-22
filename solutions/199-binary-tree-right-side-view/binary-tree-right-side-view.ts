@@ -13,19 +13,41 @@
  */
 
 function rightSideView(root: TreeNode | null): number[] {
-    const result = [];
-    function dfs(root, level) {
-        if(root === null) {
-            return;
-        }
 
-        if(result.length === level) {
-            result.push(root.val);
-        }
+    const res: number[] = [];
 
-        dfs(root.right, level + 1);
-        dfs(root.left, level + 1);
+    if(root === null) {
+        return res;
     }
-    dfs(root, 0);
-    return result;
+
+    let queue: TreeNode[] = [root];
+
+    while(queue.length > 0) {
+
+        const nextQueue: TreeNode[] = [];
+
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const currNode = queue[i];
+
+            if(i === queue.length - 1) {
+                res.push(currNode.val);
+            }
+
+            if(currNode.left !== null) {
+                nextQueue.push(currNode.left);
+            }
+
+            if(currNode.right !== null) {
+                nextQueue.push(currNode.right);
+            }
+
+        }
+
+        queue = nextQueue;
+
+    }
+
+    return res;
+    
 };
