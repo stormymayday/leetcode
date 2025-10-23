@@ -20,31 +20,24 @@ function goodNodes(root: TreeNode | null): number {
         return count;
     }
 
-    let queue: [TreeNode, number][] = [[root, root.val]];
-    while (queue.length > 0) {
+    const stack: [TreeNode, number][] = [[root, root.val]];
 
-        const nextQueue: [TreeNode, number][] = [];
+    while(stack.length > 0) {
 
-        for (let i = 0; i < queue.length; i += 1) {
+        let [currNode, currMax] = stack.pop();
 
-            let [currNode, currMax] = queue[i];
-
-            if(currNode.val >= currMax) {
-                count += 1;
-                currMax = currNode.val;
-            }
-
-            if(currNode.left !== null) {
-                nextQueue.push([currNode.left, currMax]);
-            }
-
-            if(currNode.right !== null) {
-                nextQueue.push([currNode.right, currMax]);
-            }
-            
+        if(currNode.val >= currMax) {
+            count += 1;
+            currMax = currNode.val;
         }
 
-        queue = nextQueue;
+        if(currNode.left !== null) {
+            stack.push([currNode.left, currMax]);
+        }
+
+        if(currNode.right !== null) {
+            stack.push([currNode.right, currMax]);
+        }
 
     }
 
