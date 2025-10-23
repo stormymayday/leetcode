@@ -25,7 +25,8 @@ function construct(grid: number[][]): _Node | null {
         
         // Optinal Base Case: length is 1
         if(length === 1) {
-            const value = grid[startRow][startCol] === 1 ? true : false;
+            // const value = grid[startRow][startCol] === 1 ? true : false;
+            const value = grid[startRow][startCol] === 1;
             return new _Node(value, true);
         }
 
@@ -43,7 +44,8 @@ function construct(grid: number[][]): _Node | null {
 
         // Base Case: value is same, create a leaf node
         if(isSame === true) {
-            const value = firstVal === 1 ? true : false;
+            // const value = firstVal === 1 ? true : false;
+            const value = grid[startRow][startCol] === 1;
             return new _Node(value, true);
         }
 
