@@ -22,43 +22,39 @@
 function construct(grid: number[][]): _Node | null {
 
     function helper(length: number, startRow: number, startCol: number): _Node | null {
-        
-        // Optinal Base Case: length is 1
-        if(length === 1) {
-            // const value = grid[startRow][startCol] === 1 ? true : false;
+
+        // Base Case: Return a leaf node if the matrix size is one
+        if (length === 1) {
+            // slick type comparison
             const value = grid[startRow][startCol] === 1;
             return new _Node(value, true);
         }
 
-        // Check if all values in this quadrant are the same
-        let isSame: boolean = true;
-        const firstVal = grid[startRow][startCol]
-        outer: for(let row = startRow; row < startRow + length; row += 1) {
-            for(let col = startCol; col < startCol + length; col += 1) {
-                if(grid[row][col] !== firstVal) {
-                    isSame = false;
-                    break outer;
-                }
-            }
+        // Recursive calls to the four sub-matrices.
+        const newLength = length / 2; // don't need to floor, length is always even
+        const topLeft = helper(newLength, startRow, startCol);
+        const topRight = helper(newLength, startRow, startCol + newLength);
+        const bottomLeft = helper(newLength, startRow + newLength, startCol);
+        const bottomRight = helper(newLength, startRow + newLength, startCol + newLength);
+
+        // If the four returned nodes are leaf and have the same values
+        // Return a leaf node with the same value.
+        if (
+            (topLeft.isLeaf && topRight.isLeaf && bottomLeft.isLeaf && bottomRight.isLeaf) &&
+            (
+                (topLeft.val === topRight.val) &&
+                (topRight.val === bottomLeft.val) &&
+                (bottomLeft.val === bottomRight.val)
+            )
+        ) {
+            return new _Node(topLeft.val, true);
+        }
+        // Otherwise, the nodes aren't identical, return a non-leaf node with corresponding child pointers.
+        else {
+            // first argument, value is arbitrarily 'false'
+            return new _Node(false, false, topLeft, topRight, bottomLeft, bottomRight);
         }
 
-        // Base Case: value is same, create a leaf node
-        if(isSame === true) {
-            // const value = firstVal === 1 ? true : false;
-            const value = grid[startRow][startCol] === 1;
-            return new _Node(value, true);
-        }
-
-        // Otherwise, it's not a leaf, create a parent node
-        const node = new _Node(false, false); // value does not matter, arbitrarily set to 'false'
-        // const newLength = Math.floor(length / 2); // do we need to floor if length is always even?
-        const newLength = length / 2; // apparently we don't need to floor
-        node.topLeft = helper(newLength, startRow, startCol);
-        node.topRight = helper(newLength, startRow, startCol + newLength);
-        node.bottomLeft = helper(newLength, startRow + newLength, startCol);
-        node.bottomRight = helper(newLength, startRow + newLength, startCol + newLength);
-
-        return node;
     }
 
     return helper(grid.length, 0, 0);
