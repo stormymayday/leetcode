@@ -20,15 +20,12 @@ function goodNodes(root: TreeNode | null): number {
             return 0;
         }
 
-        let count = 0;
-        if(node.val >= max) {
-            count += 1;
-            count += helper(node.left, node.val);
-            count += helper(node.right, node.val);
-        } else {
-            count += helper(node.right, max);
-            count += helper(node.left, max);
-        }
+        let count =  node.val >= max ? 1 : 0;
+        const newMax = Math.max(max, node.val);
+        
+        count += helper(node.left, newMax);
+        count += helper(node.right, newMax);
+
         return count;
 
     }
