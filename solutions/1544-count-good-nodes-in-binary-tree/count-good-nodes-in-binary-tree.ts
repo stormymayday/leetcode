@@ -14,31 +14,57 @@
 
 function goodNodes(root: TreeNode | null): number {
 
-    // Global = bad! Will need to refactor
     let count = 0;
 
-    if(root === null) {
+    if (root === null) {
         return count;
     }
 
-    // Top Down Recrsion
-    function helper(node: TreeNode | null, max: number): number {
-        if(node === null) {
-            return 0;
+    let queue: [TreeNode, number][] = [[root, root.val]];
+    while (queue.length > 0) {
+
+        const nextQueue: [TreeNode, number][] = [];
+
+        for (let i = 0; i < queue.length; i += 1) {
+
+            const [currNode, currMax] = queue[i];
+
+            // current value is greater or equal than current max
+            if (currNode.val >= currMax) {
+
+                // increment the count and update the current max
+
+                count += 1;
+
+                if (currNode.left !== null) {
+                    nextQueue.push([currNode.left, currNode.val]);
+                }
+
+                if (currNode.right !== null) {
+                    nextQueue.push([currNode.right, currNode.val]);
+                }
+
+            }
+            // current value is less than current max
+            else {
+
+                // keep current max the same
+
+                if (currNode.left !== null) {
+                    nextQueue.push([currNode.left, currMax]);
+                }
+
+                if (currNode.right !== null) {
+                    nextQueue.push([currNode.right, currMax]);
+                }
+
+            }
+
         }
 
-        if(node.val >= max) {
-            count += 1;
-            helper(node.left, node.val);
-            helper(node.right, node.val);
-        } else {
-            helper(node.right, max);
-            helper(node.left, max);
-        }
+        queue = nextQueue;
 
     }
-
-    helper(root, root.val);
 
     return count;
 
