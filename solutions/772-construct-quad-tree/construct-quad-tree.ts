@@ -21,46 +21,38 @@
 
 function construct(grid: number[][]): _Node | null {
 
-    if(grid.length === 0) {
-        return null;
-    }
+    function helper(length: number, startRow: number, startCol: number): _Node | null {
+        
+        // another base case if length is 1?
 
-    function helper(grid: number[][], rowStart: number, rowEnd: number, colStart: number, colEnd: number): _Node | null {
-
-        // traverse the grid to see if all values in this region are the same
-        let val = grid[rowStart][colStart];
-        let isLeaf = true;
-        outer: for(let row = rowStart; row <= rowEnd; row += 1) {
-            for(let col = colStart; col <= colEnd; col += 1) {
-                if(val !== grid[row][col]) {
-                    isLeaf = false;
+        let isSame: boolean = true;
+        outer: for(let row = startRow; row < startRow + length; row += 1) {
+            for(let col = startCol; col < startCol + length; col += 1) {
+                if(grid[row][col] !== grid[startRow][startCol]) {
+                    isSame = false;
                     break outer;
                 }
             }
         }
 
-        // Base Case: all values are the same, it's a leaf
-        if(isLeaf === true) {
-            const nodeVal: boolean = val === 1 ? true : false;
-            return new _Node(nodeVal, true); // value, isLeaf
+        // Base Case: value is same, create a leaf node
+        if(isSame === true) {
+            const value = grid[startRow][startCol] === 1 ? true : false;
+            return new _Node(value, true);
         }
 
-        // Otherwise, it's not a leaf, create a new node and divide grid into 4 quadrants
-        const node = new _Node(false, false); // val is false (arbitrarily), isLeaf is false
-
-        // Key! 
-        const rowMid = Math.floor((rowStart + rowEnd) / 2);
-        const colMid = Math.floor((colStart + colEnd) / 2);
-
-        node.topLeft = helper(grid, rowStart, rowMid, colStart, colMid);
-        node.topRight = helper(grid, rowStart, rowMid, colMid + 1, colEnd);
-        node.bottomLeft = helper(grid, rowMid + 1, rowEnd, colStart, colMid);
-        node. bottomRight = helper(grid, rowMid + 1, rowEnd, colMid + 1, colEnd);
+        // Otherwise, it's not a leaf, create a parent node
+        const node = new _Node(false, false); // value does not matter, arbitrarily set to 'false'
+        // const newLength = Math.floor(length / 2);
+        const newLength = length / 2; // do we need to floor if length is always even?
+        node.topLeft = helper(newLength, startRow, startCol);
+        node.topRight = helper(newLength, startRow, startCol + newLength);
+        node.bottomLeft = helper(newLength, startRow + newLength, startCol);
+        node.bottomRight = helper(newLength, startRow + newLength, startCol + newLength);
 
         return node;
-
     }
 
-    return helper(grid, 0, grid.length - 1, 0, grid.length - 1);
+    return helper(grid.length, 0, 0);
 
 };
