@@ -14,22 +14,40 @@
 
 function goodNodes(root: TreeNode | null): number {
 
-    // Top Down Recrsion
-    function helper(node: TreeNode | null, max: number): number {
-        if(node === null) {
-            return 0;
+    let count = 0;
+
+    if (root === null) {
+        return count;
+    }
+
+    let queue: [TreeNode, number][] = [[root, root.val]];
+    while (queue.length > 0) {
+
+        const nextQueue: [TreeNode, number][] = [];
+
+        for (let i = 0; i < queue.length; i += 1) {
+
+            let [currNode, currMax] = queue[i];
+
+            if(currNode.val >= currMax) {
+                count += 1;
+                currMax = currNode.val;
+            }
+
+            if(currNode.left !== null) {
+                nextQueue.push([currNode.left, currMax]);
+            }
+
+            if(currNode.right !== null) {
+                nextQueue.push([currNode.right, currMax]);
+            }
+            
         }
 
-        let count =  node.val >= max ? 1 : 0;
-        const newMax = Math.max(max, node.val);
-        
-        count += helper(node.left, newMax);
-        count += helper(node.right, newMax);
-
-        return count;
+        queue = nextQueue;
 
     }
 
-    return helper(root, root.val);
+    return count;
 
 };
