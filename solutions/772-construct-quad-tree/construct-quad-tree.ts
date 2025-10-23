@@ -23,12 +23,18 @@ function construct(grid: number[][]): _Node | null {
 
     function helper(length: number, startRow: number, startCol: number): _Node | null {
         
-        // another base case if length is 1?
+        // Optinal Base Case: length is 1
+        if(length === 1) {
+            const value = grid[startRow][startCol] === 1 ? true : false;
+            return new _Node(value, true);
+        }
 
+        // Check if all values in this quadrant are the same
         let isSame: boolean = true;
+        const firstVal = grid[startRow][startCol]
         outer: for(let row = startRow; row < startRow + length; row += 1) {
             for(let col = startCol; col < startCol + length; col += 1) {
-                if(grid[row][col] !== grid[startRow][startCol]) {
+                if(grid[row][col] !== firstVal) {
                     isSame = false;
                     break outer;
                 }
@@ -37,14 +43,14 @@ function construct(grid: number[][]): _Node | null {
 
         // Base Case: value is same, create a leaf node
         if(isSame === true) {
-            const value = grid[startRow][startCol] === 1 ? true : false;
+            const value = firstVal === 1 ? true : false;
             return new _Node(value, true);
         }
 
         // Otherwise, it's not a leaf, create a parent node
         const node = new _Node(false, false); // value does not matter, arbitrarily set to 'false'
-        // const newLength = Math.floor(length / 2);
-        const newLength = length / 2; // do we need to floor if length is always even?
+        // const newLength = Math.floor(length / 2); // do we need to floor if length is always even?
+        const newLength = length / 2; // apparently we don't need to floor
         node.topLeft = helper(newLength, startRow, startCol);
         node.topRight = helper(newLength, startRow, startCol + newLength);
         node.bottomLeft = helper(newLength, startRow + newLength, startCol);
