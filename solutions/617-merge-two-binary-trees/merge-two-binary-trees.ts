@@ -18,12 +18,7 @@ function mergeTrees(root1: TreeNode | null, root2: TreeNode | null): TreeNode | 
         return null;
     }
 
-    const node = new TreeNode();
-    if(root1 !== null && root2 !== null) {
-        node.val = root1.val + root2.val;
-    } else {
-        node.val = root1 !== null ? root1.val : root2.val;
-    }
+    const node = new TreeNode((root1 !== null ? root1.val : 0) + (root2 !== null ? root2.val : 0));
 
     node.left = mergeTrees(root1 !== null ? root1.left : null, root2 !== null ? root2.left : null);
     node.right = mergeTrees(root1 !== null ? root1.right : null, root2 !== null ? root2.right : null);
