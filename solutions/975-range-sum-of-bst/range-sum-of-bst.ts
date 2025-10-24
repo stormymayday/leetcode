@@ -20,21 +20,31 @@ function rangeSumBST(root: TreeNode | null, low: number, high: number): number {
         return sum;
     }
 
-    const stack: TreeNode[] = [root];
-    while(stack.length > 0) {
-        const currNode = stack.pop();
+    let queue: TreeNode[] = [root];
+    while(queue.length > 0) {
+        
+        const nextQueue: TreeNode[] = [];
 
-        if(currNode.val >= low && currNode.val <= high) {
-            sum += currNode.val;
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const currNode = queue[i];
+
+            if(currNode.val >= low && currNode.val <= high) {
+                sum += currNode.val;
+            }
+
+            if(currNode.val > low && currNode.left !== null) {
+                nextQueue.push(currNode.left);
+            }
+
+            if(currNode.val < high && currNode.right !== null) {
+                nextQueue.push(currNode.right);
+            }
+
         }
 
-        if(currNode.val > low && currNode.left !== null) {
-            stack.push(currNode.left);
-        }
+        queue = nextQueue;
 
-        if(currNode.val < high && currNode.right !== null) {
-            stack.push(currNode.right);
-        }
     }
 
     return sum;
