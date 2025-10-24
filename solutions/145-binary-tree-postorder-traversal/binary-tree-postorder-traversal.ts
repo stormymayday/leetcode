@@ -16,35 +16,36 @@ function postorderTraversal(root: TreeNode | null): number[] {
 
     const res: number[] = [];
 
-    if (root === null) {
+    if(root === null) {
         return res;
     }
 
-    const stack: TreeNode[] = [root];
-    const visited: boolean[] = [false];
+    const stack: [TreeNode, boolean][] = [[root, false]];
 
-    while (stack.length > 0) {
+    while(stack.length > 0) {
 
-        const currNode = stack.pop();
-        const wasVisited = visited.pop();
+        const [currNode, visited] = stack.pop();
 
-        if (wasVisited === true) {
+        if(visited === true) {
+
             res.push(currNode.val);
+
         } else {
 
-            stack.push(currNode);
-            visited.push(true);
+            stack.push([currNode, true]);
 
-            if (currNode.right !== null) {
-                stack.push(currNode.right);
-                visited.push(false);
+            if(currNode.right !== null) {
+                stack.push([currNode.right, false]);
             }
-            if (currNode.left !== null) {
-                stack.push(currNode.left);
-                visited.push(false);
+
+            if(currNode.left !== null) {
+                stack.push([currNode.left, false]);
             }
+
         }
+
     }
 
     return res;
+    
 };
