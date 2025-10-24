@@ -22,30 +22,38 @@ function mergeTrees(root1: TreeNode | null, root2: TreeNode | null): TreeNode | 
         return root1;
     }
 
-    const newTree = new TreeNode(0);
-    let queue: [TreeNode, TreeNode, TreeNode][] = [[newTree, root1, root2]];
+    let queue: [TreeNode, TreeNode][] = [[root1, root2]];
 
     while(queue.length > 0) {
 
-        const nextQueue: [TreeNode, TreeNode, TreeNode][] = [];
+        const nextQueue: [TreeNode, TreeNode][] = [];
 
         for(let i = 0; i < queue.length; i += 1) {
 
-            const [resultNode, node1, node2] = queue[i];
+            const [node1, node2] = queue[i];
 
-            resultNode.val = node1.val + node2.val;
+            node1.val = node1.val + node2.val;
 
             if(node1.left !== null || node2.left !== null) {
-                const resultLeft = new TreeNode(0);
-                resultNode.left = resultLeft;
-                nextQueue.push([resultLeft, node1.left || new TreeNode(0), node2.left || new TreeNode(0)]);
+
+                const newNode = new TreeNode(0);
+                if(node1.left === null) {
+                    node1.left = newNode;
+                }
+                nextQueue.push([node1.left, node2.left || newNode]);
+
             }
 
             if(node1.right !== null || node2.right !== null) {
-                const resultRight = new TreeNode(0);
-                resultNode.right = resultRight;
-                nextQueue.push([resultRight, node1.right || new TreeNode(0), node2.right || new TreeNode(0)]);
+
+                const newNode = new TreeNode(0);
+                if(node1.right === null) {
+                    node1.right = newNode;
+                }
+                nextQueue.push([node1.right, node2.right || newNode]);
+
             }
+
 
         }
 
@@ -53,6 +61,6 @@ function mergeTrees(root1: TreeNode | null, root2: TreeNode | null): TreeNode | 
 
     }
 
-    return newTree;
+    return root1;
     
 };
