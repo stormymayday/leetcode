@@ -38,8 +38,9 @@ function rob(root: TreeNode | null): number {
         return [withRoot, withoutRoot];
     }
 
-    const [maxWithRoot, maxWithoutRoot] = helper(root);
+    // const [maxWithRoot, maxWithoutRoot] = helper(root);
+    // return maxWithRoot > maxWithoutRoot ? maxWithRoot : maxWithoutRoot;
 
-    return maxWithRoot > maxWithoutRoot ? maxWithRoot : maxWithoutRoot;
+    return Math.max(...helper(root));
     
 };
