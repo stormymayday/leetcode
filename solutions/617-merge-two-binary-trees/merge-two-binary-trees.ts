@@ -14,22 +14,56 @@
 
 function mergeTrees(root1: TreeNode | null, root2: TreeNode | null): TreeNode | null {
 
-    if(!root1 && !root2) {
-        return null;
+    if(root1 === null) {
+        return root2;
     }
 
-    const root = new TreeNode();
-    if(root1 !== null && root2 !== null) {
-        root.val = root1.val + root2.val;
-    } else if(!root1) {
-        root.val = root2.val;
-    } else {
-        root.val = root1.val;
+    if(root2 === null) {
+        return root1;
     }
 
-    root.left = mergeTrees(root1?.left || null, root2?.left || null);
-    root.right = mergeTrees(root1?.right || null, root2?.right || null);
+    let queue: [TreeNode, TreeNode][] = [[root1, root2]];
 
-    return root;
+    while(queue.length > 0) {
+
+        const nextQueue: [TreeNode, TreeNode][] = [];
+
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const [node1, node2] = queue[i];
+
+            node1.val = node1.val + node2.val;
+
+            if(node1.left !== null && node2.left !== null) {
+                nextQueue.push([node1.left, node2.left]);
+            } else if(node1.left === null && node2.left !== null) {
+                const newNode = new TreeNode(0);
+                node1.left = newNode;
+                nextQueue.push([node1.left, node2.left]);
+            } else if(node1.left !== null && node2.left === null) {
+                const newNode = new TreeNode(0);
+                node2.left = newNode;
+                nextQueue.push([node1.left, node2.left]);
+            }
+
+            if(node1.right !== null && node2.right !== null) {
+                nextQueue.push([node1.right, node2.right]);
+            } else if(node1.right === null && node2.right !== null) {
+                const newNode = new TreeNode(0);
+                node1.right = newNode;
+                nextQueue.push([node1.right, node2.right]);
+            } else if(node1.right !== null && node2.right === null) {
+                const newNode = new TreeNode(0);
+                node2.right = newNode;
+                nextQueue.push([node1.right, node2.right]);
+            }
+
+        }
+
+        queue = nextQueue;
+
+    }
+
+    return root1;
     
 };
