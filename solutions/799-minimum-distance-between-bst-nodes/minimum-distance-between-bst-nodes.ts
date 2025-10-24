@@ -15,25 +15,22 @@
 function minDiffInBST(root: TreeNode | null): number {
 
     let minDiff = Infinity;
-
-    function inorderDFS(node: TreeNode | null, prev: TreeNode | null): TreeNode | null {
-
+    const inorder: number[] = [];
+    function inorderDFS(node: TreeNode | null): void {
         if(node === null) {
-            return prev;
+            return;
         }
-
-        const prevNode = inorderDFS(node.left, prev);
-
-        if(prevNode !== null) {
-            minDiff = Math.min(minDiff, Math.abs(node.val - prevNode.val));
-        }
-
-        return inorderDFS(node.right, node);
-
+        inorderDFS(node.left);
+        inorder.push(node.val);
+        inorderDFS(node.right);
     }
-
-    inorderDFS(root, null);
-
+    inorderDFS(root);
+    for (let i = 0; i < inorder.length - 1; i += 1) {
+        // Redundant check
+        // if (i + 1 <= inorder.length - 1) {
+            minDiff = Math.min(minDiff, Math.abs(inorder[i] - inorder[i + 1]));
+        // }
+    }
     return minDiff;
-    
+
 };
