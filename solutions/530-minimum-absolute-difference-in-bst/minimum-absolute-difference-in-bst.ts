@@ -13,31 +13,25 @@
  */
 
 function getMinimumDifference(root: TreeNode | null): number {
-
     let minDiff = Infinity;
 
-    // Returns the previous node 
-    function inorderDFS(node: TreeNode | null, prev: TreeNode | null): TreeNode | null {
+    const inorder: number[] = [];
 
-        // Base Case
+    function inorderDFS(node: TreeNode | null): void {
         if (node === null) {
-            return prev; // Important! Must return 'prev'
+            return;
         }
+        inorderDFS(node.left);
+        inorder.push(node.val);
+        inorderDFS(node.right);
+    }
+    inorderDFS(root);
 
-        // Recurse left with default 'prev' to get previous node for the current node
-        const prevNode = inorderDFS(node.left, prev);
+    for (let i = 0; i < inorder.length - 1; i += 1) {
 
-        // Check if prevNode is not null
-        if (prevNode !== null) {
-            // Update minDiff using prevNode's val
-            minDiff = Math.min(minDiff, Math.abs(node.val - prevNode.val));
-        }
-
-        // Recurse right with current node as 'prev'
-        return inorderDFS(node.right, node);
+        minDiff = Math.min(minDiff, inorder[i + 1] - inorder[i]);
 
     }
-    inorderDFS(root, null);
-    return minDiff;
 
+    return minDiff;
 };
