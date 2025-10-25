@@ -17,53 +17,47 @@
  */
 function recoverTree(root: TreeNode | null): void {
 
-    if (root === null) {
+    if(root === null) {
         return;
     }
 
-    const inorder: TreeNode[] = [];
-
-    function inorderDFS(node: TreeNode | null): void {
-        if (node === null) {
-            return;
-        }
-        inorderDFS(node.left);
-        inorder.push(node);
-        inorderDFS(node.right);
-    }
-
-    inorderDFS(root);
-
     let node1: TreeNode | null = null;
     let node2: TreeNode | null = null;
-    for (let i = 0; i < inorder.length - 1; i += 1) {
 
-        // Found a node(s) that is not in order
-        if (inorder[i].val > inorder[i + 1].val) {
-            // First discrepancy, setting both nodes incase only these two adjacent nodes need to be swapped
-            // Example: [1, 3, 2, 4] -> 3 and 2
-            if (node1 === null) {
-                node1 = inorder[i]; // will stay the same
-                node2 = inorder[i + 1]; // can change if another discrepancy is found
-            }
-            // Second discrepancy, not adjacent nodes
-            // Example [4, 2, 3, 1] -> 4 and 1
-            // Initially, node1 -> 4 and node2 -> 2
-            // Second time: (comparing 3 and 1) node1 -> 4 and node -> 1
-            else {
-                node2 = inorder[i + 1];
-                break; // there can only be two discrepancies at most
-            }
+    function inorderDFS(node: TreeNode | null, prev: TreeNode | null): TreeNode | null {
 
+        if(node === null) {
+            return prev; // IMPORTANT! must return 'prev'
         }
+
+        const prevNode = inorderDFS(node.left, prev);
+
+        if(prevNode !== null) {
+            // Discrepancy found!
+            if(prevNode.val > node.val) {
+                // First time: set both
+                if(node1 === null) {
+                    node1 = prevNode;
+                    node2 = node;
+                } 
+                // Second time: update second
+                else {
+                    node2 = node;
+                }
+            }
+        }
+
+        return inorderDFS(node.right, node);
 
     }
 
-    // Optional Guard Statement
-    if (node1 !== null && node2 !== null) {
+    inorderDFS(root, null);
+
+    // Optional Guard
+    if(node1 !== null && node2 !== null) {
         const temp = node1.val;
         node1.val = node2.val;
         node2.val = temp;
     }
-
+    
 };
