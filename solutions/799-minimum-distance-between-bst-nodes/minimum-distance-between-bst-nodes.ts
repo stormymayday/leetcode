@@ -18,14 +18,15 @@ function minDiffInBST(root: TreeNode | null): number {
 
     const inorder: number[] = [];
 
-    (function inorderDFS(node: TreeNode | null): void {
+    function inorderDFS(node: TreeNode | null): void {
         if(node === null) {
             return;
         }
         inorderDFS(node.left);
         inorder.push(node.val);
         inorderDFS(node.right);
-    })(root);
+    }
+    inorderDFS(root);
 
     for(let i = 0; i < inorder.length - 1; i += 1) {
 
