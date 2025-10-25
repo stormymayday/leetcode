@@ -23,35 +23,35 @@ function recoverTree(root: TreeNode | null): void {
 
     let node1: TreeNode | null = null;
     let node2: TreeNode | null = null;
-
-    function inorderDFS(node: TreeNode | null, prev: TreeNode | null): TreeNode | null {
-
-        if(node === null) {
-            return prev; // IMPORTANT! must return 'prev'
+    let prev: TreeNode | null = null;
+    let curr: TreeNode | null = root;
+    const stack: TreeNode[] = [];
+    while(curr !== null || stack.length > 0) {
+        while(curr !== null) {
+            stack.push(curr);
+            curr = curr.left;
         }
+        curr = stack.pop()!;
 
-        const prevNode = inorderDFS(node.left, prev);
-
-        if(prevNode !== null) {
+        if(prev !== null) {
             // Discrepancy found!
-            if(prevNode.val > node.val) {
-                // First time: set both
+            if(prev.val > curr.val) {
+                // First time: set both node1 and node2
                 if(node1 === null) {
-                    node1 = prevNode;
-                    node2 = node;
+                    node1 = prev;
+                    node2 = curr;
                 } 
-                // Second time: update second
+                // Second time: update node2
                 else {
-                    node2 = node;
+                    node2 = curr;
+                    break;
                 }
             }
         }
 
-        return inorderDFS(node.right, node);
-
+        prev = curr;
+        curr = curr.right;
     }
-
-    inorderDFS(root, null);
 
     // Optional Guard
     if(node1 !== null && node2 !== null) {
