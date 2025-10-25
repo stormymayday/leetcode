@@ -15,19 +15,22 @@
 function getMinimumDifference(root: TreeNode | null): number {
     let minDiff = Infinity;
     let prev: TreeNode | null = null;
-    function inorderDFS(node: TreeNode | null): void {
-        if (node === null) {
-            return;
+    let curr: TreeNode | null = root;
+    const stack: TreeNode[] = [];
+    while(curr !== null || stack.length > 0){
+        while(curr !== null) {
+            stack.push(curr);
+            curr = curr.left;
         }
-        inorderDFS(node.left);
+        curr = stack.pop()!;
 
-        if (prev !== null) {
-            minDiff = Math.min(minDiff, node.val - prev.val);
+        if(prev !== null) {
+            minDiff = Math.min(minDiff, curr.val - prev.val);
         }
-        prev = node;
-        inorderDFS(node.right);
+
+        prev = curr;
+        curr = curr.right;
     }
-    inorderDFS(root);
 
     return minDiff;
 };
