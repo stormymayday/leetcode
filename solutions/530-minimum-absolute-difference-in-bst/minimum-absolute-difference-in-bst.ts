@@ -14,24 +14,20 @@
 
 function getMinimumDifference(root: TreeNode | null): number {
     let minDiff = Infinity;
-
-    const inorder: number[] = [];
-
+    let prev: TreeNode | null = null;
     function inorderDFS(node: TreeNode | null): void {
         if (node === null) {
             return;
         }
         inorderDFS(node.left);
-        inorder.push(node.val);
+
+        if (prev !== null) {
+            minDiff = Math.min(minDiff, node.val - prev.val);
+        }
+        prev = node;
         inorderDFS(node.right);
     }
     inorderDFS(root);
-
-    for (let i = 0; i < inorder.length - 1; i += 1) {
-
-        minDiff = Math.min(minDiff, inorder[i + 1] - inorder[i]);
-
-    }
 
     return minDiff;
 };
