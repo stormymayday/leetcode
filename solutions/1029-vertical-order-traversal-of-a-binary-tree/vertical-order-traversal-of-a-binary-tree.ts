@@ -13,71 +13,73 @@
  */
 
 function verticalTraversal(root: TreeNode | null): number[][] {
+
     const res: number[][] = [];
 
-    if (root === null) {
+    if(root === null) {
         return res;
     }
 
+    // Phase 1: BFS
     let queue: [TreeNode, number, number][] = [[root, 0, 0]]; // [node, row, col]
-
-    // Maps column numbers to [row, value] pairs
-    const colToRowVal = new Map<number, [number, number][]>();
-
-    // Will help to iterate over the hashmap and fill up the result in O(n) time
+    const colToRowVals = new Map<number, [number, number][]>();
     let minCol: number = 0;
     let maxCol: number = 0;
+    while(queue.length > 0) {
 
-    // Phase 1: BFS
-    while (queue.length > 0) {
-        const nextQueue: [TreeNode, number, number][] = [];
+        let nextQueue: [TreeNode, number, number][] = [];
 
-        for (let i = 0; i < queue.length; i += 1) {
+        for(let i = 0; i < queue.length; i += 1) {
+
             const [currNode, currRow, currCol] = queue[i];
 
+            // Update min and max column boundaries
             minCol = Math.min(minCol, currCol);
             maxCol = Math.max(maxCol, currCol);
 
-            if (!colToRowVal.has(currCol)) {
-                colToRowVal.set(currCol, []);
+            // Create / update hash map entry for this column
+            if(!colToRowVals.has(currCol)) {
+                colToRowVals.set(currCol, []);
             }
-            colToRowVal.get(currCol).push([currRow, currNode.val]);
+            colToRowVals.get(currCol).push([currRow, currNode.val]);
 
-            if (currNode.left !== null) {
+            // Prepare nextQueue
+            if(currNode.left !== null) {
                 nextQueue.push([currNode.left, currRow + 1, currCol - 1]);
             }
-
-            if (currNode.right !== null) {
+            if(currNode.right !== null) {
                 nextQueue.push([currNode.right, currRow + 1, currCol + 1]);
             }
+
         }
 
         queue = nextQueue;
+
     }
 
-    // Extra Step: Sorting by row / value
-    for(const rowValuePairs of colToRowVal.values()) {
+    // Phase 2: sort the entries
+    // - First by row
+    // - If rows are the same, by value
+    for(const rowValuePairs of colToRowVals.values()) {
         rowValuePairs.sort((a, b) => {
-             // Sort by row if different
+            // try sorting rows (index 0) first
             if(a[0] !== b[0]) {
                 return a[0] - b[0];
-            } 
-            // Otherwise, sort by value (row is the same)
+            }
+            // otherwise, sort by values (index 1)
             else {
                 return a[1] - b[1];
             }
         });
     }
 
-    // Phase 2: fill up the result
-    for (let col = minCol; col <= maxCol; col += 1) {
-        const rowValuePairs = colToRowVal.get(col)!;
-        const values: number[] = [];
-        for(const [row,value] of rowValuePairs) {
-            values.push(value);
-        }
+    // Phase 3: fill out the result
+    for(let col = minCol; col <= maxCol; col += 1) {
+        // [[row, value], [row, value], ...]
+        const sortedRowValuePairs = colToRowVals.get(col);
+        const values = sortedRowValuePairs.map(([row, value]) => value);
         res.push(values);
     }
-
     return res;
+    
 };
