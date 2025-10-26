@@ -38,8 +38,7 @@ function replaceValueInTree(root: TreeNode | null): TreeNode | null {
         }
 
         // Second pass: update the values
-        
-        // Forumla: value = levelSum - (currNode.val + siblingVal (if exists))
+        // Forumla: value = levelSum - (currNode.val - siblingVal (if exists))
         // Copying node values into a separate array (sibling values)
         const levelValues = queue.map(([node]) => node.val);
         for(let i = 0; i < queue.length; i += 1) {
