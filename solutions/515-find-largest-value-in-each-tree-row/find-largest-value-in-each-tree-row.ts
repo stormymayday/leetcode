@@ -20,29 +20,23 @@ function largestValues(root: TreeNode | null): number[] {
         return res;
     }
 
-    function dfs(node: TreeNode | null, level: number): void {
-
-        if(node === null) {
-            return;
-        }
-
-        // if(res[level] === undefined) {
-        //     res[level] = node.val;
-        // } else {
-        //     res[level] = Math.max(res[level], node.val);
-        // }
-
-        if(res.length === level) {
-            res.push(node.val)
+    const stack: [TreeNode, number][] = [[root, 0]];
+    while(stack.length > 0) {
+        const [currNode, currLevel] = stack.pop();
+        
+        if(res.length === currLevel) {
+            res.push(currNode.val);
         } else {
-            res[level] = Math.max(res[level], node.val);
+            res[currLevel] = Math.max(res[currLevel], currNode.val);
         }
 
-        dfs(node.left, level + 1);
-        dfs(node.right, level + 1);
-
-    };
-    dfs(root, 0);
+        if(currNode.left !== null) {
+            stack.push([currNode.left, currLevel + 1]);
+        }
+        if(currNode.right !== null) {
+            stack.push([currNode.right, currLevel + 1]);
+        }
+    }
 
     return res;
     
