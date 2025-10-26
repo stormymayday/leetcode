@@ -13,25 +13,40 @@
  */
 
 function largestValues(root: TreeNode | null): number[] {
-    const result = [];
+
+    const res: number[] = [];
+
     if(root === null) {
-        return result;
+        return res;
     }
-    const queue = [root];
+
+    let queue: TreeNode[] = [root];
+
     while(queue.length > 0) {
-        const level = [];
-        const queueLength = queue.length;
-        for(let i = 0; i < queueLength; i += 1) {
-            const current = queue.shift();
-            level.push(current.val);
-            if(current.left) {
-                queue.push(current.left);
+
+        const nextQueue: TreeNode[] = [];
+        let levelMax = -Infinity;
+
+        for(let i = 0; i < queue.length; i += 1) {
+
+            const currNode = queue[i];
+
+            levelMax = Math.max(levelMax, currNode.val);
+
+            if(currNode.left !== null) {
+                nextQueue.push(currNode.left);
             }
-            if(current.right) {
-                queue.push(current.right);
+            if(currNode.right !== null) {
+                nextQueue.push(currNode.right);
             }
+
         }
-        result.push(Math.max(...level));
+
+        res.push(levelMax);
+        queue = nextQueue;
+
     }
-    return result;
+
+    return res;
+    
 };
