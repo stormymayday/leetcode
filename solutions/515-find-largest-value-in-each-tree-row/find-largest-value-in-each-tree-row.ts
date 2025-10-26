@@ -20,32 +20,23 @@ function largestValues(root: TreeNode | null): number[] {
         return res;
     }
 
-    let queue: TreeNode[] = [root];
+    function dfs(node: TreeNode | null, level: number): void {
 
-    while(queue.length > 0) {
-
-        const nextQueue: TreeNode[] = [];
-        let levelMax = -Infinity;
-
-        for(let i = 0; i < queue.length; i += 1) {
-
-            const currNode = queue[i];
-
-            levelMax = Math.max(levelMax, currNode.val);
-
-            if(currNode.left !== null) {
-                nextQueue.push(currNode.left);
-            }
-            if(currNode.right !== null) {
-                nextQueue.push(currNode.right);
-            }
-
+        if(node === null) {
+            return;
         }
 
-        res.push(levelMax);
-        queue = nextQueue;
+        if(res[level] === undefined) {
+            res[level] = node.val;
+        } else {
+            res[level] = Math.max(res[level], node.val);
+        }
 
-    }
+        dfs(node.left, level + 1);
+        dfs(node.right, level + 1);
+
+    };
+    dfs(root, 0);
 
     return res;
     
