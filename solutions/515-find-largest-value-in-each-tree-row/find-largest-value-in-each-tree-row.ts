@@ -26,8 +26,14 @@ function largestValues(root: TreeNode | null): number[] {
             return;
         }
 
-        if(res[level] === undefined) {
-            res[level] = node.val;
+        // if(res[level] === undefined) {
+        //     res[level] = node.val;
+        // } else {
+        //     res[level] = Math.max(res[level], node.val);
+        // }
+
+        if(res.length === level) {
+            res.push(node.val)
         } else {
             res[level] = Math.max(res[level], node.val);
         }
