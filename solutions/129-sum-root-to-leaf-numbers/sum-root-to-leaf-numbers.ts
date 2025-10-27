@@ -19,9 +19,9 @@ function sumNumbers(root: TreeNode | null): number {
     if(root === null) {
         return sum;
     }
-    
-    // Phase 1: Get all the 'paths' using backtracking
+
     const allPaths: string[][] = [];
+
     function backtrack(node: TreeNode | null, path: string[]): void {
         if(node === null) {
             return;
@@ -29,17 +29,16 @@ function sumNumbers(root: TreeNode | null): number {
         if(node.left === null && node.right === null) {
             path.push(`${node.val}`);
             allPaths.push([...path]);
-            path.pop(); // backtrack
+            path.pop();
             return;
         }
         path.push(`${node.val}`);
         backtrack(node.left, path);
         backtrack(node.right, path);
-        path.pop(); // backtrack
+        path.pop();
     }
     backtrack(root, []);
-
-    // Phase 2: Get the sum by parsing 'allPaths'
+    
     for(const path of allPaths) {
         sum += Number(path.join(""));
     }
