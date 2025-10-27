@@ -20,28 +20,25 @@ function sumNumbers(root: TreeNode | null): number {
         return sum;
     }
 
-    const allPaths: string[][] = [];
-
-    function backtrack(node: TreeNode | null, path: string[]): void {
+    function preorderDFS(node: TreeNode | null, pathValue: number): void {
         if(node === null) {
             return;
         }
+
+        pathValue = pathValue * 10 + node.val;
+
         if(node.left === null && node.right === null) {
-            path.push(`${node.val}`);
-            allPaths.push([...path]);
-            path.pop();
+            sum += pathValue;
             return;
         }
-        path.push(`${node.val}`);
-        backtrack(node.left, path);
-        backtrack(node.right, path);
-        path.pop();
+        
+        preorderDFS(node.left, pathValue);
+        preorderDFS(node.right, pathValue);
+
     }
-    backtrack(root, []);
-    
-    for(const path of allPaths) {
-        sum += Number(path.join(""));
-    }
+
+    preorderDFS(root, 0);
+
     return sum;
     
 };
