@@ -1,64 +1,55 @@
 function validateBinaryTreeNodes(n: number, leftChild: number[], rightChild: number[]): boolean {
+    
+    // Children Hash Set, will help finding the root
+    const children = new Set<number>([...leftChild, ...rightChild]);
+    children.delete(-1);
 
-    const uf = new UnionFind(n);
-
-    for (let i = 0; i < n; i += 1) {
-
-        if (leftChild[i] !== -1) {
-            if (uf.union(i, leftChild[i]) === false) {
-                return false; // cycle
-            }
-        }
-
-        if (rightChild[i] !== -1) {
-            if (uf.union(i, rightChild[i]) === false) {
-                return false; // cycle
-            }
-        }
-
+    if(children.size === n) {
+        return false; // there is a cycle
     }
 
-    return uf.getNumComponents() === 1;
-
-};
-
-class UnionFind {
-    roots: Map<number, number>;
-    numComponents: number;
-    constructor(n: number) {
-        this.roots = new Map();
-        this.numComponents = n;
-        for (let i = 0; i < n; i += 1) {
-            this.roots.set(i, i);
+    // Number that is not in the 'children' hash set must be the root
+    let root: number = -1;
+    for(let i = 0; i < n; i += 1) {
+        if(!children.has(i)) {
+            root = i;
         }
     }
-    find(x: number): number {
-        const root = this.roots.get(x);
-        if (root !== x) {
-            this.roots.set(x, this.find(root));
-        }
-        return this.roots.get(x);
+
+    // Optional Guard
+    if(root === -1) {
+        return false;
     }
-    union(parent: number, child: number): boolean {
-        const parentRoot = this.find(parent);
-        const childRoot = this.find(child);
 
+    // visited hash set will help detect cycles and connectivity
+    const visited = new Set<number>();
+    function dfs(node: number): boolean {
 
-        if (
-            // Child must have been assigned a parent earlier, and thus child has multiple parents.
-            childRoot !== child ||
-            // If parent and child already belong to the same subset
-            // Then there must be a directed path from child to parent as parent must have been assigned to the subset of child earlier
-            // and thus there exists a cycle.
-            parentRoot === childRoot) {
+        // Base Case: reached 'null', so far it's a valid tree
+        if(node === -1) {
+            return true;
+        }
+
+        if(visited.has(node)) {
+            return false; // cycle
+        }
+
+        visited.add(node);
+        
+        const leftSubtree = dfs(leftChild[node]);
+        if(leftSubtree === false) {
             return false;
         }
 
-        this.roots.set(childRoot, parentRoot);
-        this.numComponents -= 1;
+        const rightSubtree = dfs(rightChild[node]);
+        if(rightSubtree === false) {
+            return false;
+        }
+
         return true;
+
     }
-    getNumComponents(): number {
-        return this.numComponents;
-    }
-}
+
+    return dfs(root) && visited.size === n;
+    
+};
