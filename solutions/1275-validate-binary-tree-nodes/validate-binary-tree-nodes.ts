@@ -24,15 +24,12 @@ function validateBinaryTreeNodes(n: number, leftChild: number[], rightChild: num
 
 class UnionFind {
     roots: Map<number, number>;
-    sizes: Map<number, number>;
     numComponents: number;
     constructor(n: number) {
         this.roots = new Map();
-        this.sizes = new Map();
         this.numComponents = n;
         for (let i = 0; i < n; i += 1) {
             this.roots.set(i, i);
-            this.sizes.set(i, 1);
         }
     }
     find(x: number): number {
@@ -46,8 +43,14 @@ class UnionFind {
         const parentRoot = this.find(parent);
         const childRoot = this.find(child);
 
-        // Tree constraint: child must not have a parent yet
-        if (childRoot !== child || parentRoot === childRoot) {
+
+        if (
+            // Child must have been assigned a parent earlier, and thus child has multiple parents.
+            childRoot !== child ||
+            // If parent and child already belong to the same subset
+            // Then there must be a directed path from child to parent as parent must have been assigned to the subset of child earlier
+            // and thus there exists a cycle.
+            parentRoot === childRoot) {
             return false;
         }
 
