@@ -18,46 +18,52 @@ function replaceValueInTree(root: TreeNode | null): TreeNode | null {
         return null;
     }
 
-    let queue: [TreeNode, TreeNode | null][] = [[root, null]];
+    const dummyNode = new TreeNode(-Infinity);
+    let queue: [TreeNode, TreeNode][] = [[root, dummyNode]];
 
     while(queue.length > 0) {
 
-        const nextQueue: [TreeNode, TreeNode | null][] = [];
+        const nextQueue: [TreeNode, TreeNode][] = [];
 
-        // First Pass: get the levelSum & prepare nextQueue
+        // First Pass: get the level sum and prepare next queue
         let levelSum: number = 0;
         for(let i = 0; i < queue.length; i += 1) {
-            const [currNode, parentNode] = queue[i];
+            const [currNode, parent] = queue[i];
+
             levelSum += currNode.val;
+            
             if(currNode.left !== null) {
                 nextQueue.push([currNode.left, currNode]);
             }
             if(currNode.right !== null) {
                 nextQueue.push([currNode.right, currNode]);
             }
+
         }
 
-        // Second pass: update the values
-        // Forumla: value = levelSum - (currNode.val - siblingVal (if exists))
-        // Copying node values into a separate array (sibling values)
-        const levelValues = queue.map(([node]) => node.val);
+        // Second Pass: modify the tree
+        // IMPORTANT: copy node values and with copies, otherwise, forumla does not work because sibling values change on the fly
+        const levelValues = queue.map(([node, parent]) => node.val);
         for(let i = 0; i < queue.length; i += 1) {
-            const [currNode, parentNode] = queue[i];
 
-            let siblingVal: number = 0;
+            const [currNode, parent] = queue[i];
 
-            // check if node has a left sibling
-            if(i > 0 && queue[i - 1][1] === parentNode) {
+            // Forumula: node.val = levelSum - node.val - siblingVal
+            let siblingVal = 0;
+
+            // check for left sibling
+            if(i > 0 && queue[i - 1][1] === parent) {
                 siblingVal = levelValues[i - 1];
             } 
-            // check if node has a right sibling
-            else if(i < queue.length - 1 && queue[i + 1][1] === parentNode) {
+            // check for right sibling
+            else if(i < queue.length - 1 && queue[i + 1][1] === parent) {
                 siblingVal = levelValues[i + 1];
-            } 
-            
-            currNode.val = levelSum - currNode.val - siblingVal;
-        }
+            }
 
+            currNode.val = levelSum - currNode.val - siblingVal;
+
+        }
+        
         queue = nextQueue;
 
     }
