@@ -20,20 +20,19 @@ function minDiffInBST(root: TreeNode | null): number {
         return minDiff;
     }
 
-    const inorder: number[] = [];
-    function inorderDFS(root: TreeNode | null): void {
-        if(root === null) {
+    let prev: TreeNode | null = null;
+    function inorderDFS(node: TreeNode | null): void {
+        if(node === null) {
             return;
         }
-        inorderDFS(root.left);
-        inorder.push(root.val);
-        inorderDFS(root.right);
+        inorderDFS(node.left);
+        if(prev !== null) {
+            minDiff = Math.min(minDiff, node.val - prev.val);
+        }
+        prev = node;
+        inorderDFS(node.right);
     }
     inorderDFS(root);
-
-    for(let i = 0; i < inorder.length - 1; i += 1) {
-        minDiff = Math.min(minDiff, inorder[i + 1] - inorder[i]);
-    }
 
     return minDiff;
 
