@@ -17,7 +17,7 @@
  */
 function recoverTree(root: TreeNode | null): void {
 
-    if(root === null) {
+    if (root === null) {
         return;
     }
 
@@ -26,27 +26,43 @@ function recoverTree(root: TreeNode | null): void {
 
     let prev: TreeNode | null = null;
     let curr: TreeNode | null = root;
-    const stack: TreeNode[] = [];
-    while(curr !== null || stack.length > 0) {
-        while(curr !== null) {
-            stack.push(curr);
-            curr = curr.left;
-        }
-        curr = stack.pop();
-        if(prev !== null && prev.val > curr.val) {
-            if(node1 === null) {
-                node1 = prev;
-                node2 = curr;
+    while (curr !== null) {
+        if (curr.left === null) {
+            if (prev !== null && prev.val > curr.val) {
+                if (node1 === null) {
+                    node1 = prev;
+                    node2 = curr;
+                } else {
+                    node2 = curr;
+                }
+            }
+            prev = curr;
+            curr = curr.right;
+        } else {
+            let predecessor = curr.left;
+            while (predecessor.right !== null && predecessor.right !== curr) {
+                predecessor = predecessor.right;
+            }
+            if (predecessor.right === null) {
+                predecessor.right = curr;
+                curr = curr.left;
             } else {
-                node2 = curr;
-                break;
+                predecessor.right = null;
+                if (prev !== null && prev.val > curr.val) {
+                    if (node1 === null) {
+                        node1 = prev;
+                        node2 = curr;
+                    } else {
+                        node2 = curr;
+                    }
+                }
+                prev = curr;
+                curr = curr.right;
             }
         }
-        prev = curr;
-        curr = curr.right;
     }
     const temp = node1.val;
     node1.val = node2.val;
     node2.val = temp;
-    
+
 };
