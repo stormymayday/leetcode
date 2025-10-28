@@ -13,48 +13,47 @@
  */
 
 function isCousins(root: TreeNode | null, x: number, y: number): boolean {
-
+    
     if(root === null) {
         return false;
     }
 
-    const dummyNode = new TreeNode(-Infinity);
-    let queue: [TreeNode, TreeNode][] = [[root, dummyNode]];
+    let foundOne: boolean = false;
+    let depthOne: number = -Infinity;
+    let parentOne: TreeNode | null;
 
-    while(queue.length > 0) {
+    function preorderDFS(node: TreeNode | null, depth: number, parent: TreeNode | null): boolean {
 
-        const nextQueue: [TreeNode, TreeNode][] = [];
-        let foundOne: boolean = false;
-        let parentOfFound: TreeNode | null = null;
-
-        for(let i = 0; i < queue.length; i += 1) {
-
-            const [currNode, parent] = queue[i];
-
-            if(currNode.val === x || currNode.val === y) {
-                if(foundOne === true) {
-                    return parentOfFound !== parent;
-                } else {
-                    foundOne = true;
-                    parentOfFound = parent;
-                }
-            }
-
-            if(currNode.left !== null) {
-                nextQueue.push([currNode.left, currNode]);
-            }
-            if(currNode.right !== null) {
-                nextQueue.push([currNode.right, currNode]);
-            }
-
-        }
-
-        if(foundOne === true) {
+        if(node === null) {
             return false;
         }
-        queue = nextQueue;
+
+        if(node.val === x || node.val === y) {
+            if(foundOne === true) {
+                return depth === depthOne && parent !== parentOne;
+            } else {
+
+                foundOne = true;
+                depthOne = depth;
+                parentOne = parent;
+
+            }
+        }
+
+        const leftSubtree = preorderDFS(node.left, depth + 1, node);
+        if(leftSubtree === true) {
+            return true;
+        }
+
+        const rightSubtree = preorderDFS(node.right, depth + 1, node);
+        if(rightSubtree === true) {
+            return true;
+        }
+
+        return false;
 
     }
 
-    return false;
+    return preorderDFS(root, 0, null);
+
 };
