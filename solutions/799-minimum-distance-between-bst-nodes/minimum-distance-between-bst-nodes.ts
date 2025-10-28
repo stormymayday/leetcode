@@ -13,50 +13,28 @@
  */
 
 function minDiffInBST(root: TreeNode | null): number {
-    
-    let minDiff = Infinity;
-    let prev: TreeNode | null = null;
-    let curr: TreeNode | null = root;
-    // Morris In-Order Traversal
-    while(curr !== null) {
-        // No left subtree
-        if(curr.left === null) {
-            // visit
-            if(prev !== null) {
-                minDiff = Math.min(minDiff, curr.val - prev.val);
-            }
-            // update/set 'prev' and go right
-            prev = curr;
-            curr = curr.right;
+
+    let minDiff: number = Infinity;
+
+    if(root === null) {
+        return minDiff;
+    }
+
+    const inorder: number[] = [];
+    function inorderDFS(root: TreeNode | null): void {
+        if(root === null) {
+            return;
         }
-        // There is a left subtree
-        else {
-            // Get the inorder predecessor
-            let predecessor = curr.left;
-            while(predecessor.right !== null && predecessor.right !== curr) {
-                predecessor = predecessor.right;
-            }
-            // No cycle to curr
-            if(predecessor.right === null) {
-                // create a cycle with curr
-                predecessor.right = curr;
-                // go left
-                curr = curr.left;
-            }
-            // There is a cycle to curr
-            else {
-                // break the cycle
-                predecessor.right = null;
-                // visit
-                if(prev !== null) {
-                    minDiff = Math.min(minDiff, curr.val - prev.val);
-                }
-                // update/set 'prev' and go right
-                prev = curr;
-                curr = curr.right;
-            }
-        }
+        inorderDFS(root.left);
+        inorder.push(root.val);
+        inorderDFS(root.right);
+    }
+    inorderDFS(root);
+
+    for(let i = 0; i < inorder.length - 1; i += 1) {
+        minDiff = Math.min(minDiff, inorder[i + 1] - inorder[i]);
     }
 
     return minDiff;
+
 };
