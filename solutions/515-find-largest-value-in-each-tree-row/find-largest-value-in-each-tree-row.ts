@@ -16,19 +16,26 @@ function largestValues(root: TreeNode | null): number[] {
     
     const res: number[] = [];
 
-    function inorderDFS(node: TreeNode | null, level: number):void {
-        if(node === null) {
-            return;
-        }
-        if(res.length === level) {
-            res.push(node.val);
-        }
-        res[level] = Math.max(res[level], node.val);
-        inorderDFS(node.left, level + 1);
-        inorderDFS(node.right, level + 1);
+    if(root === null) {
+        return res;
     }
 
-    inorderDFS(root, 0);
+    const stack: [TreeNode, number][] = [[root, 0]];
+
+    while(stack.length > 0) {
+        const [currNode, currLevel] = stack.pop();
+
+        if(res.length === currLevel) {
+            res.push(currNode.val);
+        }
+        res[currLevel] = Math.max(res[currLevel], currNode.val);
+        if(currNode.left !== null) {
+            stack.push([currNode.left, currLevel + 1]);
+        }
+        if(currNode.right !== null) {
+            stack.push([currNode.right, currLevel + 1]);
+        }
+    }
 
     return res;
 
