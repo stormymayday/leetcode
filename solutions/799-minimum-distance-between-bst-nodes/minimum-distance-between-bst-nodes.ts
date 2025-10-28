@@ -22,18 +22,35 @@ function minDiffInBST(root: TreeNode | null): number {
 
     let curr: TreeNode | null = root;
     let prev: TreeNode | null = null;
-    const stack: TreeNode[] = [];
-    while(curr !== null || stack.length > 0) {
-        while(curr !== null) {
-            stack.push(curr);
-            curr = curr.left;
+    while(curr !== null) {
+        if(curr.left === null) {
+
+            if(prev !== null) {
+                minDiff = Math.min(minDiff, curr.val - prev.val);
+            }
+
+            prev = curr;
+            curr = curr.right;
+
+        } else {
+            let predecessor = curr.left;
+            while(predecessor.right !== null && predecessor.right !== curr) {
+                predecessor = predecessor.right;
+            }
+            if(predecessor.right === null) {
+                predecessor.right = curr;
+                curr = curr.left;
+            } else {
+                predecessor.right = null;
+
+                if(prev !== null) {
+                    minDiff = Math.min(minDiff, curr.val - prev.val);
+                }
+
+                prev = curr;
+                curr = curr.right;
+            }
         }
-        curr = stack.pop();
-        if(prev !== null) {
-            minDiff = Math.min(minDiff, curr.val - prev.val);
-        }
-        prev = curr;
-        curr = curr.right;
     }
     return minDiff;
 
