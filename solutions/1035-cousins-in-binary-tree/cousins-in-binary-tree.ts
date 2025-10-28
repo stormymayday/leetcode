@@ -28,6 +28,11 @@ function isCousins(root: TreeNode | null, x: number, y: number): boolean {
             return false;
         }
 
+        // Optimization: Don't go beyond the depth restricted by the first node found\
+        if(foundOne === true && depth > depthOne) {
+            return false;
+        }
+
         if(node.val === x || node.val === y) {
             if(foundOne === true) {
                 return depth === depthOne && parent !== parentOne;
