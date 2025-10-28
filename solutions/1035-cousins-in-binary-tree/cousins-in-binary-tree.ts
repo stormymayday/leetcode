@@ -18,29 +18,25 @@ function isCousins(root: TreeNode | null, x: number, y: number): boolean {
         return false;
     }
 
-    let queue: [TreeNode, TreeNode | null][] = [[root, null]];
+    const dummyNode = new TreeNode(-Infinity);
+    let queue: [TreeNode, TreeNode][] = [[root, dummyNode]];
 
     while(queue.length > 0) {
 
         const nextQueue: [TreeNode, TreeNode][] = [];
         let foundOne: boolean = false;
-        let parentOne: TreeNode | null = null;
+        let parentOfFound: TreeNode | null = null;
 
         for(let i = 0; i < queue.length; i += 1) {
 
-            const [currNode, parentNode] = queue[i];
+            const [currNode, parent] = queue[i];
 
-            // Main Logic: Check if current value equals either x or y
             if(currNode.val === x || currNode.val === y) {
-                // Already found one
                 if(foundOne === true) {
-                    // Check if parents are not the same
-                    return parentOne !== parentNode;
-                } 
-                // Otherwise, found first
-                else {
+                    return parentOfFound !== parent;
+                } else {
                     foundOne = true;
-                    parentOne = parentNode;
+                    parentOfFound = parent;
                 }
             }
 
@@ -51,17 +47,14 @@ function isCousins(root: TreeNode | null, x: number, y: number): boolean {
                 nextQueue.push([currNode.right, currNode]);
             }
 
-
         }
 
-        // Only found one on this level
         if(foundOne === true) {
-            return false; // nodes must be on the different levels
+            return false;
         }
-        
         queue = nextQueue;
 
     }
-    
+
     return false;
 };
