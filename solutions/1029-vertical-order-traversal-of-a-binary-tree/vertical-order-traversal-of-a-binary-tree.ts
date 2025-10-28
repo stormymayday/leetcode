@@ -27,23 +27,20 @@ function verticalTraversal(root: TreeNode | null): number[][] {
     let maxCol: number = 0;
     while(queue.length > 0) {
 
-        let nextQueue: [TreeNode, number, number][] = [];
+        const nextQueue: [TreeNode, number, number][] = [];
 
         for(let i = 0; i < queue.length; i += 1) {
 
             const [currNode, currRow, currCol] = queue[i];
 
-            // Update min and max column boundaries
-            minCol = Math.min(minCol, currCol);
-            maxCol = Math.max(maxCol, currCol);
-
-            // Create / update hash map entry for this column
             if(!colToRowVals.has(currCol)) {
                 colToRowVals.set(currCol, []);
             }
             colToRowVals.get(currCol).push([currRow, currNode.val]);
 
-            // Prepare nextQueue
+            minCol = Math.min(minCol, currCol);
+            maxCol = Math.max(maxCol, currCol);
+
             if(currNode.left !== null) {
                 nextQueue.push([currNode.left, currRow + 1, currCol - 1]);
             }
@@ -57,28 +54,24 @@ function verticalTraversal(root: TreeNode | null): number[][] {
 
     }
 
-    // Phase 2: sort the entries
-    // - First by row
-    // - If rows are the same, by value
-    for(const rowValuePairs of colToRowVals.values()) {
-        rowValuePairs.sort((a, b) => {
-            // try sorting rows (index 0) first
+    // Phase 2: Sorting
+    for(const rowValuePair of colToRowVals.values()) {
+        rowValuePair.sort((a, b) => {
+            // Try row first
             if(a[0] !== b[0]) {
                 return a[0] - b[0];
-            }
-            // otherwise, sort by values (index 1)
+            } 
+            // Otherwise, value
             else {
                 return a[1] - b[1];
             }
         });
     }
 
-    // Phase 3: fill out the result
+    // Phase 3: Result
     for(let col = minCol; col <= maxCol; col += 1) {
-        // [[row, value], [row, value], ...]
-        const sortedRowValuePairs = colToRowVals.get(col);
-        const values = sortedRowValuePairs.map(([row, value]) => value);
-        res.push(values);
+        const sortedColValues = colToRowVals.get(col).map(([row, value]) => value);
+        res.push(sortedColValues);
     }
     return res;
     
