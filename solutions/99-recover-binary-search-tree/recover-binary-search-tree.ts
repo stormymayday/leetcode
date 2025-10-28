@@ -16,26 +16,26 @@
  Do not return anything, modify root in-place instead.
  */
 function recoverTree(root: TreeNode | null): void {
-    
+
+    if(root === null) {
+        return;
+    }
+
     let node1: TreeNode | null = null;
     let node2: TreeNode | null = null;
-    let prev: TreeNode | null = null;
 
+    let prev: TreeNode | null = null;
     function inorderDFS(node: TreeNode | null): void {
         if(node === null) {
             return;
         }
         inorderDFS(node.left);
         if(prev !== null) {
-            // Found discrepancy!
             if(prev.val > node.val) {
-                // First time: set both node1 and node2
                 if(node1 === null) {
                     node1 = prev;
                     node2 = node;
-                } 
-                // Second time: update node2 and exit
-                else {
+                } else {
                     node2 = node;
                     return;
                 }
@@ -45,12 +45,8 @@ function recoverTree(root: TreeNode | null): void {
         inorderDFS(node.right);
     }
     inorderDFS(root);
-
-    // Optional Guard
-    if(node1 !== null && node2 !== null) {
-        const temp = node1.val;
-        node1.val = node2.val;
-        node2.val = temp;
-    }
-
+    const temp = node1.val;
+    node1.val = node2.val;
+    node2.val = temp;
+    
 };
