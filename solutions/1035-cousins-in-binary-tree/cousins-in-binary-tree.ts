@@ -20,7 +20,7 @@ function isCousins(root: TreeNode | null, x: number, y: number): boolean {
 
     let foundOne: boolean = false;
     let depthOne: number = -Infinity;
-    let parentOne: TreeNode | null;
+    let parentOne: TreeNode | null = null;
 
     function preorderDFS(node: TreeNode | null, depth: number, parent: TreeNode | null): boolean {
 
@@ -28,7 +28,7 @@ function isCousins(root: TreeNode | null, x: number, y: number): boolean {
             return false;
         }
 
-        // Optimization: Don't go beyond the depth restricted by the first node found\
+        // Branch Pruning Optimization: Don't go beyond the depth restricted by the first node found\
         if(foundOne === true && depth > depthOne) {
             return false;
         }
