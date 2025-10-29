@@ -16,32 +16,27 @@ function validateBinaryTreeNodes(n: number, leftChild: number[], rightChild: num
     }
 
     const visited = new Set<number>();
-    function dfs(node: number): boolean {
+    const stack: number[] = [root];
 
-        if(node === -1) {
-            return true;
-        }
+    while(stack.length > 0) {
 
-        if(visited.has(node)) {
+        const currNode = stack.pop();
+
+        if(visited.has(currNode)) {
             return false;
         }
+        visited.add(currNode);
 
-        visited.add(node);
-
-        const leftSubtree = dfs(leftChild[node]);
-        if(leftSubtree === false) {
-            return false;
+        if(leftChild[currNode] !== -1) {
+            stack.push(leftChild[currNode]);
         }
 
-        const rightSubtree = dfs(rightChild[node]);
-        if(rightSubtree === false) {
-            return false;
+        if(rightChild[currNode] !== -1) {
+            stack.push(rightChild[currNode]);
         }
-
-        return true;
 
     }
 
-    return dfs(root) && visited.size === n;
+    return visited.size === n;
     
 };
