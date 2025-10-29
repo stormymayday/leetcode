@@ -1,50 +1,50 @@
 function validateBinaryTreeNodes(n: number, leftChild: number[], rightChild: number[]): boolean {
 
-    const children = new Set([...leftChild, ...rightChild]);
-    children.delete(-1);
+    const uf = new UnionFind(n);
 
-    if (children.size === n) {
-        return false; // should be n-1
-    }
-
-    // Find root
-    let root: number = 0;
     for (let i = 0; i < n; i += 1) {
-        if (!children.has(i)) {
-            root = i;
+        if (leftChild[i] !== -1 && uf.union(i, leftChild[i]) === false) {
+            return false;
+        }
+        if (rightChild[i] !== -1 && uf.union(i, rightChild[i]) === false) {
+            return false;
         }
     }
 
-    const visited = new Set<number>();
-    let queue: number[] = [root];
-
-    while (queue.length > 0) {
-
-        const nextQueue: number[] = [];
-
-        for (let i = 0; i < queue.length; i += 1) {
-
-            const currNode = queue[i];
-
-            if (visited.has(currNode)) {
-                return false;
-            }
-            visited.add(currNode);
-
-            if (leftChild[currNode] !== -1) {
-                nextQueue.push(leftChild[currNode]);
-            }
-
-            if (rightChild[currNode] !== -1) {
-                nextQueue.push(rightChild[currNode]);
-            }
-
-        }
-
-        queue = nextQueue;
-
-    }
-
-    return visited.size === n;
+    return uf.getNumComponents() === 1;
 
 };
+
+class UnionFind {
+    roots: Map<number, number>;
+    numComponents: number;
+    constructor(n: number) {
+        this.roots = new Map();
+        this.numComponents = n;
+        for (let i = 0; i < n; i += 1) {
+            this.roots.set(i, i);
+        }
+    }
+    find(x: number): number {
+        const root = this.roots.get(x);
+        if (root !== x) {
+            this.roots.set(x, this.find(root));
+        }
+        return this.roots.get(x);
+    }
+    union(parent: number, child: number): boolean {
+        const parentRoot = this.find(parent);
+        const childRoot = this.find(child);
+
+        if (childRoot !== child || parentRoot === child) {
+            return false;
+        }
+
+        this.roots.set(childRoot, parentRoot);
+        this.numComponents -= 1;
+        return true;
+    }
+    getNumComponents(): number {
+        return this.numComponents;
+    }
+}
