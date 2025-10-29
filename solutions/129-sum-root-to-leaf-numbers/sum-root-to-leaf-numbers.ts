@@ -14,22 +14,33 @@
 
 function sumNumbers(root: TreeNode | null): number {
 
-    function preorderDFS(node: TreeNode | null, pathNum: number): number {
+    let sum: number = 0;
 
-        if(node === null) {
-            return 0;
+    if(root === null) {
+        return sum;
+    }
+
+    const stack: [TreeNode, number][] = [[root, 0]];
+
+    while(stack.length > 0) {
+
+        let [currNode, pathNum] = stack.pop();
+
+        pathNum = pathNum * 10 + currNode.val;
+
+        if(currNode.left === null && currNode.right === null) {
+            sum += pathNum;
+        } else {
+            if(currNode.left !== null) {
+                stack.push([currNode.left, pathNum]);
+            }
+            if(currNode.right !== null) {
+                stack.push([currNode.right, pathNum]);
+            }
         }
-
-        pathNum = pathNum * 10 + node.val;
-
-        if(node.left === null && node.right === null) {
-            return pathNum;
-        }
-
-        return preorderDFS(node.left, pathNum) + preorderDFS(node.right, pathNum);
 
     }
 
-    return preorderDFS(root, 0);
+    return sum;
     
 };
