@@ -25,8 +25,6 @@ function widthOfBinaryTree(root: TreeNode | null): number {
 
         const nextQueue: [TreeNode, number][] = [];
 
-        // Formula: Width = last node in the row - first node in the row + 1
-        // Normalize positions by subtracting the first node's position
         const levelStart = queue[0][1];
         const levelEnd = queue[queue.length - 1][1];
         maxWidth = Math.max(maxWidth, levelEnd - levelStart + 1);
@@ -34,7 +32,8 @@ function widthOfBinaryTree(root: TreeNode | null): number {
         for (let i = 0; i < queue.length; i += 1) {
 
             const [currNode, currNodeNum] = queue[i];
-            // Normalize position relative to levelStart to prevent overflow
+
+            // Important! Must normalize position relative to levelStart to prevent overflow
             const normalizedPos = currNodeNum - levelStart;
 
             if (currNode.left !== null) {
