@@ -16,19 +16,31 @@ function zigzagLevelOrder(root: TreeNode | null): number[][] {
     
     const res: number[][] = [];
 
-    function dfs(node: TreeNode | null, level: number): void {
-        if(node === null) {
-            return;
-        }
-        if(res.length === level) {
-            res.push([node.val]);
-        } else {
-            res[level].push(node.val);
-        }
-        dfs(node.left, level + 1);
-        dfs(node.right, level + 1);
+    if(root === null) {
+        return res;
     }
-    dfs(root, 0);
+
+    const stack: [TreeNode, number][] = [[root, 0]];
+
+    while(stack.length > 0) {
+
+        const [currNode, level] = stack.pop();
+
+        if(res.length === level) {
+            res.push([currNode.val]);
+        } else {
+            res[level].push(currNode.val);
+        }
+
+        if(currNode.right !== null) {
+            stack.push([currNode.right, level + 1]);
+        }
+
+        if(currNode.left !== null) {
+            stack.push([currNode.left, level + 1]);
+        }
+
+    }
 
     for(let i = 0; i < res.length; i += 1) {
         if(i % 2 !== 0) {
