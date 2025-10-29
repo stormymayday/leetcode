@@ -13,34 +13,58 @@
  */
 
 function sumNumbers(root: TreeNode | null): number {
-
     let sum: number = 0;
 
-    if(root === null) {
+    if (root === null) {
         return sum;
     }
 
-    const stack: [TreeNode, number][] = [[root, 0]];
+    let curr: TreeNode | null = root;
+    let pathNum: number = 0;
 
-    while(stack.length > 0) {
+    while (curr !== null) {
+        if (curr.left === null) {
+            // visit
+            pathNum = pathNum * 10 + curr.val;
 
-        let [currNode, pathNum] = stack.pop();
-
-        pathNum = pathNum * 10 + currNode.val;
-
-        if(currNode.left === null && currNode.right === null) {
-            sum += pathNum;
-        } else {
-            if(currNode.left !== null) {
-                stack.push([currNode.left, pathNum]);
+            // If leaf node
+            if (curr.right === null) {
+                sum += pathNum;
             }
-            if(currNode.right !== null) {
-                stack.push([currNode.right, pathNum]);
+
+            // go right
+            curr = curr.right;
+        } else {
+            let predecessor = curr.left;
+            let steps: number = 1;
+            while (predecessor.right !== null && predecessor.right !== curr) {
+                predecessor = predecessor.right;
+                steps += 1;
+            }
+            if (predecessor.right === null) {
+                predecessor.right = curr;
+
+                // visit
+                pathNum = pathNum * 10 + curr.val;
+
+                curr = curr.left;
+            } else {
+                predecessor.right = null;
+
+                // If predecessor is a leaf (no left child), we've reached a leaf
+                if (predecessor.left === null) {
+                    sum += pathNum;
+                }
+
+                // This part of tree is explored, backtrack
+                for (let i = 1; i <= steps; i += 1) {
+                    pathNum = Math.floor(pathNum / 10);
+                }
+
+                curr = curr.right;
             }
         }
-
     }
 
     return sum;
-    
-};
+}
