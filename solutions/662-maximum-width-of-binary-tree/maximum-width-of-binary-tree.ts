@@ -16,40 +16,38 @@ function widthOfBinaryTree(root: TreeNode | null): number {
 
     let maxWidth: number = 0;
 
-    if (root === null) {
+    if(root === null) {
         return maxWidth;
     }
 
-    let queue: [TreeNode, number][] = [[root, 0]]; // [node, nodeNumber]
-    while (queue.length > 0) {
+    const firstNodeIndexByLevel = new Map<number, number>();
 
-        const nextQueue: [TreeNode, number][] = [];
+    const stack: [TreeNode, number, number][] = [[root, 0, 0]]; // [node, level, nodeIndex]
 
-        const levelStart = queue[0][1];
-        const levelEnd = queue[queue.length - 1][1];
-        maxWidth = Math.max(maxWidth, levelEnd - levelStart + 1);
+    while(stack.length > 0) {
 
-        for (let i = 0; i < queue.length; i += 1) {
+        const [node, level, nodeIndex] = stack.pop();
 
-            const [currNode, currNodeNum] = queue[i];
-
-            // Important! Must normalize position relative to levelStart to prevent overflow
-            const normalizedPos = currNodeNum - levelStart;
-
-            if (currNode.left !== null) {
-                nextQueue.push([currNode.left, normalizedPos * 2]);
-            }
-            
-            if (currNode.right !== null) {
-                nextQueue.push([currNode.right, normalizedPos * 2 + 1]);
-            }
-
+        if(!firstNodeIndexByLevel.has(level)) {
+            firstNodeIndexByLevel.set(level, nodeIndex);
         }
 
-        queue = nextQueue;
+        maxWidth = Math.max(maxWidth, nodeIndex - firstNodeIndexByLevel.get(level) + 1);
+
+        // Number Overflow prevention
+        const normalizedIndex = nodeIndex - firstNodeIndexByLevel.get(level);
+        
+        // Important! Right is pushed first
+        if(node.right !== null) {
+            stack.push([node.right, level + 1, normalizedIndex * 2 + 1]);
+        }
+
+        if(node.left !== null) {
+            stack.push([node.left, level + 1, normalizedIndex * 2]);
+        }
 
     }
 
     return maxWidth;
-
+    
 };
