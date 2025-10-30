@@ -18,36 +18,38 @@
 
 function lowestCommonAncestor(p: _Node | null, q: _Node | null): _Node | null {
 
-    if(p === null || q === null) {
+    if (p === null || q === null) {
         return null;
     }
 
-    const visited = new Set<_Node>();
-    visited.add(p);
-    visited.add(q);
+    let pStart: _Node = p;
+    let qStart: _Node = q;
 
-    while(p.parent !== null || q.parent !== null) {
-
-        if(p.parent !== null) {
-            if(visited.has(p.parent)) {
-                return p.parent;
-            } else {
-                visited.add(p.parent);
-                p = p.parent;
-            }
+    // until pointers converged
+    while (p !== q) {
+        
+        // p has not reached the root yet
+        if (p.parent !== null) {
+            p = p.parent
+        }
+        // p has reached the root
+        else {
+            // restart p from 'qStart'
+            p = qStart;
         }
 
-        if(q.parent !== null) {
-            if(visited.has(q.parent)) {
-                return q.parent;
-            } else {
-                visited.add(q.parent);
-                q = q.parent;
-            }
+        // q has not reached the root yet
+        if (q.parent !== null) {
+            q = q.parent
         }
-
+        // q has reached the root
+        else {
+            // restart q from 'pStart'
+            q = pStart;
+        }
     }
 
-    return null;
+    // can return either one
+    return p;
 
 };
