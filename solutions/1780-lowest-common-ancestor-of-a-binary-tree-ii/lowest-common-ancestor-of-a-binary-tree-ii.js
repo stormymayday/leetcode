@@ -11,9 +11,9 @@
  * @param {TreeNode} q
  * @return {TreeNode}
  */
-var lowestCommonAncestor = function(root, p, q) {
+var lowestCommonAncestor = function (root, p, q) {
 
-    if(root === null || p === null || q === null) {
+    if (root === null || p === null || q === null) {
         return null;
     }
 
@@ -23,7 +23,7 @@ var lowestCommonAncestor = function(root, p, q) {
     function postorderDFS(node) {
 
         // Base Case: reached a null node
-        if(node === null) {
+        if (node === null) {
             return null;
         }
 
@@ -31,12 +31,12 @@ var lowestCommonAncestor = function(root, p, q) {
         const rightSubtree = postorderDFS(node.right);
 
         // If current node quals either p or q
-        if(node === p || node === q) {
-            if(node === p) {
+        if (node === p || node === q) {
+            if (node === p) {
                 foundP = true;
                 return node;
             }
-            if(node === q) {
+            if (node === q) {
                 foundQ = true;
                 return node;
             }
@@ -47,26 +47,19 @@ var lowestCommonAncestor = function(root, p, q) {
         // Perhaps p or q were found in the leftSubtree or rightSubtree
 
         // If both subtrees return non null, current node is the lca
-        if(leftSubtree !== null && rightSubtree !== null) {
+        if (leftSubtree !== null && rightSubtree !== null) {
             return node;
         }
 
-        if(leftSubtree !== null || rightSubtree !== null) {
-            if(leftSubtree !== null) {
-                return leftSubtree;
-            } else {
-                return rightSubtree;
-            }
-        }
-
-        // Otherwise, keep propogating 'null' from the Base Case
-        return null;
+        // Otherwise, return either leftSubtree or rightSubtree
+        // Both could be null. Therefore, keep propogating 'null' from the Base Case
+        return leftSubtree !== null ? leftSubtree : rightSubtree;
 
     }
 
     const lca = postorderDFS(root);
-    
-    if(foundP === true && foundQ === true && lca !== null) {
+
+    if (foundP === true && foundQ === true && lca !== null) {
         return lca;
     } else {
         return null;
