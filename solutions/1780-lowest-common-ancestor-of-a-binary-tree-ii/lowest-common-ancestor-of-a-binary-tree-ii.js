@@ -11,44 +11,62 @@
  * @param {TreeNode} q
  * @return {TreeNode}
  */
-var lowestCommonAncestor = function (root, p, q) {
+var lowestCommonAncestor = function(root, p, q) {
 
-    if (root === null || p === null || q === null) {
+    if(root === null || p === null || q === null) {
         return null;
     }
 
     let foundP = false;
     let foundQ = false;
 
-    function dfs(node) {
-        if (node === null) {
+    function postorderDFS(node) {
+
+        // Base Case: reached a null node
+        if(node === null) {
             return null;
         }
 
-        const leftSubtree = dfs(node.left);
-        const rightSubtree = dfs(node.right);
+        const leftSubtree = postorderDFS(node.left);
+        const rightSubtree = postorderDFS(node.right);
 
-        if(node === p || node == q) {
+        // If current node quals either p or q
+        if(node === p || node === q) {
             if(node === p) {
                 foundP = true;
                 return node;
-            } else {
+            }
+            if(node === q) {
                 foundQ = true;
                 return node;
             }
         }
 
+        // Current node doesn't equal to p or q
+
+        // Perhaps p or q were found in the leftSubtree or rightSubtree
+
+        // If both subtrees return non null, current node is the lca
         if(leftSubtree !== null && rightSubtree !== null) {
             return node;
-        } else {
-            return leftSubtree !== null ? leftSubtree : rightSubtree;
         }
-        
+
+        if(leftSubtree !== null || rightSubtree !== null) {
+            if(leftSubtree !== null) {
+                return leftSubtree;
+            } else {
+                return rightSubtree;
+            }
+        }
+
+        // Otherwise, keep propogating 'null' from the Base Case
+        return null;
+
     }
 
-    const lca = dfs(root);
+    const lca = postorderDFS(root);
     
-    if(foundP === true && foundQ === true) {
+    if(foundP === true && foundQ === true && lca !== null) {
         return lca;
     } else {
         return null;
