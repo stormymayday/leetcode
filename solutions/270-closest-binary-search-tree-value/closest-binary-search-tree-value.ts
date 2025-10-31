@@ -17,25 +17,23 @@ function closestValue(root: TreeNode | null, target: number): number {
     let res: number = Infinity;
     let minDiff: number = Infinity;
 
-    function inorderDFS(node: TreeNode | null): void {
+    function dfs(node: TreeNode | null): void {
 
-        if(node === null) {
+        if (node === null) {
             return null;
         }
 
-        inorderDFS(node.left);
-
         const absDiff = Math.abs(node.val - target);
-        if((absDiff < minDiff) || (minDiff === absDiff && node.val < res)) {
+        if ((absDiff < minDiff) || (minDiff === absDiff && node.val < res)) {
             minDiff = absDiff;
             res = node.val;
         }
-
-        inorderDFS(node.right);
+        dfs(node.left);
+        dfs(node.right);
 
     }
-    inorderDFS(root);
+    dfs(root);
 
     return res;
-    
+
 };
