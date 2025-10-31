@@ -20,37 +20,45 @@ function longestZigZag(root: TreeNode | null): number {
         return maxPathLength;
     }
 
-    const stack: [TreeNode, string, number][] = [[root, 'root', 0]]; // [node, from/direction, current path length]
+    let queue: [TreeNode, string, number][] = [[root, 'root', 0]]; // [node, from/direction, current path length]
 
-    while (stack.length > 0) {
+    while (queue.length > 0) {
 
-        const [currNode, from, currPathLength] = stack.pop();
+        const nextQueue: [TreeNode, string, number][] = [];
 
-        maxPathLength = Math.max(maxPathLength, currPathLength);
+        for (let i = 0; i < queue.length; i += 1) {
 
-        if (currNode.left !== null) {
+            const [currNode, from, currPathLength] = queue[i];
 
-            if (from === 'right') {
-                // if current node came from 'right', extend path by 1
-                stack.push([currNode.left, 'left', currPathLength + 1]);
-            } else {
-                // otherwise, reset path to 1
-                stack.push([currNode.left, 'left', 1]);
+            maxPathLength = Math.max(maxPathLength, currPathLength);
+
+            if (currNode.left !== null) {
+
+                if (from === 'right') {
+                    // if current node came from 'right', extend path by 1
+                    nextQueue.push([currNode.left, 'left', currPathLength + 1]);
+                } else {
+                    // otherwise, reset path to 1
+                    nextQueue.push([currNode.left, 'left', 1]);
+                }
+
+            }
+
+            if (currNode.right !== null) {
+
+                if (from === 'left') {
+                    // if current node came from 'left', extend path by 1
+                    nextQueue.push([currNode.right, 'right', currPathLength + 1]);
+                } else {
+                    // otherwise, reset path to 1
+                    nextQueue.push([currNode.right, 'right', 1]);
+                }
+
             }
 
         }
 
-        if (currNode.right !== null) {
-
-            if (from === 'left') {
-                // if current node came from 'left', extend path by 1
-                stack.push([currNode.right, 'right', currPathLength + 1]);
-            } else {
-                // otherwise, reset path to 1
-                stack.push([currNode.right, 'right', 1]);
-            }
-
-        }
+        queue = nextQueue;
 
     }
 
