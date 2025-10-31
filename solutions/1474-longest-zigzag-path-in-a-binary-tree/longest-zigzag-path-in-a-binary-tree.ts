@@ -16,37 +16,43 @@ function longestZigZag(root: TreeNode | null): number {
 
     let maxPathLength: number = 0;
 
-    function dfs(node: TreeNode | null, from: string, pathLength: number): void {
-        if (node === null) {
-            return;
+    if (root === null) {
+        return maxPathLength;
+    }
+
+    const stack: [TreeNode, string, number][] = [[root, 'root', 0]]; // [node, from/direction, current path length]
+
+    while (stack.length > 0) {
+
+        const [currNode, from, currPathLength] = stack.pop();
+
+        maxPathLength = Math.max(maxPathLength, currPathLength);
+
+        if (currNode.left !== null) {
+
+            if (from === 'right') {
+                // if current node came from 'right', extend path by 1
+                stack.push([currNode.left, 'left', currPathLength + 1]);
+            } else {
+                // otherwise, reset path to 1
+                stack.push([currNode.left, 'left', 1]);
+            }
+
         }
 
-        maxPathLength = Math.max(maxPathLength, pathLength);
+        if (currNode.right !== null) {
 
-        // coming from right
-        if (from === 'right') {
-            // going left - increase path length by 1 (forms a zig-zag)
-            dfs(node.left, 'left', pathLength + 1);
-            // going right - reset path length to 1 (not a zig-zag)
-            dfs(node.right, 'right', 1);
-        } 
-        // coming from left
-        else if (from === 'left') {
-            // going left - reset path length to 1 (not a zig-zag)
-            dfs(node.left, 'left', 1);
-            // going right - increase path length by 1 (forms a zig-zag)
-            dfs(node.right, 'right', pathLength + 1);
-        } 
-        // from 'root'
-        else {
-            // reset (set) path to 1 in both directions
-            dfs(node.left, 'left', 1);
-            dfs(node.right, 'right', 1);
+            if (from === 'left') {
+                // if current node came from 'left', extend path by 1
+                stack.push([currNode.right, 'right', currPathLength + 1]);
+            } else {
+                // otherwise, reset path to 1
+                stack.push([currNode.right, 'right', 1]);
+            }
+
         }
 
     }
-
-    dfs(root, 'root', 0);
 
     return maxPathLength;
 
