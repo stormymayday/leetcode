@@ -14,33 +14,39 @@
 
 function closestValue(root: TreeNode | null, target: number): number {
 
-    if (root === null) {
-        return -Infinity;
+    let res: number = Infinity;
+
+    // Edge Case Lol
+    if(root === null) {
+        return res;
     }
 
-    let curr: TreeNode | null = root;
-    let candidate: number = curr.val;
-    let remainder: number = Infinity;
+    const inorder: number[] = [];
 
-    while (curr !== null) {
-
-        if (Math.abs(curr.val - target) < remainder || (Math.abs(curr.val - target) === remainder && candidate > curr.val)) {
-            remainder = Math.abs(curr.val - target);
-            candidate = curr.val;
+    function dfs(node: TreeNode | null): void {
+        if(node === null) {
+            return;
         }
+        dfs(node.left);
+        inorder.push(node.val);
+        dfs(node.right);
+    }
+    dfs(root);
 
-        if (target < curr.val) {
-            curr = curr.left;
-        } else if (target > curr.val) {
-            curr = curr.right;
-        } else {
-            // exact match
-            candidate = curr.val;
-            break;
+    let minDiff: number = Infinity;
+
+    for(let i = 0; i < inorder.length; i += 1) {
+
+        const absDiff = Math.abs(target - inorder[i]);
+
+        // The smaller the difference the closer is the value to the target
+        // 
+        if((absDiff < minDiff) || (absDiff === minDiff && inorder[i] < res)) {
+            minDiff = absDiff;
+            res = inorder[i];
         }
-
     }
 
-    return candidate;
-
+    return res;
+    
 };
