@@ -23,13 +23,23 @@ function longestZigZag(root: TreeNode | null): number {
 
         maxPathLength = Math.max(maxPathLength, pathLength);
 
+        // coming from right
         if (from === 'right') {
+            // going left - increase path length by 1 (forms a zig-zag)
             dfs(node.left, 'left', pathLength + 1);
+            // going right - reset path length to 1 (not a zig-zag)
             dfs(node.right, 'right', 1);
-        } else if (from === 'left') {
+        } 
+        // coming from left
+        else if (from === 'left') {
+            // going left - reset path length to 1 (not a zig-zag)
             dfs(node.left, 'left', 1);
+            // going right - increase path length by 1 (forms a zig-zag)
             dfs(node.right, 'right', pathLength + 1);
-        } else {
+        } 
+        // from 'root'
+        else {
+            // reset (set) path to 1 in both directions
             dfs(node.left, 'left', 1);
             dfs(node.right, 'right', 1);
         }
