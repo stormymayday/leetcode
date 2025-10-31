@@ -15,37 +15,26 @@
 function closestValue(root: TreeNode | null, target: number): number {
 
     let res: number = Infinity;
-
-    // Edge Case Lol
-    if(root === null) {
-        return res;
-    }
-
-    const inorder: number[] = [];
-
-    function dfs(node: TreeNode | null): void {
-        if(node === null) {
-            return;
-        }
-        dfs(node.left);
-        inorder.push(node.val);
-        dfs(node.right);
-    }
-    dfs(root);
-
     let minDiff: number = Infinity;
 
-    for(let i = 0; i < inorder.length; i += 1) {
+    function inorderDFS(node: TreeNode | null): void {
 
-        const absDiff = Math.abs(target - inorder[i]);
-
-        // The smaller the difference the closer is the value to the target
-        // 
-        if((absDiff < minDiff) || (absDiff === minDiff && inorder[i] < res)) {
-            minDiff = absDiff;
-            res = inorder[i];
+        if(node === null) {
+            return null;
         }
+
+        inorderDFS(node.left);
+
+        const absDiff = Math.abs(node.val - target);
+        if((absDiff < minDiff) || (minDiff === absDiff && node.val < res)) {
+            minDiff = absDiff;
+            res = node.val;
+        }
+
+        inorderDFS(node.right);
+
     }
+    inorderDFS(root);
 
     return res;
     
