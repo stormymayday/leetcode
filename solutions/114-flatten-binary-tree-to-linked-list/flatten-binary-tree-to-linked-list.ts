@@ -17,35 +17,32 @@
  */
 function flatten(root: TreeNode | null): void {
 
-    if(root === null) {
-        return null;
+    if (root === null) {
+        return;
     }
 
-    const nodes: TreeNode[] = [];
+    let curr: TreeNode | null = root;
 
-    const stack: TreeNode[] = [root];
-    while(stack.length > 0) {
+    while (curr !== null) {
+        // Check if there is a left subtree
+        if (curr.left !== null) {
+            // Find inorder predecessor (the rightmost node)
+            let predecessor = curr.left;
+            while (predecessor.right !== null) {
+                predecessor = predecessor.right;
+            }
+            // Connect predecessor.right to curr.right
+            predecessor.right = curr.right;
 
-        const currNode = stack.pop();
+            // Point curr.right to curr.left
+            curr.right = curr.left;
 
-        if(currNode.right !== null) {
-            stack.push(currNode.right);
+            // Disconnect curr.left
+            curr.left = null;
         }
 
-        if(currNode.left !== null) {
-            stack.push(currNode.left);
-        }
-
-        currNode.left = null;
-        currNode.right = null;
-        nodes.push(currNode);
-
+        // Go to the next node
+        curr = curr.right
     }
 
-    for(let i = 0; i < nodes.length - 1; i += 1) {
-        nodes[i].right = nodes[i + 1];
-    }
-
-    // return nodes[0];
-    
 };
