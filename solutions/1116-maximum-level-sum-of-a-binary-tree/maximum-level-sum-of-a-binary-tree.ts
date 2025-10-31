@@ -16,35 +16,31 @@ function maxLevelSum(root: TreeNode | null): number {
 
     let maxLevelSum: number = -Infinity;
     let maxLevel: number = 0;
-    const sumByLevel = new Map<number, number>();
 
-    function dfs(node: TreeNode | null, level: number): void {
-
-        if(node === null) {
-            return;
-        }
-
-        if(!sumByLevel.has(level)) {
-            sumByLevel.set(level, 0);
-        }
-        sumByLevel.set(level, sumByLevel.get(level) + node.val);
-
-        // Updating max here can cause a problem because DFS goes deep before finishing a level, 
-        // Therefore, “partial sums” of deeper levels can temporarily appear greater before the shallower level is done being processed.
-        // if(sumByLevel.get(level) > maxLevelSum) {
-        //     maxLevelSum = sumByLevel.get(level);
-        //     maxLevel = level;
-        // }
-
-        dfs(node.left, level + 1);
-        dfs(node.right, level + 1);
-
+    if(root === null) {
+        return maxLevel;
     }
 
-    dfs(root, 1);
+    const sumByLevel = new Map<number, number>();
 
-    // The DFS only collects sums per level first.
-    // Only after all recursion finishes do we find the level with the true max sum.
+    const stack: [TreeNode, number][] = [[root, 1]]; // [node, level] in this question root is at level 1
+
+    while(stack.length > 0) {
+
+        const [currNode, level] = stack.pop();
+
+        sumByLevel.set(level, (sumByLevel.get(level) || 0) + currNode.val);
+
+        if(currNode.left !== null) {
+            stack.push([currNode.left, level + 1]);
+        }
+
+        if(currNode.right !== null) {
+            stack.push([currNode.right, level + 1]);
+        }
+    }
+
+    // We find the level with the true max sum after the DFS collects sums per level.
     // Ensures complete level sums are compared, not partial ones. 
     for(const [level, levelSum] of sumByLevel.entries()) {
         if(levelSum > maxLevelSum) {
