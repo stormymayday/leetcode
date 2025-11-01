@@ -14,40 +14,37 @@
 
 function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
 
-    function helperDFS(node: TreeNode | null, key: number): TreeNode | null {
+    function helper(node: TreeNode | null, key: number): TreeNode | null {
 
         if(node === null) {
             return null;
         }
-        
-        if(key < node.val) {
-            node.left = helperDFS(node.left, key);
-        } else if(key > node.val) {
-            node.right = helperDFS(node.right, key);
-        } else {
 
+        if(key < node.val) {
+            node.left = helper(node.left, key);
+        } else if(key > node.val) {
+            node.right = helper(node.right, key);
+        } else {
+            // node has no childrem
             if(node.left === null && node.right === null) {
                 node = null;
-            } else if(node.left === null) {
+            } 
+            // node has no left
+            else if(node.left === null) {
                 node = node.right;
-            } else if(node.right === null) {
+            } 
+            // node has no right
+            else if(node.right === null) {
                 node = node.left;
-            } else {
-
-                // let predecessor = node.left
-                // while(predecessor.right !== null) {
-                //     predecessor = predecessor.right;
-                // }
-                // node.val = predecessor.val;
-                // node.left = helperDFS(node.left, predecessor.val);
-
-                let successor = node.right;
-                while(successor.left !== null) {
-                    successor = successor.left;
+            } 
+            // node has both children
+            else {
+                let predecessor = node.left;
+                while(predecessor.right !== null) {
+                    predecessor = predecessor.right;
                 }
-                node.val = successor.val;
-                node.right = helperDFS(node.right, successor.val);
-
+                node.val = predecessor.val;
+                node.left = helper(node.left, predecessor.val);
             }
 
         }
@@ -56,7 +53,7 @@ function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
 
     }
 
-    root = helperDFS(root, key);
+    root = helper(root, key);
 
     return root;
     
