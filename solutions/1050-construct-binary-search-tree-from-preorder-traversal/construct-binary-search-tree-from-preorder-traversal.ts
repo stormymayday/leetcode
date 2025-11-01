@@ -14,22 +14,29 @@
 
 function bstFromPreorder(preorder: number[]): TreeNode | null {
 
-    let idx = 0;
-    
-    function helper(leftBound: number, rightBound: number): TreeNode | null {
-
-        if(idx === preorder.length || (preorder[idx] <= leftBound || preorder[idx] >= rightBound)) {
-            return null;
-        }
-
-        const root = new TreeNode(preorder[idx]);
-        idx += 1;
-        root.left = helper(leftBound, root.val);
-        root.right = helper(root.val, rightBound);
-        return root;
-
+    if(preorder.length == 0) {
+        return null;
     }
 
-    return helper(-Infinity, Infinity);
+    const root = new TreeNode(preorder[0]);
+    const stack: TreeNode[] = [root];
+    for(let i = 1; i < preorder.length; i += 1) {
 
+        const newNode = new TreeNode(preorder[i]);
+
+        if(stack[stack.length - 1].val > newNode.val) {
+            stack[stack.length - 1].left = newNode;
+            stack.push(newNode);
+        } else {
+            let temp: TreeNode | null = null;
+            while(stack.length > 0 && stack[stack.length - 1].val < newNode.val) {
+                temp = stack.pop();
+            }
+            temp.right = newNode;
+            stack.push(newNode);
+        }
+
+    }
+    return root;
+    
 };
