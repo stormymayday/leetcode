@@ -13,39 +13,53 @@
  */
 
 function bstFromPreorder(preorder: number[]): TreeNode | null {
-    
+
     if(preorder.length === 0) {
         return null;
     }
 
-    const root = new TreeNode(preorder[0]);
+    const inorder: number[] = [...preorder];
+    inorder.sort((a, b) => a - b); // Important! sort after copying. Otherwise original preorder is getting mutated
 
-    for(let i = 1; i < preorder.length; i += 1) {
+    const inorderValToIdx = new Map<number, number>();
+    for(let i = 0; i < inorder.length; i += 1) {
+        inorderValToIdx.set(inorder[i], i);
+    }
 
-        const newNode = new TreeNode(preorder[i]);
-        let curr = root;
+    function helper(
+        inorderLeft: number, 
+        inorderRight: number,
+        preorderLeft: number,
+        preorderRight: number
+    ): TreeNode |null {
 
-        while(true) {
-
-            if(curr.val > preorder[i]) {
-                if(curr.left !== null) {
-                    curr = curr.left;
-                } else {
-                    curr.left = newNode;
-                    break;
-                }
-            } else {
-                if(curr.right !== null) {
-                    curr = curr.right;
-                } else {
-                    curr.right = newNode;
-                    break;
-                }
-            }
-
+        if(preorderLeft > preorderRight || inorderLeft > inorderRight) {
+            return null;
         }
+
+        const root = new TreeNode(preorder[preorderLeft]);
+        const rootIdx = inorderValToIdx.get(preorder[preorderLeft]);
+
+        const leftLength = rootIdx - inorderLeft;
+
+        root.left = helper(
+            inorderLeft,
+            rootIdx - 1,
+            preorderLeft + 1,
+            preorderLeft + leftLength
+        );
+
+        root.right = helper(
+            rootIdx + 1,
+            inorderRight,
+            preorderLeft + leftLength + 1,
+            preorderRight
+        );
+
+        return root;
 
     }
 
-    return root;
+    return helper(0, inorder.length - 1, 0, preorder.length - 1);
+    
 };
