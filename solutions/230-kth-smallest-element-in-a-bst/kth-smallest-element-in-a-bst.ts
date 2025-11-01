@@ -14,20 +14,14 @@
 
 function kthSmallest(root: TreeNode | null, k: number): number {
 
-    if (root === null) {
-        return -Infinity;
+    if(root === null) {
+        return Infinity;
     }
 
-    // In-Order Traversal
-    // - Option 1: recursive DFS
-    // - Option 2: iterative DFS with stack and pointer
-    // - Option 3: Morris Traversal
-
-    let count = 0;
-    let res: TreeNode | null = null;
-
     let curr: TreeNode | null = root;
-    const stack: TreeNode[] = [];
+    const stack: TreeNode[] = []
+    let nodesVisited: number = 0;
+
     while(curr !== null || stack.length > 0) {
 
         while(curr !== null) {
@@ -36,22 +30,15 @@ function kthSmallest(root: TreeNode | null, k: number): number {
         }
 
         curr = stack.pop();
-
-        count += 1;
-        if(count === k) {
-            res = curr;
+        nodesVisited += 1;
+        if(nodesVisited === k) {
             break;
         }
-
         curr = curr.right;
 
     }
 
-    // Optional Guard - if there are less than k nodes in the tree
-    if(res === null) {
-        return -Infinity;
-    } else {
-        return res.val;
-    }
+    return curr.val;
 
+    
 };
