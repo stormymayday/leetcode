@@ -16,7 +16,7 @@ function bstFromPreorder(preorder: number[]): TreeNode | null {
     
     function helper(idx: number[], leftBound: number, rightBound: number): TreeNode | null {
 
-        if(idx[0] === preorder.length || (preorder[idx[0]] < leftBound || preorder[idx[0]] >= rightBound)) {
+        if(idx[0] === preorder.length || (preorder[idx[0]] < leftBound || preorder[idx[0]] > rightBound)) {
             return null;
         }
 
