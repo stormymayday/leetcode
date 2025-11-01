@@ -17,22 +17,37 @@ function closestValue(root: TreeNode | null, target: number): number {
     let res: number = Infinity;
     let minDiff: number = Infinity;
 
-    function dfs(node: TreeNode | null): void {
+    if(root === null) {
+        return res;
+    }
 
-        if (node === null) {
-            return null;
+    let curr: TreeNode | null = root;
+
+    while(curr !== null) {
+
+        // Main Logic
+        let diff = Math.abs(curr.val - target);
+        if((diff < minDiff) || (diff === minDiff && curr.val < res)) {
+            minDiff = diff;
+            res = curr.val;
         }
 
-        const absDiff = Math.abs(node.val - target);
-        if ((absDiff < minDiff) || (minDiff === absDiff && node.val < res)) {
-            minDiff = absDiff;
-            res = node.val;
+        // if target is smaller than current value, going right will not make the difference smaller
+        if(target < curr.val) {
+            // therefore, go left to potentially get closer to target
+            curr = curr.left;
+        } 
+        // similarly, if target is larger than current value, going left will not make the difference smaller
+        else if(target > curr.val) {
+            // therefore, go right
+            curr = curr.right;
         }
-        dfs(node.left);
-        dfs(node.right);
+        // exact match
+        else {
+            return curr.val;
+        }
 
     }
-    dfs(root);
 
     return res;
 
