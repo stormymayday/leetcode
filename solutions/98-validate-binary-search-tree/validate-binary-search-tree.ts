@@ -14,40 +14,52 @@
 
 function isValidBST(root: TreeNode | null): boolean {
 
-    if(root === null) {
+    if (root === null) {
         return true;
     }
 
     let prev: TreeNode | null = null;
     let curr: TreeNode | null = root;
 
-    while(curr !== null) {
+    while (curr !== null) {
 
-        if(curr.left === null) {
+        if (curr.left === null) {
 
-            if(prev !== null && curr.val <= prev.val) {
+            // visit
+            if (prev !== null && prev.val >= curr.val) {
                 return false;
             }
+
+            // go right
             prev = curr;
             curr = curr.right;
 
         } else {
 
             let predecessor = curr.left;
-            while(predecessor.right !== null && predecessor.right !== curr) {
+            while (predecessor.right !== null && predecessor.right !== curr) {
                 predecessor = predecessor.right;
             }
+            if (predecessor.right === null) {
 
-            if(predecessor.right === null) {
                 predecessor.right = curr;
+                
+                // prev = curr;
                 curr = curr.left;
+
             } else {
+
                 predecessor.right = null;
-                if(prev !== null && curr.val <= prev.val) {
+
+                // visit
+                if (prev !== null && prev.val >= curr.val) {
                     return false;
                 }
+
+                // go right
                 prev = curr;
                 curr = curr.right;
+
             }
 
         }
@@ -55,6 +67,5 @@ function isValidBST(root: TreeNode | null): boolean {
     }
 
     return true;
-
 
 };
