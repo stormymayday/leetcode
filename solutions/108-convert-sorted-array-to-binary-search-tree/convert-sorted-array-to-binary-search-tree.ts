@@ -14,25 +14,23 @@
 
 function sortedArrayToBST(nums: number[]): TreeNode | null {
 
+    function helper(left: number, right: number): TreeNode | null {
 
-    function helperDFS(leftIdx: number, rightIdx: number): TreeNode | null {
-
-        if(leftIdx > rightIdx) {
+        if(left > right) {
             return null;
         }
 
-        const midIdx = Math.floor((leftIdx + rightIdx) / 2);
+        const midIdx = Math.floor((right + left) / 2);
 
         const root = new TreeNode(nums[midIdx]);
 
-        root.left = helperDFS(leftIdx, midIdx -1);
-
-        root.right = helperDFS(midIdx + 1, rightIdx);
+        root.left = helper(left, midIdx - 1);
+        root.right = helper(midIdx + 1, right);
 
         return root;
 
     }
 
-    return helperDFS(0, nums.length - 1);
+    return helper(0, nums.length - 1);
     
 };
