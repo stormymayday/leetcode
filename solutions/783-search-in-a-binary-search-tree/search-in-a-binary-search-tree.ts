@@ -14,30 +14,20 @@
 
 function searchBST(root: TreeNode | null, val: number): TreeNode | null {
 
-    if(root === null) {
-        return null;
-    }
+    let curr: TreeNode | null = root;
 
-    const stack: TreeNode[] = [root];
+    while(curr !== null) {
 
-    while(stack.length > 0) {
-
-        const currNode = stack.pop();
-
-        if(val < currNode.val) {
-            if(currNode.left) {
-                stack.push(currNode.left);
-            }
-        } else if(val > currNode.val) {
-            if(currNode.right) {
-                stack.push(currNode.right);
-            }
+        if(val < curr.val) {
+            curr = curr.left;
+        } else if(val > curr.val) {
+            curr = curr.right;
         } else {
-            return currNode;
+            break;
         }
 
     }
 
-    return null;
+    return curr;
     
 };
