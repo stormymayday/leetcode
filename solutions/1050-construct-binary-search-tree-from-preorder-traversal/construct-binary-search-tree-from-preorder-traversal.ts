@@ -14,52 +14,22 @@
 
 function bstFromPreorder(preorder: number[]): TreeNode | null {
 
-    if(preorder.length === 0) {
-        return null;
-    }
+    let idx = 0;
+    
+    function helper(leftBound: number, rightBound: number): TreeNode | null {
 
-    const inorder: number[] = [...preorder];
-    inorder.sort((a, b) => a - b); // Important! sort after copying. Otherwise original preorder is getting mutated
-
-    const inorderValToIdx = new Map<number, number>();
-    for(let i = 0; i < inorder.length; i += 1) {
-        inorderValToIdx.set(inorder[i], i);
-    }
-
-    function helper(
-        inorderLeft: number, 
-        inorderRight: number,
-        preorderLeft: number,
-        preorderRight: number
-    ): TreeNode |null {
-
-        if(preorderLeft > preorderRight || inorderLeft > inorderRight) {
+        if(idx === preorder.length || (preorder[idx] <= leftBound || preorder[idx] >= rightBound)) {
             return null;
         }
 
-        const root = new TreeNode(preorder[preorderLeft]);
-        const rootIdx = inorderValToIdx.get(preorder[preorderLeft]);
-
-        const leftLength = rootIdx - inorderLeft;
-
-        root.left = helper(
-            inorderLeft,
-            rootIdx - 1,
-            preorderLeft + 1,
-            preorderLeft + leftLength
-        );
-
-        root.right = helper(
-            rootIdx + 1,
-            inorderRight,
-            preorderLeft + leftLength + 1,
-            preorderRight
-        );
-
+        const root = new TreeNode(preorder[idx]);
+        idx += 1;
+        root.left = helper(leftBound, root.val);
+        root.right = helper(root.val, rightBound);
         return root;
 
     }
 
-    return helper(0, inorder.length - 1, 0, preorder.length - 1);
-    
+    return helper(-Infinity, Infinity);
+
 };
