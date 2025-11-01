@@ -39,12 +39,21 @@ function deleteNode(root: TreeNode | null, key: number): TreeNode | null {
             } 
             // node has both children
             else {
-                let predecessor = node.left;
-                while(predecessor.right !== null) {
-                    predecessor = predecessor.right;
+                // Predecessor
+                // let predecessor = node.left;
+                // while(predecessor.right !== null) {
+                //     predecessor = predecessor.right;
+                // }
+                // node.val = predecessor.val;
+                // node.left = helper(node.left, predecessor.val);
+
+                // Successor
+                let successor = node.right;
+                while(successor.left !== null) {
+                    successor = successor.left;
                 }
-                node.val = predecessor.val;
-                node.left = helper(node.left, predecessor.val);
+                node.val = successor.val;
+                node.right = helper(node.right, successor.val);
             }
 
         }
