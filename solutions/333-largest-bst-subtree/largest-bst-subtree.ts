@@ -18,16 +18,17 @@ function largestBSTSubtree(root: TreeNode | null): number {
         return 0
     }
 
-    let largestBST: number = 1;
+    let largestBST: number = 0;
 
     function helper(root: TreeNode | null): [boolean, number, number, number] {
-        // Base Case: null doesn't count as a BST
+        // Base Case: In this implementation null doesn't count as a BST
         if (root === null) {
             return [false, 0, -Infinity, Infinity];
         }
 
         // Base Case: leaf node counts as a BST
         if (root.left === null && root.right === null) {
+            largestBST = Math.max(largestBST, 1);
             return [true, 1, root.val, root.val];
         }
 
@@ -41,9 +42,7 @@ function largestBSTSubtree(root: TreeNode | null): number {
             ) {
             
             const currSize = 1 + leftSize + rightSize;
-
             largestBST = Math.max(largestBST, currSize);
-
             return [true, currSize, leftMin, rightMax];
         }
         // Left is a BST and right is null
@@ -53,9 +52,7 @@ function largestBSTSubtree(root: TreeNode | null): number {
         ) {
 
             const currSize = 1 + leftSize + rightSize;
-
             largestBST = Math.max(largestBST, currSize);
-
             return [true, 1 + leftSize, leftMin, root.val];
         }
         // Right is a BST and left is null
@@ -65,9 +62,7 @@ function largestBSTSubtree(root: TreeNode | null): number {
             ) {
             
             const currSize = 1 + leftSize + rightSize;
-
             largestBST = Math.max(largestBST, currSize);
-
             return [true, 1 + rightSize, root.val, rightMax];
         }
         // Otherwise, we can't count current as a BST
