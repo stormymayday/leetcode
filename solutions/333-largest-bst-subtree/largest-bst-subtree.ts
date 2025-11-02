@@ -14,6 +14,7 @@
 
 function largestBSTSubtree(root: TreeNode | null): number {
 
+    // Edge Case: must check for null if 'largestBST' starts from 1
     if(root === null) {
         return 0
     }
