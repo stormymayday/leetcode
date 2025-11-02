@@ -18,7 +18,8 @@ function largestBSTSubtree(root: TreeNode | null): number {
         return 0
     }
 
-    let largestBST: number = 0;
+    // Can set to zero but then must run update on each leaf
+    let largestBST: number = 1;
 
     function helper(root: TreeNode | null): [boolean, number, number, number] {
         // Base Case: In this implementation null doesn't count as a BST
@@ -28,7 +29,9 @@ function largestBSTSubtree(root: TreeNode | null): number {
 
         // Base Case: leaf node counts as a BST
         if (root.left === null && root.right === null) {
-            largestBST = Math.max(largestBST, 1);
+            // Since we set 'largestBST' to be 0
+            // Either update max at each leaf or set 'largestBST' to 1 initially
+            // largestBST = Math.max(largestBST, 1);
             return [true, 1, root.val, root.val];
         }
 
