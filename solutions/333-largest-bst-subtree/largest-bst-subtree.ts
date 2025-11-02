@@ -19,7 +19,9 @@ function largestBSTSubtree(root: TreeNode | null): number {
     function helper(root: TreeNode | null): [boolean, number, number, number] {
         // Base Case: In this implementation null counts as a BST of size zero
         if (root === null) {
-            return [true, 0, Infinity, -Infinity];
+            return [true, 0, Infinity, -Infinity]; // [isBST, size, min, max]
+            // min = Infinity → ensures any real node value is smaller than it when computing parent min.
+            // max = -Infinity → ensures any real node value is larger than it when computing parent max.
         }
 
         const [isLeftBST, leftSize, leftMin, leftMax] = helper(root.left);
@@ -35,11 +37,13 @@ function largestBSTSubtree(root: TreeNode | null): number {
             const currSize = 1 + leftSize + rightSize;
             // Update the maxSize
             largestBST = Math.max(largestBST, currSize);
-
+            // for min, propogate the smallest value seen so far
+            // and for max, propogate the largest value
             return [true, currSize, Math.min(leftMin, root.val), Math.max(root.val, rightMax)];
 
         } else {
             // min and max do not matter if we return false
+            // Since this subtree is not a BST, its min/max will not be used by parent nodes
             return [false, 0, -Infinity, Infinity];
         }
     }
