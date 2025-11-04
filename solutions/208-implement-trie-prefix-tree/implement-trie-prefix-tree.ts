@@ -1,11 +1,12 @@
 class TrieNode {
-    children: Map<string, TrieNode>;
+    children: (TrieNode | null)[];
     isWord: boolean;
     constructor() {
-        this.children = new Map();
+        this.children = new Array(26).fill(null);
         this.isWord = false;
     }
 }
+
 class Trie {
     root: TrieNode;
     constructor() {
@@ -13,30 +14,25 @@ class Trie {
     }
 
     insert(word: string): void {
-        // start pointer at root
         let curr: TrieNode = this.root;
-        // iterate over each character of the input word
         for(let i = 0; i < word.length; i += 1) {
-            // if 'curr' doesn't have the character in it's children hash map
-            if(!curr.children.has(word[i])) {
-                // create it
-                curr.children.set(word[i], new TrieNode());
+            const idx = word[i].charCodeAt(0) - "a".charCodeAt(0);
+            if(curr.children[idx] === null) {
+                curr.children[idx] = new TrieNode();
             }
-            // move 'curr' to that node
-            curr = curr.children.get(word[i]);
-
+            curr = curr.children[idx];
         }
-        // mark last character as the end
-        curr.isWord = true;   
+        curr.isWord = true;
     }
 
     search(word: string): boolean {
         let curr: TrieNode = this.root;
         for(let i = 0; i < word.length; i += 1) {
-            if(!curr.children.has(word[i])) {
+            const idx = word[i].charCodeAt(0) - "a".charCodeAt(0);
+            if(curr.children[idx] === null) {
                 return false;
             } else {
-                curr = curr.children.get(word[i]);
+                curr = curr.children[idx];
             }
         }
         return curr.isWord;
@@ -45,10 +41,11 @@ class Trie {
     startsWith(prefix: string): boolean {
         let curr: TrieNode = this.root;
         for(let i = 0; i < prefix.length; i += 1) {
-            if(!curr.children.has(prefix[i])) {
+            const idx = prefix[i].charCodeAt(0) - "a".charCodeAt(0);
+            if(curr.children[idx] === null) {
                 return false;
             } else {
-                curr = curr.children.get(prefix[i]);
+                curr = curr.children[idx];
             }
         }
         return true;
