@@ -1,34 +1,60 @@
-class WordDictionary {
-    words: string[];
+class TrieNode {
+    children: Map<string, TrieNode>;
+    isWord: boolean;
     constructor() {
-        this.words = [];
+        this.children = new Map();
+        this.isWord = false;
+    }
+}
+
+class WordDictionary {
+    root: TrieNode;
+    constructor() {
+        this.root = new TrieNode();
     }
 
     addWord(word: string): void {
-        this.words.push(word);
+        let curr: TrieNode = this.root;
+        for(let i = 0; i < word.length; i += 1) {
+            if(!curr.children.has(word[i])) {
+                curr.children.set(word[i], new TrieNode());
+            }
+            curr = curr.children.get(word[i]);
+        }
+        curr.isWord = true;
+        
     }
 
     search(word: string): boolean {
-        for(let i = 0; i < this.words.length; i += 1) {
-            // if first characters match OR first character is a wildcard
-            // AND lengths match
-            if((this.words[i][0] === word[0] || word[0] === '.') && this.words[i].length === word.length) {
-                // check character by character
-                let matchCounter: number = 1;
-                for(let j = 1; j < this.words[i].length; j += 1) {
-                    // if character is not a wildercard and it doesn't match
-                    if(word[j] !== '.' && this.words[i][j] !== word[j]) {
-                        break;
-                    } else {
-                        matchCounter += 1;
+        function dfs(idx: number, node: TrieNode): boolean {
+            // Base Case: index is at the length
+            if(idx === word.length) {
+                return node.isWord;
+            }
+            // character at this index is a wildcard
+            if(word[idx] === '.') {
+                // try every child of the current node
+                for(const child of node.children.values()) {
+                    if(dfs(idx + 1, child) === true) {
+                        return true; // found the word
                     }
                 }
-                if(matchCounter === word.length) {
-                    return true;
+                return false; // did not find the word
+            } 
+            // character at this index is a regular charater
+            else {
+                // chec if current node has this character as a child
+                if(!node.children.has(word[idx])) {
+                    // it doesn't
+                    return false;
+                } else {
+                    // it does, recurse
+                    return dfs(idx + 1, node.children.get(word[idx]));
                 }
             }
+
         }
-        return false;
+        return dfs(0, this.root);
     }
 }
 
