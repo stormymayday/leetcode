@@ -1,8 +1,8 @@
 class TrieNode {
-    children: Map<string, TrieNode>;
+    children: (TrieNode | null)[];
     isWord: boolean;
     constructor() {
-        this.children = new Map();
+        this.children = new Array(26).fill(null);
         this.isWord = false;
     }
 }
@@ -16,45 +16,39 @@ class WordDictionary {
     addWord(word: string): void {
         let curr: TrieNode = this.root;
         for(let i = 0; i < word.length; i += 1) {
-            if(!curr.children.has(word[i])) {
-                curr.children.set(word[i], new TrieNode());
+            const idx = word[i].charCodeAt(0) - "a".charCodeAt(0);
+            if(curr.children[idx] === null) {
+                curr.children[idx] = new TrieNode();
             }
-            curr = curr.children.get(word[i]);
+            curr = curr.children[idx];
         }
         curr.isWord = true;
-        
     }
 
     search(word: string): boolean {
-        function dfs(idx: number, node: TrieNode): boolean {
-            // Base Case: index is at the length
+        function helper(idx: number, node: TrieNode): boolean {
             if(idx === word.length) {
                 return node.isWord;
             }
-            // character at this index is a wildcard
             if(word[idx] === '.') {
-                // try every child of the current node
-                for(const child of node.children.values()) {
-                    if(dfs(idx + 1, child) === true) {
-                        return true; // found the word
+                for(const child of node.children) {
+                    if(child !== null) {
+                        if(helper(idx + 1, child) === true) {
+                            return true;
+                        }
                     }
                 }
-                return false; // did not find the word
-            } 
-            // character at this index is a regular charater
-            else {
-                // chec if current node has this character as a child
-                if(!node.children.has(word[idx])) {
-                    // it doesn't
-                    return false;
+                return false;
+            } else {
+                const index = word[idx].charCodeAt(0) - "a".charCodeAt(0);
+                if(node.children[index] !== null) {
+                    return helper(idx + 1, node.children[index]);
                 } else {
-                    // it does, recurse
-                    return dfs(idx + 1, node.children.get(word[idx]));
+                    return false;
                 }
             }
-
         }
-        return dfs(0, this.root);
+        return helper(0, this.root);
     }
 }
 
