@@ -120,34 +120,44 @@ class Trie {
             // Base case: reached end of word
             if (index === word.length) {
                 // Word doesn't exist
-                if (!node.isWord) {
+                if (node.isWord === false) {
                     return false;
-                } else {
-                    // Unmark as word
+                } 
+                // Otherwise, the word exists and it can be deleted
+                else {
+                    // Unmark the word (Essentially deleting it from the Trie)
                     node.isWord = false;
-                    // Return true if node has no children (can be deleted)
+                    // Furthermore, if node has no children, we can delete the mapping from the parent
                     return node.children.size === 0;
                 }
             }
 
+            // get character at current index
             const char = word[index];
+            // check if current node has character as a child
             const childNode = node.children.get(char);
 
-            // Character path doesn't exist
+            // current node doesn't have character as a child
             if (childNode === undefined) {
                 return false;
-            } else {
+            } 
+            // current node has character as a child
+            else {
                 // Recursively delete from child
                 const shouldDeleteChild = helper(childNode, word, index + 1);
 
-                // If child should be deleted, remove the mapping
+                // If child should be deleted, remove the mapping from current node
                 if (shouldDeleteChild) {
                     node.children.delete(char);
-                    // Return true if current node can also be deleted AKA it's children map is empty
+                    // If current's children map becomes empty we can delete it aswell
                     return node.children.size === 0;
                 } 
-
-                // return false;
+                // Otherwise, 'shouldDeleteChild' is false
+                else {
+                    // Therefore, explicitly return false
+                    // indicating that current node should not be deleted
+                    return false;
+                }
             }
         }
 
