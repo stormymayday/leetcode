@@ -140,13 +140,13 @@ class Trie {
                 // Recursively delete from child
                 const shouldDeleteChild = helper(childNode, word, index + 1);
 
-                // If child should be deleted, remove it
+                // If child should be deleted, remove the mapping
                 if (shouldDeleteChild) {
                     node.children.delete(char);
                     // Return true if current node can also be deleted
                     // (has no children and is not end of another word)
-                    return node.children.size === 0 && !node.isWord;
-                }
+                    return node.children.size === 0;
+                } 
 
                 return false;
             }
