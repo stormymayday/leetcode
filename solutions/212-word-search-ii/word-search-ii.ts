@@ -8,9 +8,9 @@ function findWords(board: string[][], words: string[]): string[] {
 
     for (let row = 0; row < board.length; row += 1) {
         for (let col = 0; col < board[0].length; col += 1) {
-            if(trie.root.children.has(board[row][col])) {
+            if (trie.root.children.has(board[row][col])) {
                 dfs(board, row, col, [], res, trie);
-            }   
+            }
         }
     }
 
@@ -114,27 +114,28 @@ class Trie {
         return true;
     }
     delete(word: string): void {
-        this._delete(this.root, word, 0);
-    }
 
-    private _delete(node: TrieNode, word: string, index: number): boolean {
-        if (index === word.length) {
-            if (!node.isWord) return false;
-            node.isWord = false;
-            return node.children.size === 0;
+        function helper(node: TrieNode, word: string, index: number): boolean {
+            if (index === word.length) {
+                if (!node.isWord) return false;
+                node.isWord = false;
+                return node.children.size === 0;
+            }
+
+            const char = word[index];
+            const childNode = node.children.get(char);
+            if (!childNode) return false;
+
+            const shouldDeleteChild = helper(childNode, word, index + 1);
+
+            if (shouldDeleteChild) {
+                node.children.delete(char);
+                return node.children.size === 0 && !node.isWord;
+            }
+
+            return false;
         }
 
-        const char = word[index];
-        const childNode = node.children.get(char);
-        if (!childNode) return false;
-
-        const shouldDeleteChild = this._delete(childNode, word, index + 1);
-
-        if (shouldDeleteChild) {
-            node.children.delete(char);
-            return node.children.size === 0 && !node.isWord;
-        }
-
-        return false;
+        helper(this.root, word, 0);
     }
 }
