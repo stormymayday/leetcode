@@ -134,7 +134,7 @@ class Trie {
             const childNode = node.children.get(char);
 
             // Character path doesn't exist
-            if (!childNode) {
+            if (childNode === undefined) {
                 return false;
             } else {
                 // Recursively delete from child
