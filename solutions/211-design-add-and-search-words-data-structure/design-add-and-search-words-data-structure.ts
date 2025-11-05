@@ -1,54 +1,50 @@
-class TrieNode {
-    children: (TrieNode | null)[];
-    isWord: boolean;
-    constructor() {
-        this.children = new Array(26).fill(null);
-        this.isWord = false;
-    }
-}
-
 class WordDictionary {
-    root: TrieNode;
+    words: string[];
     constructor() {
-        this.root = new TrieNode();
+        this.words = [];
     }
 
     addWord(word: string): void {
-        let curr: TrieNode = this.root;
-        for(let i = 0; i < word.length; i += 1) {
-            const idx = word[i].charCodeAt(0) - "a".charCodeAt(0);
-            if(curr.children[idx] === null) {
-                curr.children[idx] = new TrieNode();
-            }
-            curr = curr.children[idx];
-        }
-        curr.isWord = true;
+        this.words.push(word);
     }
 
     search(word: string): boolean {
-        function helper(idx: number, node: TrieNode): boolean {
-            if(idx === word.length) {
-                return node.isWord;
-            }
-            if(word[idx] === '.') {
-                for(const child of node.children) {
-                    if(child !== null) {
-                        if(helper(idx + 1, child) === true) {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            } else {
-                const index = word[idx].charCodeAt(0) - "a".charCodeAt(0);
-                if(node.children[index] !== null) {
-                    return helper(idx + 1, node.children[index]);
-                } else {
-                    return false;
-                }
+        let hasDots: boolean = false;
+        for(let i = 0; i < word.length; i += 1) {
+            if(word[i] === '.') {
+                hasDots = true;
+                break;
             }
         }
-        return helper(0, this.root);
+        if(hasDots === false) {
+            return this.words.includes(word);
+        } 
+        // word has dots
+        else {
+            // meat and potates
+            // iterate over each word in the dict
+            for(const dictWord of this.words) {
+                // if lengths are different, skip
+                if(dictWord.length !== word.length) {
+                    continue;
+                } else {
+                    // compare char by char
+                    let match: boolean = true;
+                    for(let i = 0; i < word.length; i += 1) {
+                        if(word[i] !== '.' && word[i] !== dictWord[i]) {
+                            // character missmatch
+                            match = false;
+                            break;
+                        }
+                    }
+                    if(match === true) {
+                        return true;
+                    } 
+                }
+            }
+            // no match found
+            return false;
+        }
     }
 }
 
