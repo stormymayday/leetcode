@@ -115,25 +115,41 @@ class Trie {
     }
     delete(word: string): void {
 
+        // Returns true if parent should delete the mapping
         function helper(node: TrieNode, word: string, index: number): boolean {
+            // Base case: reached end of word
             if (index === word.length) {
-                if (!node.isWord) return false;
-                node.isWord = false;
-                return node.children.size === 0;
+                // Word doesn't exist
+                if (!node.isWord) {
+                    return false;
+                } else {
+                    // Unmark as word
+                    node.isWord = false;
+                    // Return true if node has no children (can be deleted)
+                    return node.children.size === 0;
+                }
             }
 
             const char = word[index];
             const childNode = node.children.get(char);
-            if (!childNode) return false;
 
-            const shouldDeleteChild = helper(childNode, word, index + 1);
+            // Character path doesn't exist
+            if (!childNode) {
+                return false;
+            } else {
+                // Recursively delete from child
+                const shouldDeleteChild = helper(childNode, word, index + 1);
 
-            if (shouldDeleteChild) {
-                node.children.delete(char);
-                return node.children.size === 0 && !node.isWord;
+                // If child should be deleted, remove it
+                if (shouldDeleteChild) {
+                    node.children.delete(char);
+                    // Return true if current node can also be deleted
+                    // (has no children and is not end of another word)
+                    return node.children.size === 0 && !node.isWord;
+                }
+
+                return false;
             }
-
-            return false;
         }
 
         helper(this.root, word, 0);
