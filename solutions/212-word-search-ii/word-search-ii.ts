@@ -1,6 +1,6 @@
 function findWords(board: string[][], words: string[]): string[] {
 
-    const res = new Set<string>();
+    const res: string[] = [];
     const trie = new Trie();
     for (let i = 0; i < words.length; i += 1) {
         trie.insert(words[i]);
@@ -14,11 +14,11 @@ function findWords(board: string[][], words: string[]): string[] {
         }
     }
 
-    return Array.from(res);
+    return res;
 
 };
 
-function dfs(board: string[][], row: number, col: number, path: string[], res: Set<string>, trie: Trie): void {
+function dfs(board: string[][], row: number, col: number, path: string[], res: string[], trie: Trie): void {
     // Base Case: out of bounds
     if (row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
         return;
@@ -45,7 +45,7 @@ function dfs(board: string[][], row: number, col: number, path: string[], res: S
 
     // Found a word
     if (trie.search(prefix) === true) {
-        res.add(prefix);
+        res.push(prefix);
         trie.delete(prefix);
         // don't return yet
     }
