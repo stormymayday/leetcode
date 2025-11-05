@@ -143,8 +143,7 @@ class Trie {
                 // If child should be deleted, remove the mapping
                 if (shouldDeleteChild) {
                     node.children.delete(char);
-                    // Return true if current node can also be deleted
-                    // (has no children and is not end of another word)
+                    // Return true if current node can also be deleted AKA it's children map is empty
                     return node.children.size === 0;
                 } 
 
