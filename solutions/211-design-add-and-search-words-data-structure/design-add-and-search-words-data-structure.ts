@@ -1,50 +1,56 @@
-class WordDictionary {
-    words: Set<string>;
+class TrieNode {
+    children: Map<string, TrieNode>;
+    isWord: boolean;
     constructor() {
-        this.words = new Set();
+        this.children = new Map();
+        this.isWord = false;
+    }
+}
+
+class WordDictionary {
+    root: TrieNode;
+    constructor() {
+        this.root = new TrieNode();
     }
 
     addWord(word: string): void {
-        this.words.add(word);
+        let curr: TrieNode = this.root;
+        for(let i = 0; i < word.length; i += 1) {
+            if(!curr.children.has(word[i])) {
+                curr.children.set(word[i], new TrieNode());
+            }
+            curr = curr.children.get(word[i]);
+        }
+        curr.isWord = true;
     }
 
     search(word: string): boolean {
-        let hasDots: boolean = false;
-        for(let i = 0; i < word.length; i += 1) {
-            if(word[i] === '.') {
-                hasDots = true;
-                break;
+        function helper(idx: number, node: TrieNode): boolean {
+            // Base Case: index goes past the last character
+            if(idx === word.length) {
+                return node.isWord;
             }
-        }
-        if(hasDots === false) {
-            return this.words.has(word);
-        } 
-        // word has dots
-        else {
-            // meat and potates
-            // iterate over each word in the dict
-            for(const dictWord of this.words) {
-                // if lengths are different, skip
-                if(dictWord.length !== word.length) {
-                    continue;
-                } else {
-                    // compare char by char
-                    let match: boolean = true;
-                    for(let i = 0; i < word.length; i += 1) {
-                        if(word[i] !== '.' && word[i] !== dictWord[i]) {
-                            // character missmatch
-                            match = false;
-                            break;
-                        }
-                    }
-                    if(match === true) {
+
+            // character at current index is the wildcard
+            if(word[idx] === '.') {
+                for(const [character, trieNode] of node.children.entries()) {
+                    if(helper(idx + 1, trieNode) === true) {
                         return true;
-                    } 
+                    }
+                }
+                return false;
+            } 
+            // character at current index is not the wildcard
+            else {
+                if(!node.children.has(word[idx])) {
+                    return false;
+                } else {
+                    return helper(idx + 1, node.children.get(word[idx]));
                 }
             }
-            // no match found
-            return false;
+
         }
+        return helper(0, this.root);
     }
 }
 
