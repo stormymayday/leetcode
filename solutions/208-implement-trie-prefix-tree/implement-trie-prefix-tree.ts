@@ -1,8 +1,8 @@
 class TrieNode {
-    children: Map<string, TrieNode>;
+    children: (TrieNode | null)[];
     isWord: boolean;
     constructor() {
-        this.children = new Map();
+        this.children = Array(26).fill(null);
         this.isWord = false;
     }
 }
@@ -16,10 +16,11 @@ class Trie {
     insert(word: string): void {
         let curr: TrieNode = this.root;
         for(let i = 0; i < word.length; i += 1) {
-            if(!curr.children.has(word[i])) {
-                curr.children.set(word[i], new TrieNode());
+            const charIdx = this.getCharIdx(word[i]);
+            if(curr.children[charIdx] === null) {
+                curr.children[charIdx] = new TrieNode();
             }
-            curr = curr.children.get(word[i]);
+            curr = curr.children[charIdx];
         }
         curr.isWord = true;
     }
@@ -27,10 +28,11 @@ class Trie {
     search(word: string): boolean {
         let curr: TrieNode = this.root;
         for(let i = 0; i < word.length; i += 1) {
-            if(!curr.children.has(word[i])) {
+            const charIdx = this.getCharIdx(word[i]);
+            if(curr.children[charIdx] === null) {
                 return false;
             } else {
-                curr = curr.children.get(word[i]);
+                curr = curr.children[charIdx];
             }
         }
         return curr.isWord;
@@ -39,13 +41,18 @@ class Trie {
     startsWith(prefix: string): boolean {
         let curr: TrieNode = this.root;
         for(let i = 0; i < prefix.length; i += 1) {
-            if(!curr.children.has(prefix[i])) {
+            const charIdx = this.getCharIdx(prefix[i]);
+            if(curr.children[charIdx] === null) {
                 return false;
             } else {
-                curr = curr.children.get(prefix[i]);
+                curr = curr.children[charIdx];
             }
         }
         return true;
+    }
+
+    private getCharIdx(char: string): number {
+        return char.charCodeAt(0) - "a".charCodeAt(0);
     }
 }
 
