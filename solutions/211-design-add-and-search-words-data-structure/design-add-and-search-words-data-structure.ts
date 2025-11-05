@@ -1,11 +1,11 @@
 class WordDictionary {
-    words: string[];
+    words: Set<string>;
     constructor() {
-        this.words = [];
+        this.words = new Set();
     }
 
     addWord(word: string): void {
-        this.words.push(word);
+        this.words.add(word);
     }
 
     search(word: string): boolean {
@@ -17,7 +17,7 @@ class WordDictionary {
             }
         }
         if(hasDots === false) {
-            return this.words.includes(word);
+            return this.words.has(word);
         } 
         // word has dots
         else {
