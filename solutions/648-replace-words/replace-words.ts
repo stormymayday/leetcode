@@ -21,14 +21,14 @@ function replaceWords(dictionary: string[], sentence: string): string {
         // going over each character in the word
         let curr: TrieNode = root;
         for (let j = 0; j < arr[i].length; j += 1) {
-            // let curr: TrieNode = root;
             if (!curr.children.has(arr[i][j])) {
-                break; // need to break out to the next array element
+                // word does not exist in the trie
+                break; // break out of the inner loop on the next element
             }
             curr = curr.children.get(arr[i][j]);
             if(curr.isWord === true) {
-                arr[i] = curr.word;
-                // break; //
+                arr[i] = curr.word; // found shortest
+                break; // break out of the inner loop on the next element
             }
         }
     }
