@@ -1,34 +1,51 @@
 class MapSum {
-    map: Map<string, number>;
+    root: TrieNode;
     constructor() {
-        this.map = new Map();
+        this.root = new TrieNode();
     }
 
     insert(key: string, val: number): void {
-        this.map.set(key, val);
+        let curr: TrieNode = this.root;
+        for(let i = 0; i < key.length; i += 1) {
+            if(!curr.children.has(key[i])) {
+                curr.children.set(key[i], new TrieNode());
+            }
+            curr = curr.children.get(key[i]);
+        }
+        curr.val = val;
     }
 
     sum(prefix: string): number {
-        let sum: number = 0;
-        for(const [key, value] of this.map.entries()) {
-            if(this.isPrefixOf(prefix, key) === true) {
-                sum += value;
+        let curr: TrieNode = this.root;
+        for(let i = 0; i < prefix.length; i += 1) {
+            if(!curr.children.has(prefix[i])) {
+                return 0;
+            } else {
+                curr = curr.children.get(prefix[i]);
             }
         }
-        return sum;
+        return this.dfs(curr);
     }
 
-    isPrefixOf(prefix: string, word: string): boolean {
-        if(prefix.length > word.length) {
-            return false;
-        } else {
-            for(let i = 0; i < prefix.length; i += 1) {
-                if(prefix[i] !== word[i]) {
-                    return false;
-                }
-            }
-            return true;
+    dfs(node: TrieNode): number {
+        if(node.children.size === 0) {
+            return node.val;
         }
+        let childrenSum = 0;
+        for(const child of node.children.values()) {
+            childrenSum += this.dfs(child);
+        }
+        return node.val + childrenSum;
+    }
+
+}
+
+class TrieNode {
+    children: Map<string, TrieNode>;
+    val: number;
+    constructor() {
+        this.children = new Map();
+        this.val = 0;
     }
 }
 
