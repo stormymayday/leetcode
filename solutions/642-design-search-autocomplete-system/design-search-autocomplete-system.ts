@@ -36,26 +36,42 @@ class AutocompleteSystem {
 
             }
 
-            // Sort by 'times' descending (larger first)?, and 'ASCII code' ascending (smaller first)?
+            // Sort by 'times' descending (larger first), and 'ASCII code' ascending (smaller first)
             allMatches.sort((a, b) => {
                 // by 'occurence' first
                 if (a[1] !== b[1]) {
-                    return b[1] - a[1]; // descending?
+                    return b[1] - a[1]; // (descending) more frequent goes first
                 }
-                // otherwise, by ASCII code
+                // otherwise, by ASCII code (ascending, smaller ASCII code goes first)
                 else {
-                    return a[0].localeCompare(b[0]);
+                    // Note: the sort comparator expects a number (negative, zero, or positive).
+                    // When a is smaller, it should come first (ascending order)
+                    if(a[0] < b[0]) {
+                        return -1;
+                    } 
+                    // When a is larger, it should come after b
+                    // else if(a[0] > b[0]) {
+                    //     return 1;
+                    // } 
+                    // a and b are equal
+                    else {
+                        // no change
+                        return 0;
+                    }
                 }
             });
 
+            // Fill out the result
+
             for (const [string, count] of allMatches) {
                 res.push(string);
+                if(res.length === 3) {
+                    break;
+                }
             }
 
-            while (res.length > 3) {
-                res.pop();
-            }
-
+            // Note: not sure about: "If there are fewer than 3 matches, return them all." requirement
+            
             return res;
         }
 
