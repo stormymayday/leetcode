@@ -1,15 +1,16 @@
 function findWords(board: string[][], words: string[]): string[] {
 
     const res: string[] = [];
+
     const trie = new Trie();
-    for (let i = 0; i < words.length; i += 1) {
+    for(let i = 0; i < words.length; i += 1) {
         trie.insert(words[i]);
     }
 
     for (let row = 0; row < board.length; row += 1) {
         for (let col = 0; col < board[0].length; col += 1) {
-            if (trie.root.children.has(board[row][col])) {
-                dfs(board, row, col, [], res, trie);
+            if(trie.startsWith(board[row][col])) {
+                dfs(board, row, col,  trie, [], res, new Set<string>());
             }
         }
     }
@@ -18,28 +19,28 @@ function findWords(board: string[][], words: string[]): string[] {
 
 };
 
-function dfs(board: string[][], row: number, col: number, path: string[], res: string[], trie: Trie): void {
+function dfs(board: string[][], row: number, col: number, trie: Trie, path: string[], res: string[], visited: Set<string>): void {
+
     // Base Case: out of bounds
     if (row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
         return;
     }
 
     // Base Case: visited
-    if (board[row][col] === '#') {
+    const position = `${row},${col}`;
+    if (visited.has(position)) {
         return;
     }
 
-    // add current char to path and mark position as visited
+    visited.add(position);
     path.push(board[row][col]);
-    const temp = board[row][col];
-    board[row][col] = '#';
     const prefix = path.join("");
 
-    // Base Case: not a prefix
+    // Base Case: character missmatch
     if (trie.startsWith(prefix) === false) {
-        // backtrack
+        // backtrck
+        visited.delete(position);
         path.pop();
-        board[row][col] = temp;
         return;
     }
 
@@ -47,9 +48,8 @@ function dfs(board: string[][], row: number, col: number, path: string[], res: s
     if (trie.search(prefix) === true) {
         res.push(prefix);
         trie.delete(prefix);
-        // don't return yet
     }
-
+    
     const directions: [number, number][] = [
         [-1, 0], // up
         [0, 1], // right
@@ -59,12 +59,12 @@ function dfs(board: string[][], row: number, col: number, path: string[], res: s
     for (const [rowDelta, colDelta] of directions) {
         const neighborRow = row + rowDelta;
         const neighborCol = col + colDelta;
-        dfs(board, neighborRow, neighborCol, path, res, trie);
+        dfs(board, neighborRow, neighborCol, trie, path, res, visited);
     }
 
-    // explored all directions from current position, backtrack
+    // Explored all directions for current positon, backtrack
+    visited.delete(position);
     path.pop();
-    board[row][col] = temp;
 }
 
 class TrieNode {
@@ -83,8 +83,8 @@ class Trie {
     }
     insert(word: string): void {
         let curr: TrieNode = this.root;
-        for (let i = 0; i < word.length; i += 1) {
-            if (!curr.children.has(word[i])) {
+        for(let i = 0; i < word.length; i += 1) {
+            if(!curr.children.has(word[i])) {
                 curr.children.set(word[i], new TrieNode());
             }
             curr = curr.children.get(word[i]);
@@ -93,8 +93,8 @@ class Trie {
     }
     search(word: string): boolean {
         let curr: TrieNode = this.root;
-        for (let i = 0; i < word.length; i += 1) {
-            if (!curr.children.has(word[i])) {
+        for(let i = 0; i < word.length; i += 1) {
+            if(!curr.children.has(word[i])) {
                 return false;
             } else {
                 curr = curr.children.get(word[i]);
@@ -104,8 +104,8 @@ class Trie {
     }
     startsWith(prefix: string): boolean {
         let curr: TrieNode = this.root;
-        for (let i = 0; i < prefix.length; i += 1) {
-            if (!curr.children.has(prefix[i])) {
+        for(let i = 0; i < prefix.length; i += 1) {
+            if(!curr.children.has(prefix[i])) {
                 return false;
             } else {
                 curr = curr.children.get(prefix[i]);
@@ -114,53 +114,46 @@ class Trie {
         return true;
     }
     delete(word: string): void {
-
-        // Returns true if parent should delete the mapping
-        function helper(node: TrieNode, word: string, index: number): boolean {
-            // Base case: reached end of word
-            if (index === word.length) {
-                // Word doesn't exist
-                if (node.isWord === false) {
-                    return false;
-                } 
-                // Otherwise, the word exists and it can be deleted
-                else {
-                    // Unmark the word (Essentially deleting it from the Trie)
+        // returns a boolean
+        // If 'true' indicates that parent node can remove the target child entry from it's hash map
+        // Otherwise, 'false' can indicate that the word was not found or last charater (of the target) still has entries in it's hash map
+        // Therefore, it cannot be removed yet
+        function helper(idx: number, node: TrieNode): boolean {
+            // Base Case: reached the last node
+            if(idx === word.length) {
+                if(node.isWord === false) {
+                    return false; // word was not found
+                } else {
+                    // Otherwise, mark this as no longer being end of a word
+                    // (This essentially deletes the word)
                     node.isWord = false;
-                    // Furthermore, if node has no children, we can delete the mapping from the parent
+                    // This will send signal to a parent node whether if this child entry should be removed from it's hash map
                     return node.children.size === 0;
                 }
             }
-
-            // get character at current index
-            const char = word[index];
-            // check if current node has character as a child
-            const childNode = node.children.get(char);
-
-            // current node doesn't have character as a child
-            if (childNode === undefined) {
+            
+            if(!node.children.has(word[idx])) {
+                // word does not exist
                 return false;
             } 
-            // current node has character as a child
+            // otherwise, word can exist
             else {
-                // Recursively delete from child
-                const shouldDeleteChild = helper(childNode, word, index + 1);
+                // check if current node can delete the child entry from it's hash map
+                const shouldDeleteChild = helper(idx + 1, node.children.get(word[idx]));
 
-                // If child should be deleted, remove the mapping from current node
-                if (shouldDeleteChild) {
-                    node.children.delete(char);
-                    // If current's children map becomes empty we can delete it aswell
+                if(shouldDeleteChild === true) {
+                    node.children.delete(word[idx]);
+                    // if current's children becomes empty we can delete it as well
                     return node.children.size === 0;
-                } 
-                // Otherwise, 'shouldDeleteChild' is false
-                else {
-                    // Therefore, explicitly return false
-                    // indicating that current node should not be deleted
+                } else {
+                    // 'shouldDeleteChild' was false
+                    // return 'false' explicitly for consistency
+                    // otherwise, it returns 'undefined' which is 'falsy'
                     return false;
                 }
             }
-        }
 
-        helper(this.root, word, 0);
+        }
+        helper(0, this.root);
     }
 }
