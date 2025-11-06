@@ -1,11 +1,13 @@
 class AutocompleteSystem {
 
     map: Map<string, number>;
-    currInput: string;
+    currInput: string[];
+    queryResult: [string, number][];
 
     constructor(sentences: string[], times: number[]) {
 
-        this.currInput = "";
+        this.currInput = [];
+        this.queryResult = [];
         this.map = new Map();
 
         for (let i = 0; i < sentences.length; i += 1) {
@@ -19,65 +21,66 @@ class AutocompleteSystem {
         const res: string[] = [];
 
         if (c === '#') {
-            this.map.set(this.currInput, (this.map.get(this.currInput) || 0) + 1);
-            this.currInput = "";
+            // joining the currInput at the end
+            const newSearchTerm: string = this.currInput.join("");
+            this.map.set(newSearchTerm, (this.map.get(newSearchTerm) || 0) + 1);
+            this.currInput = [];
+            this.queryResult = [];
             return res;
         } else {
 
-            this.currInput += c;
+            this.currInput.push(c);
 
-            const allMatches: [string, number][] = [];
+            // first input, queryResult is empty
+            if (this.queryResult.length === 0) {
+                for (const [sentence, count] of this.map.entries()) {
 
-            for (const [sentence, count] of this.map.entries()) {
+                    if (this.isPrefixOf(this.currInput, sentence)) {
+                        this.queryResult.push([sentence, count]);
+                    }
 
-                if (this.isPrefixOf(this.currInput, sentence)) {
-                    allMatches.push([sentence, count]);
                 }
+
+                // Sort by 'times' descending (larger first), and 'ASCII code' ascending (smaller first)
+                // Note: the sort comparator expects a number (negative, zero, or positive).
+                this.queryResult.sort((a, b) => {
+                    // by 'occurence' first
+                    if (a[1] !== b[1]) {
+                        return b[1] - a[1]; // (descending) more frequent goes first
+                    }
+                    // otherwise, if 'occurences' are same, by ASCII code (ascending, smaller code goes first)
+                    else {
+                        // When a is smaller, it should come first (ascending order)
+                        return a[0].localeCompare(b[0]);
+                    }
+                });
+
+            }
+            // subsequent inputs, filter out the queryResult
+            else {
+
+                // neet to filter out 'queryResult' based on new input string 
+                // note: 'queryResult' is already sorted by count (and ASCII?)
+                this.queryResult = this.queryResult.filter(([string, count]) => {
+                    return this.isPrefixOf(this.currInput, string);
+                });
 
             }
 
-            // Sort by 'times' descending (larger first), and 'ASCII code' ascending (smaller first)
-            allMatches.sort((a, b) => {
-                // by 'occurence' first
-                if (a[1] !== b[1]) {
-                    return b[1] - a[1]; // (descending) more frequent goes first
-                }
-                // otherwise, by ASCII code (ascending, smaller ASCII code goes first)
-                else {
-                    // Note: the sort comparator expects a number (negative, zero, or positive).
-                    // When a is smaller, it should come first (ascending order)
-                    if(a[0] < b[0]) {
-                        return -1;
-                    } 
-                    // When a is larger, it should come after b
-                    // else if(a[0] > b[0]) {
-                    //     return 1;
-                    // } 
-                    // a and b are equal
-                    else {
-                        // no change
-                        return 0;
-                    }
-                }
-            });
-
-            // Fill out the result
-
-            for (const [string, count] of allMatches) {
+            // Fill out the result by getting the top three
+            for (const [string, count] of this.queryResult) {
                 res.push(string);
-                if(res.length === 3) {
+                if (res.length === 3) {
                     break;
                 }
             }
 
-            // Note: not sure about: "If there are fewer than 3 matches, return them all." requirement
-            
             return res;
         }
 
     }
 
-    isPrefixOf(prefix: string, word: string): boolean {
+    isPrefixOf(prefix: string[], word: string): boolean {
         if (prefix.length > word.length) {
             return false;
         } else {
