@@ -15,11 +15,6 @@ function exist(board: string[][], word: string): boolean {
 
 
 function dfs(board: string[][], row: number, col: number, idx: number, word: string, visited: Set<string>): boolean {
-    
-    // Base Case: index has crossed the last character
-    if(idx === word.length) {
-        return true;
-    }
 
     // Base Case: out of bounds
     if(row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
@@ -35,6 +30,13 @@ function dfs(board: string[][], row: number, col: number, idx: number, word: str
     // Base Case: character missmatch
     if(board[row][col] !== word[idx]) {
         return false;
+    }
+
+    // Base Case: index is at the last character
+    // since previous base case checks whether if characters match
+    // this means that characters match and we are on the last character
+    if(idx === word.length - 1) {
+        return true;
     }
 
     visited.add(position);
