@@ -1,80 +1,59 @@
 function exist(board: string[][], word: string): boolean {
 
-    const ROWS = board.length;
-    const COLS = board[0].length;
-
-    for (let row = 0; row < ROWS; row += 1) {
-        for (let col = 0; col < COLS; col += 1) {
-            if (board[row][col] === word[0]) {
-
-                const visited: boolean[][] = new Array(ROWS);
-                for (let row = 0; row < ROWS; row += 1) {
-                    visited[row] = new Array(COLS).fill(false);
-                }
-
-                const path: string[] = [];
-
-                if (backtrackDFS(row, col, board, word, path, visited) === true) {
-                    return true;
-                }
-
+  for(let row = 0; row < board.length; row += 1) {
+    for(let col = 0; col < board[0].length; col += 1) {
+        if(board[row][col] === word[0]) {
+            if(dfs(board, row, col, 0, word, new Set<string>()) === true) {
+                return true;
             }
         }
     }
-
-    return false;
+  }
+  return false;
 
 };
 
-function backtrackDFS(
-    row: number,
-    col: number,
-    grid: string[][],
-    word: string,
-    path: string[],
-    visited: boolean[][]
-): boolean {
 
-    // Base Case 1: Out of bounds
-    if (row < 0 || row >= grid.length || col < 0 || col >= grid[0].length) {
-        return false;
-    }
-
-    // Base Case 2: Visited
-    if (visited[row][col] === true) {
-        return false;
-    }
-
-    // Base Case 3: Wrong character
-    if (grid[row][col] !== word[path.length]) {
-        return false;
-    }
-
-    // mark as 'visited'
-    visited[row][col] = true;
-    path.push(grid[row][col]);
-
-    // Base Case 4: Word found (search complete) (check AFTER adding to path)
-    if (path.length === word.length) {
+function dfs(board: string[][], row: number, col: number, idx: number, word: string, visited: Set<string>): boolean {
+    
+    // Base Case: index has crossed the last character
+    if(idx === word.length) {
         return true;
     }
 
+    // Base Case: out of bounds
+    if(row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
+        return false;
+    }
+
+    // Base Case: visited
+    const position = `${row},${col}`;
+    if(visited.has(position)) {
+        return false;
+    }
+
+    // Base Case: character missmatch
+    if(board[row][col] !== word[idx]) {
+        return false;
+    }
+
+    visited.add(position);
+    
     const directions: [number, number][] = [
         [-1, 0], // up
         [0, 1], // right
         [1, 0], // down
-        [0, -1], // left
+        [0, -1] // left
     ];
-    for (const [rowDelta, colDelta] of directions) {
-        if (backtrackDFS(row + rowDelta, col + colDelta, grid, word, path, visited) === true) {
+    for(const [rowDelta, colDelta] of directions) {
+        const neighborRow = row + rowDelta;
+        const neighborCol = col + colDelta;
+        if(dfs(board, neighborRow, neighborCol, idx + 1, word, visited) === true) {
             return true;
         }
     }
 
-    // None of the directions were successfull, backtrack
-    path.pop();
-    visited[row][col] = false;
-
-    return false;
-
+    // backtrack
+    visited.delete(position);
+    return false; // not found
 }
