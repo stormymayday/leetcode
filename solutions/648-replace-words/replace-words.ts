@@ -2,10 +2,10 @@ function replaceWords(dictionary: string[], sentence: string): string {
 
     const arr = sentence.split(" ");
 
-    dictionary.sort((a,b) => a.length - b.length);
+    const sortedDict = [...dictionary].sort((a, b) => a.length - b.length);
 
     for(let i = 0; i < arr.length; i += 1) {
-        for(const prefix of dictionary) {
+        for(const prefix of sortedDict) {
             if(isPrefixOf(prefix, arr[i]) === true) {
                 arr[i] = prefix;
                 break;
