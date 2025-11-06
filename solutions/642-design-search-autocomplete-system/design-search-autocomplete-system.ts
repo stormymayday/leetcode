@@ -21,7 +21,7 @@ class AutocompleteSystem {
         const res: string[] = [];
 
         if (c === '#') {
-            // joining the currInput at the end
+            // joining the 'currInput' once at the end instead of concatenating with each new input
             const newSearchTerm: string = this.currInput.join("");
             this.map.set(newSearchTerm, (this.map.get(newSearchTerm) || 0) + 1);
             this.currInput = [];
