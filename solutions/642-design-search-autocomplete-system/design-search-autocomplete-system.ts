@@ -1,17 +1,33 @@
 class AutocompleteSystem {
 
-    map: Map<string, number>;
+    root: TrieNode;
+    currNode: TrieNode; // for saving new search
     currInput: string[];
-    queryResult: [string, number][];
+    searchResult: string[]; // sorted cache
 
     constructor(sentences: string[], times: number[]) {
 
+        this.root = new TrieNode();
+        this.currNode = this.root;
         this.currInput = [];
-        this.queryResult = [];
-        this.map = new Map();
+        this.searchResult = []; // sorted cache
 
+        // filling the trie
         for (let i = 0; i < sentences.length; i += 1) {
-            this.map.set(sentences[i], times[i]);
+            let curr: TrieNode = this.root;
+
+            // this is going depth wise
+            for (let charIdx = 0; charIdx < sentences[i].length; charIdx += 1) {
+                if (!curr.children.has(sentences[i][charIdx])) {
+                    curr.children.set(sentences[i][charIdx], new TrieNode());
+                }
+                // then move to that new TrieNode?
+                curr = curr.children.get(sentences[i][charIdx]);
+                // fill the map here? (not sure about this one)
+                // if (curr.children.has(sentences[i][0])) {
+                    curr.sentencesCountMap.set(sentences[i], times[i]);
+                // }
+            }
         }
 
     }
@@ -20,77 +36,92 @@ class AutocompleteSystem {
 
         const res: string[] = [];
 
+        // end of an input
         if (c === '#') {
-            // joining the 'currInput' once at the end instead of concatenating with each new input
-            const newSearchTerm: string = this.currInput.join("");
-            this.map.set(newSearchTerm, (this.map.get(newSearchTerm) || 0) + 1);
-            this.currInput = [];
-            this.queryResult = [];
-            return res;
-        } else {
+            this.resetSearch();
+            return [];
+        }
+        // otherwise, it's an input
+        else {
 
             this.currInput.push(c);
 
-            // first input, queryResult is empty
-            if (this.queryResult.length === 0) {
-                for (const [sentence, count] of this.map.entries()) {
+            // Check if already in dead state
+            if (this.currNode === null) {
+                return [];
+            }
 
-                    if (this.isPrefixOf(this.currInput, sentence)) {
-                        this.queryResult.push([sentence, count]);
-                    }
+            // no matches
+            if (!this.currNode.children.has(c)) {
+                // Mark as dead to prevent accidental matches until # is entered?
+                this.currNode = null;
+                return [];
+            } else {
 
+                this.currNode = this.currNode.children.get(c);
+
+                const sentencesAndCounts: [string, number][] = [];
+
+                // this contains all the sentences with current prefix
+                for (const [sentence, count] of this.currNode.sentencesCountMap.entries()) {
+                    sentencesAndCounts.push([sentence, count]);
                 }
 
-                // Sort by 'times' descending (larger first), and 'ASCII code' ascending (smaller first)
-                // Note: the sort comparator expects a number (negative, zero, or positive).
-                this.queryResult.sort((a, b) => {
-                    // by 'occurence' first
+                // need to sort them
+                sentencesAndCounts.sort((a, b) => {
+                    // by count (desc)
                     if (a[1] !== b[1]) {
-                        return b[1] - a[1]; // (descending) more frequent goes first
+                        return b[1] - a[1];
                     }
-                    // otherwise, if 'occurences' are same, by ASCII code (ascending, smaller code goes first)
+                    // by ASCII (ascending)
                     else {
-                        // When a is smaller, it should come first (ascending order)
                         return a[0].localeCompare(b[0]);
                     }
                 });
 
-            }
-            // subsequent inputs, filter out the queryResult
-            else {
-
-                // neet to filter out 'queryResult' based on new input string 
-                // note: 'queryResult' is already sorted by count (and ASCII?)
-                this.queryResult = this.queryResult.filter(([string, count]) => {
-                    return this.isPrefixOf(this.currInput, string);
-                });
-
-            }
-
-            // Fill out the result by getting the top three
-            for (const [string, count] of this.queryResult) {
-                res.push(string);
-                if (res.length === 3) {
-                    break;
+                for (const [sentence, count] of sentencesAndCounts) {
+                    res.push(sentence);
+                    if (res.length === 3) {
+                        break;
+                    }
                 }
+
             }
 
-            return res;
         }
+
+        return res;
 
     }
 
-    isPrefixOf(prefix: string[], word: string): boolean {
-        if (prefix.length > word.length) {
-            return false;
-        } else {
-            for (let i = 0; i < prefix.length; i += 1) {
-                if (prefix[i] !== word[i]) {
-                    return false;
-                }
+    saveLatestSearch(str: string): void {
+        let curr: TrieNode = this.root;
+        for (let i = 0; i < str.length; i += 1) {
+            if (!curr.children.has(str[i])) {
+                // create an entry in the hash map
+                curr.children.set(str[i], new TrieNode());
             }
-            return true;
+            // move to that node
+            curr = curr.children.get(str[i]);
+            // add sentence and count
+            curr.sentencesCountMap.set(str, (curr.sentencesCountMap.get(str) || 0) + 1);
         }
+    }
+
+    resetSearch(): void {
+        const latestSearch = this.currInput.join("");
+        this.currInput = [];
+        this.saveLatestSearch(latestSearch);
+        this.currNode = this.root;
+    }
+}
+
+class TrieNode {
+    children: Map<string, TrieNode>;
+    sentencesCountMap: Map<string, number>;
+    constructor() {
+        this.children = new Map();
+        this.sentencesCountMap = new Map();
     }
 }
 
