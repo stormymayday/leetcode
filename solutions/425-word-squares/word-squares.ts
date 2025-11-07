@@ -21,8 +21,9 @@ function wordSquares(words: string[]): string[][] {
             prefix.push(matrix[row][matrix.length]);
         }
 
-        // This is a bottleneck: need to find a word with a matching prefix
+        // Using prefix to fetch candidate words
         const candidates = prefixHashTable.get(prefix.join(""));
+        // Try every candidate
         for (const candidate of candidates || []) {
 
             // try with this word
