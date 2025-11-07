@@ -3,30 +3,27 @@ class AutocompleteSystem {
     root: TrieNode;
     currNode: TrieNode; // for saving new search
     currInput: string[];
-    searchResult: string[]; // sorted cache
+    // searchResult: string[]; // sorted cache
 
     constructor(sentences: string[], times: number[]) {
 
         this.root = new TrieNode();
         this.currNode = this.root;
         this.currInput = [];
-        this.searchResult = []; // sorted cache
+        // this.searchResult = []; // sorted cache
 
         // filling the trie
         for (let i = 0; i < sentences.length; i += 1) {
             let curr: TrieNode = this.root;
-
             // this is going depth wise
             for (let charIdx = 0; charIdx < sentences[i].length; charIdx += 1) {
                 if (!curr.children.has(sentences[i][charIdx])) {
                     curr.children.set(sentences[i][charIdx], new TrieNode());
                 }
-                // then move to that new TrieNode?
+                // move to that new TrieNode
                 curr = curr.children.get(sentences[i][charIdx]);
-                // fill the map here? (not sure about this one)
-                // if (curr.children.has(sentences[i][0])) {
-                    curr.sentencesCountMap.set(sentences[i], times[i]);
-                // }
+                // fill the map here
+                curr.sentencesCountMap.set(sentences[i], times[i]);
             }
         }
 
@@ -39,7 +36,8 @@ class AutocompleteSystem {
         // end of an input
         if (c === '#') {
             this.resetSearch();
-            return [];
+            // return [];
+            return res;
         }
         // otherwise, it's an input
         else {
@@ -111,7 +109,9 @@ class AutocompleteSystem {
     resetSearch(): void {
         const latestSearch = this.currInput.join("");
         this.currInput = [];
-        this.saveLatestSearch(latestSearch);
+        if (latestSearch.length > 0) {  // Only save non-empty
+            this.saveLatestSearch(latestSearch);
+        }
         this.currNode = this.root;
     }
 }
