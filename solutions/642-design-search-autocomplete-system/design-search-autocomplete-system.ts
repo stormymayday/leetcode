@@ -46,7 +46,8 @@ class AutocompleteSystem {
 
             // Check if already in dead state
             if (this.currNode === null) {
-                return [];
+                // return [];
+                return res;
             }
 
             // no matches
