@@ -4,6 +4,8 @@ function wordSquares(words: string[]): string[][] {
 
     const res: string[][] = [];
 
+    const prefixHashTable = buildPrefixHashTable(words);
+
     function helper(matrix: string[]): void {
 
         // Base Case: Matrix is filled
@@ -12,24 +14,23 @@ function wordSquares(words: string[]): string[][] {
             return;
         }
 
-        // how do we get the prefix (it's the reflection column behind the diagonal)
+        // This is one of keys for this algorithm: building a prefix
         const prefix: string[] = [];
         for (let row = 0; row < matrix.length; row += 1) {
             // using 'matrix.length' because we are looking for aprefix for the next row
             prefix.push(matrix[row][matrix.length]);
         }
 
-        // need to find a word with a matching prefix
-        for (const word of words) {
-            if (isPrefixOf(prefix, word)) {
+        // This is a bottleneck: need to find a word with a matching prefix
+        const candidates = prefixHashTable.get(prefix.join(""));
+        for (const candidate of candidates || []) {
 
-                // try with this word
-                matrix.push(word);
-                helper(matrix);
+            // try with this word
+            matrix.push(candidate);
+            helper(matrix);
 
-                // backtrack
-                matrix.pop();
-            }
+            // backtrack
+            matrix.pop();
 
         }
 
@@ -46,15 +47,27 @@ function wordSquares(words: string[]): string[][] {
 
 };
 
-function isPrefixOf(prefix: string[], word: string): boolean {
-    if (prefix.length > word.length) {
-        return false;
-    } else {
-        for (let i = 0; i < prefix.length; i += 1) {
-            if (prefix[i] !== word[i]) {
-                return false;
+function buildPrefixHashTable(words: string[]): Map<string, string[]> {
+
+    const prefixHashTable = new Map();
+
+    for (let i = 0; i < words.length; i += 1) {
+
+        let prefix: string = "";
+
+        for (let charIdx = 0; charIdx < words[i].length; charIdx += 1) {
+
+            prefix += words[i][charIdx];
+
+            if (!prefixHashTable.has(prefix)) {
+                prefixHashTable.set(prefix, []);
             }
+            prefixHashTable.get(prefix).push(words[i]);
+
         }
-        return true;
+
     }
+
+    return prefixHashTable;
+
 }
