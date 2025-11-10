@@ -33,10 +33,11 @@ function removeSubfolders(folder: string[]): string[] {
 
             if(!curr.children.has(parts[j])) {
                 break; // folder does not exist in the Trie
-            } else {
-
-                // Otherwise, (potentially) the folder exists
-
+            } 
+            // Otherwise, (potentially) the folder exists
+            else {
+                
+                // Move to that node
                 curr = curr.children.get(parts[j]);
 
                 if( 
