@@ -66,7 +66,7 @@ class Trie {
                 else {
 
                     // Need to decrement count
-                    node.wordsStartingHere -= 1;
+                    node.wordsStartingHere -= 1; // was missing this!
                     node.wordsEndingHere -= 1;
 
                     // This will send signal to a parent node whether if this child entry should be removed from it's hash map
@@ -96,11 +96,8 @@ class Trie {
                         // If they are, we can delete this node
                         return node.children.size === 0 && node.wordsEndingHere === 0;
                     } else {
-                        return false;
+                        return false; // But don't delete this node
                     }
-
-                    // if current's children becomes empty we can delete it as well
-                    // return node.children.size === 0;
 
                 } else {
 
