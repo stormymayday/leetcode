@@ -38,7 +38,7 @@ function longestCommonPrefix(strs: string[]): string {
     const res: string[] = [];
     let curr: TrieNode = root;
     // Intuition: keep going down the Trie until there is more than 1 child
-    // AND current node is not 'end' of some string
+    // AND current node is not 'end' of a string
     while (curr.children.size === 1 && curr.isEnd === false) {
         for (const key of curr.children.keys()) {
             res.push(key);
