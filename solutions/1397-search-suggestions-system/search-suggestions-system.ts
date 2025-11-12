@@ -4,7 +4,7 @@ function suggestedProducts(products: string[], searchWord: string): string[][] {
 
     const sortedProducts: string[] = [...products.sort()];
 
-    for(const product of sortedProducts) {
+    for (const product of sortedProducts) {
         trie.insert(product);
     }
 
@@ -13,19 +13,15 @@ function suggestedProducts(products: string[], searchWord: string): string[][] {
     const res: string[][] = new Array(searchWord.length).fill([]);
 
     let curr: TrieNode = trie.root;
-    for(let charIdx = 0; charIdx < searchWord.length; charIdx += 1) {
+    for (let charIdx = 0; charIdx < searchWord.length; charIdx += 1) {
 
-        if(!curr.children.has(searchWord[charIdx])) {
+        if (!curr.children.has(searchWord[charIdx])) {
             break;
         } else {
             curr = curr.children.get(searchWord[charIdx]);
-            if(curr.words.length > 3) {
-                res[charIdx] = curr.words.slice(0, 3);
-            } else {
-                res[charIdx] = curr.words;
-            }
-            
-        }     
+            res[charIdx] = curr.words;
+
+        }
 
     }
 
@@ -49,13 +45,14 @@ class Trie {
     }
     insert(word: string): void {
         let curr: TrieNode = this.root;
-        for(let i = 0; i < word.length; i += 1) {
-            if(!curr.children.has(word[i])) {
+        for (let i = 0; i < word.length; i += 1) {
+            if (!curr.children.has(word[i])) {
                 curr.children.set(word[i], new TrieNode);
             }
             curr = curr.children.get(word[i]);
-            curr.words.push(word);
-            // curr.words.sort();
+            if (curr.words.length < 3) {
+                curr.words.push(word);
+            }
         }
     }
 }
