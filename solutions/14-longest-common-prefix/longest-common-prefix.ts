@@ -1,40 +1,32 @@
 function longestCommonPrefix(strs: string[]): string {
-    
-    // Cheeky Edge Case: Single Word
-    if (strs.length === 1) {
-        return strs[0];
+
+    // Phase 1: Count all the prefixes
+    const prefixCount = new Map();
+    for (const str of strs) {
+        const prefixes = getAllPrefixes(str);
+        for (const prefix of prefixes) {
+            prefixCount.set(prefix, (prefixCount.get(prefix) || 0) + 1);
+        }
     }
 
-    let res = [];
-
-    for (let i = 0; i < strs.length - 1; i += 1) {
-
-        const str1 = strs[i];
-        const str2 = strs[i + 1];
-
-        // If first chars don't match, exit early, there can't be a common prefix
-        if (str1[0] !== str2[0]) {
-            return "";
-        }
-
-        // Get the common prefix of these two words (This is quadratic due to outer loop)
-        let currPrefix = [];
-        for (let j = 0; j < Math.min(str1.length, str2.length); j += 1) {
-            if (str1[j] !== str2[j]) {
-                break;
-            } else {
-                currPrefix.push(str1[j]);
+    // Phase 2: Get the longest prefix
+    const res = [""];
+    for (const [prefix, count] of prefixCount.entries()) {
+        // count must be equal to number of input strings
+        if (count === strs.length) {
+            if (res[0].length < prefix.length) {
+                res[0] = prefix;
             }
         }
-
-        // Now update the result
-        // If we compare by min size, res (starts empty) will always be smaller
-        // it can only get smaller?
-        if (res.length === 0 || res.length > currPrefix.length) {
-            res = currPrefix;
-        }
-
     }
+    return res[0];
 
-    return res.join("");
 };
+
+function getAllPrefixes(str: string): string[] {
+    const prefixes: string[] = [];
+    for (let i = 1; i <= str.length; i += 1) {
+        prefixes.push(str.slice(0, i));
+    }
+    return prefixes;
+}
