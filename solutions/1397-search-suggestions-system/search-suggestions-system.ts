@@ -2,7 +2,9 @@ function suggestedProducts(products: string[], searchWord: string): string[][] {
 
     const trie = new Trie();
 
-    for(const product of products) {
+    const sortedProducts: string[] = [...products.sort()];
+
+    for(const product of sortedProducts) {
         trie.insert(product);
     }
 
@@ -53,7 +55,7 @@ class Trie {
             }
             curr = curr.children.get(word[i]);
             curr.words.push(word);
-            curr.words.sort();
+            // curr.words.sort();
         }
     }
 }
