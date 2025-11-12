@@ -1,35 +1,40 @@
 function longestCommonPrefix(strs: string[]): string {
-    // Edge Case: if the array is empty, return empty string
-    if(strs.length === 0) {
-        return "";
-    }
     
-    // Find the length of the shortest string in the array
-    // This sets an upper bound on how long our common prefix can be
-    let minLength = Infinity;
-    for(const str of strs) {
-        minLength = Math.min(minLength, str.length);
+    // Cheeky Edge Case: Single Word
+    if (strs.length === 1) {
+        return strs[0];
     }
-    
-    // Check each character position, up to the minimum length
-    let i = 0;
-    while(i < minLength) {
-        // Get the character at current position from the first string
-        const currentChar = strs[0][i];
-        
-        // Compare this character with the same position in all other strings
-        for(const str of strs) {
-            // If we find any mismatch, return the prefix found so far
-            if(str[i] !== currentChar) {
-                return strs[0].substring(0, i);
+
+    let res = [];
+
+    for (let i = 0; i < strs.length - 1; i += 1) {
+
+        const str1 = strs[i];
+        const str2 = strs[i + 1];
+
+        // If first chars don't match, exit early, there can't be a common prefix
+        if (str1[0] !== str2[0]) {
+            return "";
+        }
+
+        // Get the common prefix of these two words (This is quadratic due to outer loop)
+        let currPrefix = [];
+        for (let j = 0; j < Math.min(str1.length, str2.length); j += 1) {
+            if (str1[j] !== str2[j]) {
+                break;
+            } else {
+                currPrefix.push(str1[j]);
             }
         }
-        
-        // If all strings match at this position, move to the next character
-        i++;
+
+        // Now update the result
+        // If we compare by min size, res (starts empty) will always be smaller
+        // it can only get smaller?
+        if (res.length === 0 || res.length > currPrefix.length) {
+            res = currPrefix;
+        }
+
     }
-    
-    // If we've checked all positions up to minLength without finding
-    // a mismatch, return the prefix of length minLength
-    return strs[0].substring(0, i);
+
+    return res.join("");
 };
