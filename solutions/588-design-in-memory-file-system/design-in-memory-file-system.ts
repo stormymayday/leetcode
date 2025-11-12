@@ -5,10 +5,17 @@ class FileSystem {
     }
 
     ls(path: string): string[] {
+
+        // Special Case: path is "/" root directory
+        if (path === "/") {
+            return [...this.root.children.keys()].sort();
+        }
+
         let curr: TrieNode = this.root;
         // Split path and filter empty strings (paths starting with "/" produce leading empty string)
-        const pathParts = path.split("/").filter(p => p !== "");
-        for (let i = 0; i < pathParts.length; i += 1) {
+        // const pathParts = path.split("/").filter(p => p !== "");
+        const pathParts = path.split("/");
+        for (let i = 1; i < pathParts.length; i += 1) {
             if (!curr.children.has(pathParts[i])) {
                 return [];
             } else {
@@ -32,8 +39,9 @@ class FileSystem {
     mkdir(path: string): void {
         let curr: TrieNode = this.root;
         // Split path and filter empty strings (paths starting with "/" produce leading empty string)
-        const pathParts = path.split("/").filter(p => p !== "");
-        for (let i = 0; i < pathParts.length; i += 1) {
+        // const pathParts = path.split("/").filter(p => p !== "");
+        const pathParts = path.split("/");
+        for (let i = 1; i < pathParts.length; i += 1) {
             if (!curr.children.has(pathParts[i])) {
                 curr.children.set(pathParts[i], new TrieNode());
             }
@@ -44,8 +52,9 @@ class FileSystem {
     addContentToFile(filePath: string, content: string): void {
         let curr: TrieNode = this.root;
         // Split path and filter empty strings (paths starting with "/" produce leading empty string)
-        const pathParts = filePath.split("/").filter(p => p !== "");
-        for (let i = 0; i < pathParts.length; i += 1) {
+        // const pathParts = filePath.split("/").filter(p => p !== "");
+        const pathParts = filePath.split("/");
+        for (let i = 1; i < pathParts.length; i += 1) {
             if (!curr.children.has(pathParts[i])) {
                 curr.children.set(pathParts[i], new TrieNode());
             }
@@ -59,8 +68,8 @@ class FileSystem {
     readContentFromFile(filePath: string): string {
         let curr: TrieNode = this.root;
         // Split path and filter empty strings (paths starting with "/" produce leading empty string)
-        const pathParts = filePath.split("/").filter(p => p !== "");
-        for (let i = 0; i < pathParts.length; i += 1) {
+        const pathParts = filePath.split("/");
+        for (let i = 1; i < pathParts.length; i += 1) {
             if (!curr.children.has(pathParts[i])) {
                 return ""; // shouldn't be necessary
             }
