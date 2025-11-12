@@ -6,7 +6,7 @@ class FileSystem {
 
     ls(path: string): string[] {
         let curr: TrieNode = this.root;
-        // const pathParts = path.split("/");
+        // Split path and filter empty strings (paths starting with "/" produce leading empty string)
         const pathParts = path.split("/").filter(p => p !== "");
         for (let i = 0; i < pathParts.length; i += 1) {
             if (!curr.children.has(pathParts[i])) {
@@ -31,7 +31,7 @@ class FileSystem {
 
     mkdir(path: string): void {
         let curr: TrieNode = this.root;
-        // const pathParts = path.split("/");
+        // Split path and filter empty strings (paths starting with "/" produce leading empty string)
         const pathParts = path.split("/").filter(p => p !== "");
         for (let i = 0; i < pathParts.length; i += 1) {
             if (!curr.children.has(pathParts[i])) {
@@ -43,7 +43,7 @@ class FileSystem {
 
     addContentToFile(filePath: string, content: string): void {
         let curr: TrieNode = this.root;
-        // const pathParts = filePath.split("/");
+        // Split path and filter empty strings (paths starting with "/" produce leading empty string)
         const pathParts = filePath.split("/").filter(p => p !== "");
         for (let i = 0; i < pathParts.length; i += 1) {
             if (!curr.children.has(pathParts[i])) {
@@ -58,7 +58,7 @@ class FileSystem {
 
     readContentFromFile(filePath: string): string {
         let curr: TrieNode = this.root;
-        // const pathParts = filePath.split("/");
+        // Split path and filter empty strings (paths starting with "/" produce leading empty string)
         const pathParts = filePath.split("/").filter(p => p !== "");
         for (let i = 0; i < pathParts.length; i += 1) {
             if (!curr.children.has(pathParts[i])) {
