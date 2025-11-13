@@ -1,32 +1,32 @@
 function findWords(board: string[][], words: string[]): string[] {
-    
-    const root = new TrieNode();
 
-    // Build trie
-    for (const word of words) {
+    // Phase 1: Constructing Trie
+    const root = new TrieNode();
+    for (let i = 0; i < words.length; i += 1) {
         let curr: TrieNode = root;
-        for (const char of word) {
-            if (!curr.children.has(char)) {
-                curr.children.set(char, new TrieNode());
+        for (let j = 0; j < words[i].length; j += 1) {
+            if (!curr.children.has(words[i][j])) {
+                curr.children.set(words[i][j], new TrieNode());
             }
-            curr = curr.children.get(char)!;
+            curr = curr.children.get(words[i][j]);
         }
         curr.isWord = true;
-        curr.word = word;
+        curr.word = words[i];
     }
 
+    // Phase 2: Scanning board for matching first characters on the root
     const res: string[] = [];
-
-    for (let row = 0; row < board.length; row++) {
-        for (let col = 0; col < board[0].length; col++) {
+    for (let row = 0; row < board.length; row += 1) {
+        for (let col = 0; col < board[0].length; col += 1) {
+            // Run DFS
             if (root.children.has(board[row][col])) {
-                matrixDFS(board, row, col, root, res, new Set());
+                matrixDFS(board, row, col, root, res, new Set<string>());
             }
         }
     }
-    
     return res;
-}
+
+};
 
 function matrixDFS(
     board: string[][],
@@ -36,6 +36,7 @@ function matrixDFS(
     res: string[],
     visited: Set<string>
 ): void {
+
     // Base Case: out of bounds
     if (row < 0 || row >= board.length || col < 0 || col >= board[0].length) {
         return;
@@ -44,49 +45,48 @@ function matrixDFS(
     const position = `${row},${col}`;
     const char = board[row][col];
 
-    // Base Case: visited or no matching child in trie
+    // Base Case: visited
     if (visited.has(position) || !node.children.has(char)) {
         return;
     }
 
-    // Move to next node in trie
-    const nextNode = node.children.get(char)!;
-
-    // Found a word - add it but continue searching
-    if (nextNode.isWord) {
-        res.push(nextNode.word);
-        // Optional optimization: mark as not a word to avoid re-adding
-        nextNode.isWord = false;
-    }
-
     visited.add(position);
+
+    const nextNode = node.children.get(char);
+
+    if (nextNode.isWord === true) {
+        res.push(nextNode.word);
+        nextNode.isWord = false; // unmarking the word to avoid duplicates
+    }
 
     const directions: [number, number][] = [
         [-1, 0], // up
-        [0, 1],  // right
-        [1, 0],  // down
+        [0, 1], // right
+        [1, 0], // down
         [0, -1], // left
     ];
-
     for (const [rowDelta, colDelta] of directions) {
+        const neighborRow = row + rowDelta;
+        const neighborCol = col + colDelta;
         matrixDFS(
             board,
-            row + rowDelta,
-            col + colDelta,
-            nextNode, // Pass the advanced node, not the current one
+            neighborRow,
+            neighborCol,
+            nextNode,
             res,
             visited
         );
     }
 
+    // backtrack
     visited.delete(position);
+
 }
 
 class TrieNode {
     children: Map<string, TrieNode>;
     isWord: boolean;
-    word: string; // Store the actual word
-    
+    word: string;
     constructor() {
         this.children = new Map();
         this.isWord = false;
