@@ -15,7 +15,7 @@ function findWords(board: string[][], words: string[]): string[] {
         curr.word = word; // Store the word at the end node
     }
 
-    const res: string[] = [];
+    // const res: string[] = [];
     const found = new Set<string>(); // Prevent duplicates
 
     for (let row = 0; row < board.length; row++) {
