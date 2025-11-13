@@ -56,7 +56,7 @@ function matrixDFS(
     const nextNode = node.children.get(char)!;
 
     // Found a word - add it but continue searching
-    if (nextNode.isWord && nextNode.word) {
+    if (nextNode.isWord) {
         res.push(nextNode.word);
         // Optional optimization: mark as not a word to avoid re-adding
         nextNode.isWord = false;
