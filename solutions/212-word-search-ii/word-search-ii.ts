@@ -1,17 +1,9 @@
 function findWords(board: string[][], words: string[]): string[] {
 
     // Phase 1: Constructing Trie
-    const root = new TrieNode();
+    const trie = new Trie();
     for (let i = 0; i < words.length; i += 1) {
-        let curr: TrieNode = root;
-        for (let j = 0; j < words[i].length; j += 1) {
-            if (!curr.children.has(words[i][j])) {
-                curr.children.set(words[i][j], new TrieNode());
-            }
-            curr = curr.children.get(words[i][j]);
-        }
-        curr.isWord = true;
-        curr.word = words[i];
+        trie.insert(words[i]);
     }
 
     // Phase 2: Scanning board for matching first characters on the root
@@ -19,8 +11,8 @@ function findWords(board: string[][], words: string[]): string[] {
     for (let row = 0; row < board.length; row += 1) {
         for (let col = 0; col < board[0].length; col += 1) {
             // Run DFS
-            if (root.children.has(board[row][col])) {
-                matrixDFS(board, row, col, root, res, new Set<string>());
+            if (trie.root.children.has(board[row][col])) {
+                matrixDFS(board, row, col, trie.root, trie, res, new Set<string>());
             }
         }
     }
@@ -33,6 +25,7 @@ function matrixDFS(
     row: number,
     col: number,
     node: TrieNode,
+    trie: Trie,
     res: string[],
     visited: Set<string>
 ): void {
@@ -56,7 +49,8 @@ function matrixDFS(
 
     if (nextNode.isWord === true) {
         res.push(nextNode.word);
-        nextNode.isWord = false; // unmarking the word to avoid duplicates
+        // nextNode.isWord = false; // unmarking the word to avoid duplicates
+        trie.delete(nextNode.word);
     }
 
     const directions: [number, number][] = [
@@ -73,6 +67,7 @@ function matrixDFS(
             neighborRow,
             neighborCol,
             nextNode,
+            trie,
             res,
             visited
         );
@@ -91,5 +86,95 @@ class TrieNode {
         this.children = new Map();
         this.isWord = false;
         this.word = "";
+    }
+}
+
+class Trie {
+    root: TrieNode;
+    constructor() {
+        this.root = new TrieNode();
+    }
+    insert(word: string): void {
+        let curr: TrieNode = this.root;
+        for (let i = 0; i < word.length; i += 1) {
+            if (!curr.children.has(word[i])) {
+                curr.children.set(word[i], new TrieNode());
+            }
+            curr = curr.children.get(word[i]);
+        }
+        curr.isWord = true;
+        curr.word = word;
+    }
+    search(word: string): boolean {
+        let curr: TrieNode = this.root;
+        for (let i = 0; i < word.length; i += 1) {
+            if (!curr.children.has(word[i])) {
+                return false;
+            } else {
+                curr = curr.children.get(word[i]);
+            }
+        }
+        return curr.isWord;
+    }
+    startsWith(prefix: string): boolean {
+        let curr: TrieNode = this.root;
+        for (let i = 0; i < prefix.length; i += 1) {
+            if (!curr.children.has(prefix[i])) {
+                return false;
+            } else {
+                curr = curr.children.get(prefix[i]);
+            }
+        }
+        return true;
+    }
+    delete(word: string): void {
+
+        // Returns true if parent should delete the mapping
+        function helper(node: TrieNode, word: string, index: number): boolean {
+            // Base case: reached end of word
+            if (index === word.length) {
+                // Word doesn't exist
+                if (node.isWord === false) {
+                    return false;
+                } 
+                // Otherwise, the word exists and it can be deleted
+                else {
+                    // Unmark the word (Essentially deleting it from the Trie)
+                    node.isWord = false;
+                    // Furthermore, if node has no children, we can delete the mapping from the parent
+                    return node.children.size === 0;
+                }
+            }
+
+            // get character at current index
+            const char = word[index];
+            // check if current node has character as a child
+            const childNode = node.children.get(char);
+
+            // current node doesn't have character as a child
+            if (childNode === undefined) {
+                return false;
+            } 
+            // current node has character as a child
+            else {
+                // Recursively delete from child
+                const shouldDeleteChild = helper(childNode, word, index + 1);
+
+                // If child should be deleted, remove the mapping from current node
+                if (shouldDeleteChild) {
+                    node.children.delete(char);
+                    // If current's children map becomes empty we can delete it aswell
+                    return node.children.size === 0;
+                } 
+                // Otherwise, 'shouldDeleteChild' is false
+                else {
+                    // Therefore, explicitly return false
+                    // indicating that current node should not be deleted
+                    return false;
+                }
+            }
+        }
+
+        helper(this.root, word, 0);
     }
 }
