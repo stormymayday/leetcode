@@ -1,12 +1,3 @@
-class TrieNode {
-    children: (TrieNode | null)[];
-    isWord: boolean;
-    constructor() {
-        this.children = new Array(26).fill(null);
-        this.isWord = false;
-    }
-}
-
 class WordDictionary {
     root: TrieNode;
     constructor() {
@@ -16,50 +7,49 @@ class WordDictionary {
     addWord(word: string): void {
         let curr: TrieNode = this.root;
         for (let i = 0; i < word.length; i += 1) {
-            const charIdx = this.getCharIdx(word[i]);
-            if(curr.children[charIdx] === null) {
-                curr.children[charIdx] = new TrieNode();
+            if (!curr.children.has(word[i])) {
+                curr.children.set(word[i], new TrieNode());
             }
-            curr = curr.children[charIdx];
+            curr = curr.children.get(word[i]);
         }
         curr.isWord = true;
     }
 
     search(word: string): boolean {
-        const helper = (idx: number, node: TrieNode): boolean => {
-            // Base Case: index goes past the last character
+        function helper(node: TrieNode, idx: number): boolean {
             if (idx === word.length) {
                 return node.isWord;
             }
 
-            // character at current index is the wildcard
             if (word[idx] === '.') {
-                for (const child of node.children) {
-                    if (child !== null) {
-                        if (helper(idx + 1, child) === true) {
-                            return true;
-                        }
-                    }
 
+                for(const childNode of node.children.values()) {
+                    if(helper(childNode, idx + 1)) {
+                        return true;
+                    }
                 }
-                return false;
-            }
-            // character at current index is not the wildcard
-            else {
-                const charIdx = this.getCharIdx(word[idx]);
-                if (node.children[charIdx] === null) {
+
+                return false; 
+
+            } else {
+                if (!node.children.has(word[idx])) {
                     return false;
                 } else {
-                    return helper(idx + 1, node.children[charIdx]);
+                    return helper(node.children.get(word[idx]), idx + 1);
                 }
             }
 
         }
-        return helper(0, this.root);
+        return helper(this.root, 0);
     }
+}
 
-    getCharIdx(char: string): number {
-        return char.charCodeAt(0) - "a".charCodeAt(0);
+class TrieNode {
+    children: Map<string, TrieNode>;
+    isWord: boolean;
+    constructor() {
+        this.children = new Map();
+        this.isWord = false;
     }
 }
 
