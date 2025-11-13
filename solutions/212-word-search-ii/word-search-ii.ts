@@ -15,18 +15,19 @@ function findWords(board: string[][], words: string[]): string[] {
         curr.word = word; // Store the word at the end node
     }
 
-    // const res: string[] = [];
-    const found = new Set<string>(); // Prevent duplicates
+    const res: string[] = [];
+    // const found = new Set<string>(); // Prevent duplicates
 
     for (let row = 0; row < board.length; row++) {
         for (let col = 0; col < board[0].length; col++) {
             if (root.children.has(board[row][col])) {
-                matrixDFS(board, row, col, root, found, new Set());
+                matrixDFS(board, row, col, root, res, new Set());
             }
         }
     }
     
-    return Array.from(found);
+    // return Array.from(found);
+    return res;
 }
 
 function matrixDFS(
@@ -34,7 +35,8 @@ function matrixDFS(
     row: number,
     col: number,
     node: TrieNode,
-    found: Set<string>,
+    res: string[],
+    // found: Set<string>,
     visited: Set<string>
 ): void {
     // Base Case: out of bounds
@@ -55,7 +57,7 @@ function matrixDFS(
 
     // Found a word - add it but continue searching
     if (nextNode.isWord && nextNode.word) {
-        found.add(nextNode.word);
+        res.push(nextNode.word);
         // Optional optimization: mark as not a word to avoid re-adding
         nextNode.isWord = false;
     }
@@ -75,7 +77,7 @@ function matrixDFS(
             row + rowDelta,
             col + colDelta,
             nextNode, // Pass the advanced node, not the current one
-            found,
+            res,
             visited
         );
     }
