@@ -1,4 +1,5 @@
 function findWords(board: string[][], words: string[]): string[] {
+    
     const root = new TrieNode();
 
     // Build trie
