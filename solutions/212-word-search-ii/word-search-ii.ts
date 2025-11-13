@@ -49,8 +49,8 @@ function matrixDFS(
 
     if (nextNode.isWord === true) {
         res.push(nextNode.word);
-        // nextNode.isWord = false; // unmarking the word to avoid duplicates
-        trie.delete(nextNode.word);
+        trie.delete(nextNode.word); // delete the word from trie
+        // Prevents duplicates
     }
 
     const directions: [number, number][] = [
