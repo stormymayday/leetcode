@@ -12,11 +12,10 @@ function findWords(board: string[][], words: string[]): string[] {
             curr = curr.children.get(char)!;
         }
         curr.isWord = true;
-        curr.word = word; // Store the word at the end node
+        curr.word = word;
     }
 
     const res: string[] = [];
-    // const found = new Set<string>(); // Prevent duplicates
 
     for (let row = 0; row < board.length; row++) {
         for (let col = 0; col < board[0].length; col++) {
@@ -26,7 +25,6 @@ function findWords(board: string[][], words: string[]): string[] {
         }
     }
     
-    // return Array.from(found);
     return res;
 }
 
@@ -36,7 +34,6 @@ function matrixDFS(
     col: number,
     node: TrieNode,
     res: string[],
-    // found: Set<string>,
     visited: Set<string>
 ): void {
     // Base Case: out of bounds
@@ -88,10 +85,11 @@ function matrixDFS(
 class TrieNode {
     children: Map<string, TrieNode>;
     isWord: boolean;
-    word?: string; // Store the actual word
+    word: string; // Store the actual word
     
     constructor() {
         this.children = new Map();
         this.isWord = false;
+        this.word = "";
     }
 }
