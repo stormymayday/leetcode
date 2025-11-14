@@ -2,7 +2,7 @@ function mySqrt(x: number): number {
 
     // Square root of 0 is 0
     // Square root of 1 is 1
-    if(x < 2) {
+    if(x === 0 || x === 1) {
         return x;
     }
 
