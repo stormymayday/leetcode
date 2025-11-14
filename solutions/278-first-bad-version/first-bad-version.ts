@@ -8,30 +8,43 @@
 var solution = function(isBadVersion: any) {
 
     return function(n: number): number {
+        
+        // Brute Force
+        // for(let i = 1; i <= n; i += 1) {
+        //     if(isBadVersion(i) === true) {
+        //         return i;
+        //     }
+        // }
 
-        let left = 1;
-        let right = n;
+        // Binary Search on Range
+        let left: number = 0;
+        let right: number = n;
+        let candidate: number = 0;
 
-        // if left === right stop
-        while(left < right) {
+        while(left <= right) {
 
-            const mid = Math.floor((left + right) / 2);
+            const mid = left + Math.floor((right - left) / 2);
 
-            if(isBadVersion(mid)) {
-                // found bad version!
-                // discard everything to right (those are all bad)
-                // But keep account this one because it might be the first one
-                right = mid;
-            } else {
-                // good version
-                // discard everything to the left AND this one
+            const response = isBadVersion(mid);
+
+            // this is a 'bad' version
+            if(response === true) {
+                // this is a potential candidate!
+                candidate = mid;
+                // everything to the right of 'mid' must also be 'bad'
+                // therefore, discard right side
+                right = mid - 1;
+            } 
+            // this is a 'good' version
+            else {
+                // everything to the left of 'mid' must also be 'good'
+                // therefore, discard 'left'
                 left = mid + 1;
             }
 
         }
-
-        // can return either pointer at the end
-        return left;
         
+        return candidate;
+
     };
 };
