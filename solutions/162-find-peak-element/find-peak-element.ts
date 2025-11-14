@@ -20,7 +20,7 @@ function findPeakElement(nums: number[]): number {
             // value at 'mid' is GREATER than the 'real' value to it's he left
             // Potential Dead End: If we go left, and the next mid value ends up the leftmost value
             // [1, 2 (current mid), 3]
-            nums[mid] > nums[mid - 1] ||
+            // nums[mid] > nums[mid - 1] ||
             // OR value at 'mid' is less than a 'real' value to it's 'right'
             // Therefore, there is guaranteed peak somewhere on the right
             nums[mid] < nums[mid + 1]
@@ -34,7 +34,7 @@ function findPeakElement(nums: number[]): number {
             // Similarly, if value at 'mid' is greater than the 'real' value to it's right
             // Potential Dead End: If we go right, and the next mid value ends up the rightmost value
             // [3, 2 (current mid), 1]
-            nums[mid] > nums[mid + 1] ||
+            // nums[mid] > nums[mid + 1] ||
             // OR value at 'mid' is less than a 'real' value to it's 'left'
             // Therefore, there is guaranteed peak somewhere on the left
             nums[mid] < nums[mid - 1]
