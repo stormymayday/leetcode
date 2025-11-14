@@ -1,27 +1,26 @@
 function mySqrt(x: number): number {
 
-    // Square root of 0 is 0
-    // Square root of 1 is 1
-    // if(x === 0 || x === 1) {
-    //     return x;
-    // }
-
     let left: number = 0;
-    let candidate: number = left;
+    let right: number = x;
+    let candidate: number = 0;
 
-    while(left <= x) {
+    while(left <= right) {
 
-        if((left * left) > x) {
-            break;
-        } else if((left * left) < x) {
-            candidate = left;
-            left += 1;
+        const middle = left + Math.floor((right - left) / 2);
+
+        // Note: compare against the x
+        if((middle * middle) > x) {
+            right = middle - 1;
+        } else if((middle * middle) < x) {
+            // candidate = middle;
+            left = middle + 1;
+            candidate = middle;
         } else {
-            return left;
+            return middle;
         }
 
     }
 
     return candidate;
-
+    
 };
