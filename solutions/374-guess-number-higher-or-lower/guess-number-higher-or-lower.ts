@@ -17,13 +17,15 @@ function guessNumber(n: number): number {
 
         const middle = left + Math.floor((right - left) / 2);
 
+        const response = guess(middle);
+
         // guess is lower than secret number
-        if (guess(middle) === 1) {
+        if (response === 1) {
             // discard left side
             left = middle + 1;
         }
         // guess is higher than secret number
-        else if (guess(middle) === -1) {
+        else if (response === -1) {
             // discard right side
             right = middle - 1;
         } else {
