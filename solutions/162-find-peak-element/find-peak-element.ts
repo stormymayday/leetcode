@@ -16,30 +16,13 @@ function findPeakElement(nums: number[]): number {
         ) {
             return mid;
         }
-        else if (
-            // value at 'mid' is GREATER than the 'real' value to it's he left
-            // Potential Dead End: If we go left, and the next mid value ends up the leftmost value
-            // [1, 2 (current mid), 3]
-            // nums[mid] > nums[mid - 1] ||
-            // OR value at 'mid' is less than a 'real' value to it's 'right'
-            // Therefore, there is guaranteed peak somewhere on the right
-            nums[mid] < nums[mid + 1]
-
-        ) {
-            // Therefore, discard left
+        else if (nums[mid] < nums[mid + 1]) {
+            // search on a side that is 'greater'
             left = mid + 1;
         }
 
-        else if (
-            // Similarly, if value at 'mid' is greater than the 'real' value to it's right
-            // Potential Dead End: If we go right, and the next mid value ends up the rightmost value
-            // [3, 2 (current mid), 1]
-            // nums[mid] > nums[mid + 1] ||
-            // OR value at 'mid' is less than a 'real' value to it's 'left'
-            // Therefore, there is guaranteed peak somewhere on the left
-            nums[mid] < nums[mid - 1]
-        ) {
-            // Therefore, discard right
+        else if (nums[mid] < nums[mid - 1]) {
+            // search on a side that is 'greater'
             right = mid - 1;
         }
 
