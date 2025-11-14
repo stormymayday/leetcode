@@ -12,9 +12,9 @@ function mySqrt(x: number): number {
         if((middle * middle) > x) {
             right = middle - 1;
         } else if((middle * middle) < x) {
-            // candidate = middle;
-            left = middle + 1;
             candidate = middle;
+            left = middle + 1;
+            // candidate = middle;
         } else {
             return middle;
         }
