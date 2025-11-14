@@ -2,12 +2,11 @@ function mySqrt(x: number): number {
 
     // Square root of 0 is 0
     // Square root of 1 is 1
-    if(x === 0 || x === 1) {
-        return x;
-    }
+    // if(x === 0 || x === 1) {
+    //     return x;
+    // }
 
-    // let left: number = 0;
-    let left: number = 1;
+    let left: number = 0;
     let candidate: number = left;
 
     while(left <= x) {
