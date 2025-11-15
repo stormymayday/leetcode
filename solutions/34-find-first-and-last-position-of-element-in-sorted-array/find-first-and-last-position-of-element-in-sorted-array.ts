@@ -1,51 +1,56 @@
-function modifiedBinarySearch(nums: number[], target: number, leftBias: boolean): number {
+function searchRange(nums: number[], target: number): number[] {
 
-    let left = 0;
-    let right = nums.length - 1;
+    const res: [number, number] = [-1, -1];
 
-    // Initialize result index to -1 (not found)
-    let result = -1;
-    
+    // Lower Bound
+    let left: number = 0;
+    let right: number = nums.length - 1;
     while(left <= right) {
 
-        const mid = Math.floor((left+right)/2);
-        
+        const mid = left + Math.floor((right - left)/2);
+
         if(target > nums[mid]) {
+            // discard left
             left = mid + 1;
         } else if(target < nums[mid]) {
+            // discard right
             right = mid - 1;
         } else {
+            // found target
+            // save candidate idx
+            res[0] = mid;
+            // Keep searching left
+            right = mid - 1;
+        }
 
-            // Target found at the current position
-            // Store the current match
-            result = mid;
-            
-            if(leftBias) {
-                // For leftmost occurrence: continue searching in the left half
-                // This allows us to find earlier occurrences if they exist
+    }
+
+    // Upper Bound
+    if(res[0] !== -1) {
+
+        left = res[0];
+        right = nums.length - 1;
+        while(left <= right) {
+
+            const mid = left + Math.floor((right - left) / 2);
+
+            if(target > nums[mid]) {
+                // discard left
+                left = mid + 1;
+            } else if(target < nums[mid]) {
+                // discard right
                 right = mid - 1;
             } else {
-                // For rightmost occurrence: continue searching in the right half
-                // This allows us to find later occurrences if they exist
+                // found target
+                // save candidate idx
+                res[1] = mid;
+                // keep searching right
                 left = mid + 1;
             }
         }
-    }
-    // Return the biased position (or -1 if not found)
-    return result;
-}
 
-function searchRange(nums: number[], target: number): number[] {
-    // Edge Case: empty array
-    if(nums.length === 0) {
-        return [-1, -1];
     }
 
-    // Find the leftmost occurrence with leftBias=true
-    const left = modifiedBinarySearch(nums, target, true);
+    return res;
     
-    // Find the rightmost occurrence with leftBias=false
-    const right = modifiedBinarySearch(nums, target, false);
-
-    return [left, right];
-}
+};
