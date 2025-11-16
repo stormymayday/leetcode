@@ -37,15 +37,14 @@ function closestValue(root: TreeNode | null, target: number): number {
             closestVal = curr.val;
         }
 
-        // target is greater than curr.val
-        if (curr.right !== null && target > curr.val) {
+        // If target is greater than curr.val (can be null - the loop will stop)
+        if (target > curr.val) {
+            // go right
             curr = curr.right;
         } 
-        // target is less than curr.val
-        else if(curr.left !== null && target < curr.val) {
+        // Otherwise, go left (can be null - the loop will stop)
+        else {
             curr = curr.left;
-        } else {
-            break;
         }
     }
 
