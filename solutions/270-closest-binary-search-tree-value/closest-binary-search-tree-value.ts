@@ -14,41 +14,40 @@
 
 function closestValue(root: TreeNode | null, target: number): number {
 
-    let res: number = Infinity;
-    let minDiff: number = Infinity;
-
-    if(root === null) {
-        return res;
-    }
+    let closestVal: number = root.val;
 
     let curr: TreeNode | null = root;
 
-    while(curr !== null) {
+    while (curr !== null) {
 
-        // Main Logic
-        let diff = Math.abs(curr.val - target);
-        if((diff < minDiff) || (diff === minDiff && curr.val < res)) {
-            minDiff = diff;
-            res = curr.val;
-        }
-
-        // if target is smaller than current value, going right will not make the difference smaller
-        if(target < curr.val) {
-            // therefore, go left to potentially get closer to target
-            curr = curr.left;
-        } 
-        // similarly, if target is larger than current value, going left will not make the difference smaller
-        else if(target > curr.val) {
-            // therefore, go right
-            curr = curr.right;
-        }
         // exact match
-        else {
+        if (target === curr.val) {
             return curr.val;
         }
 
+        // Update Closest
+        if (
+            // if absolute difference between 'target' and 'curr.val' is less than the
+            // absolute difference between 'target' and 'closestVal'
+            (Math.abs(target - curr.val) < Math.abs(target - closestVal)) ||
+            // OR if the absolute difference is equal BUT 'curr.val' is smaller than 'closestVal'
+            ((Math.abs(target - curr.val) === Math.abs(target - closestVal)) && curr.val < closestVal)
+        ) {
+            // update closestVal
+            closestVal = curr.val;
+        }
+
+        // target is greater than curr.val
+        if (curr.right !== null && target > curr.val) {
+            curr = curr.right;
+        } 
+        // target is less than curr.val
+        else if(curr.left !== null && target < curr.val) {
+            curr = curr.left;
+        } else {
+            break;
+        }
     }
 
-    return res;
-
+    return closestVal;
 };
