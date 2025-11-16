@@ -6,13 +6,13 @@ function isPerfectSquare(num: number): boolean {
     while(left <= right) {
 
         const mid = left + Math.floor((right - left) / 2);
-        const double = mid * mid;
+        const midSquare = mid * mid;
 
-        if(double === num) {
+        if(midSquare === num) {
             return true;
-        } else if(double < num) {
+        } else if(midSquare < num) {
             left = mid + 1;
-        } else if(double > num) {
+        } else if(midSquare > num) {
             right = mid - 1;
         }
 
