@@ -14,12 +14,11 @@ function findMin(nums: number[]): number {
         }
 
         // value at 'mid' is greater than OR equals to value at 'left'
-        // AND greater than OR equals to value at 'right'
         if (nums[mid] >= nums[right]) {
             // discard left?
             left = mid + 1;
         }
-        // value at 'mid' is less than value at 'left', mid is in the 'left' half (smaller values)
+        // value at 'mid' is less than value at 'left'
         else if (nums[mid] < nums[left]) {
             // discard right
             right = mid - 1;
