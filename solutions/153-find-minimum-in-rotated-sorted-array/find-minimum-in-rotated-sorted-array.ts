@@ -17,10 +17,17 @@ function findMin(nums: number[]): number {
 
         minIdx = mid;
 
+        // If value at 'mid' is greater than value at 'right'
+        // Means that the min is somewhere on the right
+        // Example: [ 3 4 5 1 2 ]
+        //            L   M   R
+        // 5 > 2
+        // Additional note: mid cannot be the mid
         if(nums[mid] > nums[right]) {
             left = mid + 1;
         } 
-        // nums[mid] <= nums[right]
+        // Otherwise, value at 'mid' is less than OR equal to value at 'right'
+        // Therefore, it is a potential min
         else {
             right = mid - 1;
         }
