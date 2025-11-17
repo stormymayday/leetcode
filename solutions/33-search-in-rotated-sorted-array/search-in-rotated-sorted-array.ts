@@ -27,13 +27,14 @@ function search(nums: number[], target: number): number {
 
     }
 
-    // Phase 2: Run Binary Search
+    // Phase 2: Run Binary Search on the range
     if(target >= nums[minIdx] && target <= nums[nums.length - 1]) {
         left = minIdx;
         right = nums.length - 1;
     } else {
         left = 0;
-        right = minIdx;
+        // right = minIdx;
+        right = minIdx - 1; // can exclude the pivot since it's inclusive in the above
     }
     while(left <= right) {
         const mid = left + Math.floor((right - left) / 2);
