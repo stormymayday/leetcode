@@ -15,7 +15,7 @@ function findMin(nums: number[]): number {
 
         const mid = left + Math.floor((right - left) / 2);
 
-        minIdx = mid;
+        // minIdx = mid;
 
         // If value at 'mid' is greater than value at 'right'
         // Means that the min is somewhere on the right
@@ -29,6 +29,7 @@ function findMin(nums: number[]): number {
         // Otherwise, value at 'mid' is less than OR equal to value at 'right'
         // Therefore, it is a potential min
         else {
+            minIdx = mid;
             right = mid - 1;
         }
 
