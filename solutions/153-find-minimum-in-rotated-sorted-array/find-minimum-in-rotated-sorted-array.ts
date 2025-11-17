@@ -1,10 +1,5 @@
 function findMin(nums: number[]): number {
 
-    // Edge Case: there is only one element
-    if(nums.length === 1) {
-        return nums[0];
-    }
-
     let left: number = 0;
     let right: number = nums.length - 1;
     let candidate: number = 0;
