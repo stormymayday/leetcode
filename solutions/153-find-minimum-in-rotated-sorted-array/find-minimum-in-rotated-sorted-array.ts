@@ -1,49 +1,50 @@
 function findMin(nums: number[]): number {
 
+    // Edge Case: there is only one element
+    if(nums.length === 1) {
+        return nums[0];
+    }
+
     let left: number = 0;
     let right: number = nums.length - 1;
-
-    let candidateIdx: number = 0;
+    let candidate: number = 0;
 
     while(left <= right) {
 
-        const mid = left + Math.floor((right - left) / 2);
+        const mid: number = left + Math.floor((right - left) / 2);
 
-        // If value at 'mid' is greater than or equals to value at 'left'
-        // (equals incase 'mid' and 'left' are the same index)
-        if(nums[mid] >= nums[left]) {
-
-            // If value at 'mid' is also greater than value at 'right'
-            if(nums[mid] > nums[right]) {
-                // then minimum must be to the right
-                // discard left
-                left = mid + 1;
+        // value at 'mid' is greater than OR equals to value at 'left'
+        // AND greater than value at 'right'
+        if(nums[mid] >= nums[left] && nums[mid] >= nums[right]) {
+            // update candidate
+            if(nums[mid] < nums[candidate]) {
+                candidate = mid;
             }
-            // Otherwise, search space must be sorted in sorted order
-            // (mid is >= left && mid < right)
-            else {
-
-                // compare current value at 'candidateIdx' against value at 'left' and break
-                if(nums[left] < nums[candidateIdx]) {
-                    candidateIdx = left;
-                }
-                break;
-
+            // discard left?
+            left = mid + 1;
+        }
+        // value at 'mid' is less than value at 'left', mid is in the 'left' half (smaller values)
+        else if(nums[mid] < nums[left]) {
+            // update candidate
+            if(nums[mid] < nums[candidate]) {
+                candidate = mid;
             }
-
-        } 
-        // Otherwise, value at 'mid' is strictly greater than value at 'left'
-        else {
-            // update candidate / min
-            if(nums[candidateIdx] > nums[mid]) {
-                candidateIdx = mid;
-            }
-            // we can always discard right
+            // discard right
             right = mid - 1;
+        } 
+        // value at 'left' is smaller than value at 'right'
+        // - remaining search space is sorted
+        else if(nums[left] < nums[right]) {
+            // update candidate
+            if(nums[left] < nums[candidate]) {
+                candidate = left;
+            }
+            // and exit
+            break;
         }
 
     }
 
-    return nums[candidateIdx];
+    return nums[candidate];
     
 };
