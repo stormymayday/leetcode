@@ -1,59 +1,50 @@
 function search(nums: number[], target: number): number {
 
+    // Phase 1: Find minIdx (Pivot Point)
     let left: number = 0;
     let right: number = nums.length - 1;
-
+    let minIdx: number = 0;
     while (left <= right) {
+
+        if (nums[left] <= nums[right]) {
+            if (nums[minIdx] > nums[left]) {
+                minIdx = left;
+            }
+            break;
+        }
 
         const mid = left + Math.floor((right - left) / 2);
 
-        if (target === nums[mid]) {
-            return mid;
+        minIdx = mid;
+
+        if (nums[mid] > nums[right]) {
+            left = mid + 1;
         }
-
-        // value at 'mid' is greater than value at 'left'
-        if (nums[left] <= nums[mid]) {
-
-            if (
-                // target is less than valie at 'mid' AND 'left'
-                (target < nums[mid] && target < nums[left]) ||
-                // OR target is greater than value at 'mid'
-                target > nums[mid]
-            ) {
-                // discard left
-                left = mid + 1;
-            }
-            // Otherwise, target must be less than value at 'mid' AND
-            // greater than or equals to value at 'left'
-            // (typing it out for clarity)
-            // Note: it is strictly less than value at mid because it eqality is check
-            else if (target < nums[mid] && target >= nums[left]) {
-                // discard right
-                right = mid - 1;
-            }
-
-        }
-        // value at 'mid' is less than value at 'left'
-        // everything on the 'right' is greater than 'mid'?
+        // nums[mid] <= nums[right]
         else {
-
-            // if target is less than value at 'mid'
-            // OR target is greater that valua at 'mid' and 'right'
-            if (
-                target < nums[mid] ||
-                (target > nums[mid] && target > nums[right])
-            ) {
-                // discard right
-                right = mid - 1;
-            } else if (target > nums[mid]) {
-                // discard left
-                left = mid + 1;
-            }
-
+            right = mid - 1;
         }
 
     }
 
+    // Phase 2: Run Binary Search
+    if(target >= nums[minIdx] && target <= nums[nums.length - 1]) {
+        left = minIdx;
+        right = nums.length - 1;
+    } else {
+        left = 0;
+        right = minIdx;
+    }
+    while(left <= right) {
+        const mid = left + Math.floor((right - left) / 2);
+        if(target < nums[mid]) {
+            right = mid - 1;
+        } else if(target > nums[mid]) {
+            left = mid + 1;
+        } else {
+            return mid;
+        }
+    }
     return -1;
 
 };
