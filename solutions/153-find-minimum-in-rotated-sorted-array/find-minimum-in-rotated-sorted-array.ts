@@ -5,8 +5,10 @@ function findMin(nums: number[]): number {
     let minIdx: number = 0;
 
     while(left <= right) {
-
+        
+        // The entire search space is sorted
         if(nums[left] <= nums[right]) {
+            // compare current min to value at 'left' and break
             if(nums[minIdx] > nums[left]) {
                 minIdx = left;
             }
@@ -15,6 +17,7 @@ function findMin(nums: number[]): number {
 
         const mid = left + Math.floor((right - left) / 2);
 
+        // Min update here is not necessary
         // minIdx = mid;
 
         // If value at 'mid' is greater than value at 'right'
@@ -29,6 +32,7 @@ function findMin(nums: number[]): number {
         // Otherwise, value at 'mid' is less than OR equal to value at 'right'
         // Therefore, it is a potential min
         else {
+            // Since value at 'mid' is a potential min value, record it
             minIdx = mid;
             right = mid - 1;
         }
