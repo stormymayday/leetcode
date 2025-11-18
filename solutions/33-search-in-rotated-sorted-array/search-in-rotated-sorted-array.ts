@@ -1,63 +1,56 @@
 function search(nums: number[], target: number): number {
+    
+    // Phase 1: find min idx / pivot
+    let minIdx = findMin(nums);
 
-    let left: number = 0;
-    let right: number = nums.length - 1;
-    let minIdx: number = 0;
-
-    while (left <= right) {
-
-        // The entire search space is sorted
-        if (nums[left] <= nums[right]) {
-            // compare current min to value at 'left' and break
-            if (nums[minIdx] > nums[left]) {
-                minIdx = left;
-            }
-            break;
-        }
-
-        const mid = left + Math.floor((right - left) / 2);
-
-        // Min update here is not necessary
-        // minIdx = mid;
-
-        // If value at 'mid' is greater than value at 'right'
-        // Means that the min is somewhere on the right
-        // Example: [ 3 4 5 1 2 ]
-        //            L   M   R
-        // 5 > 2
-        // Additional note: mid cannot be the mid
-        if (nums[mid] > nums[right]) {
-            left = mid + 1;
-        }
-        // Otherwise, value at 'mid' is less than OR equal to value at 'right'
-        // Therefore, it is a potential min
-        else {
-            // Since value at 'mid' is a potential min value, record it
-            minIdx = mid;
-            right = mid - 1;
-        }
-
-    }
-
-    // Phase 2: Run Binary Search on the range
-    if (target >= nums[minIdx] && target <= nums[nums.length - 1]) {
+    // Phase 2: figure out which portion the target can be in and run Binary Search on it
+    let left = 0;
+    let right = nums.length - 1;
+    if(target >= nums[minIdx] && target <= nums[right]) {
         left = minIdx;
-        right = nums.length - 1;
     } else {
-        left = 0;
-        // right = minIdx;
-        right = minIdx - 1; // can exclude the pivot since it's inclusive in the above
+        right = minIdx - 1;
     }
-    while (left <= right) {
-        const mid = left + Math.floor((right - left) / 2);
-        if (target < nums[mid]) {
-            right = mid - 1;
-        } else if (target > nums[mid]) {
-            left = mid + 1;
-        } else {
+    while(left <= right) {
+        const mid = left + Math.floor((right - left)/2);
+        if(nums[mid] === target) {
             return mid;
+        } else if(nums[mid] > target) {
+            right = mid - 1;
+        } else {
+            left = mid + 1;
         }
     }
     return -1;
 
+};
+
+function findMin(nums: number[]): number {
+
+    let left = 0;
+    let right = nums.length - 1;
+    let candidate = 0;
+    while(left <= right) {
+
+        const mid = left + Math.floor((right - left)/2);
+
+        // search space is sorted
+        if(nums[left] <= nums[right]) {
+            if(nums[left] < nums[candidate]) {
+                candidate = left;
+            }
+            break;
+        }
+
+        if(nums[mid] > nums[right]) {
+            left = mid + 1;
+        } else {
+            // this is a candidate for 'min'
+            candidate = mid;
+            right = mid - 1;
+        }
+
+    }
+    return candidate;
+    
 };
