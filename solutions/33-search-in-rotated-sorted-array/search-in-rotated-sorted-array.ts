@@ -13,14 +13,13 @@ function search(nums: number[], target: number): number {
         // 2. Identify which half is sorted
         // If left half is sorted
         if(nums[left] <= nums[mid]) {
-            if(nums[left] <= target && target <= nums[mid]) {
+            if(nums[left] <= target && target < nums[mid]) {
                 right = mid - 1;
             } else {
                 left = mid + 1;
             }
         } 
-        // right half is sorted
-        // 
+        // Otherwise, right half must be sorted
         else {
             if(nums[mid] <= target && target <= nums[right]) {
                 left = mid + 1;
