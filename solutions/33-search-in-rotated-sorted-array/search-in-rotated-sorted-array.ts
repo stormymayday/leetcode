@@ -21,7 +21,7 @@ function search(nums: number[], target: number): number {
         } 
         // Otherwise, right half must be sorted
         else {
-            if(nums[mid] <= target && target <= nums[right]) {
+            if(nums[mid] < target && target <= nums[right]) {
                 left = mid + 1;
             } else {
                 right = mid - 1;
