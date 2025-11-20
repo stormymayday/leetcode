@@ -1,32 +1,36 @@
 function minEatingSpeed(piles: number[], h: number): number {
 
-    // let min: number = Math.min(...piles);
-    let min: number = 1;
-    let max: number = Math.max(...piles);
-    let candidate: number = max;
+    let left: number = 1;
+    let right: number = Math.max(...piles);
+    let candidate: number = 1;
 
-    while (min <= max) {
+    while(left <= right) {
 
-        const mid = min + Math.floor((max - min) / 2);
-        // candidate = mid;
+        const mid = left + Math.floor((right - left)/2);
 
         let time: number = 0;
-        for (let i = 0; i < piles.length; i += 1) {
+
+        for(let i = 0; i < piles.length; i += 1) {
+
             time += Math.ceil(piles[i] / mid);
+
         }
 
-        // If we went over the time limit
-        if (time > h) {
-            // increase
-            min = mid + 1;
+        // Time limit exceeded
+        if(time > h) {
+            // increase the rate
+            left = mid + 1;
         } 
-        // we were under or on time
+        // Under or on time
         else {
+            // update the candidate
             candidate = mid;
-            max = mid - 1;
+            // try slower rate
+            right = mid - 1;
         }
+
     }
 
     return candidate;
-
+    
 };
