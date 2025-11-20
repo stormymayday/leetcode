@@ -1,35 +1,35 @@
 function findPeakElement(nums: number[]): number {
 
-    let left = 0;
+    // Edge Cases: 1. There is only 1 element, 2. leftmost element is a peak
+    if (nums.length === 1 || nums[0] > nums[1]) {
+        return 0;
+    }
+
+    // 3. rightmost element is a peak
+    if (nums[nums.length - 1] > nums[nums.length - 2]) {
+        return nums.length - 1;
+    }
+
+    // Starting left and right moving inwards by 1
+    let left = 1;
     let right = nums.length - 1;
 
-    while (left <= right) {
+    while(left <= right) {
 
-        const mid = left + Math.floor((right - left) / 2);
+        const mid = left + Math.floor((right - left)/2);
 
-        // Exit condition
-        if (
-            // If mid is greater than w/e to it's left AND right
-            // (out of bounds considered -Infinity)
-            (mid - 1 < 0 || nums[mid] > nums[mid - 1]) &&
-            (mid + 1 === nums.length || nums[mid] > nums[mid + 1])
-        ) {
+        // Exit Condition: mid is peak
+        if(nums[mid - 1] < nums[mid] && nums[mid] > nums[mid + 1]) {
             return mid;
         }
 
-        // Always Go to the 'greater' side
-        if (    
-
-            // If to the left of mis is out of bounds AND mid is less than its' right neighbor
-            (mid - 1 < 0 && nums[mid] < nums[mid + 1]) ||
-            // OR mid is greater than it's left neighbor
-            (nums[mid] > nums[mid - 1])
-        ) {
-            // go Right
+        // Otherwise, always go to the 'higher' side
+        if(nums[mid] > nums[mid - 1]) {
             left = mid + 1;
         } else {
             right = mid - 1;
         }
 
     }
+
 };
