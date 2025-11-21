@@ -13,11 +13,12 @@ function smallestDivisor(nums: number[], threshold: number): number {
         if (sum > threshold) {
             left = mid + 1;
         } else {
+            candidate = mid;
             right = mid - 1;
         }
 
     }
 
-    return left;
+    return candidate;
 
 };
