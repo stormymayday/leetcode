@@ -17,29 +17,37 @@ function minDays(bloomDay: number[], m: number, k: number): number {
         const mid = left + Math.floor((right - left) / 2);
 
         // Phase 1: fill in the 'blooms' array
-        const blooms: boolean[] = [];
-        for(let i = 0; i < bloomDay.length; i += 1) {
-            if(bloomDay[i] <= mid) {
-                blooms[i] = true;
-            } else {
-                blooms[i] = false;
-            }
-        }
-
-        // Phase 2: scan the 'blooms' array
+        // const blooms: boolean[] = [];
         let bouquets = 0;
         let flowers = 0;
-        for(let i = 0; i < blooms.length; i += 1) {
-            if(blooms[i] === true) {
+        for(let i = 0; i < bloomDay.length; i += 1) {
+            if(bloomDay[i] <= mid) {
+                // blooms[i] = true;
                 flowers += 1;
                 if(flowers === k) {
                     bouquets += 1;
                     flowers = 0;
                 }
             } else {
+                // blooms[i] = false;
                 flowers = 0;
             }
         }
+
+        // Phase 2: scan the 'blooms' array
+        // let bouquets = 0;
+        // let flowers = 0;
+        // for(let i = 0; i < bloomDay.length; i += 1) {
+        //     if(blooms[i] === true) {
+        //         flowers += 1;
+        //         if(flowers === k) {
+        //             bouquets += 1;
+        //             flowers = 0;
+        //         }
+        //     } else {
+        //         flowers = 0;
+        //     }
+        // }
 
         // Phase 3: Binary Search Logic
         // We have enough bouquets        
