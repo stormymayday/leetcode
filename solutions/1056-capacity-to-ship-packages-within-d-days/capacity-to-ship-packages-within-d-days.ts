@@ -4,7 +4,6 @@ function shipWithinDays(weights: number[], days: number): number {
     let left = Math.max(...weights);
     // max capacity
     let right = weights.reduce((acc, num) => acc + num, 0);
-    let candidate = left;
 
     while (left <= right) {
 
@@ -21,14 +20,13 @@ function shipWithinDays(weights: number[], days: number): number {
         // otherwise, daysRequired at current capacity are either below or equal to given number of days
         else {
             // potential candidate
-            candidate = mid;
             // try to decrease the capacity
             right = mid - 1;
         }
 
     }
 
-    return candidate;
+    return left;
 
 };
 
