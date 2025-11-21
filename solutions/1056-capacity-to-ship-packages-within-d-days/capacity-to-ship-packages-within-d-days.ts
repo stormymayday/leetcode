@@ -32,18 +32,21 @@ function shipWithinDays(weights: number[], days: number): number {
 
 };
 
-function daysRequired(weights: number[], shipCapacity: number): number {
-    let days = 0;
-    let i = 0;
-    while (i < weights.length) {
+function daysRequired(weights: number[], capacity: number): number {
+    let days = 1; // staring with one
+    let load = 0;
+    for (let i = 0; i < weights.length; i += 1) {
 
-        let currCapacity = shipCapacity
-
-        while (i < weights.length && weights[i] <= currCapacity) {
-            currCapacity -= weights[i];
-            i += 1;
+        // current load + current wieght exceed the capacity
+        if(load + weights[i] > capacity) {
+            // go to the next day
+            days += 1;
+            // add the weight
+            load = weights[i];
+        } else {
+            // otherwise, keep loading
+            load += weights[i];
         }
-        days += 1
 
     }
 
