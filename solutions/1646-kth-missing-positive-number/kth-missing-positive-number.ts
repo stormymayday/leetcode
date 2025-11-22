@@ -1,22 +1,10 @@
 function findKthPositive(arr: number[], k: number): number {
-
-    let left = 0;
-    let right = arr.length - 1;
-
-    while(left <= right) {
-
-        const mid = left + Math.floor((right - left) / 2);
-
-        const missingAtCurr = arr[mid] - (mid + 1);
-
-        if(missingAtCurr < k) {
-            left = mid + 1;
+    for(let i = 0; i < arr.length; i += 1) {
+        if(arr[i] <= k) {
+            k += 1;
         } else {
-            right = mid - 1;
+            break;
         }
-
     }
-    
-    // arr[right] + more (k - (arr[right] - (right + 1))
-    return right + 1 + k;
+    return k;
 };
