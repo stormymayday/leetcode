@@ -17,5 +17,5 @@ function findKthPositive(arr: number[], k: number): number {
 
     }
 
-    return left + k;
+    return right + 1 + k;
 };
