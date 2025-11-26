@@ -26,8 +26,6 @@ function findPeakGrid(mat: number[][]): number[] {
                     neighborVal = mat[neighborRow][neighborCol];
                 }
 
-                // const neighborVal = mat[neighborRow][neighborCol] === undefined? -1 : mat[neighborRow][neighborCol];
-
                 if(currVal > neighborVal) {
                     count += 1;
                 }
