@@ -10,9 +10,12 @@ function searchMatrix(matrix: number[][], target: number): boolean {
 
         const mid = left + Math.floor((right - left) / 2);
 
-        if(matrix[Math.floor(mid / COLS)][mid % COLS] === target) {
+        const row = Math.floor(mid / COLS);
+        const col = mid % COLS;
+
+        if(matrix[row][col] === target) {
             return true;
-        } else if(matrix[Math.floor(mid / COLS)][mid % COLS] > target) {
+        } else if(matrix[row][col] > target) {
             right = mid - 1;
         } else {
             left = mid + 1;
