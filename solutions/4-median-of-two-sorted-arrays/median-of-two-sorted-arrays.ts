@@ -33,10 +33,12 @@ function findMedianSortedArrays(nums1: number[], nums2: number[]): number {
             } else {
                 return Math.max(l1, l2);
             }
-        } else if(l1 > r2) {
+        } 
+        // try decreasing the mid1
+        else if(l1 > r2) {
             right = mid1 - 1;
         } 
-        // 
+        // try increasing the mid1
         else if(l2 > r1) {
             left = mid1 + 1;
         }
