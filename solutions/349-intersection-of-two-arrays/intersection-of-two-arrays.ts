@@ -1,27 +1,13 @@
 function intersection(nums1: number[], nums2: number[]): number[] {
 
-    // Create a hash set out of one of the arrays
-    const hashSet = new Set(nums1);
+    const set1 = new Set<number>(nums1);
+    const res = new Set<number>();
 
-    const result = [];
-    // Iterate over the second array
-    for(let i = 0; i < nums2.length; i++) {
-
-        const currentNum = nums2[i];
-
-        // check if currentNum is in the set
-        if(hashSet.has(currentNum)) {
-
-            // If it is, add it to the result
-            result.push(currentNum);
-
-            // delete it from the set
-            hashSet.delete(currentNum);
-
+    for(let i = 0; i < nums2.length; i += 1) {
+        if(set1.has(nums2[i])) {
+            res.add(nums2[i]);
         }
-
     }
-
-    return result;
     
+    return Array.from(res);
 };
