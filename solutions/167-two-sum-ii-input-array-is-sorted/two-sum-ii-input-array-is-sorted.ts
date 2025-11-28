@@ -1,14 +1,18 @@
 function twoSum(numbers: number[], target: number): number[] {
 
-    const hashMap = new Map<number, number>();
-    for(let i = 0; i < numbers.length; i += 1) {
-        hashMap.set(numbers[i], i);
-    }
+    let left = 0;
+    let right = numbers.length - 1;
 
-    for(let i = 0; i < numbers.length; i += 1) {
-        if(hashMap.has(target - numbers[i]) && hashMap.get(target - numbers[i]) !== i) {
-            return [i + 1, hashMap.get(target - numbers[i]) + 1];
+    while(left <= right) {
+
+        if(numbers[left] + numbers[right] === target) {
+            return [left + 1, right + 1];
+        } else if(numbers[left] + numbers[right] > target) {
+            right -= 1;
+        } else {
+            left += 1;
         }
+
     }
     
 };
