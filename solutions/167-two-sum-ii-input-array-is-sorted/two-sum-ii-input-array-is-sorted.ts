@@ -1,12 +1,13 @@
 function twoSum(numbers: number[], target: number): number[] {
 
-    for(let i = 0; i < numbers.length - 1; i += 1) {
-        for(let j = i + 1; j < numbers.length; j += 1) {
+    const hashMap = new Map<number, number>();
+    for(let i = 0; i < numbers.length; i += 1) {
+        hashMap.set(numbers[i], i);
+    }
 
-            if(numbers[i] + numbers[j] === target) {
-                return [i + 1, j + 1];
-            }
-
+    for(let i = 0; i < numbers.length; i += 1) {
+        if(hashMap.has(target - numbers[i]) && hashMap.get(target - numbers[i]) !== i) {
+            return [i + 1, hashMap.get(target - numbers[i]) + 1];
         }
     }
     
