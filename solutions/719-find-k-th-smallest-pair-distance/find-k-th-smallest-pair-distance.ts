@@ -4,7 +4,7 @@ function smallestDistancePair(nums: number[], k: number): number {
 
     let left = 0;
     let right = sortedNums[sortedNums.length - 1];
-    let candidate = -1;
+    // let candidate = -1;
     while(left <= right) {
 
         // this middle value is the 'difference' we need to check
@@ -15,7 +15,7 @@ function smallestDistancePair(nums: number[], k: number): number {
 
         if(numPairs >= k) {
             // potential candidate
-            candidate = mid;
+            // candidate = mid;
             right = mid - 1;
         } else {
             left = mid + 1;
@@ -23,7 +23,8 @@ function smallestDistancePair(nums: number[], k: number): number {
 
     }
     // can also return 'left'?
-    return candidate;
+    // return candidate;
+    return left;
     
 };
 
@@ -35,6 +36,7 @@ function countPairs(sortedNums: number[], targDiff: number): number {
     for(let right = 0; right < sortedNums.length; right += 1) {
 
         // const currDiff = sortedNums[right] - sortedNums[left];
+
         // current difference is greater than target difference
         while(sortedNums[right] - sortedNums[left] > targDiff) {
             left += 1; // shrinking from 'left'
