@@ -24,7 +24,6 @@ function longestOnes(nums: number[], k: number): number {
 
         }
 
-
         if (numZeroes <= k) {
             longest = Math.max(longest, right - left + 1);
         }
