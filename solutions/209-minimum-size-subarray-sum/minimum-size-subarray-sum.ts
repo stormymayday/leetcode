@@ -1,25 +1,18 @@
 function minSubArrayLen(target: number, nums: number[]): number {
-    
+
     let minSize = Infinity;
 
     let currSum = 0;
     let left = 0;
-    for(let right = 0; right < nums.length; right += 1) {
+    for (let right = 0; right < nums.length; right += 1) {
 
         currSum += nums[right];
 
-        while(left < nums.length && currSum >= target) {
-            
-            // window is valid
+        // window is valid
+        while (left < nums.length && currSum >= target) {
             minSize = Math.min(minSize, right - left + 1);
-
             currSum -= nums[left];
             left += 1;
-
-            // how do we know the currSum is valid
-            if(currSum >= target) {
-                minSize = Math.min(minSize, right - left + 1);
-            }
         }
 
     }
