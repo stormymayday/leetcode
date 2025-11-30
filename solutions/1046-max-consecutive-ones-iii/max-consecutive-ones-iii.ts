@@ -3,11 +3,8 @@ function longestOnes(nums: number[], k: number): number {
     let longest = 0;
 
     let left = 0;
-    // let currStreak = 0;
 
     let numZeroes = 0; // should not exceed k
-
-    // let idxOfFirstZero = -1;
 
     for(let right = 0; right < nums.length; right += 1) {
 
