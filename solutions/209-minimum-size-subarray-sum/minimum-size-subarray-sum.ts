@@ -1,22 +1,29 @@
 function minSubArrayLen(target: number, nums: number[]): number {
+    
+    let minSize = Infinity;
 
-    let minLength = Infinity;
+    let currSum = 0;
     let left = 0;
-    let sum = 0;
+    for(let right = 0; right < nums.length; right += 1) {
 
-    for (let right = 0; right < nums.length; right += 1) {
+        currSum += nums[right];
 
-        // adding to the sum
-        sum += nums[right];
+        while(left < nums.length && currSum >= target) {
+            
+            // window is valid
+            minSize = Math.min(minSize, right - left + 1);
 
-        while (sum >= target) {
-            minLength = Math.min(minLength, right - left + 1);
-            sum -= nums[left];
+            currSum -= nums[left];
             left += 1;
+
+            // how do we know the currSum is valid
+            if(currSum >= target) {
+                minSize = Math.min(minSize, right - left + 1);
+            }
         }
 
     }
 
-    return minLength === Infinity ? 0 : minLength;
+    return minSize === Infinity ? 0 : minSize;
 
 };
