@@ -15,7 +15,7 @@ function longestOnes(nums: number[], k: number): number {
             if(numZeroes > k) {
                 
                 // move left to the first occurence of zero
-                while(nums[left] !== 0) {
+                while(left < nums.length && nums[left] !== 0) {
                     left += 1;
                 }
 
