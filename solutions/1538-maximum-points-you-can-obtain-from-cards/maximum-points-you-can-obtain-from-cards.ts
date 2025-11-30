@@ -1,28 +1,37 @@
 function maxScore(cardPoints: number[], k: number): number {
 
+    let max = 0;
+    
     let left = 0;
     let leftSum = 0;
     let right = cardPoints.length - 1;
     let rightSum = 0;
-    let maxSum = 0;
 
-    while (left < k) {
+    // Part 1: leftSum
+    while(left < cardPoints.length && left < k) {
         leftSum += cardPoints[left];
         left += 1;
     }
-    left -= 1;
-    maxSum = Math.max(maxSum, leftSum);
+    // Note: left we might need bring 'left' back a bit
+    if(left === k) {
+        left -= 1;
+    }
 
-    while (left >= 0) {
+    max = Math.max(max, leftSum);
+
+    // Part 2: shrink left & expand right
+    while(left >= 0) {
+
         leftSum -= cardPoints[left];
         left -= 1;
 
         rightSum += cardPoints[right];
         right -= 1;
 
-        maxSum = Math.max(maxSum, leftSum + rightSum);
+        max = Math.max(max, leftSum + rightSum);
+
     }
 
-    return maxSum;
+    return max;
 
 };
