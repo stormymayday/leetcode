@@ -6,31 +6,31 @@ function longestOnes(nums: number[], k: number): number {
 
     let numZeroes = 0; // should not exceed k
 
-    for(let right = 0; right < nums.length; right += 1) {
+    for (let right = 0; right < nums.length; right += 1) {
 
-        if(nums[right] === 0) {
+        if (nums[right] === 0) {
 
             numZeroes += 1;
+        }
 
-            if(numZeroes > k) {
-                
-                // move left to the first occurence of zero
-                while(left < nums.length && nums[left] !== 0) {
-                    left += 1;
-                }
+        if (numZeroes > k) {
 
-                // now move it 1 spot forward
-                left += 1;
+            if (nums[left] === 0) {
                 numZeroes -= 1;
-
             }
+
+            // dragging 'left'
+            left += 1;
 
         }
 
-        longest = Math.max(longest, right - left + 1);
+
+        if (numZeroes <= k) {
+            longest = Math.max(longest, right - left + 1);
+        }
 
     }
 
     return longest;
-    
+
 };
