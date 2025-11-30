@@ -11,10 +11,11 @@ function lengthOfLongestSubstring(s: string): number {
         }
 
         charSet.add(s[right]);
-        longest = Math.max(longest, charSet.size);
+        // longest = Math.max(longest, charSet.size);
+        longest = Math.max(longest, right - left + 1);
 
     }
-    
+
     return longest;
 
 };
