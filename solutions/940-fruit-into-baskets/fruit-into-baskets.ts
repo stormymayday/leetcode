@@ -24,7 +24,6 @@ function totalFruit(fruits: number[]): number {
             left += 1; // advance 'left'
         }
 
-
         // Update max length if the window is valid
         if (fruitCount.size <= 2) {
             longestWindow = Math.max(longestWindow, right - left + 1);
