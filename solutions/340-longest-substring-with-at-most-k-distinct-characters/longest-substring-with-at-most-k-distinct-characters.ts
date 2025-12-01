@@ -9,7 +9,7 @@ function lengthOfLongestSubstringKDistinct(s: string, k: number): number {
     charCount.set(s[right], (charCount.get(s[right]) || 0) + 1);
 
     // 2. Shrink window if number of keys is greater than k
-    while(charCount.size > k) {
+    if(charCount.size > k) {
 
         // 2.1. decrement count of char at 'left'
         charCount.set(s[left], charCount.get(s[left]) - 1);
