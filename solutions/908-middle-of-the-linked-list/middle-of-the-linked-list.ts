@@ -11,11 +11,18 @@
  */
 
 function middleNode(head: ListNode | null): ListNode | null {
+    
+    if(head === null) {
+        return null;
+    }
+
     let slow = head;
     let fast = head;
-    while(fast && fast.next) {
-        slow = slow.next;
+    while(fast !== null &&fast.next !== null) {
         fast = fast.next.next;
+        slow = slow.next;
     }
+
     return slow;
+
 };
