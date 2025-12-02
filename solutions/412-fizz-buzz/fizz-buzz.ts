@@ -1,17 +1,24 @@
 function fizzBuzz(n: number): string[] {
+
     const res: string[] = [];
 
-    for(let i = 1; i <= n; i += 1) {
+    for (let i = 1; i <= n; i += 1) {
 
-        if(i % 3 === 0 && i % 5 === 0) {
-            res.push("FizzBuzz");
-        } else if(i % 3 === 0) {
-            res.push("Fizz");
-        } else if(i % 5 === 0) {
-            res.push("Buzz");
-        } else {
-            res.push(`${i}`);
+        const ans: string[] = [];
+
+        if(i % 3 === 0) {
+            ans.push("Fizz");
         }
+
+        if(i % 5 === 0) {
+            ans.push("Buzz");
+        }
+
+        if(ans.length === 0) {
+            ans.push(`${i}`);
+        }
+
+        res.push(ans.join(""));
 
     }
 
