@@ -23,8 +23,7 @@ function characterReplacement(s: string, k: number): number {
             // Not needed because going below established max will never produce a better result
             // maxFrequency = Math.max(...charCount.values());
 
-            // not necessary but can reduce the number of iterations for
-            // the maxFrequency update above
+            // not necessary but can slightly improve space complexity?
             if(charCount.get(s[left]) === 0) {
                 charCount.delete(s[left]);
             }
