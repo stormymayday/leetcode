@@ -13,14 +13,15 @@ function characterReplacement(s: string, k: number): number {
         // update max frequency
         maxFrequency = Math.max(maxFrequency, charCount.get(s[right]));
 
-        // shrink while the window is not valid
+        // shrink from 'left' if the window is not valid
         if((right - left + 1) - maxFrequency > k) {
             
             // remove char at 'left'
             charCount.set(s[left], charCount.get(s[left]) - 1);
 
             // update max frequency
-            maxFrequency = Math.max(...charCount.values());
+            // Not needed because going below established max will never produce a better result
+            // maxFrequency = Math.max(...charCount.values());
 
             // not necessary but can reduce the number of iterations for
             // the maxFrequency update above
