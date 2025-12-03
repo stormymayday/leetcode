@@ -4,22 +4,16 @@ function check(nums: number[]): boolean {
         return true;
     }
     
-    const concatinedNums: number[] = nums.concat(nums);
+    const concatenatedNums: number[] = nums.concat(nums);
 
     let left = 0;
-    for(let right = 0; right < concatinedNums.length; right += 1) {
+    // Be careful, start right from 1 otherwise it will look out of bounds on first iteration!
+    for(let right = 1; right < concatenatedNums.length; right += 1) {
 
-        if(concatinedNums[right] < concatinedNums[right - 1]) {
+        // Look back
+        if(concatenatedNums[right] < concatenatedNums[right - 1]) {
             left = right;
         }
-
-        // if(right + 1 < concatinedNums.length && concatinedNums[right] > concatinedNums[right + 1]) {
-        //     left = right + 1;
-        // }
-
-        // while(left < right && concatinedNums[left] > concatinedNums[right]) {
-        //     left += 1;
-        // }
 
         if(right - left + 1 === nums.length) {
             return true;
