@@ -1,26 +1,32 @@
 function check(nums: number[]): boolean {
 
-    let pivot = -1;
-
-    for(let i = 0; i < nums.length - 1; i += 1) {
-        if(nums[i] > nums[i + 1]) {
-            pivot = i;
-            break;
-        }
-    }
-
-    if(pivot === -1) {
+    if(nums.length === 1) {
         return true;
     }
-
-    const slice1 = nums.slice(0, pivot + 1);
-    const slice2 = nums.slice(pivot + 1);
-    const candidate = [...slice2, ...slice1];
-    for(let i = 0; i < candidate.length - 1; i += 1) {
-        if(candidate[i] > candidate[i + 1]) {
-            return false;
-        }
-    }
-    return true;
     
+    const concatinedNums: number[] = nums.concat(nums);
+
+    let left = 0;
+    for(let right = 0; right < concatinedNums.length; right += 1) {
+
+        if(concatinedNums[right] < concatinedNums[right - 1]) {
+            left = right;
+        }
+
+        // if(right + 1 < concatinedNums.length && concatinedNums[right] > concatinedNums[right + 1]) {
+        //     left = right + 1;
+        // }
+
+        // while(left < right && concatinedNums[left] > concatinedNums[right]) {
+        //     left += 1;
+        // }
+
+        if(right - left + 1 === nums.length) {
+            return true;
+        }
+
+    }
+
+    return false;
+
 };
