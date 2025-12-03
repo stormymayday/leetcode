@@ -3,24 +3,23 @@ function check(nums: number[]): boolean {
     if(nums.length === 1) {
         return true;
     }
-    
-    const concatenatedNums: number[] = nums.concat(nums);
+
+    const n = nums.length;
 
     let left = 0;
-    // Be careful, start right from 1 otherwise it will look out of bounds on first iteration!
-    for(let right = 1; right < concatenatedNums.length; right += 1) {
+    for(let right = 1; right < 2 * n; right += 1) {
 
-        // Look back
-        if(concatenatedNums[right] < concatenatedNums[right - 1]) {
+        // look back
+        if(nums[right % n] < nums[(right -1) % n]) {
             left = right;
         }
 
-        if(right - left + 1 === nums.length) {
+        if(right - left + 1 === n) {
             return true;
         }
 
     }
 
     return false;
-
+    
 };
