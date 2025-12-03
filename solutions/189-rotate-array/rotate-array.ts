@@ -1,29 +1,18 @@
 /**
  Do not return anything, modify nums in-place instead.
  */
-function swap(arr, i, j) {
-    const temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
-}
-function reverse(arr, i, j) {
-    while(i < j) {
-        swap(arr, i, j);
-        i++;
-        j--;
-    }
-}
 function rotate(nums: number[], k: number): void {
+    if (k === nums.length || k === 0) {
+        return;
+    }
 
-    const pivotPoint = k % nums.length;
+    k = k % nums.length;
 
-    // reverse array
-    reverse(nums, 0, nums.length - 1);
+    const slice1 = nums.slice(0, nums.length - k);
+    const slice2 = nums.slice(nums.length - k);
+    const rotated = [...slice2, ...slice1];
 
-    // reverse left (up to pivot point EXCLUDING)
-    reverse(nums, 0, pivotPoint - 1);
-
-    // reverse right (from pivot INCLUDING to the end)
-    reverse(nums, pivotPoint, nums.length - 1);
-    
+    for (let i = 0; i < nums.length; i += 1) {
+        nums[i] = rotated[i];
+    }
 };
