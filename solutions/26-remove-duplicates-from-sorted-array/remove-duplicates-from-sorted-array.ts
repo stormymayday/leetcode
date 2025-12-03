@@ -1,12 +1,12 @@
 function removeDuplicates(nums: number[]): number {
-    
-    const uniques = [...new Set(nums)];
 
-    for (let i = 0; i < uniques.length; i += 1) {
+    const uniques = new Set<number>(nums);
 
-        nums[i] = uniques[i];
-
+    let idx = 0;
+    for(const num of uniques) {
+        nums[idx] = num;
+        idx += 1;
     }
 
-    return uniques.length;
+    return uniques.size;
 };
