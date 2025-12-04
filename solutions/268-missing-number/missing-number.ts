@@ -1,11 +1,9 @@
 function missingNumber(nums: number[]): number {
-    let sum: number = 0;
+    const n = nums.length;
+    let totalSum: number = n * (n + 1) / 2;
     let arrSum: number = 0;
-    for(let i = 0; i <= nums.length; i += 1) {
-        sum += i;
-        if(i < nums.length) {
-            arrSum += nums[i];
-        }
+    for (let i = 0; i < n; i += 1) {
+        arrSum += nums[i];
     }
-    return sum - arrSum;
+    return totalSum - arrSum;
 };
