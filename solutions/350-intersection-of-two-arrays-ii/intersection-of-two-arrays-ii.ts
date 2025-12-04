@@ -24,6 +24,12 @@ function intersect(nums1: number[], nums2: number[]): number[] {
                 break;
             }
 
+            // Sorted Arrays Optimization
+            // No point in comparing once value at j becomes greater
+            if(nums2[j] > nums1[i]) {
+                break;
+            }
+
         }
 
     }
