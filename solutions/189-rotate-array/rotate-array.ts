@@ -9,7 +9,8 @@ function rotate(nums: number[], k: number): void {
         return;
     }
 
-    k = k % n;
+    // not necessary
+    // k = k % n;
     
     const rotated: number[] = new Array(nums.length);
 
