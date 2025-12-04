@@ -2,27 +2,25 @@
  Do not return anything, modify nums in-place instead.
  */
 function rotate(nums: number[], k: number): void {
-    
-    if(k === nums.length || k === 0) {
-        return;
-    }
 
-    k = k % nums.length;
+  if(k === nums.length || k === 0) {
+    return;
+  }
 
-    // Storing last k elements
-    const temp: number[] = [];
-    for(let i = nums.length - k; i < nums.length; i += 1) {
-        temp.push(nums[i]);
-    }
+  k = k % nums.length;
 
-    // Shifting first length - k number of elements k steps forward
-    for(let i = nums.length - 1; i >= k; i -= 1) {
-        nums[i] = nums[i - k];
-    }
-
-    // Placing temp at the beginning
-    for(let i = 0; i < temp.length; i += 1) {
-        nums[i] = temp[i];
-    }
+  reverse(nums, 0, nums.length - k - 1);
+  reverse(nums, nums.length - k, nums.length - 1);
+  reverse(nums, 0, nums.length - 1);
 
 };
+
+function reverse(arr: number[], left: number, right: number): void {
+    while(left < right) {
+        const temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
+        left += 1;
+        right -= 1;
+    }
+}
