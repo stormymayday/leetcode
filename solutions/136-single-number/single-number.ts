@@ -1,13 +1,15 @@
 function singleNumber(nums: number[]): number {
-    for (let i = 0; i < nums.length; i += 1) {
-        let count = 0;
-        for (let j = 0; j < nums.length; j += 1) {
-            if (nums[i] === nums[j]) {
-                count += 1;
-            }
-        }
-        if (count === 1) {
-            return nums[i];
+    
+    const hashMap = new Map<number, number>();
+    
+    for(let i = 0; i < nums.length; i += 1) {
+        hashMap.set(nums[i], (hashMap.get(nums[i]) || 0) + 1);
+    }
+
+    for(const [key, value] of hashMap.entries()) {
+        if(value === 1) {
+            return key;
         }
     }
+
 };
