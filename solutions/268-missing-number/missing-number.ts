@@ -1,11 +1,11 @@
 function missingNumber(nums: number[]): number {
     
-    const sorted: number[] = [...nums].sort((a, b) => a - b);
+    const numSet = new Set<number>(nums);
 
     let missingNum = -Infinity;
 
-    for(let i = 0; i < sorted.length; i += 1) {
-        if(i !== sorted[i]) {
+    for(let i = 0; i < nums.length; i += 1) {
+        if(!numSet.has(i)) {
             missingNum = i;
             break;
         }
