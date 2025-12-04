@@ -8,6 +8,8 @@ function rotate(nums: number[], k: number): void {
     if(k === n || k === 0) {
         return;
     }
+
+    k = k % n;
     
     const rotated: number[] = new Array(nums.length);
 
