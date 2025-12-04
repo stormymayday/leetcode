@@ -1,16 +1,17 @@
 function missingNumber(nums: number[]): number {
     
-    const sorted: number[] = [...nums].sort((a, b) => a - b);
+    const hashArray: number[] = new Array(nums.length + 1).fill(0);
 
-    let missingNum = -Infinity;
+    for(let i = 0; i < nums.length; i += 1) {
+        hashArray[nums[i]] = 1;;
+    }
 
-    for(let i = 0; i <= sorted.length; i += 1) {
-        if(i !== sorted[i]) {
-            missingNum = i;
-            break;
+    for(let i = 0; i < hashArray.length; i += 1) {
+        if(hashArray[i] === 0) {
+            return i;
         }
     }
 
-    return missingNum;
+    return -Infinity;
 
 };
