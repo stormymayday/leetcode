@@ -4,6 +4,10 @@
 function rotate(nums: number[], k: number): void {
 
     const n = nums.length;
+
+    if(k === n || k === 0) {
+        return;
+    }
     
     const rotated: number[] = new Array(nums.length);
 
