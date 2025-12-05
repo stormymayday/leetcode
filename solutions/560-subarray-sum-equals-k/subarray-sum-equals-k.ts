@@ -4,13 +4,13 @@ function subarraySum(nums: number[], k: number): number {
 
     for(let i = 0; i < nums.length; i += 1) {
 
-        let currSum = 0;
+        let sum = 0;
 
         for(let j = i; j < nums.length; j += 1) {
 
-            currSum += nums[j];
+            sum += nums[j];
 
-            if(currSum === k) {
+            if(sum === k) {
                 count += 1;
             }
 
