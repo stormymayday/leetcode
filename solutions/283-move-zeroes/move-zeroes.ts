@@ -2,23 +2,20 @@
  Do not return anything, modify nums in-place instead.
  */
 function moveZeroes(nums: number[]): void {
+    
+    let left = 0;
+    for(let right = 0; right < nums.length; right += 1) {
 
-    const nonZeroes: number[] = [];
+        if(nums[left] === 0 && nums[right] !== 0) {
+            nums[left] = nums[right];
+            nums[right] = 0;
+            left += 1;
+        }
 
-    for(let i = 0; i < nums.length; i += 1) {
-
-        if(nums[i] !== 0) {
-            nonZeroes.push(nums[i]);
+        if(nums[left] !== 0) {
+            left += 1;
         }
 
     }
 
-    for(let i = 0; i < nonZeroes.length; i += 1) {
-        nums[i] = nonZeroes[i];
-    }
-
-    for(let i = nonZeroes.length; i < nums.length; i += 1) {
-        nums[i] = 0;
-    }
-    
 };
