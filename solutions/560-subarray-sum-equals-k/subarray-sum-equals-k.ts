@@ -5,6 +5,8 @@ function subarraySum(nums: number[], k: number): number {
     let prefixSum = 0;
     for (let i = 0; i < nums.length; i += 1) {
 
+        // Note: Orde matters here
+
         prefixSum += nums[i];
 
         if (prefixSum === k) {
