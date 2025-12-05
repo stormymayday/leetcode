@@ -8,6 +8,7 @@ function sortColors(nums: number[]): void {
     // Forward Pass: Place all items smaller than the pivot
     let left = 0;
     for (let right = 0; right < nums.length; right += 1) {
+        // Note: value at left must be greater than or EQUAL to pivot!
         if(nums[left] >= pivot && nums[right] < pivot) {
             const temp = nums[left];
             nums[left] = nums[right];
@@ -25,10 +26,11 @@ function sortColors(nums: number[]): void {
     for (let right = nums.length - 1; right >= 0; right -= 1) {
         // Optimization: if the 'right' pointer encounteres value less than pivot
         // We have entered the 'sorted' portion from Forward Pass
-        if(nums[right] < pivot) {
-            break; // we have 'encroached'
-        }
+        // if(nums[right] < pivot) {
+        //     break;
+        // }
 
+        // Note: value at 'left' must be less than or EQUAL to pivot
         if(nums[left] <= pivot && nums[right] > pivot) {
             const temp = nums[left];
             nums[left] = nums[right];
