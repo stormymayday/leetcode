@@ -16,7 +16,9 @@ function subarraySum(nums: number[], k: number): number {
         }
 
         prefixSumHash.set(prefixSum, (prefixSumHash.get(prefixSum) || 0) + 1);
+
     }
+    
     return count;
 
 };
