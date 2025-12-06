@@ -22,6 +22,8 @@ function sortColors(nums: number[]): void {
             swap(nums, right, mid);
             right -= 1;
             // Edge Case: don't advance the 'mid' pointer if swapped with 'right'!
+            // Because 'right' could have been on 'one'
+            // Therefore, if mid moves after swap, 'one' will remain inthe 'zeroes' partition!
             // mid += 1;
         }
         // otherwise, advance 'mid'
