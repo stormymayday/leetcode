@@ -10,17 +10,22 @@ function sortColors(nums: number[]): void {
     let right = nums.length - 1;
     while (mid <= right) {
 
-        // if (nums[left] >= pivot && nums[mid] < pivot) {
+        // Checking if value at mid is less than pivot
         if (nums[mid] < pivot) {
             swap(nums, left, mid);
             left += 1;
             mid += 1;
-        // } else if (nums[right] <= pivot && nums[mid] > pivot) {
-        } else if (nums[mid] > pivot) {
+
+        }
+        // Checking if value at mid is greater than pivot
+        else if (nums[mid] > pivot) {
             swap(nums, right, mid);
             right -= 1;
-            // mid -= 1;
-        } else {
+            // Edge Case: don't advance the 'mid' pointer if swapped with 'right'!
+            // mid += 1;
+        }
+        // otherwise, advance 'mid'
+        else {
             mid += 1;
         }
 
