@@ -1,28 +1,28 @@
 function majorityElement(nums: number[]): number {
-    // Variable to store the final result (the majority element)
-    let result = 0;
-    // Track the maximum frequency seen so far
-    let max = 0;
-
-    // Create a hashmap to count occurrences of each number
-    const hashMap = {};
     
-    // Count frequencies and track the majority element simultaneously
-    for(const num of nums) {
-        // If this is the first time we've seen this number, initialize its count to 1
-        if(hashMap[num] === undefined) {
-            hashMap[num] = 1;
-        } else {
-            // Otherwise, increment its count
-            hashMap[num]++;
+    let maxCount = 0;
+    let result = 0;
+
+    for(let i = 0; i < nums.length; i += 1) {
+        
+        // count the occurence of 'candidate'
+        let count = 0;
+        const candidate = nums[i];
+
+        for(let j = i; j < nums.length; j += 1) {
+
+            if(nums[j] === candidate) {
+                count += 1;
+            }
+
         }
 
-        // Update majority element if this number now has the highest frequency
-        if(hashMap[num] > max) {
-            result = num;
-            max = hashMap[num];
+        if(count > maxCount) {
+            maxCount = count;
+            result = candidate;
         }
     }
 
     return result;
+
 };
