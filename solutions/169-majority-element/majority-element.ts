@@ -1,34 +1,25 @@
 function majorityElement(nums: number[]): number {
-    
+
     const n = nums.length;
+    const frequencyMap = new Map<number, number>();
     let maxCount = 0;
-    let result = 0;
+    let res = 0;
+    for (let i = 0; i < n; i += 1) {
 
-    outer: for(let i = 0; i < n; i += 1) {
-        
-        // count the occurence of 'candidate'
-        let count = 0;
-        const candidate = nums[i];
+        frequencyMap.set(nums[i], (frequencyMap.get(nums[i]) || 0) + 1);
 
-        for(let j = i; j < n; j += 1) {
+        const count = frequencyMap.get(nums[i]);
 
-            if(nums[j] === candidate) {
-                count += 1;
-            }
-
+        if(count > Math.floor(n / 2)) {
+            res = nums[i];
+            break;
         }
 
-        if(count > Math.floor(n/2)) {
-            result = candidate;
-            break outer;
-        }
 
-        if(count > maxCount) {
+        if (count > maxCount) {
             maxCount = count;
-            result = candidate;
+            res = nums[i];
         }
     }
-
-    return result;
-
+    return res;
 };
