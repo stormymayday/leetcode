@@ -1,24 +1,23 @@
 function permuteUnique(nums: number[]): number[][] {
-    const numCount = new Map<number, number>();
-    for(let i = 0; i < nums.length; i += 1) {
-        const num = nums[i];
+    const n = nums.length;
+    const res = [];
+    const perm = [];
+    const numCount = new Map();
+    for(const num of nums) {
         numCount.set(num, (numCount.get(num) || 0) + 1);
     }
-    const res: number[][] = [];
-    const perm: number[] = [];
     (function helper() {
-        if(perm.length === nums.length) {
+        if(perm.length === n) {
             res.push([...perm]);
             return;
         }
         for(const [num, count] of numCount.entries()) {
             if(count > 0) {
                 perm.push(num);
-                numCount.set(num, numCount.get(num) - 1);
+                numCount.set(num, count - 1);
                 helper();
-
                 perm.pop();
-                numCount.set(num, numCount.get(num) + 1);
+                numCount.set(num, count);
             }
         }
     }());
