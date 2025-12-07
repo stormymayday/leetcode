@@ -11,13 +11,25 @@ function rearrangeArray(nums: number[]): number[] {
     let p1 = 0;
     let p2 = 0;
     let idx = 0;
+    // while (p1 < positives.length && p2 < negatives.length) {
+    //     nums[idx] = positives[p1];
+    //     p1 += 1;
+    //     idx += 1;
+    //     nums[idx] = negatives[p2];
+    //     p2 += 1;
+    //     idx += 1;
+    // }
     while (p1 < positives.length && p2 < negatives.length) {
-        nums[idx] = positives[p1];
-        p1 += 1;
-        idx += 1;
-        nums[idx] = negatives[p2];
-        p2 += 1;
-        idx += 1;
+        if (p1 === p2) {
+            nums[idx] = positives[p1];
+            p1 += 1;
+            idx += 1;
+        } else {
+            nums[idx] = negatives[p2];
+            p2 += 1;
+            idx += 1;
+        }
     }
+    nums[idx] = negatives[p2];
     return nums;
 };
