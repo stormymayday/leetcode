@@ -12,15 +12,18 @@ function nextPermutation(nums: number[]): void {
         const currVal = nums[idx];
 
         // 1.1. Linear scan 'numBackwards' if there is value greater than 'currVal'
-        for (let i = 0; i < numBackwards.length; i += 1) {
-            // Found greater!
-            if (currVal < numBackwards[i]) {
-                // swap and break
-                nums[idx] = numBackwards[i];
-                numBackwards[i] = currVal;
-                break outer;
-            }
 
+        if (currVal < numBackwards[numBackwards.length - 1]) {
+            for (let i = 0; i < numBackwards.length; i += 1) {
+                // Found greater!
+                if (currVal < numBackwards[i]) {
+                    // swap and break
+                    nums[idx] = numBackwards[i];
+                    numBackwards[i] = currVal;
+                    break outer;
+                }
+
+            }
         }
 
         // If there is no greater value, copy 'currVal' over to 'numBackwards'
