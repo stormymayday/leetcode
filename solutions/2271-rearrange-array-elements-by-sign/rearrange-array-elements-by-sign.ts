@@ -1,18 +1,25 @@
 function rearrangeArray(nums: number[]): number[] {
-    const positives = [];
-    const negatives = [];
+
+    const res: number[] = new Array(nums.length);
+
+    let p1 = 0;
+    let p2 = 1;
+
     for (let i = 0; i < nums.length; i += 1) {
         if (nums[i] < 0) {
-            negatives.push(nums[i]);
+            res[p2] = nums[i];
+            // p2 = p2 * 2 + 1;
+            p2 += 2;
         } else {
-            positives.push(nums[i]);
+            res[p1] = nums[i];
+            // if(p1 === 0) {
+            //     p1 = 2;
+            // } else {
+                // p1 = p1 * 2;
+                p1 += 2;
+            // }   
         }
     }
     
-    for(let i = 0; i < nums.length / 2; i += 1) {
-        nums[i * 2] = positives[i];
-        nums[i * 2 + 1] = negatives[i];
-    }
-
-    return nums;
+    return res;
 };
