@@ -11,9 +11,10 @@ function nextPermutation(nums: number[]): void {
 
         const currVal = nums[idx];
 
-        // 1.1. Linear scan 'numBackwards' if there is value greater than 'currVal'
-
+        // Check numBackwards has value greater than currVal
+        // We can check top in O(1) Time
         if (currVal < numBackwards[numBackwards.length - 1]) {
+            // If there is a greater value, linear scan 'numBackwards' to find smallest element greater than currVal
             for (let i = 0; i < numBackwards.length; i += 1) {
                 // Found greater!
                 if (currVal < numBackwards[i]) {
