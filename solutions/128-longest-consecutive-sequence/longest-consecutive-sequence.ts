@@ -1,5 +1,6 @@
 function longestConsecutive(nums: number[]): number {
 
+    // Edge Case: empty input
     if(nums.length === 0) {
         return 0;
     }
@@ -16,16 +17,17 @@ function longestConsecutive(nums: number[]): number {
             currStreak += 1;
             maxStreak = Math.max(maxStreak, currStreak);
         }
+        // duplicate
         else if (sortedNums[i] === sortedNums[i + 1]) {
-            continue;
+            continue; // skip
         }
+        // not an exact increment by 1
         else {
-            currStreak = 1;
+            currStreak = 1; // reseting current streak
         }
 
     }
 
     return maxStreak;
-
 
 };
