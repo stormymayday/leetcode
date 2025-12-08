@@ -36,7 +36,8 @@ function nextPermutation(nums: number[]): void {
     }
 
     // 2. Overwrite 'nums' from 'idx + 1' with sorted 'numBackwards'
-    numBackwards.sort((a, b) => a - b);
+    // numBackwards.sort((a, b) => a - b);
+    // numBackwards.reverse();
     idx += 1;
     for (let i = 0; i < numBackwards.length; i += 1) {
         nums[idx] = numBackwards[i];
