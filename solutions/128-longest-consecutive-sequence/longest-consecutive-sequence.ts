@@ -5,25 +5,23 @@ function longestConsecutive(nums: number[]): number {
         return 0;
     }
 
-    const uniqueSortedNums = [...new Set(nums)].sort((a, b) => a - b);
+    const set = new Set<number>(nums);
 
     let maxStreak = 1;
-    let currStreak = 1;
-
-    for (let i = 0; i < uniqueSortedNums.length - 1; i += 1) {
-
-        // if current + 1 equals to next element
-        if (uniqueSortedNums[i] + 1 === uniqueSortedNums[i + 1]) {
-            currStreak += 1;
+    for(const key of set) {
+        if(set.has(key - 1)) {
+            continue;
+        } else {
+            let next = key + 1;
+            let currStreak = 1;
+            while(set.has(next)) {
+                currStreak += 1;
+                next += 1;
+            }
             maxStreak = Math.max(maxStreak, currStreak);
         }
-        // not an exact increment by 1
-        else {
-            currStreak = 1; // reseting current streak
-        }
-
     }
-
+    
     return maxStreak;
 
 };
