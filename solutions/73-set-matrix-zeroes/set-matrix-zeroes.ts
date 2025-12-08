@@ -6,28 +6,24 @@ function setZeroes(matrix: number[][]): void {
     const ROWS = matrix.length;
     const COLS = matrix[0].length;
 
-    const rowSet = new Set<number>();
-    const colSet = new Set<number>();
+    const hashRows = new Array(ROWS).fill(1);
+    const hashCols = new Array(COLS).fill(1);
 
-    for (let row = 0; row < ROWS; row += 1) {
-        for (let col = 0; col < COLS; col += 1) {
-            if (matrix[row][col] === 0) {
-                rowSet.add(row);
-                colSet.add(col);
+    for(let row = 0; row < ROWS; row += 1) {
+        for(let col = 0; col < COLS; col += 1) {
+            if(matrix[row][col] === 0) {
+                hashRows[row] = 0;
+                hashCols[col] = 0;
             }
         }
     }
 
-    for (const row of rowSet) {
-        for (let col = 0; col < COLS; col += 1) {
-            matrix[row][col] = 0;
+    for(let row = 0; row < ROWS; row += 1) {
+        for(let col = 0; col < COLS; col += 1) {
+            if(hashRows[row] === 0 || hashCols[col] === 0) {
+                matrix[row][col] = 0
+            }
         }
     }
-
-    for (const col of colSet) {
-        for (let row = 0; row < ROWS; row += 1) {
-            matrix[row][col] = 0;
-        }
-    }
-
+    
 };
