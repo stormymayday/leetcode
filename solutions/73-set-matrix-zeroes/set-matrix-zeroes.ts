@@ -18,10 +18,20 @@ function setZeroes(matrix: number[][]): void {
         }
     }
 
+    // Iterating over 'hashRows'
     for(let row = 0; row < ROWS; row += 1) {
-        for(let col = 0; col < COLS; col += 1) {
-            if(hashRows[row] === 0 || hashCols[col] === 0) {
-                matrix[row][col] = 0
+        if(hashRows[row] === 0) {
+            for(let col = 0; col < COLS; col += 1) {
+                matrix[row][col] = 0;
+            }
+        }
+    }
+
+    // Iterating over 'hashCols'
+    for(let col = 0; col < COLS; col += 1) {
+        if(hashCols[col] === 0) {
+            for(let row = 0; row < ROWS; row += 1) {
+                matrix[row][col] = 0;
             }
         }
     }
