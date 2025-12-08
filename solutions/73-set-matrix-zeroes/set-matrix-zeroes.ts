@@ -18,23 +18,15 @@ function setZeroes(matrix: number[][]): void {
         }
     }
 
-    // for (const row of rowSet) {
-    //     for (let col = 0; col < COLS; col += 1) {
-    //         matrix[row][col] = 0;
-    //     }
-    // }
-
-    // for (const col of colSet) {
-    //     for (let row = 0; row < ROWS; row += 1) {
-    //         matrix[row][col] = 0;
-    //     }
-    // }
-
-    for (let row = 0; row < ROWS; row += 1) {
+    for (const row of rowSet) {
         for (let col = 0; col < COLS; col += 1) {
-            if (rowSet.has(row) || colSet.has(col)) {
-                matrix[row][col] = 0;
-            }
+            matrix[row][col] = 0;
+        }
+    }
+
+    for (const col of colSet) {
+        for (let row = 0; row < ROWS; row += 1) {
+            matrix[row][col] = 0;
         }
     }
 
