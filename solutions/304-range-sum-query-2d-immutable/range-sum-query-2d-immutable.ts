@@ -1,33 +1,24 @@
 class NumMatrix {
-    sumMatrix: number[][];
+    grid: number[][];
     constructor(matrix: number[][]) {
-        const ROWS = matrix.length;
-        const COLS = matrix[0].length;
-        this.sumMatrix = [];
-        for(let i = 0; i < ROWS + 1; i += 1) {
-            this.sumMatrix.push(new Array(COLS + 1).fill(0));
-        }
-
-        for(let r = 0; r < ROWS; r += 1) {
-            let prefixSum = 0;
-            for(let c = 0; c < COLS; c += 1) {
-                prefixSum += matrix[r][c];
-                const above = this.sumMatrix[r][c + 1];
-                this.sumMatrix[r + 1][c + 1] = prefixSum + above;
-            }
+        this.grid = [];
+        for(let row = 0; row < matrix.length; row += 1) {
+            this.grid.push([...matrix[row]]);
         }
     }
 
     sumRegion(row1: number, col1: number, row2: number, col2: number): number {
-        row1 += 1;
-        row2 += 1;
-        col1 += 1;
-        col2 += 1;
-        const bottomRight = this.sumMatrix[row2][col2];
-        const above = this.sumMatrix[row1 - 1][col2];
-        const left = this.sumMatrix[row2][col1 - 1];
-        const topLeft = this.sumMatrix[row1 - 1][col1 - 1];
-        return bottomRight - above - left + topLeft;
+        
+        let sum = 0;
+
+        for(let row = row1; row <= row2; row += 1) {
+            for(let col = col1; col <= col2; col += 1) {
+                sum += this.grid[row][col];
+            }
+        }
+
+        return sum;
+
     }
 }
 
