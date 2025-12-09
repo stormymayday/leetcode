@@ -6,9 +6,9 @@ function rotate(matrix: number[][]): void {
     const ROWS = matrix.length;
     const COLS = matrix[0].length;
 
-    // Transpose using Left Half
-    for(let row = 1; row < ROWS; row += 1) {
-        for(let col = 0; col < row; col += 1) {
+    // Transpose using the Top Right Half behind the diagonal
+    for(let row = 0; row < ROWS - 1; row += 1) {
+        for(let col = row + 1; col < COLS; col += 1) {
             // Swap
             const temp = matrix[row][col];
             matrix[row][col] = matrix[col][row];
