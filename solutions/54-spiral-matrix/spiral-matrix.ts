@@ -10,24 +10,25 @@ function spiralOrder(matrix: number[][]): number[] {
     let topBound = 0;
     let botBound = ROWS - 1;
 
-    // Traverse until left & right AND top & bot have not crossed
+    // Iterate until Left & Right AND Top & Bottom have not crossed
     while (leftBound <= rightBound && topBound <= botBound) {
 
         // Reading Top Row (from leftBound up to rightBound)
         for (let col = leftBound; col <= rightBound; col += 1) {
             res.push(matrix[topBound][col]);
         }
-        // Moving topBound down
-        topBound += 1;
+        // Moving topBound down (Folding Top)
+        topBound += 1; // Top can now cross Bottom!
 
         // Reading Right Col (from topBound up to botBound)
+        // Note: If Top crosses Bottom, this loop will not execute!
         for (let row = topBound; row <= botBound; row += 1) {
             res.push(matrix[row][rightBound]);
         }
-        // Moving rightBound to the left
-        rightBound -= 1;
+        // Moving rightBound to the left (Folding Right)
+        rightBound -= 1; // Right can now cross Left!
 
-        // Now Pointers could have crossed
+        // Check if any pointers have crossed!
         if (leftBound > rightBound || topBound > botBound) {
             break;
         }
@@ -36,15 +37,15 @@ function spiralOrder(matrix: number[][]): number[] {
         for (let col = rightBound; col >= leftBound; col -= 1) {
             res.push(matrix[botBound][col]);
         }
-        // Moving botBound up
-        botBound -= 1;
+        // Moving botBound up (Folding Bottom)
+        botBound -= 1; // Bottom can now cross Top
 
         // Left Col (from botBound up to but not topBound)
         for (let row = botBound; row >= topBound; row -= 1) {
             res.push(matrix[row][leftBound]);
         }
-        // Moving leftBound to the right
-        leftBound += 1;
+        // Moving leftBound to the right (Folding Left)
+        leftBound += 1; // Left can now cross Right
 
     }
 
