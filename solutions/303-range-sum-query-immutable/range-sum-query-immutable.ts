@@ -1,15 +1,16 @@
 class NumArray {
-    arr: number[];
+    prefixSums: number[];
     constructor(nums: number[]) {
-        this.arr = [...nums];
+        this.prefixSums = [];
+        let prefixSum = 0;
+        for(let i = 0; i < nums.length; i += 1) {
+            prefixSum += nums[i];
+            this.prefixSums.push(prefixSum);
+        }
     }
 
     sumRange(left: number, right: number): number {
-        let sum = 0;
-        for(let i = left; i <= right; i += 1) {
-            sum += this.arr[i];
-        }
-        return sum;
+        return left === 0 ? this.prefixSums[right] : this.prefixSums[right] - this.prefixSums[left - 1];
     }
 }
 
