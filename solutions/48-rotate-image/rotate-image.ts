@@ -12,23 +12,17 @@ function rotate(matrix: number[][]): void {
         copy[row] = new Array(COLS);
     }
 
-    // Fill out the copy using original row into copy column
-    let copyCol = COLS - 1; // starting from the last column, going towards first
-    for (let row = 0; row < ROWS; row += 1) {
+    for(let row = 0; row < ROWS; row += 1) {
+        for(let col = 0; col < COLS; col += 1) {
+            
+            // original - col is dynamic, therefore, reference can copy - row
 
-        const currRow = matrix[row];
+            // original - row is static
 
-        // Going down row by row
-        for (let rowIdx = 0; rowIdx < ROWS; rowIdx += 1) {
 
-            copy[rowIdx][copyCol] = currRow[rowIdx];
-            // Note: 'rowIdx' in currRow[rowIdx] is referencing a column index
+            copy[col][matrix.length - 1 - row] = matrix[row][col];
 
         }
-
-        // move to the next column
-        copyCol -= 1;
-
     }
 
     // Overwrite the original using copy
