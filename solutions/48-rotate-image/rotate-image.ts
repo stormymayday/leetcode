@@ -2,40 +2,37 @@
  Do not return anything, modify matrix in-place instead.
  */
 function rotate(matrix: number[][]): void {
+    
+    const ROWS = matrix.length;
+    const COLS = matrix[0].length;
 
-    // storing matrix length
-    const n = matrix.length;
+    // Create a copy
+    const copy = new Array(ROWS);
+    for (let row = 0; row < ROWS; row += 1) {
+        copy[row] = new Array(COLS);
+    }
 
-    // Process layer by layer from outside to inside
-    for(let layer = 0; layer < Math.floor(n / 2); layer++) {
+    // Fill out the copy using original row into copy column
+    let copyCol = COLS - 1; // starting from the last column, going towards first
+    for (let row = 0; row < ROWS; row += 1) {
 
-        // boundaries for current layer
-        let topRow = layer
-        let rightCol = n - 1 - layer;
-        let bottomRow = n - 1 - layer;
-        let leftCol = layer;
+        // Going row by row
+        const currRow = matrix[row];
 
-        // For each element in the current layer
-        for(let i = 0; i < rightCol - leftCol; i++) {
-            // TEMP VARS
-            // Storing all four elements that will be rotated
-            let currentTopRowElement = matrix[topRow][leftCol + i];
-            let currentRightColElement = matrix[topRow + i][rightCol];
-            let currentBottomRowElement = matrix[bottomRow][rightCol - i];
-            let currentLeftColElement = matrix[bottomRow - i][leftCol];
+        for (let copyRow = 0; copyRow < ROWS; copyRow += 1) {
 
-            // SWAPPING
-            // top row goes into right col
-            matrix[topRow + i][rightCol] = currentTopRowElement;
-            // right col goes into bottom row
-            matrix[bottomRow][rightCol - i] = currentRightColElement;
-            // bottom row goes into left col
-            matrix[bottomRow - i][leftCol] = currentBottomRowElement;
-            // left col goes into tio row
-            matrix[topRow][leftCol + i] = currentLeftColElement
+            copy[copyRow][copyCol] = currRow[copyRow];
 
         }
 
+        copyCol -= 1;
+
     }
-    
+
+    // Overwrite the original using copy
+    for (let row = 0; row < ROWS; row += 1) {
+        for (let col = 0; col < COLS; col += 1) {
+            matrix[row][col] = copy[row][col];
+        }
+    }
 };
