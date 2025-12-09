@@ -3,34 +3,45 @@
  */
 function rotate(matrix: number[][]): void {
 
-    const ROWS = matrix.length;
-    const COLS = matrix[0].length;
+    const n = matrix.length;
 
-    // Transpose using the Top Right Half behind the diagonal
-    for(let row = 0; row < ROWS - 1; row += 1) {
-        for(let col = row + 1; col < COLS; col += 1) {
-            // Swap
-            const temp = matrix[row][col];
-            matrix[row][col] = matrix[col][row];
-            matrix[col][row] = temp;
+    // Boundaries
+    let leftBound = 0;
+    let rightBound = matrix[0].length - 1;
+    let topBound = 0;
+    let botBound = matrix.length - 1;
+
+    while(leftBound < rightBound || topBound < botBound) {
+
+        for(let i = leftBound; i < rightBound; i += 1) {
+            
+            // Cache Right Col Val
+            const rightColVal = matrix[i][rightBound];
+            // (dynamic row) Right Col <- Top Row (dynamic col)
+            matrix[i][rightBound] = matrix[topBound][i];
+
+            // Cache Bot Row Val
+            const botRowVal = matrix[botBound][n - 1 - i];
+            // Bot Row (dynamic col) <- (dynamic row) Right Col
+            matrix[botBound][n - 1 - i] = rightColVal;
+
+            // Cache Left Col Val
+            const leftColVal = matrix[n - 1 - i][leftBound];
+            // Bot Row -> Left Col
+            // (dynamic row) Left Col <- Bot Row (dynamic col)
+            matrix[n - 1 - i][leftBound] = botRowVal;
+
+            // Top Row (dynamic Col) <- (dynamic row) Left Col
+            matrix[topBound][i] = leftColVal;
+
         }
+
+        // Constricting the bounds
+        leftBound += 1;
+        rightBound -= 1;
+        topBound += 1;
+        botBound -= 1;
+
     }
 
-    // Reverse all rows
-    for(let row = 0; row < ROWS; row += 1) {
-        reverse(matrix[row]);
-    }
-    
 };
-
-function reverse(arr: number[]): void {
-    let left = 0;
-    let right = arr.length - 1;
-    while(left < right) {
-        const temp = arr[left];
-        arr[left] = arr[right];
-        arr[right] = temp;
-        left += 1;
-        right -= 1;
-    }
-}
