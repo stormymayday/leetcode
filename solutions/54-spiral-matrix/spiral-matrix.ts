@@ -10,7 +10,7 @@ function spiralOrder(matrix: number[][]): number[] {
     let topBound = 0;
     let botBound = ROWS - 1;
 
-    // this
+    // Traverse until left & right AND top & bot have not crossed
     while (leftBound <= rightBound && topBound <= botBound) {
 
         // Reading Top Row (from leftBound up to rightBound)
