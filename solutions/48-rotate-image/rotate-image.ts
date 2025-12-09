@@ -6,8 +6,7 @@ function rotate(matrix: number[][]): void {
     const ROWS = matrix.length;
     const COLS = matrix[0].length;
 
-    // Transpose Matrix
-    // Only need to visit one half of a 'diagonal'
+    // Transpose using Left Half
     for(let row = 1; row < ROWS; row += 1) {
         for(let col = 0; col < row; col += 1) {
             // Swap
