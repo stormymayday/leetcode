@@ -2,7 +2,7 @@
  Do not return anything, modify matrix in-place instead.
  */
 function rotate(matrix: number[][]): void {
-    
+
     const ROWS = matrix.length;
     const COLS = matrix[0].length;
 
@@ -16,15 +16,17 @@ function rotate(matrix: number[][]): void {
     let copyCol = COLS - 1; // starting from the last column, going towards first
     for (let row = 0; row < ROWS; row += 1) {
 
-        // Going row by row
         const currRow = matrix[row];
 
-        for (let copyRow = 0; copyRow < ROWS; copyRow += 1) {
+        // Going down row by row
+        for (let rowIdx = 0; rowIdx < ROWS; rowIdx += 1) {
 
-            copy[copyRow][copyCol] = currRow[copyRow];
+            copy[rowIdx][copyCol] = currRow[rowIdx];
+            // Note: 'rowIdx' in currRow[rowIdx] is referencing a column index
 
         }
 
+        // move to the next column
         copyCol -= 1;
 
     }
