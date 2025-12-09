@@ -11,7 +11,7 @@ function rotate(matrix: number[][]): void {
     let topBound = 0;
     let botBound = matrix.length - 1;
 
-    while(leftBound < rightBound || topBound < botBound) {
+    while(leftBound < rightBound) {
 
         for(let i = leftBound; i < rightBound; i += 1) {
             
