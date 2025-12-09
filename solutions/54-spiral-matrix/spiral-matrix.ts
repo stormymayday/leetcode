@@ -1,65 +1,53 @@
 function spiralOrder(matrix: number[][]): number[] {
-    // Array to store the spiral order traversal
-    const result: number[] = [];
 
-    // Edge case handling for empty matrix
-    if (matrix.length === 0 || matrix[0].length === 0) {
-        return result;
+    const res = [];
+
+    const ROWS = matrix.length;
+    const COLS = matrix[0].length;
+
+    let leftBound = 0;
+    let rightBound = COLS - 1;
+    let topBound = 0;
+    let botBound = ROWS - 1;
+
+    // this
+    while (leftBound <= rightBound && topBound <= botBound) {
+
+        // Reading Top Row (from leftBound up to rightBound)
+        for (let col = leftBound; col <= rightBound; col += 1) {
+            res.push(matrix[topBound][col]);
+        }
+        // Moving topBound down
+        topBound += 1;
+
+        // Reading Right Col (from topBound up to botBound)
+        for (let row = topBound; row <= botBound; row += 1) {
+            res.push(matrix[row][rightBound]);
+        }
+        // Moving rightBound to the left
+        rightBound -= 1;
+
+        // Now Pointers could have crossed
+        if (leftBound > rightBound || topBound > botBound) {
+            break;
+        }
+
+        // Reading Bot Row (from rightBound up leftBound)
+        for (let col = rightBound; col >= leftBound; col -= 1) {
+            res.push(matrix[botBound][col]);
+        }
+        // Moving botBound up
+        botBound -= 1;
+
+        // Left Col (from botBound up to but not topBound)
+        for (let row = botBound; row >= topBound; row -= 1) {
+            res.push(matrix[row][leftBound]);
+        }
+        // Moving leftBound to the right
+        leftBound += 1;
+
     }
 
-    // Initialize the boundary pointers
-    let leftColumnPointer = 0;
-    let rightColumnPointer = matrix[0].length - 1; // Last column index
-    let topRowPointer = 0;
-    let bottomRowPointer = matrix.length - 1;    // Last row index
+    return res;
 
-    // Continue traversal until boundaries cross
-    while(leftColumnPointer <= rightColumnPointer && topRowPointer <= bottomRowPointer) {
-
-        // 1. Traverse top row (left to right)
-        for(let col = leftColumnPointer; col <= rightColumnPointer; col++) {
-            result.push(matrix[topRowPointer][col]);
-        }
-        // Move top boundary down after traversing top row
-        topRowPointer++;
-        // Check if top boundary has crossed bottom boundary
-        if(topRowPointer > bottomRowPointer) {
-            break;
-        }
-
-        // 2. Traverse right column (top to bottom)
-        for(let row = topRowPointer; row <= bottomRowPointer; row++) {
-            result.push(matrix[row][rightColumnPointer]);
-        }
-        // Move right boundary left after traversing right column
-        rightColumnPointer--;
-        // Check if right boundary has crossed left boundary
-        if(leftColumnPointer > rightColumnPointer) {
-            break;
-        }
-
-        // 3. Traverse bottom row (right to left)
-        for(let col = rightColumnPointer; col >= leftColumnPointer; col--) {
-            result.push(matrix[bottomRowPointer][col]);
-        }
-        // Move bottom boundary up after traversing bottom row
-        bottomRowPointer--;
-        // Check if bottom boundary has crossed top boundary
-        if(topRowPointer > bottomRowPointer) {
-            break;
-        }
-
-        // 4. Traverse left column (bottom to top)
-        for(let row = bottomRowPointer; row >= topRowPointer; row--) {
-            result.push(matrix[row][leftColumnPointer]);
-        }
-        // Move left boundary right after traversing left column
-        leftColumnPointer++;
-        // Check if left boundary has crossed right boundary
-        if(leftColumnPointer > rightColumnPointer) {
-            break;
-        }
-    }
-
-    return result;
 };
