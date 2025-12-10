@@ -1,13 +1,13 @@
 class NumMatrix {
-    oneDimensionalPrefixSums: number[][];
+    prefixSums1D: number[][];
     constructor(matrix: number[][]) {
-        this.oneDimensionalPrefixSums = new Array(matrix.length);
+        this.prefixSums1D = new Array(matrix.length);
         let prefixSum = 0;
         for(let row = 0; row < matrix.length; row += 1) {
-            this.oneDimensionalPrefixSums[row] = new Array(matrix[0].length);
+            this.prefixSums1D[row] = new Array(matrix[0].length);
             for(let col = 0; col < matrix[0].length; col += 1) {
                 prefixSum += matrix[row][col];
-                this.oneDimensionalPrefixSums[row][col] = prefixSum;
+                this.prefixSums1D[row][col] = prefixSum;
             }
         }
     }
@@ -18,7 +18,7 @@ class NumMatrix {
 
         for(let row = row1; row <= row2; row += 1) {
             
-            const rightSum = this.oneDimensionalPrefixSums[row][col2];
+            const rightSum = this.prefixSums1D[row][col2];
             let leftSum = 0;
             // Edge Case 1: The sub-matrix starts at first row and first col
             if(row === 0 && col1 === 0) {
@@ -27,9 +27,9 @@ class NumMatrix {
             // Edge Case2 : col1 is 0
             // Then the 'leftSum' will 'wrap around' to the last column one row above
             else if(col1 === 0) {
-                leftSum = this.oneDimensionalPrefixSums[row - 1][this.oneDimensionalPrefixSums[0].length - 1];
+                leftSum = this.prefixSums1D[row - 1][this.prefixSums1D[0].length - 1];
             } else {
-                leftSum = this.oneDimensionalPrefixSums[row][col1 - 1];
+                leftSum = this.prefixSums1D[row][col1 - 1];
             }
 
             sum += rightSum - leftSum;
