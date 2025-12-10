@@ -20,9 +20,13 @@ class NumMatrix {
             
             const rightSum = this.prefixSums[row][col2];
             let leftSum = 0;
+            // Edge Case 1: The sub-matrix starts at first row and first col
             if(row === 0 && col1 === 0) {
                 leftSum = 0;
-            } else if(col1 === 0) {
+            } 
+            // Edge Case2 : col1 is 0
+            // Then the 'leftSum' will 'wrap around' to the last column one row above
+            else if(col1 === 0) {
                 leftSum = this.prefixSums[row - 1][this.prefixSums[0].length - 1];
             } else {
                 leftSum = this.prefixSums[row][col1 - 1];
