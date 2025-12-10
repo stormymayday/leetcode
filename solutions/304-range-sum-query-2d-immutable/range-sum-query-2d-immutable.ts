@@ -1,9 +1,14 @@
 class NumMatrix {
-    grid: number[][];
+    prefixSums: number[][];
     constructor(matrix: number[][]) {
-        this.grid = [];
+        this.prefixSums = new Array(matrix.length);
+        let prefixSum = 0;
         for(let row = 0; row < matrix.length; row += 1) {
-            this.grid.push([...matrix[row]]);
+            this.prefixSums[row] = new Array(matrix[0].length);
+            for(let col = 0; col < matrix[0].length; col += 1) {
+                prefixSum += matrix[row][col];
+                this.prefixSums[row][col] = prefixSum;
+            }
         }
     }
 
@@ -12,9 +17,19 @@ class NumMatrix {
         let sum = 0;
 
         for(let row = row1; row <= row2; row += 1) {
-            for(let col = col1; col <= col2; col += 1) {
-                sum += this.grid[row][col];
+            
+            const rightSum = this.prefixSums[row][col2];
+            let leftSum = 0;
+            if(row === 0 && col1 === 0) {
+                leftSum = 0;
+            } else if(col1 === 0) {
+                leftSum = this.prefixSums[row - 1][this.prefixSums[0].length - 1];
+            } else {
+                leftSum = this.prefixSums[row][col1 - 1];
             }
+
+            sum += rightSum - leftSum;
+            
         }
 
         return sum;
