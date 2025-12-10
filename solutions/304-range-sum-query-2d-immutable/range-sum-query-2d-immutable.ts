@@ -54,8 +54,11 @@ class NumMatrix {
         // There is a row above and col to the left
         else {
             return this.prefixSums2D[row2][col2] -
-                this.prefixSums2D[row1 - 1][col2] - 
+                // Subtract from the row above 
+                this.prefixSums2D[row1 - 1][col2] -
+                // Subtract from col to th left
                 this.prefixSums2D[row2][col1 - 1] +
+                // Add the top-left diagonal
                 this.prefixSums2D[row1 - 1][col1 - 1];
         }
 
