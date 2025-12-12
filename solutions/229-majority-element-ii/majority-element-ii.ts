@@ -2,25 +2,50 @@ function majorityElement(nums: number[]): number[] {
 
     const n = nums.length;
 
-    const majority = Math.floor(n / 3);
+    let el1 = -Infinity;
+    let count1 = 0;
+    let el2 = -Infinity;
+    let count2 = 0;
 
-    const res = new Set<number>();
+    for(let i = 0; i < n; i += 1) {
 
-    const freqMap = new Map<number, number>();
-
-    for (let i = 0; i < n; i += 1) {
-
-        freqMap.set(nums[i], (freqMap.get(nums[i]) || 0) + 1);
-
-        if (freqMap.get(nums[i]) > majority) {
-            res.add(nums[i]);
-            if(res.size === 2) {
-                // There can be no more than 2 majority elements
-                break;
-            }
+        if(count1 === 0 && nums[i] !== el2) {
+            el1 = nums[i];
+            count1 = 1;
+        } else if(count2 === 0 && nums[i] !== el1) {
+            el2 = nums[i];
+            count2 = 1;
+        } else if(nums[i] === el1) {
+            count1 += 1;
+        } else if(nums[i] === el2) {
+            count2 += 1;
+        } else {
+            count1 -= 1;
+            count2 -= 1;
         }
 
     }
 
-    return Array.from(res);
+    const res: number[] = [];
+    const majority: number = Math.floor(n / 3);
+    count1 = 0;
+    count2 = 0;
+    for(let i = 0; i < n; i += 1) {
+        if(nums[i] === el1) {
+            count1 += 1;
+        }
+        if(nums[i] === el2) {
+            count2 += 1;
+        }
+    }
+
+    if(count1 > majority) {
+        res.push(el1);
+    }
+    if(count2 > majority) {
+        res.push(el2);
+    }
+    
+    return res;
+    
 };
