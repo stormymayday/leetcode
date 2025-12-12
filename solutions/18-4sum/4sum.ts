@@ -4,39 +4,23 @@ function fourSum(nums: number[], target: number): number[][] {
 
     nums.sort((a, b) => a - b);
 
-    const res = [];
+    const res = new Set<string>();
 
-    for (let i = 0; i < n - 3; i += 1) {
+    for (let i = 0; i < n; i += 1) {
 
-        if (i > 0 && nums[i] === nums[i - 1]) {
-            continue;
-        }
+        for (let j = i + 1; j < n; j += 1) {
 
-        for (let j = i + 1; j < n - 2; j += 1) {
+            const kSet = new Set<number>();
 
-            if (j > i + 1 && nums[j] === nums[j - 1]) {
-                continue;
-            }
+            for (let k = j + 1; k < n; k += 1) {
 
-            for (let k = j + 1; k < n - 1; k += 1) {
+                const diff = target - (nums[i] + nums[j] + nums[k]);
 
-                if (k > j + 1 && nums[k] === nums[k - 1]) {
-                    continue;
+                if (kSet.has(diff)) {
+                    res.add(JSON.stringify([nums[i], nums[j], nums[k], diff]));
                 }
 
-                for (let l = k + 1; l < n; l += 1) {
-
-                    if (l > k + 1 && nums[l] === nums[l - 1]) {
-                        continue;
-                    }
-
-                    if (nums[i] + nums[j] + nums[k] + nums[l] === target) {
-
-                        res.push([nums[i], nums[j], nums[k], nums[l]]);
-
-                    }
-
-                }
+                kSet.add(nums[k]);
 
             }
 
@@ -44,6 +28,6 @@ function fourSum(nums: number[], target: number): number[][] {
 
     }
 
-    return res;
+    return Array.from(res).map((quadruplet) => JSON.parse(quadruplet));
 
 };
