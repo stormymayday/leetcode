@@ -25,15 +25,10 @@ function maxTurbulenceSize(arr: number[]): number {
         // prev and curr comp signs are the same
         if (prevCompSign === currCompSign) {
             left = right - 1;
-            // prevCompSign = currCompSign;
-            // continue;
         }
 
         // there is no prevCompSign OR signs are different
-        if(prevCompSign !== currCompSign) {
-            maxStreak = Math.max(maxStreak, right - left + 1);
-            // prevCompSign = currCompSign;
-        }
+        maxStreak = Math.max(maxStreak, right - left + 1);
 
         prevCompSign = currCompSign;
 
