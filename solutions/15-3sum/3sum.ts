@@ -2,30 +2,52 @@ function threeSum(nums: number[]): number[][] {
 
     const n = nums.length;
 
-        const sorted = [...nums].sort((a, b) => a - b);
+    const sorted = [...nums].sort((a, b) => a - b);
 
-        const triplets = new Set<string>();
+    const res = [];
 
-        for (let i = 0; i < n; i += 1) {
+    for (let left = 0; left < n - 2; left += 1) {
 
-            // will be adding nums[j]
-            const jSet = new Set<number>();
-
-            for (let j = i + 1; j < n; j += 1) {
-
-                const third = -(sorted[i] + sorted[j]);
-
-                if (jSet.has(third)) {
-                    // triplets.add(JSON.stringify([nums[i], nums[j], third].sort((a, b) => a - b)));
-                    triplets.add(JSON.stringify([sorted[i], sorted[j], third]));
-                }
-
-                // jSet.add(nums[j]);
-                jSet.add(sorted[j]);
-
-            }
+        if (left > 0 && sorted[left] === sorted[left - 1]) {
+            continue;
         }
 
-        return Array.from(triplets).map(triplet => JSON.parse(triplet));
+        let mid = left + 1;
+        let right = n - 1;
+        while (mid < right) {
+
+            if (sorted[left] + sorted[mid] + sorted[right] === 0) {
+
+                res.push([sorted[left], sorted[mid], sorted[right]]);
+
+                mid += 1;
+                while (mid < right && sorted[mid] === sorted[mid - 1]) {
+                    mid += 1;
+                }
+
+                right -= 1;
+                while (mid < right && sorted[right] === sorted[right + 1]) {
+                    right -= 1;
+                }
+
+            } else if (sorted[left] + sorted[mid] + sorted[right] > 0) {
+                right -= 1;
+                while (mid < right && sorted[right] === sorted[right + 1]) {
+                    right -= 1;
+                }
+            }
+            // sorted[left] + sorted[mid] + sorted[right] < 0
+            else {
+                mid += 1;
+                while (mid < right && sorted[mid] === sorted[mid - 1]) {
+                    mid += 1;
+                }
+            }
+
+        }
+
+    }
+
+    return res;
 
 };
