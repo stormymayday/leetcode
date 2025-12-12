@@ -1,9 +1,10 @@
 function majorityElement(nums: number[]): number {
     
+    const n = nums.length;
     let majorityEl;
     let count = 0;
 
-    for(let i = 0; i < nums.length; i += 1) {
+    for(let i = 0; i < n; i += 1) {
         if(count === 0) {
             majorityEl = nums[i];
             count = 1;
@@ -14,6 +15,13 @@ function majorityElement(nums: number[]): number {
         }
     }
 
-    return majorityEl;
+    count = 0;
+    for(let i = 0; i < n; i += 1) {
+        if(nums[i] === majorityEl) {
+            count += 1;
+        }
+    }
+
+    return count > Math.floor(n / 2) ? majorityEl : -1;
 
 };
