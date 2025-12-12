@@ -1,39 +1,41 @@
 function maxTurbulenceSize(arr: number[]): number {
-    
+
     // Need to start max streak with 1 (1 element)
     let maxStreak = 1;
 
-    for (let i = 0; i < arr.length; i += 1) {
+    let prevCompSign = "";
+    let left = 0;
+    for (let right = 1; right < arr.length; right += 1) {
 
-        let prevCompSign = "";
+        let currCompSign = "";
+        let curr = arr[right];
+        let prev = arr[right - 1];
 
-        for (let j = i + 1; j < arr.length; j += 1) {
-
-            let currCompSign = "";
-
-            let curr = arr[j];
-            let prev = arr[j - 1];
-
-            if (prev > curr) {
-                currCompSign = ">";
-            } else if (prev < curr) {
-                currCompSign = "<";
-            } else {
-                // current sign is "==="
-                break;
-            }
-
-            // prev and curr comp signs are the same
-            if (prevCompSign === currCompSign) {
-                prevCompSign = currCompSign;
-                break;
-            }
-
-            // there is no prevCompSign OR signs are different
-            maxStreak = Math.max(maxStreak, j - i + 1);
-            prevCompSign = currCompSign;
-
+        if (prev > curr) {
+            currCompSign = ">";
+        } else if (prev < curr) {
+            currCompSign = "<";
+        } else {
+            // current sign is "==="
+            left = right;
+            prevCompSign = "";
+            continue;
         }
+
+        // prev and curr comp signs are the same
+        if (prevCompSign === currCompSign) {
+            left = right - 1;
+            // prevCompSign = currCompSign;
+            // continue;
+        }
+
+        // there is no prevCompSign OR signs are different
+        if(prevCompSign !== currCompSign) {
+            maxStreak = Math.max(maxStreak, right - left + 1);
+            // prevCompSign = currCompSign;
+        }
+
+        prevCompSign = currCompSign;
 
     }
 
