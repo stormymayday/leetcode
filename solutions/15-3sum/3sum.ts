@@ -34,16 +34,10 @@ function threeSum(nums: number[]): number[][] {
 
                 } else if(sum > 0) {
                     right -= 1;
-                    // while(mid < right && sorted[right] === sorted[right + 1]) {
-                    //     right -= 1;
-                    // }
                 } 
                 // sum < 0
                 else {
                     mid += 1;
-                    // while(mid < right && sorted[mid] === sorted[mid - 1]) {
-                    //     mid += 1;
-                    // }
                 }
 
             }
