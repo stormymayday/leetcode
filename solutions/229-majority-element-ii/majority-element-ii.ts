@@ -10,8 +10,12 @@ function majorityElement(nums: number[]): number[] {
 
         freqMap.set(nums[i], (freqMap.get(nums[i]) || 0) + 1);
 
-        if (freqMap.get(nums[i]) > n / 3) {
+        if (freqMap.get(nums[i]) > Math.floor(n / 3)) {
             res.add(nums[i]);
+            if(res.size === 2) {
+                // There can be no more than 2 majority elements
+                break;
+            }
         }
 
     }
