@@ -1,43 +1,31 @@
 function threeSum(nums: number[]): number[][] {
-    
-    nums.sort((a,b) => a - b);
 
-    const result = [];
+    const n = nums.length;
 
-    // iterate until i < nums.length - 2 ?
-    for(let i = 0; i < nums.length; i++) {
+        const sorted = [...nums].sort((a, b) => a - b);
 
-        if(nums[i] > 0) {
-            break;
-        } else if(i > 0 && nums[i] === nums[i - 1]) {
-            continue;
-        }
+        const triplets = new Set<string>();
 
-        let low = i + 1;
-        let high = nums.length - 1;
-        while(low < high) {
-            const sum = nums[i] + nums[low] + nums[high];
-            if(sum === 0) {
-                result.push([nums[i], nums[low], nums[high]]);
+        for (let i = 0; i < n; i += 1) {
 
-                low++;
-                while(low < high && nums[low] === nums[low - 1]) {
-                    low++;
+            // will be adding nums[j]
+            const jSet = new Set<number>();
+
+            for (let j = i + 1; j < n; j += 1) {
+
+                const third = -(sorted[i] + sorted[j]);
+
+                if (jSet.has(third)) {
+                    // triplets.add(JSON.stringify([nums[i], nums[j], third].sort((a, b) => a - b)));
+                    triplets.add(JSON.stringify([sorted[i], sorted[j], third]));
                 }
 
-                high--;
-                while(low < high && nums[high] === nums[high + 1]) {
-                    high--;
-                }
+                // jSet.add(nums[j]);
+                jSet.add(sorted[j]);
 
-            } else if(sum > 0) {
-                high--;
-            } else {
-                low++;
             }
         }
 
-    }
+        return Array.from(triplets).map(triplet => JSON.parse(triplet));
 
-    return result;
 };
