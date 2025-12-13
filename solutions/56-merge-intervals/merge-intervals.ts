@@ -1,27 +1,34 @@
 function merge(intervals: number[][]): number[][] {
+    
+    if (intervals.length === 0 || intervals.length === 1) {
+        return intervals;
+    }
 
     const n = intervals.length;
 
     intervals.sort((a, b) => a[0] - b[0]);
 
-    const res = [];
-    res.push(intervals[0]);
+    const res = [intervals[0]];
 
     for (let i = 1; i < n; i += 1) {
 
         const curr = intervals[i];
+        const prev = res[res.length - 1];
 
-        if (res[res.length - 1][1] >= curr[0] && res[res.length - 1][1] >= curr[1]) {
-            continue;
+        // Overlap Case 1
+        if (prev[1] >= curr[0]) {
+            prev[1] = Math.max(prev[1], curr[1]);
         }
-        else if (res[res.length - 1][1] >= curr[0]) {
-            res[res.length - 1][1] = curr[1];
-        } else {
+        // Overlap Case 2
+        else if (prev[0] === curr[0] && prev[1] < curr[1]) {
+            prev[1] = curr[1];
+        }
+        // No Overlap
+        else {
             res.push(curr);
         }
 
     }
 
     return res;
-
 };
