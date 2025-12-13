@@ -1,5 +1,5 @@
 function merge(intervals: number[][]): number[][] {
-    
+
     if (intervals.length === 0 || intervals.length === 1) {
         return intervals;
     }
@@ -15,13 +15,9 @@ function merge(intervals: number[][]): number[][] {
         const curr = intervals[i];
         const prev = res[res.length - 1];
 
-        // Overlap Case 1
+        // Overlap
         if (prev[1] >= curr[0]) {
             prev[1] = Math.max(prev[1], curr[1]);
-        }
-        // Overlap Case 2
-        else if (prev[0] === curr[0] && prev[1] < curr[1]) {
-            prev[1] = curr[1];
         }
         // No Overlap
         else {
