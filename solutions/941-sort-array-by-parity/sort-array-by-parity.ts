@@ -1,17 +1,25 @@
 function sortArrayByParity(nums: number[]): number[] {
-    const res = [];
+    let left = 0;
+    let right = nums.length - 1;
 
-    for (let i = 0; i < nums.length; i += 1) {
-        if (nums[i] % 2 === 0) {
-            res.push(nums[i]);
+    while(left < right) {
+
+        if(nums[left] % 2 === 0 && nums[right] % 2 !== 0) {
+            left += 1;
+            right -= 1;
+        } else if(nums[left] % 2 !== 0 && nums[right] % 2 === 0) {
+            const temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+            left += 1;
+            right -= 1;
+        } else if(nums[left] % 2 === 0 ) {
+            left += 1;
+        } else if(nums[right] % 2 !== 0) {
+            right -= 1;
         }
+
     }
 
-    for (let i = 0; i < nums.length; i += 1) {
-        if (nums[i] % 2 !== 0) {
-            res.push(nums[i]);
-        }
-    }
-
-    return res;
+    return nums;
 };
