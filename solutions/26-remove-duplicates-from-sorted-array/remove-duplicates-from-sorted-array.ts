@@ -1,24 +1,19 @@
 function removeDuplicates(nums: number[]): number {
-
-    let i = 0; // dupe pointer
+    
+    let i = 1;
 
     for(let j = 1; j < nums.length; j += 1) {
 
-        // Swap Condition
-        if(nums[i] !== nums[j]) {
+        // 'j' is at a unique value
+        if(nums[j] !== nums[j - 1]) {
 
-            i += 1; // advance first
-
-            // the swap / (can overwrite)
-            const temp = nums[i];
             nums[i] = nums[j];
-            nums[j] = temp;
+            i += 1;
+
         }
 
     }
 
-    // 'i' was pointing at last non-duplicate
-    // therefore, i + 1 will be the length of non-duplicate section
-    return i + 1;
-    
+    return i;
+
 };
