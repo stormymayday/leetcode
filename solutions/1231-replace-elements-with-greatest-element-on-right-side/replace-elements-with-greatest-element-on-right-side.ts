@@ -1,20 +1,14 @@
 function replaceElements(arr: number[]): number[] {
+    
+    let max = -1;
 
-    for (let i = 0; i < arr.length - 1; i += 1) {
+    for(let i = arr.length - 1; i >= 0; i -= 1) {
 
-        let maxRight = -Infinity;
-
-        for (let j = i + 1; j < arr.length; j += 1) {
-
-            maxRight = Math.max(maxRight, arr[j]);
-
-        }
-
-        arr[i] = maxRight;
+        const temp = arr[i];
+        arr[i] = max;
+        max = Math.max(max, temp);
 
     }
-
-    arr[arr.length - 1] = -1;
 
     return arr;
 
