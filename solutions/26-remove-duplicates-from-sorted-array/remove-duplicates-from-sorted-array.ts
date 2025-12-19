@@ -1,19 +1,25 @@
 function removeDuplicates(nums: number[]): number {
-    
-    let i = 1;
 
-    for(let j = 1; j < nums.length; j += 1) {
+    let length = nums.length;
 
-        // 'j' is at a unique value
-        if(nums[j] !== nums[j - 1]) {
+    // Going Backwards
+    for(let i = nums.length - 2; i >= 0; i -= 1) {
 
-            nums[i] = nums[j];
-            i += 1;
+        // 'curr' and 'prev' are duplicates
+        if(nums[i] === nums[i + 1]) {
 
+            for(let j = i + 1; j < length; j += 1) {
+
+                nums[j - 1] = nums[j];
+
+            }
+
+            length -= 1;
         }
+
 
     }
 
-    return i;
-
+    return length;
+    
 };
