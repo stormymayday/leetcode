@@ -2,20 +2,34 @@
  Do not return anything, modify nums in-place instead.
  */
 function moveZeroes(nums: number[]): void {
-    
-    let left = 0;
-    for(let right = 0; right < nums.length; right += 1) {
 
-        if(nums[left] === 0 && nums[right] !== 0) {
-            nums[left] = nums[right];
-            nums[right] = 0;
-            left += 1;
+    const n = nums.length;
+
+    let i = 0;
+    outer: while(i < n) {
+
+        if(nums[i] === 0) {
+
+            // Scan forward for the next non zero
+            let j = i + 1;
+            while(nums[j] === 0) {
+                j += 1;
+            }
+
+            if(j < n && nums[j] !== 0) {
+
+                nums[i] = nums[j];
+                nums[j] = 0;
+
+            } else {
+                // There are only zeroes
+                break outer;
+            }
+
         }
 
-        if(nums[left] !== 0) {
-            left += 1;
-        }
+        i += 1;
 
     }
-
+    
 };
