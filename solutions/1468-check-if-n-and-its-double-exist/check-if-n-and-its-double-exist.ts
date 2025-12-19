@@ -1,17 +1,14 @@
 function checkIfExist(arr: number[]): boolean {
 
     const n = arr.length;
+
+    const set = new Set<number>();
     
     for(let i = 0; i < n; i += 1) {
-
-        for(let j = 0; j < n; j += 1) {
-
-            if(i !== j && arr[i] === (arr[j] * 2)) {
-                return true;
-            }
-
+        if(set.has(arr[i] * 2) || set.has(arr[i] / 2)) {
+            return true;
         }
-
+        set.add(arr[i]);
     }
 
     return false;
