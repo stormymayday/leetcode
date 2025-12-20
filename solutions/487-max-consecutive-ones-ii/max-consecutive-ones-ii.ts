@@ -12,7 +12,7 @@ function findMaxConsecutiveOnes(nums: number[]): number {
         }
 
         // Make window valid
-        while (flipsAllowed < 0) {
+        if(flipsAllowed < 0) {
 
             if (nums[left] !== 1) {
                 flipsAllowed += 1;
