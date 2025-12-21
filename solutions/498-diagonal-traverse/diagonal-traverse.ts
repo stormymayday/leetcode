@@ -3,7 +3,7 @@ function findDiagonalOrder(mat: number[][]): number[] {
     const ROWS = mat.length;
     const COLS = mat[0].length;
 
-    const res: number[] = [];
+    const res: number[] = new Array(ROWS * COLS);
     let idx = 0;
 
     for(let diag = 0; diag < ROWS + COLS - 1; diag += 1) {
@@ -11,10 +11,10 @@ function findDiagonalOrder(mat: number[][]): number[] {
         const temp: number[] = [];
 
         // Starting Points
-        // While current diagonal is smaller than number of COLS, row stays at index 0. Otherwise (equals or greater), row starts moving down.
-        let row = diag < COLS ? 0 : diag - COLS + 1; // Carefull off by one!
-        // While current diagonal is smaller than number of COLS, col moves with diagonal. Otherwise (quals or greater), it stays at last index
-        let col = diag < COLS ? diag : COLS - 1;  // Carefull off by one!
+        // While current diagonal is smaller than the number of COLS, row stays at index 0. Otherwise (equals or greater), row starts moving down.
+        let row = diag < COLS ? 0 : diag - COLS + 1; // Carefull off by one error!
+        // While current diagonal is smaller than the number of COLS, col moves with the diagonal. Otherwise (quals or greater), it stays at the last index.
+        let col = diag < COLS ? diag : COLS - 1;  // Carefull off by one error!
 
         // Reading values from the current diagonal (top -> down, right -> left):
         // - row is increasing
@@ -36,7 +36,7 @@ function findDiagonalOrder(mat: number[][]): number[] {
             temp.reverse();
         }
 
-        // Writing into the result (uing the 'idx')
+        // Writing into the result (using the 'idx')
         for(let i = 0; i < temp.length; i+= 1) {
             res[idx] = temp[i];
             idx += 1;
