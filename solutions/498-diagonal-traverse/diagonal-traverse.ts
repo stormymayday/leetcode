@@ -1,49 +1,45 @@
 function findDiagonalOrder(mat: number[][]): number[] {
 
-    const ROWS = mat.length;
-    const COLS = mat[0].length;
+    const ROWS: number = mat.length;
+    const COLS: number = mat[0].length;
 
     const res: number[] = new Array(ROWS * COLS);
-    let idx = 0;
+    let idx: number = 0;
 
-    for(let diag = 0; diag < ROWS + COLS - 1; diag += 1) {
+    for (let diag = 0; diag < ROWS + COLS - 1; diag += 1) {
+        // even diagonal index - row decreases and col increases (going up-right)
+        if (diag % 2 === 0) {
 
-        const temp: number[] = [];
+            // Starting row & col (start from bottom-left of diagonal)
+            let row = diag < ROWS ? diag : ROWS - 1;
+            let col = diag < ROWS ? 0 : diag - ROWS + 1;
 
-        // Starting Points
-        // While current diagonal is smaller than the number of COLS, row stays at index 0. Otherwise (equals or greater), row starts moving down.
-        let row = diag < COLS ? 0 : diag - COLS + 1; // Carefull off by one error!
-        // While current diagonal is smaller than the number of COLS, col moves with the diagonal. Otherwise (quals or greater), it stays at the last index.
-        let col = diag < COLS ? diag : COLS - 1;  // Carefull off by one error!
+            // Read & Write
+            while (row >= 0 && col < COLS) {
+                res[idx++] = mat[row][col];
+                row -= 1;
+                col += 1;
+            }
 
-        // Reading values from the current diagonal (top -> down, right -> left):
-        // - row is increasing
-        // - col is decreasing
-        while(
-            row < ROWS &&
-            col >= 0
-        ) {
+        } 
+        // odd numbered diagonal - row increases and col decreases (going down-left)
+        else {
+            
+            // Starting row & col (start from top-right of diagonal)
+            let row = diag < COLS ? 0 : diag - COLS + 1;
+            let col = diag < COLS ? diag : COLS - 1;
 
-            temp.push(mat[row][col]);
+            // Read & Write
+            while (row < ROWS && col >= 0) {
+                res[idx++] = mat[row][col];
+                row += 1;
+                col -= 1;
+            }
 
-            row += 1;
-            col -= 1;
-
-        }
-
-        // Reversing even indexed diagonals
-        if(diag % 2 === 0) {
-            temp.reverse();
-        }
-
-        // Writing into the result (using the 'idx')
-        for(let i = 0; i < temp.length; i+= 1) {
-            res[idx] = temp[i];
-            idx += 1;
         }
 
     }
 
     return res;
-    
+
 };
