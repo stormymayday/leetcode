@@ -1,23 +1,29 @@
 function strStr(haystack: string, needle: string): number {
-    if (needle.length > haystack.length) {
-        return -1;
-    }
 
-    if (!needle.length) {
-        return 0;
-    }
+    let idx = -1;
+    
+    for(let i = 0; i < haystack.length - needle.length + 1; i += 1) {
 
-    for (let i = 0; i <= haystack.length - needle.length; i++) {
-        for (let j = 0; j < needle.length; j++) {
-            if (needle[j] !== haystack[j + i]) {
+        if(haystack[i] === needle[0]) {
+            
+            let match = true;
+            for(let j = 1; j < needle.length; j += 1) {
+
+                if(haystack[i + j] !== needle[j]) {
+                    match = false;
+                    break;
+                }
+
+            }
+            if(match === true) {
+                idx = i;
                 break;
             }
 
-            if (j === needle.length - 1) {
-                return i;
-            }
         }
+
     }
 
-    return -1;
-}
+    return idx;
+
+};
