@@ -2,7 +2,8 @@ function strStr(haystack: string, needle: string): number {
 
     let idx = -1;
     
-    for(let i = 0; i < haystack.length - needle.length + 1; i += 1) {
+    let i = 0;
+    while(i < haystack.length - needle.length + 1) {
 
         if(haystack[i] === needle[0]) {
             
@@ -21,6 +22,8 @@ function strStr(haystack: string, needle: string): number {
             }
 
         }
+
+        i += 1;
 
     }
 
