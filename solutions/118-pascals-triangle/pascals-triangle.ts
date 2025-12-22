@@ -2,19 +2,19 @@ function generate(numRows: number): number[][] {
 
     const res: number[][] = [[1]];
 
-    for (let i = 1; i < numRows; i += 1) {
+    for(let i = 1; i < numRows; i += 1) {
 
-        const curr: number[] = [];
-        const prev: number[] = [0, ...res[i - 1], 0];
+        const temp: number[] = [1];
 
-        for(let j = 0; j < prev.length - 1; j += 1) {
+        for(let j = 0; j < res[i - 1].length - 1; j += 1) {
 
-            const sum = prev[j] + prev[j + 1];
-            curr.push(sum);
+            temp.push(res[i - 1][j] + res[i - 1][j + 1]);
 
         }
 
-        res.push(curr);
+        temp.push(1);
+
+        res.push(temp);
 
     }
 
