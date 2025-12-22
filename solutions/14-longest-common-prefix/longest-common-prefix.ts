@@ -1,59 +1,31 @@
 function longestCommonPrefix(strs: string[]): string {
+    
+    // starting with index 0, this will be the index of the last common character
+    let idx = 0;
 
-    // Quick Optimization: if there is only one string
-    if (strs.length === 1) {
-        return strs[0]; // just return the string (it's own prefix)
-    }
+    // Going through every character of the first string
+    // Note: there can be strings shorter than first
+    outer: while(idx < strs[0].length) {
 
-    // Phase 1: Populate the Trie
-    const root = new TrieNode();
-    for (const str of strs) {
+        let currChar = strs[0][idx];
 
-        // Edge Case: empty string
-        if(str === "") {
-            return "";
-        }
+        // Going through every string (skipping first)
+        for(let i = 1; i < strs.length; i += 1) {
 
-        // Optimization?
-        // If root already has 1 child and current word has a different first character
-        // Thus, 'common' prefix is no longer possible
-        if (root.children.size === 1 && !root.children.has(str[0])) {
-            return ""; // exit early
-        }
-
-        // Otherwise, keep inserting
-        let curr: TrieNode = root;
-
-        // character by character
-        for (let i = 0; i < str.length; i += 1) {
-            if (!curr.children.has(str[i])) {
-                curr.children.set(str[i], new TrieNode());
+            const currStr = strs[i];
+            
+            // If current string is too short or characters at this index do not match
+            if(currStr.length < idx || currStr[idx] !== currChar) {
+                break outer;
             }
-            curr = curr.children.get(str[i]);
+
         }
-        curr.isEnd = true;
+
+        // char at this index have matched for all strings
+        idx += 1;
+
     }
 
-    // Phase 2: get the common longest prefix
-    const res: string[] = [];
-    let curr: TrieNode = root;
-    // Intuition: keep going down the Trie until there is more than 1 child
-    // AND current node is not 'end' of a string
-    while (curr.children.size === 1 && curr.isEnd === false) {
-        for (const key of curr.children.keys()) {
-            res.push(key);
-            curr = curr.children.get(key);
-        }
-    }
-    return res.join("");
+    return strs[0].substring(0, idx);
 
 };
-
-class TrieNode {
-    children: Map<string, TrieNode>;
-    isEnd: boolean;
-    constructor() {
-        this.children = new Map();
-        this.isEnd = false;
-    }
-}
