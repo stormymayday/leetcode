@@ -1,51 +1,58 @@
 function spiralOrder(matrix: number[][]): number[] {
 
-    const res = [];
-
     const ROWS = matrix.length;
     const COLS = matrix[0].length;
 
-    let leftBound = 0;
-    let rightBound = COLS - 1;
-    let topBound = 0;
-    let botBound = ROWS - 1;
+    let top = 0;
+    let bot = ROWS - 1;
+    let left = 0;
+    let right = COLS - 1;
 
-    // Iterate until Left & Right AND Top & Bottom have not crossed
-    while (leftBound <= rightBound && topBound <= botBound) {
+    const res: number[] = new Array(ROWS * COLS);
+    let idx = 0;
 
-        // Reading Top Row (from leftBound up to rightBound)
-        for (let col = leftBound; col <= rightBound; col += 1) {
-            res.push(matrix[topBound][col]);
+    while (top <= bot && left <= right) {
+
+        // 1. Reading Top Row column by column (left -> right)
+        for (let col = left; col <= right; col += 1) {
+            res[idx] = matrix[top][col];
+            idx += 1;
         }
-        // Moving topBound down (Folding Top)
-        topBound += 1; // Top can now cross Bottom!
+        // "Folding" Top Row
+        top += 1;
+        // Note: Rows can cross at this point
+        // if they do, 'Reading Right Col' will not run because row > bot
+        // However, 'Reading Bot Row' will crash if left and right cols have not crossed yet
+        // Therefore, perform a check after 'Reading Right Col'!
 
-        // Reading Right Col (from topBound up to botBound)
-        // Note: If Top crosses Bottom, this loop will not execute!
-        for (let row = topBound; row <= botBound; row += 1) {
-            res.push(matrix[row][rightBound]);
+        // 2. Reading Right Col row by row (top -> down)
+        for (let row = top; row <= bot; row += 1) {
+            res[idx] = matrix[row][right];
+            idx += 1;
         }
-        // Moving rightBound to the left (Folding Right)
-        rightBound -= 1; // Right can now cross Left!
+        // "Folding" Right Col
+        right -= 1;
 
-        // Check if any pointers have crossed!
-        if (leftBound > rightBound || topBound > botBound) {
+        // 3. Check if either rows or cols have crossed!
+        if (top > bot || left > right) {
             break;
         }
 
-        // Reading Bot Row (from rightBound up leftBound)
-        for (let col = rightBound; col >= leftBound; col -= 1) {
-            res.push(matrix[botBound][col]);
+        // 4. Reading Bot Row column by column (left <- right)
+        for (let col = right; col >= left; col -= 1) {
+            res[idx] = matrix[bot][col];
+            idx += 1;
         }
-        // Moving botBound up (Folding Bottom)
-        botBound -= 1; // Bottom can now cross Top
+        // "Folding" Bot Row
+        bot -= 1;
 
-        // Left Col (from botBound up to but not topBound)
-        for (let row = botBound; row >= topBound; row -= 1) {
-            res.push(matrix[row][leftBound]);
+        // 5. Reading Left Col row by row (bot -> top)
+        for (let row = bot; row >= top; row -= 1) {
+            res[idx] = matrix[row][left];
+            idx += 1;
         }
-        // Moving leftBound to the right (Folding Left)
-        leftBound += 1; // Left can now cross Right
+        // "Folding" Left Col
+        left += 1;
 
     }
 
