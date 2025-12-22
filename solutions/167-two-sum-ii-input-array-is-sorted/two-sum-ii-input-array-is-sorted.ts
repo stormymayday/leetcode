@@ -2,15 +2,16 @@ function twoSum(numbers: number[], target: number): number[] {
 
     const n = numbers.length;
     
-    for(let i = 0; i < n - 1; i += 1) {
+    const hashMap = new Map<number, number>(); // key: number, val: index
 
-        for(let j = i + 1; j < n; j += 1) {
+    for(let i = 0; i < n; i += 1) {
 
-            if(numbers[i] + numbers[j] === target) {
-                return [i + 1, j + 1];
-            }
-
+        if(hashMap.has(target - numbers[i])) {
+            return [hashMap.get(target - numbers[i]), i + 1];
         }
+
+        hashMap.set(numbers[i], i + 1);
+
 
     }
 
