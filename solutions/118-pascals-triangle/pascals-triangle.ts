@@ -3,7 +3,8 @@ function generate(numRows: number): number[][] {
     const res: number[][] = [[1]];
 
     for(let i = 1; i < numRows; i += 1) {
-
+        
+        // pre-pending 1
         const temp: number[] = [1];
 
         for(let j = 0; j < res[i - 1].length - 1; j += 1) {
@@ -12,6 +13,7 @@ function generate(numRows: number): number[][] {
 
         }
 
+        // post-pending 1
         temp.push(1);
 
         res.push(temp);
