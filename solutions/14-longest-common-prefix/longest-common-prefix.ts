@@ -15,7 +15,7 @@ function longestCommonPrefix(strs: string[]): string {
             const currStr = strs[i];
             
             // If current string is too short or characters at this index do not match
-            if(currStr.length < idx || currStr[idx] !== currChar) {
+            if(currStr.length <= idx || currStr[idx] !== currChar) {
                 break outer;
             }
 
