@@ -1,16 +1,25 @@
 function removeElement(nums: number[], val: number): number {
 
-    let write = 0;
+    let k = nums.length;
+    let i = 0;
+    while(i < k) {
 
-    for(let read = 0; read < nums.length; read += 1) {
+        while(i < k && nums[i] === val) {
 
-        if(nums[read] !== val) {
-            nums[write] = nums[read];
-            write += 1;
+            for(let j = i; j < k - 1; j += 1) {
+
+                nums[j] = nums[j + 1];
+
+            }
+
+            k -= 1;
+
         }
+
+        i += 1;
 
     }
 
-    return write;
+    return k;
     
 };
