@@ -13,7 +13,7 @@ function moveZeroes(nums: number[]): void {
         if(nums[left] === 0 && nums[right] !== 0) {
             nums[left] = nums[right];
             nums[right] = 0;
-            left += 1;
+            // left += 1;
         }
 
     }
