@@ -1,23 +1,85 @@
+class CustomListNode {
+    val: number;
+    next: CustomListNode | null;
+    constructor(val: number) {
+        this.val = val;
+        this.next = null;
+    }
+}
+
 class MyHashSet {
 
-    capacity: number;
-    data: boolean[];
+    data: CustomListNode[];
+    capacity: number = 101;
 
     constructor() {
-        this.capacity = 1000001;
-        this.data = new Array(this.capacity).fill(false);
+        // filling with dummy heads
+        this.data = new Array(this.capacity);
+        for(let i = 0; i < this.capacity; i += 1) {
+            this.data[i] = new CustomListNode(-Infinity);
+        }
     }
 
     add(key: number): void {
-        this.data[key] = true;
+
+        const newNode = new CustomListNode(key);
+
+        let prev = this.data[key % this.capacity];
+        let temp = this.data[key % this.capacity].next;
+
+        while(temp !== null) {
+
+            if(temp.val === key) {
+                return;
+            } else {
+                prev = temp;
+                temp = temp.next;
+            }
+
+        }
+        
+        prev.next = newNode;
+        return;
+
     }
 
     remove(key: number): void {
-        this.data[key] = false;
+
+        let prev = this.data[key % this.capacity];
+        let temp = this.data[key % this.capacity].next;
+
+        while(temp !== null) {
+
+            if(temp.val === key) {
+                prev.next = temp.next;
+                temp.next = null;
+                return;
+            } else {
+                prev = temp;
+                temp = temp.next;
+            }
+            
+        }
+
     }
 
     contains(key: number): boolean {
-        return this.data[key];
+
+        // starting at the dummyNode
+        let temp = this.data[key % this.capacity];
+
+        while(temp !== null) {
+            
+            if(temp.val === key) {
+                return true;
+            } else {
+                temp = temp.next;
+            }
+
+        }
+
+        return false;
+
     }
 }
 
