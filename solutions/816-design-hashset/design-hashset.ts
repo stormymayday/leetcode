@@ -9,15 +9,15 @@ class MyHashSet {
     }
 
     add(key: number): void {
-        this.data[key % this.capacity] = true;
+        this.data[key] = true;
     }
 
     remove(key: number): void {
-        this.data[key % this.capacity] = false;
+        this.data[key] = false;
     }
 
     contains(key: number): boolean {
-        return this.data[key % this.capacity];
+        return this.data[key];
     }
 }
 
