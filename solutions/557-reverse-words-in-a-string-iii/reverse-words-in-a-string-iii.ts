@@ -6,19 +6,15 @@ function reverseWords(s: string): string {
 
         if(arr[i] !== "") {
 
-            const splitStr = arr[i].split("");
+            const reverse: string[] = [];
 
-            let left = 0;
-            let right = splitStr.length - 1;
-            while(left < right) {
-                const temp = splitStr[left];
-                splitStr[left] = splitStr[right];
-                splitStr[right] = temp;
-                left += 1;
-                right -= 1;
+            for(let j = arr[i].length - 1; j >= 0; j -= 1) {
+
+                reverse.push(arr[i][j]);
+
             }
 
-            arr[i] = splitStr.join("");
+            arr[i] = reverse.join("");
 
         }
 
