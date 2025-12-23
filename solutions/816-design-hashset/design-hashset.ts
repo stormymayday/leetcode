@@ -65,8 +65,8 @@ class MyHashSet {
 
     contains(key: number): boolean {
 
-        // starting at the dummyNode
-        let temp = this.data[key % this.capacity];
+        // starting at the dummyNode.next
+        let temp = this.data[key % this.capacity].next;
 
         while(temp !== null) {
             
