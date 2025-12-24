@@ -1,7 +1,9 @@
 function isIsomorphic(s: string, t: string): boolean {
+
     const n = s.length;
 
     const sToM = new Map<string, string>();
+    const tToM = new Map<string, string>();
 
     for (let i = 0; i < n; i += 1) {
 
@@ -13,15 +15,6 @@ function isIsomorphic(s: string, t: string): boolean {
         }
 
         sToM.set(charS, charT);
-
-    }
-
-    const tToM = new Map<string, string>();
-
-    for (let i = 0; i < n; i += 1) {
-
-        const charS = s[i];
-        const charT = t[i];
 
         if (tToM.has(charT) && tToM.get(charT) !== charS) {
             return false;
