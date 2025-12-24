@@ -4,7 +4,7 @@ function isHappy(n: number): boolean {
 
     function helper(num: number): boolean {
 
-        const sum: number = sumSquaresOfDigits(getDigits(num));
+        const sum: number = sumSquaresOfDigits(num);
 
         if(sum === 1) {
             return true;
@@ -23,14 +23,12 @@ function isHappy(n: number): boolean {
 
 };
 
-function getDigits(n: number): number[] {
-    return String(n).split("").map(Number);
-}
-
-function sumSquaresOfDigits(digits: number[]): number {
+function sumSquaresOfDigits(num: number): number {
     let sum = 0;
-    for(const digit of digits) {
+    while(num > 0) {
+        const digit = num % 10;
         sum += digit * digit;
+        num = Math.floor(num / 10);
     }
     return sum;
 }
