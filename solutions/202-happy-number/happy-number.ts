@@ -2,24 +2,15 @@ function isHappy(n: number): boolean {
     
     const seen = new Set<number>();
 
-    function helper(num: number): boolean {
-
-        const sum: number = sumSquaresOfDigits(num);
-
-        if(sum === 1) {
+    while(!seen.has(n)) {
+        seen.add(n);
+        n = sumSquaresOfDigits(n);
+        if(n === 1) {
             return true;
-        } else {
-            if(seen.has(sum)) {
-                return false;
-            } else {
-                seen.add(sum);
-                return helper(sum);
-            }
         }
-
     }
 
-    return helper(n);
+    return false;
 
 };
 
