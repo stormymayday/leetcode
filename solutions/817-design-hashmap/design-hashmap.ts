@@ -1,93 +1,86 @@
-/**
- * Node for MyHashMap - Separate Chaining
- */
-class Node {
-    key: number;
-    value: number;
-    next: Node | null;
-
-    constructor(key: number, value: number) {
-        this.key = key;
-        this.value = value;
+class CustomListNode {
+    val: number[];
+    next: CustomListNode | null;
+    constructor(key: number, val: number) {
+        this.val = [key, val];
         this.next = null;
     }
 }
 
-/**
- * MyHashMap with Separate Chaining
- */
 class MyHashMap {
 
-    private capacity: number;
-    private size: number;
-    private table: Array<Node | null>;
+    capacity: number = 101;
+    data: CustomListNode[];
 
-    constructor(capacity: number = 1000) {
-        this.capacity = capacity;
-        this.size = 0;
-        this.table = new Array<Node | null>(this.capacity).fill(null);
-    }
-
-    /**
-     * Hash function using modulo
-     */
-    private hashFunction(key: number): number {
-        return key % this.capacity;
+    constructor() {
+        this.data = new Array(this.capacity);
+        for(let i = 0; i < this.capacity; i += 1) {
+            this.data[i] = new CustomListNode(-Infinity, -Infinity);
+        }
     }
 
     put(key: number, value: number): void {
-        const index = this.hashFunction(key);
-        let node = this.table[index];
 
-        if (!node) {
-            this.table[index] = new Node(key, value);
-            this.size++;
-        } else {
-            let prev: Node | null = null;
-            while (node) {
-                if (node.key === key) {
-                    node.value = value;
-                    return;
-                }
-                prev = node;
-                node = node.next;
+        const newNode = new CustomListNode(key, value);
+        let prev = this.data[key % this.capacity];
+        let curr = this.data[key % this.capacity].next;
+
+        while(curr !== null) {
+            // key already exists
+            if(curr.val[0] === key) {
+                // overwriting an existing value
+                curr.val[1] = value;
+                return;
+            } else {
+                prev = curr;
+                curr = curr.next;
             }
-            prev!.next = new Node(key, value);
-            this.size++;
+
         }
+
+        prev.next = newNode;
+        return;
+
     }
 
     get(key: number): number {
-        const index = this.hashFunction(key);
-        let node = this.table[index];
 
-        while (node) {
-            if (node.key === key) {
-                return node.value;
+        let curr = this.data[key % this.capacity].next;
+
+        while(curr !== null) {
+
+            if(curr.val[0] === key) {
+                return curr.val[1];
+            } else {
+                curr = curr.next;
             }
-            node = node.next;
+
         }
 
         return -1;
+
     }
 
     remove(key: number): void {
-        const index = this.hashFunction(key);
-        let node = this.table[index];
-        let prev: Node | null = null;
 
-        while (node) {
-            if (node.key === key) {
-                if (prev) {
-                    prev.next = node.next;
-                } else {
-                    this.table[index] = node.next;
-                }
-                this.size--;
+        let prev = this.data[key % this.capacity];
+        let curr = this.data[key % this.capacity].next;
+
+        while(curr !== null) {
+
+            if(curr.val[0] === key) {
+                prev.next = curr.next;
+                curr.next = null;
+                return;
+            } else {
+                prev = curr;
+                curr = curr.next;
             }
-            prev = node;
-            node = node.next;
+
         }
+
+        return;
+
     }
 }
 
