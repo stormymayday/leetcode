@@ -1,51 +1,54 @@
 function isValidSudoku(board: string[][]): boolean {
 
-    // Phase 1: Rows & Cols
-    for (let i = 0; i < 9; i += 1) {
+    const rowMap = new Map<number, Set<string>>(); // key: row ind, val: set of row vals
+    const colMap = new Map<number, Set<string>>(); // key: col idx, val: set of col vals
+    const subGridMap = new Map<string, Set<string>>(); // key: "row//3,col//3", val: set of sub grid vals
 
-        // rows
-        const rowSet = new Set<string>();
+    for (let row = 0; row < 9; row += 1) {
+
+        if (!rowMap.has(row)) {
+            // Creating a new rowMap entry
+            rowMap.set(row, new Set<string>);
+        }
+
         for (let col = 0; col < 9; col += 1) {
 
-            if (board[i][col] !== '.') {
-                if (rowSet.has(board[i][col])) {
-                    return false;
-                }
-                rowSet.add(board[i][col]);
+            const currVal = board[row][col];
+            if(currVal === '.') {
+                continue;
             }
 
-        }
+            // 1. Row Map Check
+            if(rowMap.get(row).has(currVal)) {
+                return false;
+            }
+            rowMap.get(row).add(currVal);
 
-        // cols
-        const colSet = new Set<string>();
-        for (let row = 0; row < 9; row += 1) {
-            if (board[row][i] !== '.') {
-                if (colSet.has(board[row][i])) {
-                    return false;
-                }
-                colSet.add(board[row][i]);
+            if (!colMap.has(col)) {
+                // Creating a new colMap entry
+                colMap.set(col, new Set<string>);
             }
 
-        }
-
-        // Phase 2: Sub-Grids
-        const gridSet = new Set<string>();
-        for (let row = 0; row < 3; row += 1) {
-            for (let col = 0; col < 3; col += 1) {
-                let r = Math.floor(i / 3) * 3 + row;
-                let c = (i % 3) * 3 + col;
-                if (board[r][c] !== '.') {
-                    if (gridSet.has(board[r][c])) {
-                        return false;
-                    }
-                    gridSet.add(board[r][c]);
-                }
-
+            // 2. Col Map Check
+            if(colMap.get(col).has(currVal)) {
+                return false;
             }
-        }
+            colMap.get(col).add(currVal);
 
+            const subGridKey = `${Math.floor(row/3)},${Math.floor(col/3)}`;
+            if(!subGridMap.has(subGridKey)) {
+                // Creating a new subGrid entry
+                subGridMap.set(subGridKey, new Set<string>);
+            }
+
+            // 3 Sub-Grid Map Check
+            if(subGridMap.get(subGridKey).has(currVal)) {
+                return false;
+            }
+            subGridMap.get(subGridKey).add(currVal);
+
+        }
     }
-
 
     return true;
 
