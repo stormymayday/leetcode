@@ -13,37 +13,25 @@
  */
 
 function isSameTree(p: TreeNode | null, q: TreeNode | null): boolean {
+    
+    function helper(pNode: TreeNode | null, qNode: TreeNode | null): boolean {
 
-    let queue: [TreeNode | null, TreeNode | null][] = [[p, q]];
-
-    while(queue.length > 0) {
-
-        const nextQueue: [TreeNode, TreeNode][] = [];
-
-        for(let i = 0; i < queue.length; i += 1) {
-
-            const [pNode, qNode] = queue[i];
-
-            if(pNode === null && qNode === null) {
-                continue;
-            }
-
-            if(
-                (pNode === null || qNode === null) ||
-                (pNode.val !== qNode.val)
-            ) {
-                return false;
-            }
-
-            nextQueue.push([pNode.left, qNode.left]);
-            nextQueue.push([pNode.right, qNode.right]);
-
+        if(pNode === null && qNode === null) {
+            return true;
         }
 
-        queue = nextQueue;
+        if(pNode === null || qNode === null) {
+            return false;
+        }
+
+        if(pNode.val !== qNode.val) {
+            return false;
+        }
+
+        return helper(pNode.left, qNode.left) && helper(pNode.right, qNode.right);
 
     }
 
-    return true;
-    
+    return helper(p, q);
+
 };
