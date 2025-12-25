@@ -4,31 +4,21 @@ function isAnagram(s: string, t: string): boolean {
         return false;
     }
 
-    const freqMap1 = {};
-    for(const char of s) {
-        if(freqMap1[char] === undefined) {
-            freqMap1[char] = 1;
-        } else {
-            freqMap1[char]++;
-        }
+    const letters: number[] = new Array(26).fill(0);
+
+    for(let i = 0; i < s.length; i += 1) {
+        const idx = s[i].charCodeAt(0) - 'a'.charCodeAt(0);
+        letters[idx] += 1;
     }
 
-    for(const char of t) {
-        if(freqMap1[char] === undefined) {
+    for(let i = 0; i < t.length; i += 1) {
+        const idx = t[i].charCodeAt(0) - 'a'.charCodeAt(0);
+        if(letters[idx] === 0) {
             return false;
-        } else {
-            freqMap1[char]--;
-            if(freqMap1[char] === 0) {
-                delete freqMap1[char];
-            }
         }
+        letters[idx] -= 1;
     }
-    return true;
 
-    // if(Object.keys(freqMap1).length === 0) {
-    //     return true;
-    // } else {
-    //     return false;
-    // }
+    return true;
     
 };
