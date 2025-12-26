@@ -10,14 +10,10 @@ function topKFrequent(nums: number[], k: number): number[] {
         pq.push([num, freq]);
     }
 
-    pq.sort((a, b) => b[1] - a[1]);
-
-    while(pq.length > k) {
-        pq.pop();
-    }
+    pq.sort((a, b) => a[1] - b[1]);
 
     const res: number[] = [];
-    for(let i = 0; i < pq.length; i += 1) {
+    for(let i = pq.length - 1; i > pq.length - 1 - k; i -= 1) {
         res.push(pq[i][0]);
     }
     return res; 
