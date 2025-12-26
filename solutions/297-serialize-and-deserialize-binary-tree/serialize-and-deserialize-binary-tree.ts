@@ -47,7 +47,7 @@ function deserialize(data: string): TreeNode | null {
     let idx: number = 0;
     function helper(): TreeNode | null {
 
-        if(arr[idx] === 'null') {
+        if(idx >= arr.length ||arr[idx] === 'null') {
             idx += 1;
             return null;
         }
