@@ -45,7 +45,8 @@ class TwoSum {
                     return true;
                 } 
                 // Numbers are the same (length of 'indices' array is greater than 1)
-                if(this.numToIdx.get(diff).length > 1) {
+                // Note: need separate if or else if
+                else if(this.numToIdx.get(diff).length > 1) {
                     return true;
                 }
 
