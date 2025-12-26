@@ -1,36 +1,28 @@
 function lengthOfLongestSubstring(s: string): number {
 
-    const charToIdx = new Map<string, number>();
-    let maxLength = 0;
-    let left = 0;
-    for(let right = 0; right < s.length; right += 1) {
-
-        const char = s[right];
-        
-        // char is in the map already
-        if(charToIdx.has(char)) {
-            
-            // check if left is smaller than char idx
-            // issue?
-            if(left <= charToIdx.get(char)) {
-                // we need shrink window by moving the 'left' pointer
-                // left = right;
-                left = charToIdx.get(char) + 1;
-            }
-
-            // Update the index of this character
-            charToIdx.set(char, right);
-
-
-        } 
-        // add char to the map
-        else {
-            charToIdx.set(char, right);
-        }
-
-        maxLength = Math.max(maxLength, right - left + 1);
-
+    if(s.length < 2) {
+        return s.length;
     }
     
-    return maxLength;
+    let max = -Infinity;
+
+    for(let i = 0; i < s.length - 1; i += 1) {
+
+        const set = new Set<string>();
+
+        for(let j = i; j < s.length; j += 1) {
+
+            if(set.has(s[j])) {
+                break;
+            }
+
+            set.add(s[j]);
+
+        }
+
+        max = Math.max(max, set.size);
+    }
+
+    return max;
+
 };
