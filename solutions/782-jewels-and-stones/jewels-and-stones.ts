@@ -1,17 +1,15 @@
 function numJewelsInStones(jewels: string, stones: string): number {
     
-    let count = 0;
+    const jewelSet = new Set<string>(jewels);
+    
+    let count: number = 0;
     
     // for each stone
     for(let stone = 0; stone < stones.length; stone += 1) {
 
         // check if it is a jewel
-        for(let jewel = 0; jewel < jewels.length; jewel += 1) {
-
-            if(stones[stone] === jewels[jewel]) {
-                count += 1;
-            }
-
+        if(jewelSet.has(stones[stone])) {
+            count += 1;
         }
 
     }
