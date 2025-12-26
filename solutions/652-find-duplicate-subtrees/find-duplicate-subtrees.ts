@@ -16,7 +16,7 @@ function findDuplicateSubtrees(root: TreeNode | null): Array<TreeNode | null> {
 
     const res: TreeNode[] = [];
     const serializedSubtrees = new Set<string>();
-    const usedKeys = new Set<string>(); // to prevent adding similar nodes more than once
+    const seenKeys = new Set<string>(); // to prevent adding similar nodes more than once
 
     // can be any order: pre, in, or post
     function postorderDFS(node: TreeNode | null): string {
@@ -38,8 +38,9 @@ function findDuplicateSubtrees(root: TreeNode | null): Array<TreeNode | null> {
         } 
         // Seen this key before - duplicate node
         else {
-            if(!usedKeys.has(key)) {
-                usedKeys.add(key);
+            // Seeing key for the first time
+            if(!seenKeys.has(key)) {
+                seenKeys.add(key);
                 res.push(node); // adding duplicate node to the result only once
             }
         }
