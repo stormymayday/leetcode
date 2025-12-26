@@ -18,16 +18,19 @@ function findDuplicateSubtrees(root: TreeNode | null): Array<TreeNode | null> {
     const serializedSubtrees = new Set<string>();
     const usedKeys = new Set<string>(); // to prevent adding similar nodes more than once
 
-    function postorderDFS(node: TreeNode | null): void {
+    // can be any order: pre, in, or post
+    function postorderDFS(node: TreeNode | null): string {
 
         if(node === null) {
-            return;
+            return 'null';
         }
 
-        postorderDFS(node.left);
-        postorderDFS(node.right);
+        const postorderNodes: string[] = [];
+        postorderNodes.push(postorderDFS(node.left));
+        postorderNodes.push(postorderDFS(node.right));
+        postorderNodes.push(`${node.val}`);
 
-        const key = serialize(node);
+        const key: string = postorderNodes.join(",");
 
         // Seeing this key for the first time
         if(!serializedSubtrees.has(key)) {
@@ -41,31 +44,11 @@ function findDuplicateSubtrees(root: TreeNode | null): Array<TreeNode | null> {
             }
         }
 
+        return key;
+
     }
     postorderDFS(root);
 
     return res;
     
 };
-
-function serialize(root: TreeNode | null): string {
-
-    const res: string[] = [];
-
-    function helper(node: TreeNode | null): void {
-
-        if(node === null) {
-            res.push('null');
-            return;
-        }
-
-        res.push(`${node.val}`);
-        helper(node.left);
-        helper(node.right);
-
-    }
-
-    helper(root);
-
-    return res.join(",");
-}
