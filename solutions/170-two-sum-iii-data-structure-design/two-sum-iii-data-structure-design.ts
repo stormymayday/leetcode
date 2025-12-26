@@ -23,30 +23,18 @@ class TwoSum {
 
     find(value: number): boolean {
 
-        // Linear scan each number: can this be optimized?
-        for(let i = 0; i < this.nums.length; i += 1) {
+        for(const [num, indices] of this.numToIdx.entries()) {
 
-            const diff = value - this.nums[i];
+            const diff = value - num;
 
-            // Difference exists
             if(this.numToIdx.has(diff)) {
                 
-                // O(n) - if need the actual indices
-                // const indices = this.numToIdx.get(diff);
-                // for(let j = 0; j < indices.length; j += 1) {
-                //     if(i !== indices[j]) {
-                //         return [i, j];
-                //     }
-                // }
-
-                // O(1) - simple true / false
-                // Numbers are different
-                if(diff !== this.nums[i]) {
+                // Different numbers - any pair works
+                if(diff !== num) {
                     return true;
-                } 
-                // Numbers are the same (length of 'indices' array is greater than 1)
-                // Note: need separate if or else if
-                else if(this.numToIdx.get(diff).length > 1) {
+                }
+                // Same number - need at least 2 occurrences
+                if(indices.length > 1) {
                     return true;
                 }
 
