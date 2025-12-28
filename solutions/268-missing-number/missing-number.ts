@@ -1,15 +1,19 @@
 function missingNumber(nums: number[]): number {
+
+    const n = nums.length;
     
-    const sorted = [...nums].sort((a, b) => a - b);
+    const set = new Set<number>();
+    for(let i = 0; i <= n; i += 1) {
+        set.add(i);
+    }
 
     for(let i = 0; i < nums.length; i += 1) {
-
-        if(i !== sorted[i]) {
-            return i;
-        }
+        
+        set.delete(nums[i]);
 
     }
 
-    return nums.length;
+    return [...set][0];
+
 
 };
