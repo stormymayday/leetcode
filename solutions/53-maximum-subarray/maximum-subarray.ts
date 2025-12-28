@@ -1,22 +1,18 @@
 function maxSubArray(nums: number[]): number {
+    
+    let max = -Infinity;
+    let currMax = 0;
+    for(let i = 0; i < nums.length; i += 1) {
 
-    let maxSum = -Infinity;
-    let currSum = 0;
+        currMax += nums[i];
 
-    for (let i = 0; i < nums.length; i += 1) {
-        // add to curr
-        currSum += nums[i];
+        max = Math.max(max, currMax);
 
-        // update max
-        if(currSum > maxSum) {
-            maxSum = currSum;
+        if(currMax < 0) {
+            currMax = 0;
         }
 
-        // don't carry negative
-        if(currSum < 0) {
-            currSum = 0;
-        }
     }
+    return max;
 
-    return maxSum;
 };
