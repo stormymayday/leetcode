@@ -1,27 +1,20 @@
 function intersect(nums1: number[], nums2: number[]): number[] {
 
-    nums1.sort((a, b) => a - b);
-    nums2.sort((a, b) => a - b);
-
-    const res: number[] = [];
-
-    let p1 = 0;
-    let p2 = 0;
-
-    while(p1 < nums1.length && p2 < nums2.length) {
-
-        if(nums1[p1] === nums2[p2]) {
-            res.push(nums1[p1]);
-            p1 += 1;
-            p2 += 1;
-        } else if(nums1[p1] < nums2[p2]) {
-            p1 += 1;
-        } else {
-            p2 += 1;
-        }
-
+    const freqMap = new Map<number, number>();
+    for (let i = 0; i < nums1.length; i += 1) {
+        freqMap.set(nums1[i], (freqMap.get(nums1[i]) || 0) + 1);
     }
 
-    return res;
+    const intersection: number[] = [];
+    for (let i = 0; i < nums2.length; i += 1) {
+        if (freqMap.has(nums2[i])) {
+            intersection.push(nums2[i]);
+            freqMap.set(nums2[i], (freqMap.get(nums2[i])) - 1);
+            if(freqMap.get(nums2[i]) === 0) {
+                freqMap.delete(nums2[i]);
+            }
+        }
+    }
+    return intersection;
 
 };
