@@ -1,9 +1,15 @@
 function missingNumber(nums: number[]): number {
-    const n = nums.length;
-    let gaussForumla: number = n * (n + 1) / 2;
-    let arrSum: number = 0;
-    for (let i = 0; i < n; i += 1) {
-        arrSum += nums[i];
+    
+    const sorted = [...nums].sort((a, b) => a - b);
+
+    for(let i = 0; i < nums.length; i += 1) {
+
+        if(i !== sorted[i]) {
+            return i;
+        }
+
     }
-    return gaussForumla - arrSum;
+
+    return nums.length;
+
 };
