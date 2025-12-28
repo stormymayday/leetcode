@@ -1,19 +1,19 @@
 function missingNumber(nums: number[]): number {
-
-    const n = nums.length;
     
-    const set = new Set<number>();
-    for(let i = 0; i <= n; i += 1) {
-        set.add(i);
-    }
+    const set = new Set<number>(nums);
 
-    for(let i = 0; i < nums.length; i += 1) {
+    let missing: number;
+
+    for(let i = 0; i <= nums.length; i += 1) {
         
-        set.delete(nums[i]);
+        if(!set.has(i)) {
+            missing = i;
+            break;
+        }
 
     }
 
-    return [...set][0];
+    return missing;
 
 
 };
