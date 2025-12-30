@@ -2,21 +2,26 @@ type MultiDimensionalArray = (number | MultiDimensionalArray)[];
 
 var flat = function (arr:  MultiDimensionalArray, n: number):  MultiDimensionalArray {
     
-    const flatArray = [];
+    const res: MultiDimensionalArray = [];
 
-    function helper(array, depth) {
+    function helper(arr: MultiDimensionalArray, depth: number): void {
 
-        for(let i = 0; i < array.length; i++) {
-            if(Array.isArray(array[i]) && depth !== 0) {
-                helper(array[i], depth - 1);
+        for(let i = 0; i < arr.length; i += 1) {
+
+            const curr = arr[i];
+
+            if(Array.isArray(curr) && depth > 0) {
+                helper(curr, depth - 1);
             } else {
-                flatArray.push(array[i]);
+                res.push(curr);
             }
+
         }
 
-        return flatArray;
     }
 
-    return helper(arr, n);
+    helper(arr, n);
+
+    return res;
 
 };
