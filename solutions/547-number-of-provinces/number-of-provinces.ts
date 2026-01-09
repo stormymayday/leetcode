@@ -4,10 +4,10 @@ function findCircleNum(isConnected: number[][]): number {
 
     const uf = new UnionFind(n);
 
-    for(let row = 0; row < n; row += 1) {
-        for(let col = row + 1; col < n; col += 1) {
-            if(isConnected[row][col] === 1) {
-                uf.union(row, col);
+    for (let i = 0; i < n; i += 1) {
+        for (let j = i + 1; j < n; j += 1) {
+            if (isConnected[i][j] === 1) {
+                uf.union(i, j);
             }
         }
     }
@@ -17,40 +17,50 @@ function findCircleNum(isConnected: number[][]): number {
 };
 
 class UnionFind {
-    private roots: Map<number, number>;
-    private sizes: Map<number, number>;
-    private numComponents: number;
+    roots: Map<number, number>;
+    sizes: Map<number, number>;
+    numComponents: number;
     constructor(n: number) {
+        this.numComponents = n;
         this.roots = new Map();
         this.sizes = new Map();
-        this.numComponents = n;
-        for(let i = 0; i < n; i += 1) {
+        for (let i = 0; i < n; i += 1) {
             this.roots.set(i, i);
             this.sizes.set(i, 1);
         }
     }
     find(x: number): number {
-        const root = this.roots.get(x);
-        if(root !== x) {
-            this.roots.set(x, this.find(root));
+        const root = this.roots.get(x)!;
+        if (root === x) {
+            return x;
         }
-        return this.roots.get(x);
+
+        const actualRoot = this.find(root);
+        this.roots.set(x, actualRoot);
+        return actualRoot;
     }
     union(x: number, y: number): boolean {
         const rootX = this.find(x);
         const rootY = this.find(y);
-        if(rootX === rootY) {
+
+        if (rootX === rootY) {
             return false;
         } else {
-            if(this.sizes.get(rootX) >= this.sizes.get(rootY)) {
+
+            const sizeX = this.sizes.get(rootX)!;
+            const sizeY = this.sizes.get(rootY)!;
+
+            if (sizeX >= sizeY) {
                 this.roots.set(rootY, rootX);
-                this.sizes.set(rootX, this.sizes.get(rootX) + this.sizes.get(rootY)); 
+                this.sizes.set(rootX, sizeX + sizeY);
             } else {
                 this.roots.set(rootX, rootY);
-                this.sizes.set(rootY, this.sizes.get(rootY) + this.sizes.get(rootX));
+                this.sizes.set(rootY, sizeY + sizeX);
             }
+
             this.numComponents -= 1;
             return true;
+
         }
     }
     getNumComponents(): number {
