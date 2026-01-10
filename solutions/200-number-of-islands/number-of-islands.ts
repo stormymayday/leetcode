@@ -8,23 +8,30 @@ function numIslands(grid: string[][]): number {
         visited[row] = new Array(COLS).fill(false);
     }
 
-    let numIslands = 0;
+    let count = 0;
+
     for(let row = 0; row < ROWS; row += 1) {
         for(let col = 0; col < COLS; col += 1) {
+
             if(grid[row][col] === '1' && visited[row][col] === false) {
-                numIslands += 1;
-                matrixDFS(row, col, grid, visited);
+
+                dfs(grid, ROWS, COLS, row, col, visited);
+
+                count += 1;
+
             }
+
         }
     }
-    return numIslands;
+
+    return count;
 
 };
 
-function matrixDFS(row: number, col: number, grid: string[][], visited: boolean[][]): void {
+function dfs(grid: string[][], numRows: number, numCols: number, row: number, col: number, visited: boolean[][]): void {
 
-    // Base Case: Out of bounds check
-    if(row < 0 || row >= grid.length || col < 0 || col >= grid[0].length) {
+    // Base Case: out of bounds
+    if(row < 0 || row >= numRows || col < 0 || col >= numCols) {
         return;
     }
 
@@ -40,16 +47,20 @@ function matrixDFS(row: number, col: number, grid: string[][], visited: boolean[
 
     visited[row][col] = true;
 
-    const directions: [number, number][] = [
+    const directions: number[][] = [
         [-1, 0], // up
         [0, 1], // right
         [1, 0], // down
         [0, -1], // left
     ];
-    for(const [rowDelta, colDelta] of directions) {
-        matrixDFS(row + rowDelta, col + colDelta, grid, visited);
-    }
 
-    return;
+    for(const [rowDelta, colDelta] of directions) {
+
+        const neighborRow = row + rowDelta;
+        const neighborCol = col + colDelta;
+
+        dfs(grid, numRows, numCols, neighborRow, neighborCol, visited);
+
+    }
 
 }
