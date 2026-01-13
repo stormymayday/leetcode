@@ -5,12 +5,12 @@ class WordDictionary {
     }
 
     addWord(word: string): void {
-        let curr: TrieNode = this.root;
+        let curr = this.root;
         for (let i = 0; i < word.length; i += 1) {
-            if (!curr.children.has(word[i])) {
-                curr.children.set(word[i], new TrieNode());
+            if (curr.children[word[i]] === undefined) {
+                curr.children[word[i]] = new TrieNode();
             }
-            curr = curr.children.get(word[i]);
+            curr = curr.children[word[i]];
         }
         curr.isWord = true;
     }
@@ -23,19 +23,19 @@ class WordDictionary {
 
             if (word[idx] === '.') {
 
-                for(const childNode of node.children.values()) {
-                    if(helper(childNode, idx + 1)) {
+                for (const childNode of Object.values(node.children)) {
+                    if (helper(childNode, idx + 1)) {
                         return true;
                     }
                 }
 
-                return false; 
+                return false;
 
             } else {
-                if (!node.children.has(word[idx])) {
+                if (node.children[word[idx]] === undefined) {
                     return false;
                 } else {
-                    return helper(node.children.get(word[idx]), idx + 1);
+                    return helper(node.children[word[idx]], idx + 1);
                 }
             }
 
@@ -45,10 +45,10 @@ class WordDictionary {
 }
 
 class TrieNode {
-    children: Map<string, TrieNode>;
+    children: Record<string, TrieNode>;
     isWord: boolean;
     constructor() {
-        this.children = new Map();
+        this.children = {};
         this.isWord = false;
     }
 }
