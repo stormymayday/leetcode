@@ -2,16 +2,23 @@ type F = (...args: number[]) => void
 
 function debounce(fn: F, t: number): F {
 
-    let timeoutId;
+    let intervalId;
 
     return function (...args) {
 
-        clearTimeout(timeoutId)
+        const lastCall = Date.now();
 
-        timeoutId = setTimeout(() => {
-            // fn.apply(this, args);
-            fn.call(this, ...args);
-        }, t);
+        clearInterval(intervalId)
+
+        intervalId = setInterval(() => {
+
+            if (Date.now() - lastCall >= t) {
+                // fn.call(this, ...args);
+                fn.apply(this, args);
+                clearInterval(intervalId);
+            }
+
+        }, 1);
 
     }
 };
