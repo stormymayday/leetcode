@@ -1,17 +1,17 @@
 type F = (...args: number[]) => void
 
 function debounce(fn: F, t: number): F {
-    
-    let timeoutId = null;
 
-    return function(...args) {
+    let timeoutId;
 
-        clearTimeout(timeoutId);
+    return function (...args) {
+
+        clearTimeout(timeoutId)
 
         timeoutId = setTimeout(() => {
-            fn(...args);
+            fn.apply(this, args);
         }, t);
-        
+
     }
 };
 
