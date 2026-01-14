@@ -9,7 +9,8 @@ function debounce(fn: F, t: number): F {
         clearTimeout(timeoutId)
 
         timeoutId = setTimeout(() => {
-            fn.apply(this, args);
+            // fn.apply(this, args);
+            fn.call(this, ...args);
         }, t);
 
     }
