@@ -1,15 +1,19 @@
 function checkIfInstanceOf(obj: any, classFunction: any): boolean {
     
     if(obj === null || obj === undefined || typeof classFunction !== 'function') {
-        return false;
+        return false
     }
 
-    let inputObj = obj;
-    if(typeof obj !== 'object') {
-        inputObj = Object(obj);
+    let currPrototype = Object.getPrototypeOf(obj);
+
+    while(currPrototype !== null) {
+        if(currPrototype === classFunction.prototype) {
+            return true;
+        }
+        currPrototype = Object.getPrototypeOf(currPrototype);
     }
 
-    return inputObj instanceof classFunction;
+    return false;
 
 };
 
