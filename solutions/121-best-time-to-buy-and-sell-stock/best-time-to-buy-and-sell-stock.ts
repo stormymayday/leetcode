@@ -1,18 +1,18 @@
 function maxProfit(prices: number[]): number {
 
-    let maxDiff = 0;
+    let max = 0;
 
     let left = 0;
     for(let right = 1; right < prices.length; right += 1) {
 
-        if(prices[right] > prices[left]) {
-            maxDiff = Math.max(maxDiff, prices[right] - prices[left]);
-        } else {
+        max = Math.max(max,prices[right] - prices[left]);
+
+        if(prices[right] < prices[left]) {
             left = right;
         }
 
     }
 
-    return maxDiff;
+    return max;
     
 };
