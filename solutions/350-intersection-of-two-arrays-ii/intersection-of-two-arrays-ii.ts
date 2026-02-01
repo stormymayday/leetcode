@@ -1,6 +1,6 @@
 function intersect(nums1: number[], nums2: number[]): number[] {
 
-    const freqMap = {};
+    const freqMap: Record<number, number> = {};
     for(let i = 0; i < nums1.length; i += 1) {
         if(!freqMap.hasOwnProperty(nums1[i])) {
             freqMap[nums1[i]] = 0;
