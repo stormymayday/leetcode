@@ -1,6 +1,6 @@
-# Write your MySQL query statement below
-SELECT customers.name AS Customers
+-- Write your PostgreSQL query statement below
+SELECT name as Customers
 FROM customers
 LEFT JOIN orders
-    ON customers.id = orders.customerId
-WHERE orders.id IS NULL;
+ON customers.id = orders.customerId
+WHERE orders.customerID IS NULL;
