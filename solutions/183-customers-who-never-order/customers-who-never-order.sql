@@ -3,4 +3,4 @@ SELECT name as Customers
 FROM customers
 LEFT JOIN orders
 ON customers.id = orders.customerId
-WHERE orders.customerID IS NULL;
+WHERE orders.customerId IS NULL;
