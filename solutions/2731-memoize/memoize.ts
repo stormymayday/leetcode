@@ -2,7 +2,7 @@ type Fn = (...params: number[]) => number
 
 function memoize(fn: Fn): Fn {
 
-    const cache = new Map();
+    const cache = new Map<string, number>();
     
     return function(...args) {
 
@@ -10,11 +10,13 @@ function memoize(fn: Fn): Fn {
 
         if(cache.has(key)) {
             return cache.get(key);
-        } else {
-            const result = fn(...args);
-            cache.set(key, result);
-            return result;
         }
+
+        const res = fn(...args);
+
+        cache.set(key, res);
+
+        return res;
         
     }
 }
