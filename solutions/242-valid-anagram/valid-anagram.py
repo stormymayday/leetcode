@@ -18,3 +18,4 @@ class Solution:
                 del freqMap[char]
 
         return len(freqMap) == 0
+        # return True
