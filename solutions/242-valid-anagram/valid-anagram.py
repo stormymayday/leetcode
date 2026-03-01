@@ -1,24 +1,13 @@
 class Solution:
     def isAnagram(self, s: str, t: str) -> bool:
-
-        if len(s) != len(t):
-            return False
+        return self.char_count(s) == self.char_count(t)
         
-        freqMap = {}
+    def char_count(self, s: str) -> dict:
+        count = {}
 
-        # Filling in the hash map using 's'
         for char in s:
-            if char not in freqMap:
-                freqMap[char] = 0
-            freqMap[char] += 1
+            if char not in count:
+                count[char] = 0
+            count[char] += 1
 
-        # 'Emptying' the hash map using 't'
-        for char in t:
-            if char not in freqMap:
-                return False
-            freqMap[char] -= 1
-            if freqMap[char] == 0:
-                del freqMap[char]
-
-        return len(freqMap) == 0
-        # return True
+        return count
