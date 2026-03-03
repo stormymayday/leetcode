@@ -1,26 +1,26 @@
-interface ToBeOrNotToBe {
+type ToBeOrNotToBe = {
     toBe: (val: any) => boolean;
     notToBe: (val: any) => boolean;
 };
 
-function expect(value: any): ToBeOrNotToBe {
+function expect(val: any): ToBeOrNotToBe {
 
     return {
-        toBe(val: any): boolean {
-            if (val === value) {
-                return true;
-            } else {
-                throw new Error('Not Equal');
-            }
-        },
-        notToBe(val: any): boolean {
-            if (val !== value) {
-                return true;
-            } else {
-                throw new Error('Equal');
-            }
-        },
-    };
+    toBe(value: any) {
+        if(value === val) {
+            return true;
+        } else {
+            throw new Error("Not Equal");
+        }
+    },
+    notToBe(value: any) {
+        if(value !== val) {
+            return true;
+        } else {
+            throw new Error("Equal");
+        }
+    },
+};
     
 };
 
