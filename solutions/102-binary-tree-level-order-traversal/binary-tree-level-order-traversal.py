@@ -19,7 +19,7 @@ class Solution:
             next_level_nodes = []
             curr_level_vals = []
 
-            for idx, node in enumerate(curr_level_nodes):
+            for node in curr_level_nodes:
                 curr_level_vals.append(node.val)
                 if node.left is not None:
                     next_level_nodes.append(node.left)
