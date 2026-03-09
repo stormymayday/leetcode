@@ -11,11 +11,11 @@ class Solution:
             return []
         
         result = []
-        list_queue = [[root]]
+        stack_lol = [[root]]
 
-        while len(list_queue) > 0:
+        while len(stack_lol) > 0:
 
-            curr_level_nodes = list_queue.pop()
+            curr_level_nodes = stack_lol.pop()
             next_level_nodes = []
             curr_level_vals = []
 
@@ -28,7 +28,7 @@ class Solution:
 
             result.append(curr_level_vals)
             if len(next_level_nodes) > 0:
-                list_queue.append(next_level_nodes)
+                stack_lol.append(next_level_nodes)
 
         return result
         
