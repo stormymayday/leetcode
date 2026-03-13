@@ -5,21 +5,25 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def binaryTreePaths(self, root: Optional[TreeNode]) -> List[str]:
+    def binaryTreePaths(self, root: Optional[TreeNode], result: list[str] | None = None, curr_path: list[int] | None = None) -> List[str]:
 
-        result = []
+        if result is None:
+            result = []
+        if curr_path is None:
+            curr_path = []
+        
+        # Base Case
+        if root is None:
+            return result
+        
+        curr_path.append(root.val)
 
-        def backtrack_helper(node: Optional[TreeNode], curr_path: list[int]) -> None:
-            if node is None:
-                return
-            curr_path.append(node.val)
-            if node.left is None and node.right is None:
-                result.append("->".join(str(num) for num in curr_path))
-            else:
-                backtrack_helper(node.left, curr_path)
-                backtrack_helper(node.right, curr_path)
-            curr_path.pop()
+        if root.left is None and root.right is None:
+            result.append("->".join(str(num) for num in curr_path))
+        else:
+            self.binaryTreePaths(root.left, result, curr_path)
+            self.binaryTreePaths(root.right, result, curr_path)
 
-        backtrack_helper(root, [])
+        curr_path.pop()
 
         return result
