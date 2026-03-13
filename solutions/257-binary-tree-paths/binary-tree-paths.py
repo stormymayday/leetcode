@@ -9,29 +9,17 @@ class Solution:
 
         result = []
 
-        if root is None:
-            return result
-        
-        def backtrack(node: Optional[TreeNode], curr_path: list[TreeNode] | None = None) -> None:
-            
+        def backtrack_helper(node: Optional[TreeNode], curr_path: list[int]) -> None:
             if node is None:
                 return
-            
-            if curr_path is None:
-                curr_path = []
-            
             curr_path.append(node.val)
-
             if node.left is None and node.right is None:
-                result.append("->".join(str(val) for val in curr_path))
+                result.append("->".join(str(num) for num in curr_path))
             else:
-                backtrack(node.left, curr_path)
-                backtrack(node.right, curr_path)
-            
+                backtrack_helper(node.left, curr_path)
+                backtrack_helper(node.right, curr_path)
             curr_path.pop()
-            
 
-        backtrack(root, [])
+        backtrack_helper(root, [])
 
         return result
-        
