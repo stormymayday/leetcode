@@ -6,6 +6,8 @@
 #         self.right = right
 class Solution:
     def leafSimilar(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> bool:
+        if root1 is None or root2 is None:
+            return False
         return self.dfs(root1) == self.dfs(root2)
 
     def dfs(self, root: TreeNode | None, result: list[int] | None = None) -> list[int]:
