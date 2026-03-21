@@ -2,5 +2,5 @@ type JSONValue = null | boolean | number | string | JSONValue[] | { [key: string
 type Fn = (value: JSONValue) => number
 
 function sortBy(arr: JSONValue[], fn: Fn): JSONValue[] {
-    return arr.sort((a,b) => fn(a) - fn(b));
+    return arr.sort((a, b) => fn(a) - fn(b));
 };
