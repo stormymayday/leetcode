@@ -4,11 +4,14 @@ function compose(functions: F[]): F {
     
     return function(x) {
 
-        for(let i = functions.length - 1; i >=0; i--) {
-            x = functions[i](x);
+        let result = x;
+
+        for(let i = functions.length - 1; i >= 0; i--) {
+            result = functions[i](result);
         }
 
-        return x;
+
+        return result;
         
     }
 };
