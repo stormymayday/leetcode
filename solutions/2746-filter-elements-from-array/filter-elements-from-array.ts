@@ -1,17 +1,11 @@
 type Fn = (n: number, i: number) => any
 
 function filter(arr: number[], fn: Fn): number[] {
-
-    const res: number[] = [];
-
+    const res = []
     for(let i = 0; i < arr.length; i += 1) {
-
-        if(fn(arr[i], i)) {
-            res.push(arr[i]);
+        if(fn(arr[i],  i)) {
+            res.push(arr[i])
         }
-
     }
-
-    return res;
-    
+    return res
 };
