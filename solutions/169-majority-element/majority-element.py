@@ -1,22 +1,23 @@
 class Solution:
     def majorityElement(self, nums: List[int]) -> int:
         
-        majority_el = {
-            "el": float("-inf"),
-            "count": 0
-        }
+        n = len(nums)
 
-        count_map = {}
+        if n == 0:
+            return -100000000
 
-        for i in range(len(nums)):
+        maj_el = nums[0]
+        count = 1
+
+        for i in range(1, n):
             curr_el = nums[i]
-            if curr_el not in count_map:
-                count_map[curr_el] = 1
-            else:
-                count_map[curr_el] += 1
-            curr_count = count_map[curr_el]
-            if curr_count > majority_el["count"]:
-                majority_el["el"] = curr_el
-                majority_el["count"] = curr_count
 
-        return majority_el["el"]
+            if curr_el != maj_el:
+                count -= 1
+                if count < 0:
+                    maj_el = curr_el
+                    count = 1
+            else:
+                count += 1
+
+        return maj_el
