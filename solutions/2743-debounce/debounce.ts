@@ -1,19 +1,16 @@
-function debounce<F extends (...args: any[]) => void> (
-    fn: F,
-    delay: number
-): (...args: Parameters<F>) => void {
+type F = (...args: number[]) => void
 
-    let timerId: ReturnType<typeof setTimeout> | null = null;
+function debounce(fn: F, t: number): F {
+
+    let id = null;
     
-    return function(this: unknown, ...args: Parameters<F>) {
+    return function(this, ...args) {
 
-        if(timerId !== null) {
-            clearTimeout(timerId);
-        }
+        if(id !== null) clearTimeout(id);
 
-        timerId = setTimeout(() => {
+        id = setTimeout(() => {
             fn.apply(this, args);
-        }, delay);
+        }, t);
         
     }
 };
