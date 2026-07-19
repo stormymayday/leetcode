@@ -1,10 +1,11 @@
-type F = (...args: number[]) => void
-
-function debounce(fn: F, t: number): F {
+function debounce<F extends (...args: any[]) => void>(
+        fn: F,
+        t: number
+    ): (...args: Parameters<F>) => void {
     
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-    return function(this: unknown, ...args: any[]) {
+    return function(this: unknown, ...args: Parameters<F>) {
         
         if(timeoutId !== null) {
             clearTimeout(timeoutId);
