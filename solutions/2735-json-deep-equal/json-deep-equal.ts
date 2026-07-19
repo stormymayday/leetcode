@@ -1,32 +1,61 @@
+type TType =
+  | 'null'
+  | 'undefined'
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'symbol'
+  | 'bigint'
+  | 'object'
+  | 'array'
+  | 'function'
+  | 'date'
+  | 'regexp'
+  | 'map'
+  | 'set'
+  | 'weakmap'
+  | 'weakset'
+  | 'error'
+  | 'promise'
+  | 'arraybuffer'
+  | string
+
+function getType(data: any): TType {
+    if(data === null) return 'null';
+    if(data === undefined) return 'undefined';
+
+    const proto = Object.getPrototypeOf(data);
+
+    if(proto === null) return 'null';
+
+    return proto.constructor.name.toLowerCase();
+}
+
+
 type JSONValue = null | boolean | number | string | JSONValue[] | { [key: string]: JSONValue };
 
-function areDeeplyEqual(o1: JSONValue, o2: JSONValue): boolean {
-    if(Object.is(o1, o2)) {
-        return true;
-    }
+function areDeeplyEqual(a: JSONValue, b: JSONValue): boolean {
 
-    const bothObjects = Object.prototype.toString.call(o1) === '[object Object]' && Object.prototype.toString.call(o2) === '[object Object]';
-    const bothArrays = Array.isArray(o1) && Array.isArray(o2);
-    
-    if(!bothObjects && !bothArrays) {
-        return false;
-    }
+    if(a === b) return true;
 
-    // TypeScript needs to know these are objects/arrays after the checks above
-    const obj1 = o1 as { [key: string]: JSONValue } | JSONValue[];
-    const obj2 = o2 as { [key: string]: JSONValue } | JSONValue[];
+    const [typeA, typeB] = [getType(a), getType(b)];
 
-    // Check length
-    if(Object.keys(obj1).length !== Object.keys(obj2).length) {
-        return false;
-    }
+    if(typeA !== typeB) return false;
 
-    // Check keys/values recursively
-    for(const key in obj1) {
-        if(!areDeeplyEqual(obj1[key], obj2[key])) {
+    if(typeA !== 'object' && typeA !== 'array') return a === b;
+
+    const [keysA, keysB] = [Object.keys(a), Object.keys(b)];
+
+    if(keysA.length !== keysB.length) return false;
+
+    for(const key of keysA) {
+        if(
+            !Object.prototype.hasOwnProperty.call(b, key) ||
+            !areDeeplyEqual(a[key], b[key])
+        ) {
             return false;
         }
     }
-
+    
     return true;
-}
+};
