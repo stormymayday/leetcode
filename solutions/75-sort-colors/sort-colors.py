@@ -3,23 +3,34 @@ class Solution:
         """
         Do not return anything, modify nums in-place instead.
         """
+        n = len(nums)
         num_zeros = 0
         num_ones = 0
         num_twos = 0
 
-        for i in range(len(nums)):
-            if nums[i] == 0:
+        for i in range(0, n):
+            curr_num = nums[i]
+            if curr_num == 0:
                 num_zeros += 1
-            if nums[i] == 1:
+            elif curr_num == 1:
                 num_ones += 1
-            if nums[i] == 2:
+            elif curr_num == 2:
                 num_twos += 1
+            else:
+                continue
         
-        for i in range(num_zeros):
-            nums[i] = 0
+        if num_zeros + num_ones + num_twos != n:
+            return
         
-        for i in range(num_zeros, num_zeros + num_ones):
-            nums[i] = 1
+        index = 0
+        while index < n:
+            if num_zeros != 0:
+                nums[index] = 0
+                num_zeros -= 1
+            elif num_ones != 0:
+                nums[index] = 1
+                num_ones -= 1
+            else:
+                nums[index] = 2
+            index += 1
         
-        for i in range(num_zeros + num_ones, len(nums)):
-            nums[i] = 2
