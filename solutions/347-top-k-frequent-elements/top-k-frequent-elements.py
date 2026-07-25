@@ -11,14 +11,19 @@ class Solution:
                 freqMap[curr_num] = 1
             else:
                 freqMap[curr_num] += 1
-        
-        max_pq = []
+            
+        min_pq = []
         for num, count in freqMap.items():
-            heapq.heappush_max(max_pq, (count, num))
+            if len(min_pq) < k:
+                heapq.heappush(min_pq, (count, num))
+            else:
+                if count > min_pq[0][0]:
+                    heapq.heappop(min_pq)
+                    heapq.heappush(min_pq, (count, num))
         
         res = []
-        for _ in range(k):
-            (count, num) = heapq.heappop_max(max_pq)
+        while len(min_pq) > 0:
+            (count, num) = heapq.heappop(min_pq)
             res.append(num)
 
         return res
