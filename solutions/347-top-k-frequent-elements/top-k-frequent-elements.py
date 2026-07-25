@@ -1,4 +1,3 @@
-import heapq
 from typing import List
 
 class Solution:
@@ -11,19 +10,21 @@ class Solution:
                 freqMap[curr_num] = 1
             else:
                 freqMap[curr_num] += 1
-            
-        min_pq = []
+        
+        buckets: List[int][int] = []
+        for i in range(len(nums) + 1):
+            buckets.append([])
+        
         for num, count in freqMap.items():
-            if len(min_pq) < k:
-                heapq.heappush(min_pq, (count, num))
-            else:
-                if count > min_pq[0][0]:
-                    heapq.heappop(min_pq)
-                    heapq.heappush(min_pq, (count, num))
+            buckets[count].append(num)
         
         res = []
-        while len(min_pq) > 0:
-            (count, num) = heapq.heappop(min_pq)
-            res.append(num)
+        for i in range(len(buckets) - 1, -1, -1):
+            bucket = buckets[i]
+            for j in range(len(bucket)):
+                num = bucket[j]
+                res.append(num)
+                if len(res) >= k:
+                    return res
 
         return res
