@@ -1,41 +1,41 @@
 class Solution:
-    def sortArray(self, nums: List[int]) -> List[int]:
-
-        def merge(arr: List[int], l: int, m: int, r: int) -> None:
-
-            left = arr[l:m+1]
-            right = arr[m+1:r+1]
-
-            i, j, k = l, 0, 0
-
-            while j < len(left) and k < len(right):
-                if left[j] <= right[k]:
-                    arr[i] = left[j]
-                    j += 1
-                else:
-                    arr[i] = right[k]
-                    k += 1
-                i += 1
-            
-            while j < len(left):
-                arr[i] = left[j]
-                j += 1
-                i += 1
-            
-            while k < len(right):
-                arr[i] = right[k]
-                k += 1
-                i += 1
+    def sortArray(self, nums: list[int]) -> list[int]:
         
-        def mergeSort(arr: List[int], l: int, r: int) -> None:
-            if l >= r:
-                return
+        def merge(arr: list[int], leftBound: int, mid: int, rightBound: int) -> None:
             
-            m = (l + r) // 2
-            mergeSort(arr, l, m)
-            mergeSort(arr, m + 1, r)
+            temp: list[int] = []
 
-            merge(arr, l, m, r)
+            leftPtr = leftBound
+            rightPtr = mid + 1
+
+            while leftPtr <= mid and rightPtr <= rightBound:
+                if arr[leftPtr] <= arr[rightPtr]:
+                    temp.append(arr[leftPtr])
+                    leftPtr += 1
+                else:
+                    temp.append(arr[rightPtr])
+                    rightPtr += 1
+            
+            while leftPtr <= mid:
+                temp.append(arr[leftPtr])
+                leftPtr += 1
+            
+            while rightPtr <= rightBound:
+                temp.append(arr[rightPtr])
+                rightPtr += 1
+
+            for index in range(leftBound, rightBound + 1):
+                arr[index] = temp[index - leftBound]
+
+        def mergeSort(arr: list[int], leftBound: int, rightBound: int) -> None:
+            if leftBound == rightBound:
+                return
+            mid = (leftBound + rightBound) // 2
+            mergeSort(arr, leftBound, mid)
+            mergeSort(arr, mid + 1, rightBound)
+            merge(arr, leftBound, mid, rightBound)
         
         mergeSort(nums, 0, len(nums) - 1)
+
         return nums
+        
