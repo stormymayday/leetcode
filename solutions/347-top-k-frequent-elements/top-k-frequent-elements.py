@@ -1,30 +1,36 @@
-from typing import List
+import heapq
 
 class Solution:
-    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+    def topKFrequent(self, nums: list[int], k: int) -> list[int]:
         
-        freqMap = {}
-        for i in range(len(nums)):
+        n = len(nums)
+
+        freq_count = {}
+
+        for i in range(n):
+
             curr_num = nums[i]
-            if curr_num not in freqMap:
-                freqMap[curr_num] = 1
+
+            if curr_num not in freq_count:
+                freq_count[curr_num] = 0
+            
+            freq_count[curr_num] += 1
+        
+        min_pq = []
+
+        for key, count in freq_count.items():
+
+            if len(min_pq) < k:
+                heapq.heappush(min_pq, (count, key))
             else:
-                freqMap[curr_num] += 1
+                if count > min_pq[0][0]:
+                    heapq.heappop(min_pq)
+                    heapq.heappush(min_pq, (count, key))
         
-        buckets: List[int][int] = []
-        for i in range(len(nums) + 1):
-            buckets.append([])
-        
-        for num, count in freqMap.items():
-            buckets[count].append(num)
-        
-        res = []
-        for i in range(len(buckets) - 1, -1, -1):
-            bucket = buckets[i]
-            for j in range(len(bucket)):
-                num = bucket[j]
-                res.append(num)
-                if len(res) >= k:
-                    return res
+        res: list[int] = []
+
+        for i in range(0, k):
+            (count, key) = heapq.heappop(min_pq)
+            res.append(key)
 
         return res
