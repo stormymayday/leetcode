@@ -1,49 +1,34 @@
 class Solution:
     def isValidSudoku(self, board: list[list[str]]) -> bool:
-
-        if len(board) == 0 or len(board[0]) == 0:
-            return false
-
-        ROWS = len(board)
-        COLS = len(board[0])
         
-        rows = {}
-        cols = {}
-        sub_grids = {}
+        row_map = {}
+        col_map = {}
+        subgrid_map = {}
 
-        for row in range(0, ROWS):
-            for col in range(0, COLS):
+        for row in range(0, 9):
+
+            if row not in row_map:
+                row_map[row] = set()
+
+            for col in range(0, 9):
+
                 curr_val = board[row][col]
 
                 if curr_val == '.':
                     continue
                 
-                # rows
-                if row not in rows:
-                    rows[row] = set()
+                if col not in col_map:
+                    col_map[col] = set()
                 
-                if curr_val in rows[row]:
+                subgrid_key = (row // 3, col // 3)
+                if subgrid_key not in subgrid_map:
+                    subgrid_map[subgrid_key] = set()
+                
+                if curr_val in row_map[row] or curr_val in col_map[col] or curr_val in subgrid_map[subgrid_key]:
                     return False
-                else:
-                    rows[row].add(curr_val)
                 
-                # cols
-                if col not in cols:
-                    cols[col] = set()
-                
-                if curr_val in cols[col]:
-                    return False
-                else:
-                    cols[col].add(curr_val)
-                
-                # sub_grids
-                sub_grid = (row // 3, col // 3)
-                if sub_grid not in sub_grids:
-                    sub_grids[sub_grid] = set()
-                
-                if curr_val in sub_grids[sub_grid]:
-                    return False
-                else:
-                    sub_grids[sub_grid].add(curr_val)
+                row_map[row].add(curr_val)
+                col_map[col].add(curr_val)
+                subgrid_map[subgrid_key].add(curr_val)
 
         return True
